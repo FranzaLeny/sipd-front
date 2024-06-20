@@ -1,0 +1,496 @@
+{
+   "routes": [
+      {
+         "key": "/dashboard",
+         "title": "Dashboard",
+         "keywords": "dashboard",
+         "path": "/dashboard",
+         "access": ["auth"],
+         "newPost": true
+      },
+      {
+         "key": "/kepegawaian",
+         "title": "Kepegawaian",
+         "keywords": "kepegawaian",
+         "path": "/kepegawaian",
+         "access": ["kepegawaian"],
+         "comingSoon": true
+      },
+      {
+         "key": "/data",
+         "title": "Data",
+         "keywords": "data",
+         "access": ["auth", "super_admin"],
+         "newPost": true,
+         "defaultOpen": false,
+         "routes": [
+            {
+               "key": "/data/user",
+               "title": "User",
+               "keywords": "roel",
+               "path": "/data/user",
+               "access": ["auth"],
+               "newPost": true
+            },
+            {
+               "key": "/data/role",
+               "title": "Role",
+               "keywords": "role",
+               "path": "/data/role",
+               "access": ["auth", "super_admin"],
+               "newPost": true
+            },
+            {
+               "key": "/data/tapd",
+               "title": "TAPD",
+               "keywords": "tapd",
+               "path": "/data/tapd",
+               "access": ["auth", "super_admin", "admin"]
+            }
+         ]
+      },
+      {
+         "key": "/perencanaan",
+         "title": "Perencanaan",
+         "keywords": "perencanaan",
+         "access": ["auth"],
+         "defaultOpen": false,
+         "routes": [
+            {
+               "key": "/perencanaan/data",
+               "title": "Data",
+               "keywords": "data",
+               "access": ["auth"],
+               "defaultOpen": false,
+               "routes": [
+                  {
+                     "key": "/perencanaan/data/akun",
+                     "title": "Akun",
+                     "keywords": "akun",
+                     "path": "/perencanaan/data/akun",
+                     "access": ["auth"]
+                  },
+                  {
+                     "key": "/perencanaan/data/standar-harga",
+                     "title": "Standar Harga",
+                     "keywords": "standar-harga",
+                     "path": "/perencanaan/data/standar-harga",
+                     "access": ["auth"]
+                  },
+                  {
+                     "key": "/perencanaan/data/tahapan",
+                     "title": "Tahapan",
+                     "keywords": "tahapan",
+                     "path": "/perencanaan/data/tahapan",
+                     "access": ["auth"]
+                  },
+                  {
+                     "key": "/perencanaan/data/skpd",
+                     "title": "Skpd",
+                     "keywords": "skpd",
+                     "path": "/perencanaan/data/skpd",
+                     "access": ["auth"]
+                  },
+                  {
+                     "key": "/perencanaan/data/satuan",
+                     "title": "Satuan",
+                     "keywords": "satuan",
+                     "path": "/perencanaan/data/satuan",
+                     "access": ["auth"]
+                  },
+                  {
+                     "key": "/perencanaan/data/lokasi",
+                     "title": "Lokasi",
+                     "keywords": "lokasi",
+                     "path": "/perencanaan/data/lokasi",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  },
+                  {
+                     "key": "/perencanaan/data/user",
+                     "title": "User SIPD",
+                     "keywords": "user-sipd",
+                     "path": "/perencanaan/data/user",
+                     "access": ["admin_perencanaan"]
+                  }
+               ]
+            },
+            {
+               "key": "/perencanaan/rpjmd",
+               "title": "RPJMD",
+               "keywords": "rpjmd",
+               "access": ["auth"],
+               "defaultOpen": false,
+               "comingSoon": true,
+               "routes": [
+                  {
+                     "key": "perencanaan/rpjmd/cascading",
+                     "title": "Cascading",
+                     "keywords": "cascading",
+                     "path": "/perencanaan/rpjmd/cascading",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  },
+                  {
+                     "key": "perencanaan/rpjmd/jadwal",
+                     "title": "Jadwal",
+                     "keywords": "jadwal",
+                     "path": "/perencanaan/rpjmd/jadwal",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  },
+                  {
+                     "key": "perencanaan/rpjmd/laporan",
+                     "title": "Laporan",
+                     "keywords": "laporan",
+                     "path": "/perencanaan/rpjmd/laporan",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  }
+               ]
+            },
+            {
+               "key": "/perencanaan/renstra",
+               "title": "Rensta",
+               "keywords": "renstra",
+               "access": ["auth"],
+               "defaultOpen": false,
+               "comingSoon": true,
+               "routes": [
+                  {
+                     "key": "perencanaan/renstra/cascading",
+                     "title": "Cascading",
+                     "keywords": "cascading",
+                     "path": "/perencanaan/renstra/cascading",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  },
+                  {
+                     "key": "perencanaan/renstra/jadwal",
+                     "title": "Jadwal",
+                     "keywords": "jadwal",
+                     "path": "/perencanaan/renstra/jadwal",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  },
+                  {
+                     "key": "perencanaan/renstra/laporan",
+                     "title": "Laporan",
+                     "keywords": "laporan",
+                     "path": "/perencanaan/renstra/laporan",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  }
+               ]
+            },
+            {
+               "key": "/perencanaan/rpd",
+               "title": "RPD",
+               "keywords": "rpd",
+               "access": ["auth"],
+               "defaultOpen": false,
+               "comingSoon": true,
+               "routes": [
+                  {
+                     "key": "perencanaan/rpd/cascading",
+                     "title": "Cascading",
+                     "keywords": "cascading",
+                     "path": "/perencanaan/rpd/cascading",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  },
+                  {
+                     "key": "perencanaan/rpd/jadwal",
+                     "title": "Jadwal",
+                     "keywords": "jadwal",
+                     "path": "/perencanaan/rpd/jadwal",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  },
+                  {
+                     "key": "perencanaan/rpd/laporan",
+                     "title": "Laporan",
+                     "keywords": "laporan",
+                     "path": "/perencanaan/rpd/laporan",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  }
+               ]
+            },
+            {
+               "key": "/perencanaan/rkpd",
+               "title": "RKPD",
+               "keywords": "rkpd",
+               "access": ["auth"],
+               "defaultOpen": false,
+               "comingSoon": true,
+               "routes": [
+                  {
+                     "key": "/perencanaan/rkpd/cascading",
+                     "title": "Cascading",
+                     "keywords": "cascading",
+                     "path": "/perencanaan/rkpd/cascading",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  },
+                  {
+                     "key": "/perencanaan/rkpd/jadwal",
+                     "title": "Jadwal",
+                     "keywords": "jadwal",
+                     "path": "/perencanaan/rkpd/jadwal",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  },
+                  {
+                     "key": "/perencanaan/rkpd/laporan",
+                     "title": "Laporan",
+                     "keywords": "laporan",
+                     "path": "/perencanaan/rkpd/laporan",
+                     "access": ["auth"],
+                     "comingSoon": true
+                  }
+               ]
+            },
+            {
+               "key": "/perencanaan/rka",
+               "title": "RKA",
+               "keywords": "rka",
+               "access": ["auth"],
+               "defaultOpen": false,
+               "routes": [
+                  {
+                     "key": "/perencanaan/rka/jadwal",
+                     "title": "Jadwal",
+                     "keywords": "jadwal",
+                     "path": "/perencanaan/rka/jadwal",
+                     "access": ["perencanaan", "sipd_ri"]
+                  },
+                  {
+                     "key": "/perencanaan/rka/skpd",
+                     "title": "Skpd",
+                     "keywords": "skpd",
+                     "path": "/perencanaan/rka/skpd",
+                     "access": ["perencanaan", "sipd_ri"]
+                  },
+                  {
+                     "key": "/perencanaan/rka/sub-giat",
+                     "title": "Sub Kegiatan",
+                     "keywords": "sub-giat",
+                     "path": "/perencanaan/rka/sub-giat",
+                     "access": ["auth"]
+                  },
+                  {
+                     "key": "/perencanaan/rka/pendapatan",
+                     "title": "Pendapatan",
+                     "keywords": "Pendapatan",
+                     "path": "/perencanaan/rka/pendapatan",
+                     "access": ["auth"]
+                  },
+                  {
+                     "key": "/perencanaan/rka/laporan",
+                     "title": "Laporan",
+                     "keywords": "laporan",
+                     "access": ["perencanaan", "admin_perencanaan"],
+                     "defaultOpen": false,
+                     "routes": [
+                        {
+                           "key": "/perencanaan/rka/laporan/skpd",
+                           "title": "Ringkasan Skpd",
+                           "keywords": "skpd",
+                           "path": "/perencanaan/rka/laporan/skpd",
+                           "access": ["perencanaan", "admin_perencanaan"]
+                        },
+                        {
+                           "key": "/perencanaan/rka/laporan/pendapatan",
+                           "title": "Pendapatan",
+                           "keywords": "pendapatan",
+                           "path": "/perencanaan/rka/laporan/pendapatan",
+                           "access": ["perencanaan", "admin_perencanaan"]
+                        },
+                        {
+                           "key": "/perencanaan/rka/laporan/rekap-bl",
+                           "title": "Rekapan Belanja",
+                           "keywords": "rekap-bl",
+                           "path": "/perencanaan/rka/laporan/rekap-bl",
+                           "access": ["perencanaan", "admin_perencanaan"]
+                        },
+                        {
+                           "key": "/perencanaan/rka/laporan/rinci-bl",
+                           "title": "Rincian Belanja",
+                           "keywords": "rinci-bl",
+                           "path": "/perencanaan/rka/laporan/rinci-bl",
+                           "access": ["perencanaan", "admin_perencanaan"]
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "key": "/keuangan",
+         "title": "Keuangan",
+         "keywords": "keuangan",
+         "access": ["auth"],
+         "path": "/keuangan",
+         "comingSoon": true
+      },
+      {
+         "key": "/sipd",
+         "title": "SIPD",
+         "keywords": "sipd",
+         "access": ["auth"],
+         "defaultOpen": false,
+         "routes": [
+            {
+               "key": "/sipd/sipd-ri",
+               "title": "SIPD-Perencanaan",
+               "keywords": "sipd-perencanaan",
+               "access": ["perencanaan", "sipd_ri"],
+               "defaultOpen": false,
+               "routes": [
+                  {
+                     "key": "/sipd/sipd-ri/laporan",
+                     "title": "Laporan SIPD",
+                     "keywords": "laporan,sipd,perencanaan",
+                     "access": ["perencanaan", "sipd_ri"],
+                     "defaultOpen": false,
+                     "routes": [
+                        {
+                           "key": "/sipd/sipd-ri/laporan/rkpd",
+                           "title": "RKPD SIPD",
+                           "keywords": "rkpd,sipd",
+                           "access": ["perencanaan", "sipd_ri"],
+                           "path": "/sipd-ri/laporan/rkpd",
+                           "comingSoon": true
+                        },
+                        {
+                           "key": "/sipd/sipd-ri/laporan/rka",
+                           "title": "RKA SIPD",
+                           "keywords": "rka,sipd",
+                           "access": ["perencanaan", "sipd_ri"],
+                           "path": "/sipd-ri/laporan/rka"
+                        }
+                     ]
+                  },
+                  {
+                     "key": "/sipd/sipd-ri/sync",
+                     "title": "Singkron",
+                     "keywords": "singkron,sipd",
+                     "access": ["perencanaan", "sipd_ri"],
+                     "defaultOpen": false,
+                     "routes": [
+                        {
+                           "key": "/sipd/sipd-ri/sync/data",
+                           "title": "Data",
+                           "keywords": "singkron,data,sipd",
+                           "access": ["perencanaan", "sipd_ri"],
+                           "path": "/sipd-ri/sync/data"
+                        },
+                        {
+                           "key": "/sipd/sipd-ri/sync/rka",
+                           "title": "RKA",
+                           "keywords": "singkron,rka,sipd",
+                           "access": ["perencanaan", "sipd_ri"],
+                           "path": "/sipd-ri/sync/rka"
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "key": "/sipd/sipd-peta",
+               "title": "SIPD-Penatausahaan",
+               "keywords": "penatausahaan,sipd",
+               "access": ["auth"],
+               "defaultOpen": false,
+               "routes": [
+                  {
+                     "key": "/sipd/sipd-peta/data",
+                     "title": "Data SIPD",
+                     "keywords": "penatausahaan,sipd,data",
+                     "access": ["auth"],
+                     "path": "/sipd-peta/data"
+                  },
+                  {
+                     "key": "/sipd/sipd-peta/laporan",
+                     "title": "Laporan SIPD",
+                     "keywords": "penatausahaan,sipd,laporan",
+                     "access": ["auth"],
+                     "defaultOpen": false,
+                     "routes": [
+                        {
+                           "key": "/sipd/sipd-peta/laporan/dpa",
+                           "title": "DPA SIPD",
+                           "keywords": "penatausahaan,sipd,laporan,dpa",
+                           "access": ["auth"],
+                           "defaultOpen": false,
+                           "routes": [
+                              {
+                                 "key": "/sipd/sipd-peta/laporan/dpa/persetujuan",
+                                 "title": "Halaman Persetujuan",
+                                 "keywords": "penatausahaan,sipd,laporan,dpa",
+                                 "access": ["auth"],
+                                 "path": "/sipd-peta/laporan/dpa/persetujuan",
+                                 "comingSoon": true
+                              },
+                              {
+                                 "key": "/sipd/sipd-peta/laporan/dpa/depan",
+                                 "title": "Halaman Depan",
+                                 "keywords": "penatausahaan,sipd,laporan,dpa",
+                                 "access": ["auth"],
+                                 "path": "/sipd-peta/laporan/dpa/depan",
+                                 "comingSoon": true
+                              },
+                              {
+                                 "key": "/sipd/sipd-peta/laporan/dpa/skpd",
+                                 "title": "Ringkasan Skpd",
+                                 "keywords": "penatausahaan,sipd,laporan,dpa",
+                                 "access": ["auth"],
+                                 "path": "/sipd-peta/laporan/dpa/skpd"
+                              },
+                              {
+                                 "key": "/sipd/sipd-peta/laporan/dpa/pendapatan",
+                                 "title": "Pendapatan",
+                                 "keywords": "penatausahaan,sipd,laporan,dpa,pendapatan",
+                                 "access": ["auth"],
+                                 "path": "/sipd-peta/laporan/dpa/pendapatan"
+                              },
+                              {
+                                 "key": "/sipd/sipd-peta/laporan/dpa/belanja",
+                                 "title": "Rekapan Belanja",
+                                 "keywords": "penatausahaan,sipd,laporan,dpa,belanja",
+                                 "access": ["auth"],
+                                 "path": "/sipd-peta/laporan/dpa/rekap-bl"
+                              },
+                              {
+                                 "key": "/sipd/sipd-peta/laporan/dpa/rincian",
+                                 "title": "Rincian Belanja",
+                                 "keywords": "penatausahaan,sipd,laporan,dpa,rincian,belanja",
+                                 "access": ["auth"],
+                                 "path": "/sipd-peta/laporan/dpa/rinci-bl"
+                              }
+                           ]
+                        },
+                        {
+                           "key": "/sipd/sipd-peta/laporan/rak",
+                           "title": "RAK SIPD",
+                           "keywords": "penatausahaan,sipd,laporan,rak",
+                           "access": ["auth"],
+                           "path": "#"
+                        },
+                        {
+                           "key": "/sipd/sipd-peta/laporan/spj",
+                           "title": "SPJ SIPD",
+                           "keywords": "penatausahaan,sipd,laporan,spj",
+                           "access": ["auth"],
+                           "path": "/sipd-peta/laporan/spj"
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      }
+   ]
+}

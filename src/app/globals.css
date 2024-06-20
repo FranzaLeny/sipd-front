@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+   --height-navbar: 4rem; /* HACK "UBAH" "height-navbar" dan "z-index navbar" */
+   --sidebar-width: 16rem;
+}
+
+/* HACK TOAST Color */
+.Toastify__toast {
+   @apply !bg-content2 !text-content2-foreground text-sm;
+}
+
+.Toastify__close-button {
+   @apply text-danger;
+}
+
+@layer base {
+   .classic [class*='rounded']:not(.rounded-full) {
+      border-radius: 0 !important;
+   }
+
+   .sort-table > svg {
+      @apply !absolute right-0 top-1/2 -translate-y-1/2;
+   }
+
+   .content {
+      @apply group-data-[sidebar-open=true]/layout:sm:pl-2 px-2 md:px-4 lg:px-6;
+   }
+
+   ::-webkit-scrollbar {
+      @apply w-2 h-2;
+   }
+
+   ::-webkit-scrollbar-thumb {
+      @apply bg-secondary/20 hover:bg-primary rounded-full;
+   }
+
+   ::-webkit-scrollbar-track {
+      @apply bg-default-100;
+   }
+   /* TODO pindahkan ke componen navbar */
+   .nav-title {
+      @apply hover:border-l-secondary border-l-divider aria-expanded:border-l-secondary flex w-full items-center justify-between gap-3 border-l px-2 py-1;
+   }
+   .nav-chip {
+      @apply text-tiny ml-1 py-1;
+   }
+   .rak td {
+      @apply border border-black;
+   }
+   .cell-print {
+      @apply px-1.5 py-0.5 border border-collapse border-divider print:border-black;
+   }
+   .rak .noborder td {
+      @apply border-0;
+   }
+   .text-vertical {
+      @apply rotate-180;
+      writing-mode: vertical-rl;
+   }
+   .border-print {
+      @apply border-collapse border border-divider print:border-black;
+   }
+}
+
+@media print {
+   @page {
+      margin: 2cm;
+   }
+}

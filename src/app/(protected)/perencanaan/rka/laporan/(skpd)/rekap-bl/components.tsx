@@ -1,0 +1,306 @@
+'use client'
+
+import { LaporanBelanjaSkpd } from '@/types/api/laporan'
+
+export const TheadMurni = ({ tahun }: { tahun: number }) => {
+   return (
+      <thead className='font-bold'>
+         <tr>
+            <th
+               rowSpan={3}
+               className='cell-print text-vertical'>
+               Urusan
+            </th>
+            <th
+               rowSpan={3}
+               className='cell-print text-vertical'>
+               Bidang Urusan
+            </th>
+            <th
+               rowSpan={3}
+               className='cell-print text-vertical'>
+               Program
+            </th>
+            <th
+               rowSpan={3}
+               className='cell-print text-vertical'>
+               Kegiatan
+            </th>
+            <th
+               rowSpan={3}
+               className='cell-print text-vertical'>
+               Sub Kegiatan
+            </th>
+            <th
+               rowSpan={3}
+               className='cell-print'>
+               Uraian
+            </th>
+            <th
+               rowSpan={3}
+               className='cell-print'>
+               Sumber Dana
+            </th>
+            <th
+               rowSpan={3}
+               className='cell-print'>
+               Lokasi
+            </th>
+            <th
+               colSpan={7}
+               className='cell-print'>
+               JUMLAH
+            </th>
+            <th
+               rowSpan={3}
+               className='cell-print print:hidden'>
+               KET
+            </th>
+         </tr>
+         <tr>
+            <th
+               rowSpan={2}
+               className='cell-print whitespace-pre-wrap'>
+               Tahun {tahun - 1}
+            </th>
+            <th
+               colSpan={5}
+               className='cell-print'>
+               Tahun {tahun}
+            </th>
+            <th
+               rowSpan={2}
+               className='cell-print'>
+               Tahun {tahun + 1}
+            </th>
+         </tr>
+         <tr>
+            <th className='cell-print'>Belanja Operasi</th>
+            <th className='cell-print'>Belanja Modal</th>
+            <th className='cell-print'>Belanja Tak Terduga</th>
+            <th className='cell-print'>Belanja Transfer</th>
+            <th className='cell-print'>Jumlah</th>
+         </tr>
+      </thead>
+   )
+}
+
+export const RenderRincianMurni = ({ item }: { item: LaporanBelanjaSkpd['list_bl'][number] }) => {
+   const { belanja } = item
+   const total = belanja?.bo + belanja?.btt + belanja?.bt + belanja?.bm
+   const chek = total - (item?.pagu || 0)
+   const kode = item.kode
+   const isSkpd = item?.group === 'sub_skpd'
+   const isSubGiat = item?.group === 'sub_giat'
+   const isJumlah = item?.group === 'jumlah'
+   return (
+      <tr
+         className={`break-inside-avoid ${!isSubGiat && 'font-bold'} ${(isSkpd || isJumlah) && 'bg-foreground/5'}`}>
+         {!(isSkpd || isJumlah) && (
+            <>
+               <td className='cell-print text-center'>{kode[0]}</td>
+               <td className='cell-print text-center'>{kode[1]}</td>
+               <td className='cell-print text-center'>{kode[2]}</td>
+               <td className='cell-print text-center'>{kode[3]}</td>
+               <td className='cell-print text-center'>{kode[4]}</td>
+            </>
+         )}
+         <td
+            colSpan={isSubGiat ? 1 : isJumlah || isSkpd ? 8 : 3}
+            className={`cell-print ${isJumlah ? 'text-center' : ''}`}>
+            {item.uraian}
+         </td>
+         {isSubGiat && (
+            <>
+               <td className='cell-print'>{item.nama_dana}</td>
+               <td className='cell-print'>{item.lokasi}</td>
+            </>
+         )}
+         <td className='cell-print text-right'>{item.pagu_n_lalu?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja?.bo?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja?.bm?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja?.btt?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja?.bt?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja?.total_harga?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{item.pagu_n_depan?.toLocaleString('id')}</td>
+         <td className='cell-print text-center print:hidden'>
+            <div>{chek === 0 ? '✓' : 'Ada Selsish Pagu: ' + chek?.toLocaleString('id')}</div>
+         </td>
+      </tr>
+   )
+}
+
+export const TheadPerubahan = ({ tahun }: { tahun: number }) => {
+   return (
+      <thead className='font-bold'>
+         <tr>
+            <th
+               rowSpan={4}
+               className='cell-print text-vertical'>
+               Urusan
+            </th>
+            <th
+               rowSpan={4}
+               className='cell-print text-vertical'>
+               Bidang Urusan
+            </th>
+            <th
+               rowSpan={4}
+               className='cell-print text-vertical'>
+               Program
+            </th>
+            <th
+               rowSpan={4}
+               className='cell-print text-vertical'>
+               Kegiatan
+            </th>
+            <th
+               rowSpan={4}
+               className='cell-print text-vertical'>
+               Sub Kegiatan
+            </th>
+            <th
+               rowSpan={4}
+               className='cell-print'>
+               Uraian
+            </th>
+            <th
+               rowSpan={4}
+               className='cell-print'>
+               Sumber Dana
+            </th>
+            <th
+               rowSpan={4}
+               className='cell-print'>
+               Lokasi
+            </th>
+            <th
+               colSpan={13}
+               className='cell-print'>
+               JUMLAH
+            </th>
+            <th
+               rowSpan={4}
+               className='cell-print print:hidden'>
+               KET
+            </th>
+         </tr>
+         <tr>
+            <th
+               rowSpan={3}
+               className='cell-print whitespace-pre-wrap'>
+               Tahun {tahun - 1}
+            </th>
+            <th
+               colSpan={11}
+               className='cell-print'>
+               Tahun {tahun}
+            </th>
+            <th
+               rowSpan={3}
+               className='cell-print'>
+               Tahun {tahun + 1}
+            </th>
+         </tr>
+         <tr>
+            <th
+               colSpan={5}
+               className='cell-print'>
+               Sebelum
+            </th>
+            <th
+               colSpan={5}
+               className='cell-print'>
+               Sesudah
+            </th>
+            <th
+               rowSpan={2}
+               className='cell-print'>
+               <div>Bertambah</div>
+               <div>(Berkurang)</div>
+            </th>
+         </tr>
+         <tr>
+            <th className='cell-print'>Belanja Operasi</th>
+            <th className='cell-print'>Belanja Modal</th>
+            <th className='cell-print'>Belanja Tak Terduga</th>
+            <th className='cell-print'>Belanja Transfer</th>
+            <th className='cell-print'>Jumlah</th>
+            <th className='cell-print'>Belanja Operasi</th>
+            <th className='cell-print'>Belanja Modal</th>
+            <th className='cell-print'>Belanja Tak Terduga</th>
+            <th className='cell-print'>Belanja Transfer</th>
+            <th className='cell-print'>Jumlah</th>
+         </tr>
+      </thead>
+   )
+}
+
+export const RenderRincianPerubahan = ({
+   item,
+}: {
+   item: LaporanBelanjaSkpd['list_bl'][number]
+}) => {
+   const { belanja_murni, belanja } = item
+   const total_murni =
+      belanja_murni?.bo_murni +
+      belanja_murni?.btt_murni +
+      belanja_murni?.bt_murni +
+      belanja_murni?.bm_murni
+   const total = belanja?.bo + belanja?.btt + belanja?.bt + belanja?.bm
+   const selisih = total - total_murni
+   const chek = total - (item?.pagu || 0)
+   const kode = item.kode
+   const isSkpd = item?.group === 'sub_skpd'
+   const isSubGiat = item?.group === 'sub_giat'
+   const isJumlah = item?.group === 'jumlah'
+   return (
+      <tr
+         className={`break-inside-avoid ${!isSubGiat && 'font-bold'} ${(isSkpd || isJumlah) && 'bg-foreground/5'}`}>
+         {!(isSkpd || isJumlah) && (
+            <>
+               <td className='cell-print text-center'>{kode[0]}</td>
+               <td className='cell-print text-center'>{kode[1]}</td>
+               <td className='cell-print text-center'>{kode[2]}</td>
+               <td className='cell-print text-center'>{kode[3]}</td>
+               <td className='cell-print text-center'>{kode[4]}</td>
+            </>
+         )}
+         <td
+            colSpan={isSubGiat ? 1 : isJumlah || isSkpd ? 8 : 3}
+            className={`cell-print ${isJumlah ? 'text-center' : ''}`}>
+            {item.uraian}
+         </td>
+         {isSubGiat && (
+            <>
+               <td className='cell-print'>{item.nama_dana}</td>
+               <td className='cell-print'>{item.lokasi}</td>
+            </>
+         )}
+         <td className='cell-print text-right'>{item.pagu_n_lalu?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja_murni?.bo_murni?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja_murni?.bm_murni?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja_murni?.btt_murni?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja_murni?.bt_murni?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>
+            {belanja_murni?.total_harga_murni?.toLocaleString('id')}
+         </td>
+         <td className='cell-print text-right'>{belanja?.bo?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja?.bm?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja?.btt?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja?.bt?.toLocaleString('id')}</td>
+         <td className='cell-print text-right'>{belanja?.total_harga?.toLocaleString('id')}</td>
+         {selisih < 0 ? (
+            <td className='cell-print text-right text-red-800 print:text-red-800'>
+               (<span>{(-selisih).toLocaleString('id')}</span>)
+            </td>
+         ) : (
+            <td className='cell-print text-right'>{selisih.toLocaleString('id')}</td>
+         )}
+         <td className='cell-print text-right'>{item.pagu_n_depan?.toLocaleString('id')}</td>
+         <td className='cell-print text-center print:hidden'>
+            <div>{chek === 0 ? '✓' : 'Ada Selsish Pagu: ' + chek?.toLocaleString('id')}</div>
+         </td>
+      </tr>
+   )
+}

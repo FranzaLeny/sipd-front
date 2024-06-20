@@ -1,0 +1,754 @@
+import manifest from '@constants/tpd.json'
+import { numberToMonth } from '@utils'
+import { borderAll, calcRowHeight, createExcelData } from '@utils/excel'
+import Excel from 'exceljs'
+import { saveAs } from 'file-saver'
+
+import { LaporanRinciBl } from './rinci-bl'
+
+function formatDefaultRka(ws: Excel.Worksheet) {
+   const font = { name: 'Arial', size: 10 }
+   const textStyle: Partial<Excel.Style> = {
+      alignment: {
+         vertical: 'middle',
+         horizontal: 'left',
+         wrapText: true,
+         shrinkToFit: false,
+         indent: 0.1,
+      },
+      font,
+      numFmt: '@',
+   }
+   const numStyle: Partial<Excel.Style> = {
+      alignment: {
+         vertical: 'middle',
+         horizontal: 'right',
+         wrapText: false,
+         shrinkToFit: true,
+         indent: 0.1,
+      },
+      font,
+      numFmt: '#,##0;[Red]-#,##0',
+   }
+   const percentStyle: Partial<Excel.Style> = {
+      ...numStyle,
+      numFmt: '0%',
+   }
+   ws.columns = [
+      { key: 'kd_1', width: 2.29, style: textStyle },
+      { key: 'kd_2', width: 2.29, style: textStyle },
+      { key: 'kd_3', width: 3.29, style: textStyle },
+      { key: 'kd_4', width: 3.29, style: textStyle },
+      { key: 'kd_5', width: 3.29, style: textStyle },
+      { key: 'kd_6', width: 5.29, style: textStyle },
+      {
+         key: 'uraian',
+         width: 30.71,
+         style: textStyle,
+      },
+      {
+         key: 'volume',
+         width: 9.71,
+         style: numStyle,
+      },
+      {
+         key: 'harga',
+         width: 11.71,
+         style: numStyle,
+      },
+      {
+         key: 'satuan',
+         width: 10.71,
+         style: textStyle,
+      },
+      {
+         key: 'pajak',
+         style: percentStyle,
+         width: 5.71,
+      },
+      {
+         key: 'jumlah',
+         style: numStyle,
+         width: 11.71,
+      },
+   ]
+   ws.pageSetup = { showGridLines: false, showRowColHeaders: false }
+}
+
+type Data = {
+   dokumen: {
+      name: string
+      title: string
+      kode: string
+      header: string
+   }
+   skpd: LaporanRinciBl['skpd']['sub_skpd']
+   tapd: LaporanRinciBl['skpd']['tapd'] | undefined
+   items: LaporanRinciBl['rincian']
+   subGiat: LaporanRinciBl['sub_kegiatan']
+}
+
+const dowloadRkaRinciBl = async (data: Data) => {
+   const { dokumen, items, skpd, tapd, subGiat } = data
+   let namaFile =
+      dokumen?.kode + '_' + subGiat?.kode_sub_giat + subGiat?.nama_sub_giat.substring(0, 100)
+   namaFile = namaFile?.replace(/[^\w.-]/g, ' ')?.replaceAll('.', '_')
+   const sheet_name = subGiat?.kode_sub_giat + ' ' + subGiat?.nama_sub_giat.substring(0, 12)
+   let footer = subGiat?.kode_sub_giat + '-' + subGiat?.nama_sub_giat
+   if (footer.length > 100) {
+      footer = footer.substring(0, 97) + '...'
+   }
+   const generateSubTotal = (group: number, index: number, nextRow: number) => {
+      const lastIndex = items.findIndex((d, i) => i > index && d.group <= group)
+      const endRow = lastIndex === -1 ? lastRow : starRow + lastIndex
+      return `=SUBTOTAL(9,L${nextRow}:L${endRow})`
+   }
+
+   const wb = new Excel.Workbook()
+   const ws = wb.addWorksheet(sheet_name)
+   formatDefaultRka(ws)
+   fillDokJudul({ ws, dokumen, tahun: subGiat?.tahun })
+   fillDataKegiatan({ ws, subGiat })
+   fillIndikatorKegiatan({ ws, subGiat })
+   fillDataSubKegiatan({ ws, subGiat })
+   const starRow = fillTableHead({ ws })
+   const lastRow = starRow + items.length - 1
+   for (let [index, rinci] of items.entries()) {
+      const nextRow = starRow + index + 2
+      const currRow = starRow + index + 1
+      const isRinci = rinci.group === 9
+      const { group, pajak, uraian, volume, nama_dana, rekening, spek, satuan, harga_satuan } =
+         rinci
+      const isTotal = group === 10
+      const _uraian =
+         isRinci && !!spek
+            ? `${uraian}\nSpesifikasi: ${spek}`
+            : group === 8
+              ? `[-] ${uraian}`
+              : group === 7
+                ? `[#] ${uraian}\nSumber dana: ${nama_dana}`
+                : uraian
+      const rek = rekening?.reduce((a, b, i) => ({ ...a, [i + 1]: i === 5 ? b : b + '.' }), {})
+      const total = isRinci
+         ? `=H${currRow}*I${currRow}+H${currRow}*I${currRow}*K${currRow}`
+         : isTotal
+           ? '=SUBTOTAL(9,L' + (starRow + 1) + ':L' + lastRow + ')'
+           : generateSubTotal(group, index, nextRow)
+      let item = createExcelData({
+         l: 12,
+         d: {
+            ...rek,
+            7: _uraian,
+            8: isRinci ? { formula: `=${volume?.join('*')}` } : undefined,
+            9: harga_satuan,
+            10: isRinci ? satuan?.join(' ') : undefined,
+            11: isRinci ? pajak : undefined,
+            12: { formula: total },
+         },
+      })
+
+      const row = ws.addRow(item)
+      if (!isRinci) {
+         ws.mergeCells(row.number, 7, row.number, 11)
+         row.height = calcRowHeight({
+            value: _uraian,
+            width: 65 * 7.166,
+            font: '10pt Arial',
+            bold: true,
+            min_height: 15,
+         })
+      }
+      borderAll({ row, ws, bold: !isRinci })
+      row.eachCell({ includeEmpty: true }, (cell, col) => {
+         if (col <= 6) {
+            const cellAddress = cell.address
+            const style = ws.getCell(cellAddress).style
+            ws.getCell(cellAddress).style = {
+               ...style,
+               border: {
+                  top: { style: 'thin' },
+                  left: col === 1 ? { style: 'thin' } : undefined,
+                  bottom: { style: 'thin' },
+                  right: col === 6 ? { style: 'thin' } : undefined,
+               },
+            }
+         }
+      })
+   }
+   const row = ws.addRow(undefined)
+   row.height = 7
+   fillKepala({ ws, skpd })
+   fillKeterangan({ ws })
+   fillTapd({ ws, tapd })
+   ws.headerFooter.oddFooter = `&L&\"Arial\"&9&I${footer}&R&\"Arial\"&9${dokumen?.kode}| &B&P`
+   const password = subGiat.kode_sub_giat.slice(-4)
+   await ws.protect(password, {
+      insertRows: true,
+      formatRows: true,
+      formatColumns: true,
+      formatCells: true,
+   })
+   const buf = await wb.xlsx.writeBuffer()
+   saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
+}
+
+export default dowloadRkaRinciBl
+
+function fillDokJudul({
+   ws,
+   dokumen,
+   tahun,
+}: {
+   ws: Excel.Worksheet
+   dokumen: Data['dokumen']
+   tahun: number
+}): number {
+   const data_judul = createExcelData({
+      l: 3,
+      c: false,
+      d: {
+         0: createExcelData({
+            l: 12,
+            d: {
+               1: dokumen?.title?.toLocaleUpperCase('ID'),
+               10: `FORMULIR\n${dokumen.kode}-RINCIAN BELANJA\nSKPD`,
+            },
+         }),
+         1: createExcelData({ l: 12, d: { 1: 'SATUAN KERJA PERANGKAT DAERAH' } }),
+         2: createExcelData({
+            l: 12,
+            d: { 1: `Pemerintahan Kab. Lembata Tahun Anggaran ${tahun}` },
+         }),
+      },
+   })
+   const rows_judul = ws.addRows(data_judul)
+   rows_judul.map((row) => {
+      borderAll({ row, ws, bold: true, center: true, wrapText: true })
+      ws.mergeCells(row.number, 1, row.number, 9)
+   })
+   ws.mergeCells(rows_judul[0].number, 10, rows_judul[rows_judul.length - 1].number, 12)
+   const row = ws.addRow(undefined)
+   row.height = 7
+   return row.number
+}
+
+function fillDataKegiatan({
+   ws,
+   subGiat,
+}: {
+   ws: Excel.Worksheet
+   subGiat: Data['subGiat']
+}): number {
+   const giat = [
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Urusan Pemerintahan',
+            7: subGiat.kode_urusan + ' ' + subGiat.nama_urusan,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Bidang Urusan',
+            7: subGiat.kode_bidang_urusan + ' ' + subGiat.nama_bidang_urusan,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Organisasi',
+            7: subGiat.kode_skpd + ' ' + subGiat.nama_skpd,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Unit',
+            7: subGiat.kode_sub_skpd + ' ' + subGiat.nama_sub_skpd,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Program',
+            7: subGiat.kode_program + ' ' + subGiat.nama_program,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Kegiatan',
+            7: subGiat.kode_giat + ' ' + subGiat.nama_giat,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: `Alokasi ${subGiat.tahun - 1}`,
+            7: subGiat.pagu_n_lalu,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: `Alokasi ${subGiat.tahun}`,
+            7: subGiat.pagu,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: `Alokasi ${subGiat.tahun + 1}`,
+            7: subGiat.pagu_n_depan,
+         },
+      }),
+   ]
+   const rows = ws.addRows(giat)
+   rows.map((row) => {
+      const value = row.getCell(7).value
+      row.height = calcRowHeight({
+         value: value,
+         width: 76 * 7.16,
+         font: '10pt Arial',
+         bold: true,
+         min_height: 15,
+      })
+      row.eachCell({ includeEmpty: true }, (cell, i) => {
+         if (i === 1) {
+            const style = cell.style
+            cell.style = {
+               ...style,
+               numFmt: '@* :',
+               alignment: { ...style.alignment, wrapText: false, shrinkToFit: true },
+            }
+         } else if (i === 7) {
+            const style = cell.style
+            cell.style = {
+               ...style,
+               numFmt: '#,##0;-#,##0',
+            }
+         }
+      })
+      ws.mergeCellsWithoutStyle(row.number, 1, row.number, 6)
+      ws.mergeCellsWithoutStyle(row.number, 7, row.number, 12)
+   })
+   const row = ws.addRow(undefined)
+   row.height = 7
+   return row.number
+}
+
+function fillIndikatorKegiatan({
+   ws,
+   subGiat,
+}: {
+   ws: Excel.Worksheet
+   subGiat: Data['subGiat']
+}): number {
+   const capaian = subGiat.capaian_bl_giat?.map((c, i) => {
+      return createExcelData({
+         l: 12,
+         d: { 1: i === 0 ? 'Capaian Program' : undefined, 7: c.tolak_ukur, 11: c.target_teks },
+      })
+   })
+   const keluaran = subGiat.output_bl_giat?.map((k, i) => {
+      return createExcelData({
+         l: 12,
+         d: {
+            1: i === 0 ? 'Keluaran Kegiatan' : undefined,
+            7: k.tolok_ukur,
+            11: k.target_teks,
+         },
+      })
+   })
+   const hasil = subGiat.hasil_bl_giat?.map((h, i) => {
+      return createExcelData({
+         l: 12,
+         d: {
+            1: i === 0 ? 'Hasil Kegiatan' : undefined,
+            7: h.tolak_ukur,
+            11: h.target_teks,
+         },
+      })
+   })
+   const output = subGiat.output_bl_sub_giat?.map((h, i) => {
+      return createExcelData({
+         l: 12,
+         d: {
+            1: i === 0 ? 'Keluaran Sub Kegiatan' : undefined,
+            7: h.tolak_ukur,
+            11: h.target_teks,
+         },
+      })
+   })
+   const indikator = [
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Indikator',
+            7: 'Tolok Ukur Kinerja',
+            11: 'Target Kinerja',
+         },
+      }),
+      ...capaian,
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Masukan',
+            7: 'Dana yang dibutuhkan',
+            11: subGiat.pagu,
+         },
+      }),
+      ...keluaran,
+      ...hasil,
+      ...output,
+   ]
+   const rows = ws.addRows(indikator)
+   rows.map((row, i) => {
+      ws.mergeCellsWithoutStyle(row.number, 1, row.number, 6)
+      ws.mergeCellsWithoutStyle(row.number, 7, row.number, 10)
+      ws.mergeCellsWithoutStyle(row.number, 11, row.number, 12)
+      borderAll({ row, ws, center: i == 0, bold: i == 0 })
+      row.eachCell({ includeEmpty: true }, (cell, y) => {
+         if (y === 11 && i > 0) {
+            const style = cell.style
+            cell.style = {
+               ...style,
+               numFmt: i === 2 ? '#,##0;-#,##0' : '@',
+               alignment: {
+                  ...style.alignment,
+                  horizontal: 'center',
+                  wrapText: i !== 2,
+                  shrinkToFit: i === 2,
+               },
+            }
+         }
+      })
+      const value = row.getCell(7).value
+      row.height = calcRowHeight({
+         value: value,
+         width: 60 * 7.16,
+         font: '10pt Arial',
+         bold: true,
+         min_height: 15,
+      })
+   })
+
+   const row = ws.addRow(undefined)
+   row.height = 7
+   return row.number
+}
+
+function fillDataSubKegiatan({
+   ws,
+   subGiat,
+}: {
+   ws: Excel.Worksheet
+   subGiat: Data['subGiat']
+}): number {
+   const giat = [
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Sub Kegiatan',
+            7: subGiat.kode_sub_giat + ' ' + subGiat.nama_sub_giat,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: 'Sumber Dana',
+            7: subGiat.dana_bl_sub_giat?.map((d) => d.nama_dana).join('\n'),
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: `Lokasi`,
+            7: subGiat.lokasi_bl_sub_giat
+               ?.map((l) =>
+                  [
+                     l.kab_kota?.nama_daerah ?? 'Semua Kab/Kota',
+                     l.kecamatan?.camat_teks ?? 'Semua Kecamatan',
+                     l.lurah?.lurah_teks ?? 'Semua Kelurahan',
+                  ].join(', ')
+               )
+               .join(', '),
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: `Waktu Pelaksanaan`,
+            7: numberToMonth(subGiat.waktu_awal) + ' s/d ' + numberToMonth(subGiat.waktu_akhir),
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: `Kelompok Sasaran`,
+            7: subGiat.sasaran,
+         },
+      }),
+      createExcelData({
+         l: 12,
+         d: {
+            1: `Keterangan`,
+            7: subGiat.tag_bl_sub_giat?.map((t) => t.nama_label_giat).join('\n'),
+         },
+      }),
+   ]
+   const rows = ws.addRows(giat)
+   rows.map((row) => {
+      const value = row.getCell(7).value
+      row.height = calcRowHeight({
+         value: value,
+         width: 76 * 7.16,
+         font: '10pt Arial',
+         bold: true,
+         min_height: 15,
+      })
+      row.eachCell({ includeEmpty: true }, (cell, i) => {
+         if (i === 1) {
+            const style = cell.style
+            cell.style = {
+               ...style,
+               numFmt: '@* :',
+               alignment: { ...style.alignment, wrapText: false, shrinkToFit: true },
+            }
+         } else if (i === 7) {
+            const style = cell.style
+            cell.style = {
+               ...style,
+               numFmt: '#,##0;-#,##0',
+            }
+         }
+      })
+      ws.mergeCellsWithoutStyle(row.number, 1, row.number, 6)
+      ws.mergeCellsWithoutStyle(row.number, 7, row.number, 12)
+   })
+
+   const row = ws.addRow(undefined)
+   row.height = 7
+   return row.number
+}
+
+function fillTableHead({ ws }: { ws: Excel.Worksheet }): number {
+   const data_th = createExcelData({
+      l: 2,
+      c: false,
+      d: {
+         0: createExcelData({
+            l: 12,
+            d: {
+               1: 'Kode Rekening',
+               7: 'Uraian',
+               8: 'Rincian Perhitungan',
+               12: 'Jumlah\n(Rp)',
+            },
+         }),
+         1: createExcelData({
+            l: 12,
+            d: {
+               8: 'Koefisien',
+               9: 'Satuan',
+               10: 'Harga',
+               11: 'PPN',
+            },
+         }),
+      },
+   })
+   const row_th = ws.addRows(data_th)
+   row_th.map((row, i) => {
+      borderAll({ row, ws, bold: true, center: true, wrapText: true })
+      if (i === 0) {
+         ws.mergeCellsWithoutStyle(row.number, 1, row.number + 1, 6)
+         ws.mergeCellsWithoutStyle(row.number, 7, row.number + 1, 7)
+         ws.mergeCellsWithoutStyle(row.number, 8, row.number, 11)
+         ws.mergeCellsWithoutStyle(row.number, 12, row.number + 1, 12)
+      }
+   })
+   ws.pageSetup = {
+      fitToWidth: 1,
+      fitToPage: true,
+      fitToHeight: 0,
+      orientation: 'portrait',
+      blackAndWhite: true,
+      showGridLines: false,
+      margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.2, footer: 0.2 },
+      printTitlesRow: `${row_th[0].number}:${row_th[row_th.length - 1].number}`,
+   }
+   return row_th[row_th.length - 1].number
+}
+
+function fillKepala({ ws, skpd }: { ws: Excel.Worksheet; skpd: Data['skpd'] }) {
+   const data = createExcelData({
+      l: !skpd?.pangkat_kepala ? 5 : 6,
+      d: {
+         1: createExcelData({
+            l: 12,
+            d: { 9: 'Lewoleba, __________________' },
+         }),
+         2: createExcelData({
+            l: 12,
+            d: { 9: skpd?.nama_jabatan_kepala },
+         }),
+         4: createExcelData({
+            l: 12,
+            d: { 9: skpd?.nama_kepala },
+         }),
+         5: createExcelData({
+            l: 12,
+            d: { 9: skpd?.pangkat_kepala ?? `NIP.${skpd.nip_kepala}` },
+         }),
+         6: !skpd?.pangkat_kepala
+            ? undefined
+            : createExcelData({
+                 l: 12,
+                 d: { 9: `NIP.${skpd.nip_kepala}` },
+              }),
+      },
+      c: true,
+   })
+   const rows = ws.addRows(data)
+   rows.map((row, i) => {
+      ws.mergeCellsWithoutStyle(row.number, 9, row.number, 12)
+      const cell = row.getCell(9)
+      const style = cell.style
+      cell.style = {
+         ...style,
+         numFmt: '@',
+         alignment: { ...style.alignment, horizontal: 'center', wrapText: true },
+         font: {
+            ...style.font,
+            underline: i === 3,
+            bold: i >= 1 && i <= 3,
+         },
+      }
+      row.height = i === 2 ? 30 : 15
+   })
+
+   const row = ws.addRow(undefined)
+   row.height = 7
+   return row.number
+}
+
+function fillKeterangan({ ws }: { ws: Excel.Worksheet }) {
+   const data = createExcelData({
+      l: 6,
+      d: {
+         1: createExcelData({
+            l: 12,
+            d: { 1: 'Pembahasan', 7: ':' },
+         }),
+         2: createExcelData({
+            l: 12,
+            d: { 1: 'Tanggal', 7: ':' },
+         }),
+         3: createExcelData({
+            l: 12,
+            d: { 1: 'Catatan', 7: ':' },
+         }),
+         4: createExcelData({
+            l: 12,
+            d: { 1: '1.' },
+         }),
+         5: createExcelData({
+            l: 12,
+            d: { 1: '2.' },
+         }),
+         6: createExcelData({
+            l: 12,
+            d: { 1: 'dst.' },
+         }),
+      },
+      c: true,
+   })
+   const rows = ws.addRows(data)
+   rows.map((row, i) => {
+      if (i < 3) {
+         ws.mergeCellsWithoutStyle(row.number, 1, row.number, 6)
+         ws.mergeCellsWithoutStyle(row.number, 7, row.number, 12)
+      } else {
+         ws.mergeCellsWithoutStyle(row.number, 1, row.number, 2)
+         ws.mergeCellsWithoutStyle(row.number, 3, row.number, 12)
+      }
+      row.eachCell({ includeEmpty: true }, (cell) => {
+         cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            right: { style: 'thin' },
+            bottom: { style: 'thin' },
+         }
+      })
+   })
+   const row = ws.addRow(undefined)
+   row.height = 7
+   return row.number
+}
+
+export type Tapd = {
+   nama: string
+   jabatan: string
+   nip: string
+   id: string
+}
+
+function fillTapd({
+   tapd = manifest?.data_tapd,
+   ws,
+}: {
+   tapd?: Tapd[] | null
+   ws: Excel.Worksheet
+}): number {
+   if (!tapd) return 0
+   const title = 'TIM ANGGARAN PEMERINTAH DAERAH'
+   const rowTitile = ws.addRow([title])
+   ws.mergeCellsWithoutStyle(rowTitile.number, 1, rowTitile.number, 12)
+   borderAll({ row: rowTitile, ws, bold: true, center: true })
+   const header = createExcelData({
+      l: 12,
+      d: {
+         1: 'NO.',
+         3: 'NAMA',
+         8: 'NIP',
+         10: 'JABATAN',
+         11: 'Tanda Tangan',
+      },
+   })
+   const row = ws.addRow(header)
+   row.height = 20
+   ws.mergeCellsWithoutStyle(row.number, 1, row.number, 2)
+   ws.mergeCellsWithoutStyle(row.number, 3, row.number, 7)
+   ws.mergeCellsWithoutStyle(row.number, 8, row.number, 9)
+   ws.mergeCellsWithoutStyle(row.number, 11, row.number, 12)
+   borderAll({ row, ws, bold: true, center: true, wrapText: true })
+   const rows = tapd.map((item, i) => {
+      const data = createExcelData({
+         l: 12,
+         d: {
+            1: i + 1 + '.',
+            3: item.nama,
+            8: item.nip,
+            10: item.jabatan,
+         },
+      })
+      const row = ws.addRow(data)
+      ws.mergeCellsWithoutStyle(row.number, 1, row.number, 2)
+      ws.mergeCellsWithoutStyle(row.number, 3, row.number, 7)
+      ws.mergeCellsWithoutStyle(row.number, 8, row.number, 9)
+      ws.mergeCellsWithoutStyle(row.number, 11, row.number, 12)
+      borderAll({ row, ws })
+      row.eachCell({ includeEmpty: true }, (cell) => {
+         const style = cell.style
+         cell.style = {
+            ...style,
+            alignment: { horizontal: 'left', vertical: 'middle' },
+            numFmt: '@',
+         }
+      })
+      row.height = 20
+      return row.number
+   })
+   return Math.max(...rows)
+}

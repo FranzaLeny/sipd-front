@@ -1,0 +1,1004 @@
+[
+   {
+      "id": "data-master",
+      "title": "DATA MASTER",
+      "step": "todo",
+      "parent_id": null
+   },
+   {
+      "id": "role",
+      "title": "Role",
+      "step": "todo",
+      "parent_id": "data-master"
+   },
+   {
+      "id": "list-data-role",
+      "title": "List Data Role",
+      "step": "done",
+      "parent_id": "role"
+   },
+   {
+      "id": "tambah-data-role",
+      "title": "Tambah Data Role",
+      "step": "todo",
+      "parent_id": "role"
+   },
+   {
+      "id": "ubah-data-role",
+      "title": "Ubah Data Role",
+      "step": "todo",
+      "parent_id": "role"
+   },
+   {
+      "id": "lihat-data-role",
+      "title": "Lihat Data Role",
+      "step": "todo",
+      "parent_id": "role"
+   },
+   {
+      "id": "hapus-data-role",
+      "title": "Hapus Data Role",
+      "step": "todo",
+      "parent_id": "role"
+   },
+   {
+      "id": "user",
+      "title": "User",
+      "step": "todo",
+      "parent_id": "data-master"
+   },
+   {
+      "id": "list-data-user",
+      "title": "List Data User",
+      "step": "done",
+      "parent_id": "user"
+   },
+   {
+      "id": "tambah-data-user",
+      "title": "Tambah Data User",
+      "step": "todo",
+      "parent_id": "user"
+   },
+   {
+      "id": "ubah-data-user",
+      "title": "Ubah Data User",
+      "step": "done",
+      "parent_id": "user"
+   },
+   {
+      "id": "hapus-data-user",
+      "title": "Hapus Data User",
+      "step": "todo",
+      "parent_id": "user"
+   },
+   {
+      "id": "perencanaan",
+      "title": "PERENCANAAN",
+      "completed": false,
+      "parent_id": null
+   },
+   {
+      "id": "master-data-perencanaan",
+      "title": "Master Data Perencanaan",
+      "completed": false,
+      "parent_id": "perencanaan"
+   },
+   {
+      "id": "rekening-akun",
+      "title": "Rekening Akun",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-rekening-akun",
+      "title": "List Data Rekening Akun",
+      "completed": true,
+      "parent_id": "rekening-akun"
+   },
+   {
+      "id": "singkron-rekening-akun-dari-sipd",
+      "title": "Singkron Rekening Akun dari SIPD",
+      "completed": true,
+      "parent_id": "rekening-akun"
+   },
+   {
+      "id": "tambah-data-rekening-akun",
+      "title": "Tambah Data Rekening Akun",
+      "completed": false,
+      "parent_id": "rekening-akun"
+   },
+   {
+      "id": "ubah-data-rekening-akun",
+      "title": "Ubah Data Rekening Akun",
+      "completed": false,
+      "parent_id": "rekening-akun"
+   },
+   {
+      "id": "hapus-data-rekening-akun",
+      "title": "Hapus Data Rekening Akun",
+      "completed": false,
+      "parent_id": "rekening-akun"
+   },
+   {
+      "id": "standar-harga",
+      "title": "Standar Harga",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-standar-harga",
+      "title": "List Data Standar Harga",
+      "completed": true,
+      "parent_id": "standar-harga"
+   },
+   {
+      "id": "singkron-data-standar-harga-dari-sipd",
+      "title": "Singkron Data Standar Harga dari SIPD",
+      "completed": true,
+      "parent_id": "standar-harga"
+   },
+   {
+      "id": "tambah-data-standar-harga",
+      "title": "Tambah Data Standar Harga",
+      "completed": false,
+      "parent_id": "standar-harga"
+   },
+   {
+      "id": "ubah-data-standar-harga",
+      "title": "Ubah Data Standar Harga",
+      "completed": false,
+      "parent_id": "standar-harga"
+   },
+   {
+      "id": "hapus-data-standar-harga",
+      "title": "Hapus Data Standar Harga",
+      "completed": false,
+      "parent_id": "standar-harga"
+   },
+   {
+      "id": "mapping-data-akun-standar-harga-dari-sipd",
+      "title": "Mapping Data Akun Standar Harga dari SIPD",
+      "completed": true,
+      "parent_id": "standar-harga"
+   },
+   {
+      "id": "tahapan",
+      "title": "Tahapan",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-tahapan",
+      "title": "List Data Tahapan",
+      "completed": true,
+      "parent_id": "tahapan"
+   },
+   {
+      "id": "singkron-data-tahapan-dari-sipd",
+      "title": "Singkron Data Tahapan dari SIPD",
+      "completed": true,
+      "parent_id": "tahapan"
+   },
+   {
+      "id": "tambah-data-tahapan",
+      "title": "Tambah Data Tahapan",
+      "completed": false,
+      "parent_id": "tahapan"
+   },
+   {
+      "id": "ubah-data-tahapan",
+      "title": "Ubah Data Tahapan",
+      "completed": false,
+      "parent_id": "tahapan"
+   },
+   {
+      "id": "hapus-data-tahapan",
+      "title": "Hapus Data Tahapan",
+      "completed": false,
+      "parent_id": "tahapan"
+   },
+   {
+      "id": "satuan",
+      "title": "Satuan",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-satuan",
+      "title": "List Data Satuan",
+      "completed": true,
+      "parent_id": "satuan"
+   },
+   {
+      "id": "singkron-data-satuan-dari-sipd",
+      "title": "Singkron Data Satuan dari SIPD",
+      "completed": true,
+      "parent_id": "satuan"
+   },
+   {
+      "id": "tambah-data-satuan",
+      "title": "Tambah Data Satuan",
+      "completed": false,
+      "parent_id": "satuan"
+   },
+   {
+      "id": "ubah-data-satuan",
+      "title": "Ubah Data Satuan",
+      "completed": false,
+      "parent_id": "satuan"
+   },
+   {
+      "id": "hapus-data-satuan",
+      "title": "Hapus Data Satuan",
+      "completed": false,
+      "parent_id": "satuan"
+   },
+   {
+      "id": "lokasi",
+      "title": "Lokasi",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "provinsi",
+      "title": "Provinsi",
+      "completed": false,
+      "parent_id": "lokasi"
+   },
+   {
+      "id": "kabupaten-kota",
+      "title": "Kabupaten / Kota",
+      "completed": false,
+      "parent_id": "lokasi"
+   },
+   {
+      "id": "kecamatan",
+      "title": "Kecamatan",
+      "completed": false,
+      "parent_id": "lokasi"
+   },
+   {
+      "id": "desa-kelurahan",
+      "title": "Desa Kelurahan",
+      "completed": false,
+      "parent_id": "lokasi"
+   },
+   {
+      "id": "urusan",
+      "title": "Urusan",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-urusan",
+      "title": "List Data Urusan",
+      "completed": false,
+      "parent_id": "urusan"
+   },
+   {
+      "id": "singkron-data-urusan-dari-sipd",
+      "title": "Singkron Data Urusan dari SIPD",
+      "completed": false,
+      "parent_id": "urusan"
+   },
+   {
+      "id": "tambah-data-urusan",
+      "title": "Tambah Data Urusan",
+      "completed": false,
+      "parent_id": "urusan"
+   },
+   {
+      "id": "ubah-data-urusan",
+      "title": "Ubah Data Urusan",
+      "completed": false,
+      "parent_id": "urusan"
+   },
+   {
+      "id": "hapus-data-urusan",
+      "title": "Hapus Data Urusan",
+      "completed": false,
+      "parent_id": "urusan"
+   },
+   {
+      "id": "bidang-urusan",
+      "title": "Bidang Urusan",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-bidang-urusan",
+      "title": "List Data Bidang Urusan",
+      "completed": false,
+      "parent_id": "bidang-urusan"
+   },
+   {
+      "id": "singkron-data-bidang-urusan-dari-sipd",
+      "title": "Singkron Data Bidang Urusan dari SIPD",
+      "completed": false,
+      "parent_id": "bidang-urusan"
+   },
+   {
+      "id": "tambah-data-bidang-urusan",
+      "title": "Tambah Data Bidang Urusan",
+      "completed": false,
+      "parent_id": "bidang-urusan"
+   },
+   {
+      "id": "ubah-data-bidang-urusan",
+      "title": "Ubah Data Bidang Urusan",
+      "completed": false,
+      "parent_id": "bidang-urusan"
+   },
+   {
+      "id": "hapus-data-bidang-urusan",
+      "title": "Hapus Data Bidang Urusan",
+      "completed": false,
+      "parent_id": "bidang-urusan"
+   },
+   {
+      "id": "program",
+      "title": "Program",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-program",
+      "title": "List Data Program",
+      "completed": false,
+      "parent_id": "program"
+   },
+   {
+      "id": "singkron-data-program-dari-sipd",
+      "title": "Singkron Data Program dari SIPD",
+      "completed": false,
+      "parent_id": "program"
+   },
+   {
+      "id": "tambah-data-program",
+      "title": "Tambah Data Program",
+      "completed": false,
+      "parent_id": "program"
+   },
+   {
+      "id": "ubah-data-program",
+      "title": "Ubah Data Program",
+      "completed": false,
+      "parent_id": "program"
+   },
+   {
+      "id": "hapus-data-program",
+      "title": "Hapus Data Program",
+      "completed": false,
+      "parent_id": "program"
+   },
+   {
+      "id": "sub-kegiatan",
+      "title": "Sub Kegiatan",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-sub-kegiatan",
+      "title": "List Data Sub Kegiatan",
+      "completed": false,
+      "parent_id": "sub-kegiatan"
+   },
+   {
+      "id": "singkron-data-sub-kegiatan-dari-sipd",
+      "title": "Singkron Data Sub Kegiatan dari SIPD",
+      "completed": false,
+      "parent_id": "sub-kegiatan"
+   },
+   {
+      "id": "tambah-data-sub-kegiatan",
+      "title": "Tambah Data Sub Kegiatan",
+      "completed": false,
+      "parent_id": "sub-kegiatan"
+   },
+   {
+      "id": "ubah-data-sub-kegiatan",
+      "title": "Ubah Data Sub Kegiatan",
+      "completed": false,
+      "parent_id": "sub-kegiatan"
+   },
+   {
+      "id": "hapus-data-sub-kegiatan",
+      "title": "Hapus Data Sub Kegiatan",
+      "completed": false,
+      "parent_id": "sub-kegiatan"
+   },
+   {
+      "id": "skpd",
+      "title": "SKPD",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-skpd",
+      "title": "List Data SKPD",
+      "completed": true,
+      "parent_id": "skpd"
+   },
+   {
+      "id": "singkron-data-skpd-dari-sipd",
+      "title": "Singkron Data SKPD dari SIPD",
+      "completed": true,
+      "parent_id": "skpd"
+   },
+   {
+      "id": "tambah-data-skpd",
+      "title": "Tambah Data SKPD",
+      "completed": false,
+      "parent_id": "skpd"
+   },
+   {
+      "id": "ubah-data-skpd",
+      "title": "Ubah Data SKPD",
+      "completed": false,
+      "parent_id": "skpd"
+   },
+   {
+      "id": "hapus-data-skpd",
+      "title": "Hapus Data SKPD",
+      "completed": false,
+      "parent_id": "skpd"
+   },
+   {
+      "id": "user-sipd",
+      "title": "User SIPD",
+      "completed": false,
+      "parent_id": "master-data-perencanaan"
+   },
+   {
+      "id": "list-data-user-sipd",
+      "title": "List Data User SIPD",
+      "completed": true,
+      "parent_id": "user-sipd"
+   },
+   {
+      "id": "singkron-data-user-sipd-dari-sipd",
+      "title": "Singkron Data User SIPD dari SIPD",
+      "completed": true,
+      "parent_id": "user-sipd"
+   },
+   {
+      "id": "tambah-data-user-sipd",
+      "title": "Tambah Data User SIPD",
+      "completed": false,
+      "parent_id": "user-sipd"
+   },
+   {
+      "id": "ubah-data-user-sipd",
+      "title": "Ubah Data User SIPD",
+      "completed": false,
+      "parent_id": "user-sipd"
+   },
+   {
+      "id": "hapus-data-user-sipd",
+      "title": "Hapus Data User SIPD",
+      "completed": false,
+      "parent_id": "user-sipd"
+   },
+   {
+      "id": "buat-akun-user",
+      "title": "Buat Akun User",
+      "completed": true,
+      "parent_id": "user-sipd"
+   },
+   {
+      "id": "rka",
+      "title": "RKA",
+      "completed": true,
+      "parent_id": "perencanaan"
+   },
+   {
+      "id": "jadwal-anggaran",
+      "title": "Jadwal Anggaran",
+      "completed": false,
+      "parent_id": "rka"
+   },
+   {
+      "id": "list-data-jadwal-anggaran",
+      "title": "List Data Jadwal Anggaran",
+      "completed": true,
+      "parent_id": "jadwal-anggaran"
+   },
+   {
+      "id": "singkron-data-jadwal-anggaran-dari-sipd",
+      "title": "Singkron Data Jadwal Anggaran dari SIPD",
+      "completed": true,
+      "parent_id": "jadwal-anggaran"
+   },
+   {
+      "id": "tambah-data-jadwal-anggaran",
+      "title": "Tambah Data Jadwal Anggaran",
+      "completed": false,
+      "parent_id": "jadwal-anggaran"
+   },
+   {
+      "id": "ubah-data-jadwal-anggaran",
+      "title": "Ubah Data Jadwal Anggaran",
+      "completed": true,
+      "parent_id": "jadwal-anggaran"
+   },
+   {
+      "id": "salin-data-jadwal-anggaran",
+      "title": "Salin Data Jadwal Anggaran",
+      "completed": true,
+      "parent_id": "jadwal-anggaran"
+   },
+   {
+      "id": "hapus-data-jadwal-anggaran",
+      "title": "Hapus Data Jadwal Anggaran",
+      "completed": true,
+      "parent_id": "jadwal-anggaran"
+   },
+   {
+      "id": "belanja-skpd",
+      "title": "Belanja SKPD",
+      "completed": false,
+      "parent_id": "rka"
+   },
+   {
+      "id": "list-data-belanja-skpd",
+      "title": "List Data Belanja SKPD",
+      "completed": true,
+      "parent_id": "belanja-skpd"
+   },
+   {
+      "id": "singkron-data-belanja-skpd-dari-sipd",
+      "title": "Singkron Data Belanja SKPD dari SIPD",
+      "completed": true,
+      "parent_id": "belanja-skpd"
+   },
+   {
+      "id": "tambah-data-belanja-skpd",
+      "title": "Tambah Data Belanja SKPD",
+      "completed": false,
+      "parent_id": "belanja-skpd"
+   },
+   {
+      "id": "ubah-data-belanja-skpd",
+      "title": "Ubah Data Belanja SKPD",
+      "completed": false,
+      "parent_id": "belanja-skpd"
+   },
+   {
+      "id": "hapus-data-belanja-skpd",
+      "title": "Hapus Data Belanja SKPD",
+      "completed": false,
+      "parent_id": "belanja-skpd"
+   },
+   {
+      "id": "atur-tapd-untuk-belanja-skpd",
+      "title": "Atur TAPD untuk Belanja SKPD",
+      "completed": false,
+      "parent_id": "belanja-skpd"
+   },
+   {
+      "id": "belanja-kegiatan",
+      "title": "Belanja Kegiatan",
+      "completed": false,
+      "parent_id": "rka"
+   },
+   {
+      "id": "list-data-belanja-kegiatan",
+      "title": "List Data Belanja Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-kegiatan"
+   },
+   {
+      "id": "singkron-data-belanja-kegiatan-dari-sipd",
+      "title": "Singkron Data Belanja Kegiatan dari SIPD",
+      "completed": true,
+      "parent_id": "belanja-kegiatan"
+   },
+   {
+      "id": "tambah-data-belanja-kegiatan",
+      "title": "Tambah Data Belanja Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-kegiatan"
+   },
+   {
+      "id": "ubah-data-belanja-kegiatan",
+      "title": "Ubah Data Belanja Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-kegiatan"
+   },
+   {
+      "id": "hapus-data-belanja-kegiatan",
+      "title": "Hapus Data Belanja Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-kegiatan"
+   },
+   {
+      "id": "belanja-sub-kegiatan",
+      "title": "Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "rka"
+   },
+   {
+      "id": "list-data-belanja-sub-kegiatan",
+      "title": "List Data Belanja Sub Kegiatan",
+      "completed": true,
+      "parent_id": "belanja-sub-kegiatan"
+   },
+   {
+      "id": "singkron-data-belanja-sub-kegiatan-dari-sipd",
+      "title": "Singkron Data Belanja Sub Kegiatan dari SIPD",
+      "completed": true,
+      "parent_id": "belanja-sub-kegiatan"
+   },
+   {
+      "id": "tambah-data-belanja-sub-kegiatan",
+      "title": "Tambah Data Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-sub-kegiatan"
+   },
+   {
+      "id": "ubah-data-belanja-sub-kegiatan",
+      "title": "Ubah Data Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-sub-kegiatan"
+   },
+   {
+      "id": "hapus-data-belanja-sub-kegiatan",
+      "title": "Hapus Data Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-sub-kegiatan"
+   },
+   {
+      "id": "rincian-belanja-sub-kegiatan",
+      "title": "Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-sub-kegiatan"
+   },
+   {
+      "id": "list-data-rincian-belanja-sub-kegiatan",
+      "title": "List Data Rincian Belanja Sub Kegiatan",
+      "completed": true,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "singkron-data-rincian-belanja-sub-kegiatan",
+      "title": "Singkron Data Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "lihat-data-rincian-belanja-sub-kegiatan",
+      "title": "Lihat Data Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "tambah-data-rincian-belanja-sub-kegiatan",
+      "title": "Tambah Data Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "ubah-data-rincian-belanja-sub-kegiatan",
+      "title": "Ubah Data Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "hapus-data-rincian-belanja-sub-kegiatan",
+      "title": "Hapus Data Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "cetak-data-rincian-belanja-sub-kegiatan",
+      "title": "Cetak Data Rincian Belanja Sub Kegiatan",
+      "completed": true,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "export-excel-data-rincian-belanja-sub-kegiatan",
+      "title": "Export Excel Data Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "kelompok-data-rincian-belanja-sub-kegiatan",
+      "title": "Kelompok Data Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "singkron-data-kelompok-rincian-belanja-sub-kegiatan",
+      "title": "Singkron Data Kelompok Rincian Belanja Sub Kegiatan",
+      "completed": true,
+      "parent_id": "kelompok-data-rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "tambah-data-kelompok-rincian-belanja-sub-kegiatan",
+      "title": "Tambah Data Kelompok Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "kelompok-data-rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "hapus-data-kelompok-rincian-belanja-sub-kegiatan",
+      "title": "Hapus Data Kelompok Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "kelompok-data-rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "keterangan-data-rincian-belanja-sub-kegiatan",
+      "title": "Keterangan Data Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "singkron-data-keterangan-rincian-belanja-sub-kegiatan",
+      "title": "Singkron Data Keterangan Rincian Belanja Sub Kegiatan",
+      "completed": true,
+      "parent_id": "keterangan-data-rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "tambah-data-keterangan-rincian-belanja-sub-kegiatan",
+      "title": "Tambah Data Keterangan Rincian Belanja Sub Kegiatan",
+      "completed": true,
+      "parent_id": "keterangan-data-rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "hapus-data-keterangan-rincian-belanja-sub-kegiatan",
+      "title": "Hapus Data Keterangan Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "keterangan-data-rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "laporan-rka-berdasarkan-jadwal-anggaran",
+      "title": "Laporan RKA Berdasarkan Jadwal Anggaran",
+      "completed": false,
+      "parent_id": "rka"
+   },
+   {
+      "id": "laporan-dari-sipd",
+      "title": "Laporan dari SIPD",
+      "completed": false,
+      "parent_id": "laporan-rka-berdasarkan-jadwal-anggaran"
+   },
+   {
+      "id": "belanja-sipd",
+      "title": "Belanja SIPD",
+      "completed": false,
+      "parent_id": "laporan-dari-sipd"
+   },
+   {
+      "id": "belanja-skpd-sipd",
+      "title": "Belanja SKPD SIPD",
+      "completed": false,
+      "parent_id": "belanja-sipd"
+   },
+   {
+      "id": "export-excel-laporan-rka-skpd-sipd",
+      "title": "Export Excel Laporan RKA SKPD SIPD",
+      "completed": false,
+      "parent_id": "belanja-skpd-sipd"
+   },
+   {
+      "id": "generate-excel-formulir-draft-rka-perubahan-skpd-sipd",
+      "title": "Generate Excel Formulir Draft RKA Perubahan SKPD SIPD",
+      "completed": true,
+      "parent_id": "belanja-skpd-sipd"
+   },
+   {
+      "id": "belanja-sub-kegiatan-sipd",
+      "title": "Belanja Sub Kegiatan SIPD",
+      "completed": false,
+      "parent_id": "belanja-sipd"
+   },
+   {
+      "id": "rekapan-belanja-sub-kegiatan-sipd",
+      "title": "Rekapan Sub Kegiatan SIPD",
+      "completed": false,
+      "parent_id": "belanja-sub-kegiatan-sipd"
+   },
+   {
+      "id": "export-excel-rka-rekapan-sub-kegiatan-sipd",
+      "title": "Export Excel RKA Rekapan Sub Kegiatan SIPD",
+      "completed": false,
+      "parent_id": "rekapan-belanja-sub-kegiatan-sipd"
+   },
+   {
+      "id": "export-excel-rka-perubahan-rekapan-sub-kegiatan-sipd",
+      "title": "Export Excel RKA Perubahan Rekapan Sub Kegiatan SIPD",
+      "completed": false,
+      "parent_id": "rekapan-belanja-sub-kegiatan-sipd"
+   },
+   {
+      "id": "generate-excel-formulir-draft-rka-perubahan-rekapan-sub-kegiatan-sipd",
+      "title": "Generate Excel Formulir Draft RKA Perubahan Rekapan Sub Kegiatan SIPD",
+      "completed": true,
+      "parent_id": "rekapan-belanja-sub-kegiatan-sipd"
+   },
+   {
+      "id": "rincian-sub-kegiatan-sipd",
+      "title": "Rincian Sub Kegiatan SIPD",
+      "completed": false,
+      "parent_id": "belanja-sub-kegiatan-sipd"
+   },
+   {
+      "id": "export-excel-rka-rincian-belanja-sub-kegiatan-sipd",
+      "title": "Export Excel RKA Rincian Belanja Sub Kegiatan SIPD",
+      "completed": false,
+      "parent_id": "rincian-sub-kegiatan-sipd"
+   },
+   {
+      "id": "export-excel-rka-perubahan-rincian-belanja-sub-kegiatan-sipd",
+      "title": "Export Excel RKA Perubahan Rincian Belanja Sub Kegiatan SIPD",
+      "completed": false,
+      "parent_id": "rincian-sub-kegiatan-sipd"
+   },
+   {
+      "id": "generate-excel-formulir-draft-rka-perubahan-rincian-belanja-sub-kegiatan-sipd",
+      "title": "Generate Excel Formulir Draft RKA Perubahan Rincian Belanja Sub Kegiatan SIPD",
+      "completed": true,
+      "parent_id": "rincian-sub-kegiatan-sipd"
+   },
+   {
+      "id": "pendapatan-sipd",
+      "title": "Pendapatan SIPD",
+      "completed": false,
+      "parent_id": "laporan-dari-sipd"
+   },
+   {
+      "id": "export-excel-rka-pedapatan-sipd",
+      "title": "Export Excel RKA Pedapatan SIPD",
+      "completed": false,
+      "parent_id": "pendapatan-sipd"
+   },
+   {
+      "id": "export-excel-rka-perubahan-pedapatan-sipd",
+      "title": "Export Excel RKA Perubahan Pedapatan SIPD",
+      "completed": false,
+      "parent_id": "pendapatan-sipd"
+   },
+   {
+      "id": "generate-excel-formulir-draft-rka-perubahan-pedapatan-sipd",
+      "title": "Generate Excel Formulir Draft RKA Perubahan Pedapatan SIPD",
+      "completed": true,
+      "parent_id": "pendapatan-sipd"
+   },
+   {
+      "id": "laporan-rka",
+      "title": "Laporan RKA",
+      "completed": false,
+      "parent_id": "laporan-rka-berdasarkan-jadwal-anggaran"
+   },
+   {
+      "id": "laporan-belanja",
+      "title": "Laporan Belanja",
+      "completed": false,
+      "parent_id": "laporan-rka"
+   },
+   {
+      "id": "belanja-skpd",
+      "title": "Belanja SKPD",
+      "completed": false,
+      "parent_id": "laporan-belanja"
+   },
+   {
+      "id": "singkron-laporan-rekapan-belanja-skpd",
+      "title": "Singkron Laporan Rekapan Belanja SKPD",
+      "completed": false,
+      "parent_id": "belanja-skpd"
+   },
+   {
+      "id": "cetak-laporan-rekapan-belanja-skpd",
+      "title": "Cetak Laporan Rekapan Belanja SKPD",
+      "completed": false,
+      "parent_id": "belanja-skpd"
+   },
+   {
+      "id": "export-excel-laporan-rekapan-belanja-skpd",
+      "title": "Export Excel Laporan Rekapan Belanja SKPD",
+      "completed": false,
+      "parent_id": "belanja-skpd"
+   },
+   {
+      "id": "belanja-sub-kegiatan",
+      "title": "Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "laporan-belanja"
+   },
+   {
+      "id": "laporan-belanja-rekapan-sub-kegiatan",
+      "title": "Laporan Belanja Rekapan Sub Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-sub-kegiatan"
+   },
+   {
+      "id": "singron-laporan-rka-rekapan-sub-kegiatan",
+      "title": "Singron Laporan RKA Rekapan Sub Kegiatan",
+      "completed": true,
+      "parent_id": "laporan-belanja-rekapan-sub-kegiatan"
+   },
+   {
+      "id": "cetak-laporan-rka-rekapan-sub-kegiatan",
+      "title": "Cetak Laporan RKA Rekapan Sub Kegiatan",
+      "completed": false,
+      "parent_id": "laporan-belanja-rekapan-sub-kegiatan"
+   },
+   {
+      "id": "export-excel-laporan-rka-rekapan-sub-kegiatan",
+      "title": "Export Excel Laporan RKA Rekapan Sub Kegiatan",
+      "completed": true,
+      "parent_id": "laporan-belanja-rekapan-sub-kegiatan"
+   },
+   {
+      "id": "laporan-belanja-rincian-belanja-sub-kegiatan",
+      "title": "Laporan Belanja Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "belanja-sub-kegiatan"
+   },
+   {
+      "id": "singron-laporan-rka-rincian-belanja-sub-kegiatan",
+      "title": "Singron Laporan RKA Rincian Belanja Sub Kegiatan",
+      "completed": true,
+      "parent_id": "laporan-belanja-rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "cetak-laporan-rka-rincian-belanja-sub-kegiatan",
+      "title": "Cetak Laporan RKA Rincian Belanja Sub Kegiatan",
+      "completed": false,
+      "parent_id": "laporan-belanja-rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "export-excel-rka-laporan-rincian-belanja-sub-kegiatan",
+      "title": "Export Excel RKA Laporan Rincian Belanja Sub Kegiatan",
+      "completed": true,
+      "parent_id": "laporan-belanja-rincian-belanja-sub-kegiatan"
+   },
+   {
+      "id": "laporan-pendapatan",
+      "title": "Laporan Pendapatan",
+      "completed": false,
+      "parent_id": "laporan-rka"
+   },
+   {
+      "id": "singkron-laporan-rka-pedapatan",
+      "title": "Singkron Laporan RKA Pedapatan",
+      "completed": true,
+      "parent_id": "laporan-pendapatan"
+   },
+   {
+      "id": "cetak-laporan-rka-pedapatan",
+      "title": "Cetak Laporan RKA Pedapatan",
+      "completed": false,
+      "parent_id": "laporan-pendapatan"
+   },
+   {
+      "id": "export-excel-formulir-laporan-rka-pedapatan",
+      "title": "Export Excel Formulir Laporan RKA Pedapatan",
+      "completed": true,
+      "parent_id": "laporan-pendapatan"
+   },
+   {
+      "id": "tapd-anggaran",
+      "title": "TAPD Anggaran",
+      "completed": true,
+      "parent_id": "rka"
+   },
+   {
+      "id": "tambah-data-tapd-anggaran",
+      "title": "Tambah Data TAPD Anggaran",
+      "completed": true,
+      "parent_id": "tapd-anggaran"
+   },
+   {
+      "id": "ubah-data-tapd-anggaran",
+      "title": "Ubah Data TAPD Anggaran",
+      "completed": true,
+      "parent_id": "tapd-anggaran"
+   },
+   {
+      "id": "hapus-data-tapd-anggaran",
+      "title": "Hapus Data TAPD Anggaran",
+      "completed": true,
+      "parent_id": "tapd-anggaran"
+   }
+]
