@@ -158,4 +158,3 @@ const options: Props['options'] = {
    // @ts-ignore
    markers: false,
 }
-

@@ -193,7 +193,7 @@ export const checkJadwalAnggaranAktif = async (
 export async function syncJadwalAnggaranSipd(
    data: Zod.infer<typeof JadwalAnggaranUncheckedCreateInputSchema>[]
 ) {
-   const res = await axios.patch<ResponseApi>('api/perencanaan/rka/jadwal', data)
+   const res = await axios.put<ResponseApi>('api/perencanaan/rka/jadwal', data)
    await revalidate('jadwal_anggaran')
    return res
 }
@@ -201,7 +201,10 @@ export async function syncJadwalAnggaranSipd(
 export async function syncJadwalAnggaranAktifSipd(
    data: Zod.infer<typeof JadwalAnggaranUncheckedCreateInputSchema>
 ) {
-   const res = await axios.put<ResponseApi>(`api/perencanaan/rka/jadwal/${data.id_unik}`, data)
+   const res = await axios.put<ResponseApi>(
+      `api/perencanaan/rka/jadwal/${data.id_unik}/by-id-unik`,
+      data
+   )
    await revalidate('jadwal_anggaran')
    return res
 }

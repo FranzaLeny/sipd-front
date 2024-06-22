@@ -12,4 +12,4 @@ TODO Tambah singkron laporan pergeseran
 TODO Buat dan ubah RKA
 
 
-git add . && git commit -m "tambah readme" && git push
+git add . && git commit -m "perbaiki schema rak dan jadwal anggaran" && git push

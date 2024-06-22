@@ -1,6 +1,6 @@
 'use client'
 
-import { Spinner, cn } from '@nextui-org/react'
+import { cn, Spinner } from '@nextui-org/react'
 
 interface LoadingProps
    extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {

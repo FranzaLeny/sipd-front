@@ -1,16 +1,16 @@
 'use client'
 
-import {
-    CardBody,
-    CardFooterProps,
-    CardFooter as CardFooterUi,
-    CardHeader as CardHeaderUi,
-    CardProps,
-    Card as CardUi,
-    HTMLNextUIProps,
-    cn,
-} from '@nextui-org/react'
 import { forwardRef } from 'react'
+import {
+   CardBody,
+   CardFooterProps,
+   CardFooter as CardFooterUi,
+   CardHeader as CardHeaderUi,
+   CardProps,
+   Card as CardUi,
+   cn,
+   HTMLNextUIProps,
+} from '@nextui-org/react'
 
 const Card = forwardRef<HTMLDivElement, CardProps>(({ ...props }, ref) => (
    <CardUi

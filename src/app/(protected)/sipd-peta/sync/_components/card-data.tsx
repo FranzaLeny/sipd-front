@@ -48,26 +48,27 @@ export function CardData<T extends Object>({
       const isPressable = !results.isFetching && canPres
       const butonDisabled = results.isFetching || !canPres || results.isError || !hasAccess
 
-      const value = results.isSuccess
-         ? typeof results.data === 'number'
-            ? results.data.toLocaleString(locale)
-            : typeof results.data === 'string'
-              ? results.data
-              : 'totalCount' in results.data
-                ? results?.data?.totalCount?.toLocaleString(locale)
-                : 'total' in results.data
-                  ? results?.data?.total?.toLocaleString(locale)
-                  : 'recordsTotal' in results.data
-                    ? results?.data?.recordsTotal?.toLocaleString(locale)
-                    : Array.isArray(results?.data)
-                      ? results?.data?.length
-                      : typeof results?.data === 'object' &&
-                          !!key_value &&
-                          key_value in results?.data &&
-                          typeof results?.data[key_value as keyof T] === 'number'
-                        ? (results?.data[key_value as keyof T] as number)?.toLocaleString(locale)
-                        : '...'
-         : '...'
+      const value =
+         results.isSuccess && !!results.data
+            ? typeof results.data === 'number'
+               ? results.data.toLocaleString(locale)
+               : typeof results.data === 'string'
+                 ? results.data
+                 : 'totalCount' in results.data
+                   ? results?.data?.totalCount?.toLocaleString(locale)
+                   : 'total' in results.data
+                     ? results?.data?.total?.toLocaleString(locale)
+                     : 'recordsTotal' in results.data
+                       ? results?.data?.recordsTotal?.toLocaleString(locale)
+                       : Array.isArray(results?.data)
+                         ? results?.data?.length
+                         : typeof results?.data === 'object' &&
+                             !!key_value &&
+                             key_value in results?.data &&
+                             typeof results?.data[key_value as keyof T] === 'number'
+                           ? (results?.data[key_value as keyof T] as number)?.toLocaleString(locale)
+                           : '...'
+            : '...'
       const refetch = () => results.refetch()
       return { isLoading, isPressable, value, refetch, butonDisabled }
    }, [results, canPres, hasAccess, locale, key_value])
