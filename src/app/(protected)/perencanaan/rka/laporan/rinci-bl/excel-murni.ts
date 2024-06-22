@@ -72,7 +72,7 @@ function formatDefaultRka(ws: Excel.Worksheet) {
          width: 11.71,
       },
    ]
-   ws.pageSetup = { showGridLines: false, showRowColHeaders: false }
+   ws.views = [{ showGridLines: false }]
 }
 
 type Data = {
@@ -112,7 +112,7 @@ const dowloadRkaRinciBl = async (data: Data) => {
    fillIndikatorKegiatan({ ws, subGiat })
    fillDataSubKegiatan({ ws, subGiat })
    const starRow = fillTableHead({ ws })
-   const lastRow = starRow + items.length - 1
+   let lastRow = starRow + items.length - 1
    for (let [index, rinci] of items.entries()) {
       const nextRow = starRow + index + 2
       const currRow = starRow + index + 1
@@ -179,7 +179,7 @@ const dowloadRkaRinciBl = async (data: Data) => {
    row.height = 7
    fillKepala({ ws, skpd })
    fillKeterangan({ ws })
-   fillTapd({ ws, tapd })
+   lastRow = fillTapd({ ws, tapd })
    ws.headerFooter.oddFooter = `&L&\"Arial\"&9&I${footer}&R&\"Arial\"&9${dokumen?.kode}| &B&P`
    const password = subGiat.kode_sub_giat.slice(-4)
    await ws.protect(password, {
@@ -188,6 +188,8 @@ const dowloadRkaRinciBl = async (data: Data) => {
       formatColumns: true,
       formatCells: true,
    })
+
+   wb.creator = 'FXIL'
    const buf = await wb.xlsx.writeBuffer()
    saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
 }

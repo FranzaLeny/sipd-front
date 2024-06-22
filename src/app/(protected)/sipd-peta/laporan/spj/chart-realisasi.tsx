@@ -1,9 +1,9 @@
 'use client'
 
+import { SpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
+import { StatistikBelanjaSkpdSipd } from '@actions/penatausahaan/pengeluaran/statistik'
 import { sortBy } from 'lodash-es'
 import Chart, { Props } from 'react-apexcharts'
-
-import { Apbd, SpjFungsional } from './component'
 
 const ChartRealisasi = ({
    items,
@@ -16,7 +16,7 @@ const ChartRealisasi = ({
    tahun: number
    bulan: string
    skpd: string
-   apbd?: Apbd[]
+   apbd?: StatistikBelanjaSkpdSipd[]
 }) => {
    const data = sortBy(items, 'kode_unik')
    const belanja = data[0]
@@ -109,7 +109,7 @@ const ChartRealisasi = ({
       labels: ['Sisa Pagu', 'Realisasi'],
       legend: { show: false },
       title: {
-         text: `Anggaran tahun ${tahun}`,
+         text: `Anggaran tahun ${tahun} sd ${bulan}`,
          align: 'center',
       },
       subtitle: {
@@ -149,7 +149,9 @@ const ChartRealisasi = ({
       </div>
    )
 }
-const ChartApbd = ({ data }: { data: Apbd }) => {
+const ChartApbd = ({ data }: { data: StatistikBelanjaSkpdSipd }) => {
+   const date = new Date()
+
    const realiasi: Props['options'] = {
       series: [data?.realisasi_rencana - data?.realisasi_rill, data?.realisasi_rill],
       chart: {
@@ -157,10 +159,10 @@ const ChartApbd = ({ data }: { data: Apbd }) => {
          type: 'pie',
       },
       theme: { palette: 'palette7' },
-      labels: ['Sisa Pagu', 'Realisasi'],
+      labels: ['Non SKPJ', 'SPJ'],
       legend: { show: false },
       title: {
-         text: `RAK tahun ${data?.tahun}`,
+         text: `SPJ ${data?.tahun} sd ${new Intl.DateTimeFormat('id-ID', { dateStyle: 'short' }).format(date)}`,
          align: 'center',
       },
       subtitle: {

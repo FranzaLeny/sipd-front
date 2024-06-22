@@ -45,6 +45,8 @@ export const JadwalAnggaranSchema = z.object({
    tgl_rka: z.string().nullish(),
    waktu_mulai: z.coerce.date(),
    waktu_selesai: z.coerce.date(),
+   id_jadwal_penatausahaan: z.number().int().nullish(),
+   jadwal_penatausahaan: z.string().nullish(),
    created_by: z.string().nullish(),
    created_at: z.coerce.date(),
    updated_by: z.string().nullish(),
@@ -167,6 +169,8 @@ export const JadwalAnggaranUncheckedCreateInputSchema = z
          .transform((v) => (v === '' ? null : v))
          .optional()
          .nullable(),
+      id_jadwal_penatausahaan: z.number().int().optional().nullable(),
+      jadwal_penatausahaan: z.string().optional().nullable(),
       waktu_mulai: z.coerce.date(),
       waktu_selesai: z.coerce.date(),
    })

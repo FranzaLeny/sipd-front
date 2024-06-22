@@ -1,8 +1,8 @@
+import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 import manifest from '@constants/tpd.json'
 import { borderAll, calcRowHeight, createExcelData, numberToColumn } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
-import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 
 function formatDefaultRka(ws: Excel.Worksheet) {
    const font = { name: 'Arial', size: 10 }
@@ -119,6 +119,7 @@ function formatDefaultRka(ws: Excel.Worksheet) {
          width: 11.71,
       },
    ]
+   ws.views = [{ showGridLines: false }]
 }
 
 type Data = {

@@ -102,6 +102,7 @@ function formatDefaultRka(ws: Excel.Worksheet) {
          width: 11.71,
       },
    ]
+   ws.views = [{ showGridLines: false }]
 }
 
 type Data = {

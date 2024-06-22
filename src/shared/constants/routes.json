@@ -407,10 +407,10 @@
                "routes": [
                   {
                      "key": "/sipd/sipd-peta/data",
-                     "title": "Data SIPD",
+                     "title": "Sync Data SIPD",
                      "keywords": "penatausahaan,sipd,data",
                      "access": ["auth"],
-                     "path": "/sipd-peta/data"
+                     "path": "/sipd-peta/sync"
                   },
                   {
                      "key": "/sipd/sipd-peta/laporan",
@@ -477,7 +477,7 @@
                            "title": "RAK SIPD",
                            "keywords": "penatausahaan,sipd,laporan,rak",
                            "access": ["auth"],
-                           "path": "#"
+                           "path": "/sipd-peta/laporan/rak"
                         },
                         {
                            "key": "/sipd/sipd-peta/laporan/spj",

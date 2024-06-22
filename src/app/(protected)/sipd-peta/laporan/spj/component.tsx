@@ -2,9 +2,13 @@
 
 import { useCallback, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { getRakBlByJadwal } from '@actions/penatausahaan/pengeluaran/rak'
+import { getSpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
+import { getStatistikBlSkpdSipd } from '@actions/penatausahaan/pengeluaran/statistik'
+import { JadwalRakInput } from '@components/perencanaan/jadwal-anggaran'
 import { Autocomplete, AutocompleteItem, Button } from '@nextui-org/react'
+import { useQuery } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import { useSipdPetaFetcher } from '@shared/hooks/use-sipd-peta-fetcher'
 
 import dowloadExcelSpjFungsional from './export-excel'
 
@@ -12,106 +16,6 @@ const ChartRealisasi = dynamic(() => import('./chart-realisasi'), {
    loading: () => <p>Loading</p>,
    ssr: false,
 })
-
-export interface SpjFungsional {
-   nama_daerah: string
-   nama_skpd: string
-   kode_skpd: string
-   tahun: number
-   logo: string
-   nama_pa_kpa: string
-   nip_pa_kpa: string
-   jabatan_pa_kpa: string
-   nama_bp_bpp: string
-   nip_bp_bpp: string
-   jabatan_bp_bpp: string
-   pembukuan1: Pembukuan1[]
-   pembukuan2: Pembukuan1[]
-   pembukuan3: Pembukuan3[]
-   pembukuan4: Pembukuan4[]
-   pembukuan5: Pembukuan5[]
-   pembukuan6: Pembukuan3[]
-   pembukuan7: Pembukuan4[]
-   pembukuan8: Pembukuan5[]
-   pembukuan9: Pembukuan3[]
-   pembukuan10: Pembukuan10[]
-   pembukuan11: Pembukuan3[]
-}
-
-interface Pembukuan10 {
-   urut: number
-   jenis: string
-   pengembalian_realisasi_gaji_bulan_sebelumnya: number
-   pengembalian_realisasi_gaji_bulan_ini: number
-   pengembalian_realisasi_gaji_sd_saat_ini: number
-   pengembalian_realisasi_selain_gaji_bulan_sebelumnya: number
-   pengembalian_realisasi_selain_gaji_bulan_ini: number
-   pengembalian_realisasi_selain_gaji_sd_saat_ini: number
-   pengembalian_realisasi_upgutu_bulan_sebelumnya: number
-   pengembalian_realisasi_upgutu_bulan_ini: number
-   pengembalian_realisasi_upgutu_sd_saat_ini: number
-}
-
-interface Pembukuan5 {
-   id_pajak_potongan: number
-   nama_pajak_potongan: string
-   realisasi_pajak_gaji_bulan_sebelumnya: number
-   realisasi_pajak_gaji_bulan_ini: number
-   realisasi_pajak_gaji_sd_saat_ini: number
-   realisasi_pajak_selain_gaji_bulan_sebelumnya: number
-   realisasi_pajak_selain_gaji_bulan_ini: number
-   realisasi_pajak_selain_gaji_sd_saat_ini: number
-   realisasi_pajak_upgutu_bulan_sebelumnya: number
-   realisasi_pajak_upgutu_bulan_ini: number
-   realisasi_pajak_upgutu_sd_saat_ini: number
-}
-
-interface Pembukuan4 {
-   id_pajak_potongan: number
-   nama_pajak_potongan: string
-   realisasi_potongan_gaji_bulan_sebelumnya: number
-   realisasi_potongan_gaji_bulan_ini: number
-   realisasi_potongan_gaji_sd_saat_ini: number
-   realisasi_potongan_selain_gaji_bulan_sebelumnya: number
-   realisasi_potongan_selain_gaji_bulan_ini: number
-   realisasi_potongan_selain_gaji_sd_saat_ini: number
-   realisasi_potongan_upgutu_bulan_sebelumnya: number
-   realisasi_potongan_upgutu_bulan_ini: number
-   realisasi_potongan_upgutu_sd_saat_ini: number
-}
-
-interface Pembukuan3 {
-   urut: number
-   jenis: string
-   realisasi_gaji_bulan_sebelumnya: number
-   realisasi_gaji_bulan_ini: number
-   realisasi_gaji_sd_saat_ini: number
-   realisasi_ls_selain_gaji_bulan_sebelumnya: number
-   realisasi_ls_selain_gaji_bulan_ini: number
-   realisasi_ls_selain_gaji_sd_saat_ini: number
-   realisasi_up_gu_tu_bulan_sebelumnya: number
-   realisasi_up_gu_tu_bulan_ini: number
-   realisasi_up_gu_tu_sd_saat_ini: number
-}
-
-interface Pembukuan1 {
-   kode_akun: string
-   nama_akun: string
-   alokasi_anggaran: number
-   realisasi_gaji_bulan_sebelumnya: number
-   realisasi_gaji_bulan_ini: number
-   realisasi_gaji_sd_saat_ini: number
-   realisasi_ls_selain_gaji_bulan_sebelumnya: number
-   realisasi_ls_selain_gaji_bulan_ini: number
-   realisasi_ls_selain_gaji_sd_saat_ini: number
-   realisasi_up_gu_tu_bulan_sebelumnya: number
-   realisasi_up_gu_tu_bulan_ini: number
-   realisasi_up_gu_tu_sd_saat_ini: number
-   jumlah_sd_saat_ini: number
-   sisa_pagu_anggaran: number
-   bku_jenis: number
-   kode_unik: string
-}
 
 const months = [
    { key: 1, name: 'Januari' },
@@ -128,31 +32,40 @@ const months = [
    { key: 12, name: 'Desember' },
 ]
 
-export interface Apbd {
+export default function Component({
+   bulan,
+   id_daerah,
+   id_skpd,
+   tahun,
+}: {
+   bulan: string
    id_daerah: number
-   tahun: number
    id_skpd: number
-   kode_skpd: string
-   nama_skpd: string
-   anggaran: number
-   realisasi_rencana: number
-   realisasi_rill: number
-}
-
-export default function Component({ bulan, token }: { token: string; bulan: string }) {
-   const currMonth = new Date().getMonth() + 1
+   tahun: number
+}) {
    const [month, setMonth] = useState<string | number | null>(bulan)
-   const { data: dataSpj, isFetching } = useSipdPetaFetcher<SpjFungsional>({
-      token,
-      url: `
-        https://service.sipd.kemendagri.go.id/pengeluaran/strict/lpj/adm-fungs/0?type=SKPD&bulan=${month}`,
-      enabled: !!token && !!month,
+   const [jadwal, setJadwal] = useState('')
+
+   const currMonth = new Date().getMonth() + 1
+   const { data: dataSpj, isFetching } = useQuery({
+      queryKey: [{ bulan: month, type: 'SKPD' }, 'spj-fungsional'] as [
+         { type: string; bulan: string },
+         ...any,
+      ],
+      queryFn: async ({ queryKey: [params] }) => await getSpjFungsional(params),
    })
-   const { data: apbd } = useSipdPetaFetcher<Apbd[]>({
-      token,
-      url: `
-        https://service.sipd.kemendagri.go.id/pengeluaran/strict/dashboard/statistik-belanja`,
-      enabled: !!token,
+
+   const { data: apbd } = useQuery({
+      queryKey: ['statistik-belanja'],
+      queryFn: async () => await getStatistikBlSkpdSipd(),
+   })
+   const { data: rak } = useQuery({
+      queryKey: [{ jadwal_anggaran_id: jadwal, id_skpd }, 'statistik-belanja'] as [
+         { jadwal_anggaran_id: string; id_skpd: number },
+         ...any,
+      ],
+      queryFn: async ({ queryKey: [params] }) => await getRakBlByJadwal(params),
+      enabled: !!jadwal,
    })
 
    const namaBulan = useMemo(() => {
@@ -162,19 +75,62 @@ export default function Component({ bulan, token }: { token: string; bulan: stri
    const handle = useCallback(() => {
       try {
          if (!!dataSpj && !!namaBulan) {
-            dowloadExcelSpjFungsional({ ...dataSpj, bulan: namaBulan })
+            const pembukuan2 = dataSpj?.pembukuan2?.map((d) => {
+               const kode = d?.kode_unik?.split('-')
+               if (kode?.length === 5) {
+                  const [kode_sub_skpd, kode_program, kode_giat, kode_sub_giat, kode_akun] = kode
+                  const itemRak = rak?.find(
+                     (item) =>
+                        d.kode_akun === item?.kode_akun &&
+                        item?.kode_giat === kode_giat &&
+                        item?.kode_sub_giat === kode_sub_giat &&
+                        item?.kode_program === kode_program &&
+                        item?.kode_sub_skpd === kode_sub_skpd &&
+                        item?.kode_akun === kode_akun
+                  )
+                  if (!!itemRak) {
+                     const dataRak = Object.entries(itemRak).reduce(
+                        (acc, [key, value]) => {
+                           if (key?.startsWith('bulan_')) {
+                              const [_, _bulan] = key.split('_')
+                              const numBulan = Number(_bulan)
+                              const bln = Number(month)
+                              acc.total += value
+                              !!bln && numBulan <= bln && (acc.bulan_sd_sekarang += value)
+                              !!bln && numBulan == bln && (acc.bulan_ini = value)
+                              !!bln && numBulan <= 6
+                                 ? (acc.semester_1 += value)
+                                 : (acc.semester_2 += value)
+                           }
+                           return acc
+                        },
+                        {
+                           bulan_sd_sekarang: 0,
+                           bulan_ini: 0,
+                           semester_1: 0,
+                           semester_2: 0,
+                           total: 0,
+                        }
+                     )
+                     return { ...d, rak: dataRak }
+                  }
+               }
+               return d
+            })
+
+            dowloadExcelSpjFungsional({ ...dataSpj, pembukuan2, bulan: namaBulan })
          } else {
             throw new Error('Data SPJ Fungsional tidak ditemukan')
          }
       } catch (error: any) {
          toast.error(error?.message ?? 'Gagal download excel SPJ fungsional', { autoClose: 5000 })
       }
-   }, [dataSpj, namaBulan])
+   }, [dataSpj, namaBulan, rak, month])
 
    return (
       <div className='content relative z-0 space-y-3'>
          <div className='bg-content1 flex items-center gap-4 rounded p-4'>
-            <div className='w-full flex-1'>
+            <div className='flex w-full flex-1 flex-col gap-2 sm:flex-row'>
                <Autocomplete
                   selectedKey={month?.toString() ?? ''}
                   onSelectionChange={setMonth}
@@ -190,7 +146,14 @@ export default function Component({ bulan, token }: { token: string; bulan: stri
                      </AutocompleteItem>
                   )}
                </Autocomplete>
+               <JadwalRakInput
+                  selectedKey={jadwal}
+                  onListJadwalChange={(d) => setJadwal(d[0]?.id)}
+                  onSelectionChange={setJadwal}
+                  defaultParams={{ id_daerah, id_skpd, tahun }}
+               />
             </div>
+
             <Button
                color='primary'
                isLoading={isFetching}

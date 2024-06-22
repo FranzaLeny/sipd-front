@@ -11,7 +11,7 @@ import { groupBy } from 'lodash-es'
 import { Printer } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 
-const currOpt = {
+const currOpt: Intl.NumberFormatOptions = {
    maximumFractionDigits: 0,
    style: 'currency',
    currency: 'IDR',
@@ -20,7 +20,7 @@ const currOpt = {
 const convertToRupiah = (value?: string | number | null) => {
    let newVal: number | string | undefined = Number(value)
    if (!isNaN(newVal)) {
-      newVal = newVal.toLocaleString('id-ID', currOpt)
+      newVal = newVal?.toLocaleString('id-ID', currOpt)
    } else {
       newVal = value ? value?.toString() : '-'
    }

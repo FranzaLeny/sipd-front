@@ -163,6 +163,7 @@ function formatDefaultRka(ws: Excel.Worksheet) {
          style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
       },
    ]
+   ws.views = [{ showGridLines: false }]
 }
 type Params = {
    dokumen: {

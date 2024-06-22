@@ -166,8 +166,20 @@ const dateTime = (value: any) => {
 }
 export const helperColumns: HelperColumns<JadwalAnggaranWithTahapan> = {
    id_jadwal: { key: 'id_jadwal', name: 'ID', hide: true, sortable: true },
-   nama_tahap: { key: 'id_tahap', name: 'Nama Tahap', renderCell: (d) => d.tahapan?.nama_tahap },
-   nama_sub_tahap: { key: 'nama_sub_tahap', name: 'Nama Sub Tahap', sortable: true },
+   nama_sub_tahap: { key: 'nama_sub_tahap', name: 'Jadwal Anggaran', sortable: true },
+   jadwal_penatausahaan: {
+      key: 'jadwal_penatausahaan',
+      name: 'Jadwal Penatausahaan',
+      sortable: true,
+      hide: true,
+   },
+   nama_tahap: {
+      key: 'id_tahap',
+      name: 'Nama Tahap',
+      renderCell: (d) => d.tahapan?.nama_tahap,
+      hide: true,
+   },
+
    status: {
       key: 'is_active',
       name: 'Status',

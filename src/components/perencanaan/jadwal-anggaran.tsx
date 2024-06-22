@@ -4,7 +4,9 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import {
+   AllJadwalAnggaranRakParams,
    getAllJadwalAnggaran,
+   getAllJadwalAnggaranRak,
    GetJadwalAnggaranParams,
    JadwalAnggaran,
 } from '@actions/perencanaan/rka/jadwal-anggaran'
@@ -45,7 +47,7 @@ interface Props
    sipdOnly?: boolean
    isLocked?: boolean
    keyByIdUnik?: boolean
-   onSelectionChange?: (id?: string) => void
+   onSelectionChange?: (id: string) => void
 }
 
 export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLInputElement>) => {
@@ -115,7 +117,7 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
    }, [localOnly, sipdOnly, isLocked, data, keyByIdUnik, props?.disabledKeys])
    const handleSelect = useCallback(
       (select: React.Key | null) => {
-         onSelectionChange && onSelectionChange(select?.toString())
+         onSelectionChange && onSelectionChange(select?.toString() ?? '')
          if (data?.length && select) {
             const jadwal = data?.find((d) => (keyByIdUnik ? d.id_unik === select : d.id === select))
             const jadwal_murni = data?.find((d) => d.id_unik === jadwal?.id_unik_murni)
@@ -159,6 +161,92 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
 })
 JadwalInput.displayName = 'JadwalInput'
 export default JadwalInput
+
+interface JadwalRakInputProps
+   extends Pick<
+      AutocompleteProps,
+      Exclude<
+         keyof AutocompleteProps,
+         'onChange' | 'children' | 'onSelectionChange' | 'defaultItems' | 'items' | 'ref'
+      >
+   > {
+   onChange?: (jadwal?: JadwalAnggaran) => void
+   onListJadwalChange?: (listJadwal: JadwalAnggaran[]) => void
+   defaultParams: AllJadwalAnggaranRakParams
+   onSelectionChange?: (id: string) => void
+}
+export const JadwalRakInput = forwardRef(
+   (jadwalProps: JadwalRakInputProps, ref?: React.Ref<HTMLInputElement>) => {
+      const {
+         onChange,
+         onSelectionChange = () => {},
+         defaultParams,
+         onListJadwalChange = () => {},
+         selectedKey = '',
+         ...props
+      } = jadwalProps
+
+      const { data, isFetching } = useQuery({
+         queryKey: [defaultParams, 'jadwal_anggaran', 'jadwal_anggaran_rak'] as [
+            AllJadwalAnggaranRakParams,
+            string,
+            string,
+         ],
+         queryFn: async ({ queryKey: [params] }) => {
+            if (params && typeof params === 'object') {
+               return await getAllJadwalAnggaranRak(params).then((res) => {
+                  return res?.data
+               })
+            } else {
+               return []
+            }
+         },
+         enabled: !!defaultParams?.id_daerah && !!!!defaultParams?.tahun,
+      })
+
+      const handleSelect = useCallback(
+         (select: React.Key | null) => {
+            onSelectionChange && onSelectionChange(select?.toString() ?? '')
+            if (data?.length && select) {
+               const jadwal = data?.find((d) => d.id === select)
+               !!onChange && onChange(jadwal)
+            } else {
+               !!onChange && onChange(undefined)
+            }
+         },
+         [onChange, data, onSelectionChange]
+      )
+
+      useEffect(() => {
+         onListJadwalChange(data ?? [])
+      }, [data, onListJadwalChange])
+      return (
+         <Autocomplete
+            label='Jadwal RAK :'
+            placeholder='Pilih Jadwal RAK...'
+            variant='bordered'
+            {...props}
+            selectedKey={selectedKey}
+            onSelectionChange={handleSelect}
+            ref={ref}
+            defaultItems={data || []}
+            isDisabled={props?.isDisabled || !data?.length}
+            isLoading={props?.isLoading || isFetching}>
+            {({ is_locked, nama_sub_tahap, id, id_unik, is_lokal }) => (
+               <AutocompleteItem
+                  className='data-[selected=true]:text-primary'
+                  classNames={{ title: 'whitespace-normal' }}
+                  endContent={is_locked ? '' : 'Masih Terbuka'}
+                  textValue={nama_sub_tahap}
+                  key={id}>
+                  {nama_sub_tahap} {!is_lokal && <span className={`font-bold `}>(SIPD)</span>}
+               </AutocompleteItem>
+            )}
+         </Autocomplete>
+      )
+   }
+)
+JadwalRakInput.displayName = 'JadwalRakInput'
 
 export const JadwalAnggaranSearchParams: React.FC<{
    data: JadwalAnggaran[]

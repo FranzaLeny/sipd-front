@@ -13,4 +13,3 @@ TODO Buat dan ubah RKA
 
 
 git add . && git commit -m "tambah readme" && git push
-

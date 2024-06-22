@@ -26,9 +26,13 @@ export function borderAll(params: {
    wrapText?: boolean
    italic?: boolean
    fontSize?: number
+   excludeColumns?: number[]
 }) {
-   const { row, ws, bold, center, wrapText, fontSize, italic } = params
-   row.eachCell({ includeEmpty: true }, (singleCell) => {
+   const { row, ws, bold, center, wrapText, fontSize, italic, excludeColumns } = params
+   row.eachCell({ includeEmpty: true }, (singleCell, col) => {
+      if (excludeColumns?.includes(col)) {
+         return
+      }
       const cellAddress = singleCell.address
       const style = ws.getCell(cellAddress).style
       ws.getCell(cellAddress).style = {

@@ -81,7 +81,7 @@ const SipdSessionSchema = z
       id_user: z.coerce.number(),
       id_daerah: z.coerce.number(),
       id_unit: z.coerce.number(),
-      id_level: z.coerce.number(),
+      id_level: z.coerce.number().default(0),
       id_prop: z.coerce.number(),
       is_prop: z.coerce.number(),
       tahun: z.coerce.number(),
@@ -114,6 +114,26 @@ export const validateSipdSession = (params: { user?: User | null } | null) => {
          console.error('Validation error:', error.issues)
       }
       throw new Error('Unauthorized SIPD-RI')
+   }
+}
+
+export const validateSipdPetaSession = (params: { user?: User | null } | null) => {
+   if (!params || !('user' in params) || !params.user) {
+      throw new Error('Unauthorized SIPD-PETA')
+   }
+   const token = params.user.tokens?.find((t) => t.name === 'sipd_peta')?.token
+   if (!token) {
+      throw new Error('Unauthorized SIPD-PETA')
+   }
+
+   try {
+      const sipdData = decodeJwt(token)
+      return SipdSessionSchema.parse({ ...params.user, ...sipdData })
+   } catch (error) {
+      if (error instanceof ZodError) {
+         console.error('Validation error:', error.issues)
+      }
+      throw new Error('Unauthorized SIPD-PETA')
    }
 }
 

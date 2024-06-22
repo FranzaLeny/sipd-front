@@ -20,6 +20,7 @@ const queryClient = new QueryClient({
          networkMode: 'always',
          retry: 0,
          staleTime: 1000 * 60 * 60, // 60 menit
+         placeholderData: (prev: unknown) => prev,
       },
    },
 })

@@ -270,24 +270,6 @@ export const syncSubBlAktif = async (
       .then((res) => res.data)
 }
 
-export interface SubBlByUnit {
-   id: string
-   nama_sub_giat: string
-   tahun: number
-   jadwal_anggaran_id: string
-   bl_giat_id: string
-   bl_sub_giat_aktif_id: string
-}
-export const getSubBlByUnit = async (params: {
-   id_unit: number
-   id_skpd: number
-   jadwal_anggaran_id: string
-}) => {
-   return await axios
-      .get<ResponseApi<SubBlByUnit[]>>('api/perencanaan/rka/sub-giat/by-unit', { params })
-      .then((res) => res?.data)
-}
-
 export const syncBlSubGiat = async (
    params: SyncSubGiatParams & {
       jadwal_anggaran_murni_id?: string | null
