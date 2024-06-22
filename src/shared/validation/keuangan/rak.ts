@@ -51,7 +51,10 @@ export const RakSchema = z.object({
    tahun: z.number().int(),
    bl_sub_giat_aktif_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
    bl_sub_giat_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
-   jadwal_anggaran_murni_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
+   jadwal_anggaran_murni_id: z
+      .string()
+      .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+      .nullish(),
    jadwal_anggaran_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
    created_by: z
       .string()
@@ -120,20 +123,10 @@ export const RakUncheckedCreateInputSchema = z
       bl_sub_giat_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
       jadwal_anggaran_murni_id: z
          .string()
-         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
+         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+         .optional()
+         .nullable(),
       jadwal_anggaran_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
-      created_by: z
-         .string()
-         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
-         .optional()
-         .nullable(),
-      created_at: z.coerce.date().optional().nullable(),
-      updated_by: z
-         .string()
-         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
-         .optional()
-         .nullable(),
-      updated_at: z.coerce.date().optional().nullable(),
    })
    .strip()
 
@@ -147,13 +140,16 @@ export const RakSkpdSchema = z.object({
    id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
    id_daerah: z.number().int(),
    id_skpd: z.number().int(),
-   kode_skpd: z.number().int(),
-   nama_skpd: z.number().int(),
+   kode_skpd: z.string().trim().min(1),
+   nama_skpd: z.string().trim().min(1),
    nilai: z.number().int(),
    nilai_rak: z.number().int(),
    status: z.number().int(),
    tahun: z.number().int(),
-   jadwal_anggaran_murni_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
+   jadwal_anggaran_murni_id: z
+      .string()
+      .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+      .nullish(),
    jadwal_anggaran_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
    created_by: z
       .string()
@@ -171,34 +167,20 @@ export type RakSkpd = z.infer<typeof RakSkpdSchema>
 
 export const RakSkpdUncheckedCreateInputSchema = z
    .object({
-      id: z
-         .string()
-         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
-         .optional(),
       id_daerah: z.number().int(),
       id_skpd: z.number().int(),
-      kode_skpd: z.number().int(),
-      nama_skpd: z.number().int(),
+      kode_skpd: z.string().trim().min(1),
+      nama_skpd: z.string().trim().min(1),
       nilai: z.number().int(),
       nilai_rak: z.number().int(),
       status: z.number().int(),
       tahun: z.number().int(),
       jadwal_anggaran_murni_id: z
          .string()
-         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
+         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+         .optional()
+         .nullable(),
       jadwal_anggaran_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
-      created_by: z
-         .string()
-         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
-         .optional()
-         .nullable(),
-      created_at: z.coerce.date().optional().nullable(),
-      updated_by: z
-         .string()
-         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
-         .optional()
-         .nullable(),
-      updated_at: z.coerce.date().optional().nullable(),
    })
-   .strict()
+   .strip()
 export type RakSkpdUncheckedCreateInput = z.infer<typeof RakSkpdUncheckedCreateInputSchema>

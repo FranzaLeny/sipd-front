@@ -60,7 +60,7 @@ export default function Component({
       queryFn: async () => await getStatistikBlSkpdSipd(),
    })
    const { data: rak } = useQuery({
-      queryKey: [{ jadwal_anggaran_id: jadwal, id_skpd }, 'statistik-belanja'] as [
+      queryKey: [{ jadwal_anggaran_id: jadwal, id_skpd }, 'rak'] as [
          { jadwal_anggaran_id: string; id_skpd: number },
          ...any,
       ],

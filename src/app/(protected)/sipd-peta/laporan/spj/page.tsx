@@ -21,7 +21,6 @@ export default async function Page({ searchParams }: { searchParams?: { bulan?: 
          accountPeta: { id_daerah, id_skpd },
       },
    } = session
-   //   const dataSkpd = await getSkpdTapdAnggaranBySkpd({ id_daerah, tahun, id_unit, id_skpd })
    const defaultBulan = new Date().getMonth() + 1
    const bulan = searchParams?.bulan || defaultBulan.toString()
    const data = { bulan, id_daerah, id_skpd, tahun }

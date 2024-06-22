@@ -34,6 +34,7 @@ function CardDataRak({ data }: Props) {
       queryKey: [
          { id_skpd: data?.id_skpd, jadwal_anggaran_id: data?.jadwal_anggaran_id },
          'rak_skpd',
+         'rak',
       ] as [
          {
             jadwal_anggaran_id: string

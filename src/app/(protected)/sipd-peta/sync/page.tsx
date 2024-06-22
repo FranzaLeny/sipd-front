@@ -60,9 +60,8 @@ const Page = async () => {
          />
       )
    const { user: _user, jadwal_anggaran_id, id_jadwal_penatausahaan } = data
-   console.log({ _user })
-
    const user = getUser(_user)
+
    return (
       <>
          <Breadcrumb paths={PATHS} />

@@ -55,6 +55,7 @@ const dowloadExcelSpjFungsional = async (dpaRician: Params) => {
    //    formatCells: true,
    // })
    wb.creator = 'FXIL'
+
    const buf = await wb.xlsx.writeBuffer()
 
    saveAs(

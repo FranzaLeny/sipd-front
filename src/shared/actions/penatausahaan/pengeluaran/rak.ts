@@ -1,10 +1,9 @@
-import { getBlSubGiatByJadwalUnit } from '@actions/perencanaan/rka/bl-sub-giat'
 import apiFetcher from '@custom-axios/api-fetcher'
 import axios from '@custom-axios/peta-fetcher'
 import {
    RakSkpd,
+   RakSkpdUncheckedCreateInput,
    RakUncheckedCreateInput,
-   RakUncheckedCreateInputSchema,
 } from '@validations/keuangan/rak'
 
 // SIPD PENATAUSAHAAN
@@ -51,7 +50,7 @@ export const getBlSkpdSipdPeta = async (idSkpd: string | number) => {
    )
 }
 
-interface ParamsRakBlSkpdSipdPeta {
+export interface ParamsRakBlSkpdSipdPeta {
    id_unit: number
    id_skpd: number
    id_sub_skpd: number
@@ -62,7 +61,7 @@ interface ParamsRakBlSkpdSipdPeta {
    id_sub_giat: number
 }
 
-interface ResponseRakBlSubGiatSipdPeta {
+export interface ResponseRakBlSubGiatSipdPeta {
    '1': number
    '2': number
    '3': number
@@ -114,7 +113,8 @@ export const getRakBlSubGiatSipdPeta = async (params: ParamsRakBlSkpdSipdPeta) =
       { params }
    )
 }
-interface ResponseLaporanRakBlSubGiatSipdPeta {
+
+export interface ResponseLaporanRakBlSubGiatSipdPeta {
    nama_daerah: string
    kode_skpd: string
    nama_skpd: string
@@ -161,18 +161,56 @@ interface ResponseRakSpd {
    nilai_rak: number
    status: number
 }
-export const getRakSkpSipdPeta = async (params: { page: number; limit: number }) => {
+export const getRakSkpdSipdPeta = async (params: { page: number; limit: number }) => {
    return await axios.get<ResponseRakSpd[]>(`referensi/strict/dpa/penarikan/belanja`, { params })
 }
 
-export const getRakSkpdSipdPetaBySkpd = async (idSkpd: number) => {
-   const data = await getRakSkpSipdPeta({ page: 1, limit: 100 })?.then((res) => {
-      console.log({ res })
+interface ResponseRakSubGiatSipdPeta {
+   id_skpd: number
+   nama_skpd: string
+   kode_skpd: string
+   items: RakSubGiatSipdPeta[]
+}
 
+interface RakSubGiatSipdPeta {
+   id_daerah: number
+   tahun: number
+   id_unit: number
+   id_skpd: number
+   kode_skpd: string
+   nama_skpd: string
+   id_sub_skpd: number
+   kode_sub_skpd: string
+   nama_sub_skpd: string
+   id_urusan: number
+   id_bidang_urusan: number
+   kode_bidang_urusan: string
+   nama_bidang_urusan: string
+   id_program: number
+   kode_program: string
+   nama_program: string
+   id_giat: number
+   kode_giat: string
+   nama_giat: string
+   id_sub_giat: number
+   kode_sub_giat: string
+   nama_sub_giat: string
+   nilai: number
+   nilai_rak: number
+   status: number
+   rak_belum_sesuai: number
+}
+
+export const getRakSubGiatSipdPeta = async (skpd: number | string) => {
+   return await axios.get<ResponseRakSubGiatSipdPeta>(
+      `referensi/strict/dpa/penarikan/belanja/skpd/${skpd}`
+   )
+}
+
+export const getRakSkpdSipdPetaBySkpd = async (idSkpd: number) => {
+   const data = await getRakSkpdSipdPeta({ page: 1, limit: 100 })?.then((res) => {
       return res?.find((d) => d.id_skpd === idSkpd)
    })
-   console.log({ data })
-
    if (data) {
       return data
    } else {
@@ -182,8 +220,11 @@ export const getRakSkpdSipdPetaBySkpd = async (idSkpd: number) => {
 
 // LOKAL
 
-export const syncLaporanRakBlSubGiatSipdPeta = async (data: RakUncheckedCreateInput[]) => {
-   return await apiFetcher.put<ResponseLaporanRakBlSubGiatSipdPeta>(`api/keuangan/rak`, data)
+export const syncRakBlSubGiat = async (data: RakUncheckedCreateInput[]) => {
+   return await apiFetcher.put<ResponseApi>(`api/keuangan/rak`, data)
+}
+export const syncRakBlSkpd = async (data: RakSkpdUncheckedCreateInput[]) => {
+   return await apiFetcher.put<ResponseApi>(`api/keuangan/rak/skpd`, data)
 }
 
 interface RakByJadwal {
@@ -228,68 +269,3 @@ export const getRakSkpdBlBySkpd = async (params: {
 }
 
 // OTHER
-
-type BackUpRakBlSubGiatSipdPetaParams = {
-   tahun?: number
-   id_daerah?: number
-   id_skpd?: number
-   id_unit: number
-   jadwal_anggaran_id: string
-}
-
-export const backUpRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) => {
-   try {
-      const data: RakUncheckedCreateInput[] = []
-      const subGiats = await getBlSubGiatByJadwalUnit(params)
-      for await (const sbl of subGiats) {
-         const {
-            id: bl_sub_giat_id,
-            bl_sub_giat_aktif_id,
-            jadwal_anggaran_id,
-            jadwal_anggaran_murni_id,
-            id_bidang_urusan,
-            id_giat,
-            id_program,
-            id_skpd,
-            id_sub_giat,
-            id_sub_skpd,
-            id_unit,
-            id_urusan,
-         } = sbl
-         const laporan = await getRakBlSubGiatSipdPeta({
-            id_bidang_urusan,
-            id_giat,
-            id_program,
-            id_skpd,
-            id_sub_giat,
-            id_sub_skpd,
-            id_unit,
-            id_urusan,
-         }).then((res) =>
-            res?.map((d) => {
-               const temp = Object.keys(d)?.reduce((acc: any, curr) => {
-                  if (isNaN(Number(curr))) {
-                     acc[curr] = d[curr as keyof ResponseRakBlSubGiatSipdPeta]
-                  } else {
-                     acc[`bulan_${curr}`] = d[curr as keyof ResponseRakBlSubGiatSipdPeta]
-                  }
-                  return acc
-               }, {})
-               data.push({
-                  ...temp,
-                  bl_sub_giat_aktif_id,
-                  jadwal_anggaran_id,
-                  jadwal_anggaran_murni_id,
-                  bl_sub_giat_id,
-               })
-            })
-         )
-         if (!laporan.length) continue
-      }
-      const validaData = RakUncheckedCreateInputSchema.array().min(1).parse(data)
-      const result = await syncLaporanRakBlSubGiatSipdPeta(validaData)
-      console.log(result)
-   } catch (error: any) {
-      throw new Error(error?.message ?? 'Gagal back up data rak')
-   }
-}
