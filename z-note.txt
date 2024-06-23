@@ -12,4 +12,4 @@ TODO Tambah singkron laporan pergeseran
 TODO Buat dan ubah RKA
 
 
-git add . && git commit -m "perbaiki parameter JadwalInput " && git push
+git add . && git commit -m "perbaiki function singkron data rak " && git push

@@ -10,20 +10,36 @@ import { useSession } from '@shared/hooks/use-session'
 const ModalSingkronJadwal = () => {
    const { data: session } = useSession(['admin', 'super_admin', 'sipd_peta'])
    const action = useCallback(async () => {
-      toast('Sedang mengambil data jadwal dari sipd', { toastId: 'singkron_data', isLoading: true })
+      toast(
+         <div>
+            <p className='text-sm font-bold'>Mohon tunggu...</p>
+            <p className='text-xs font-bold'>Sedang singkron data Anggaran Penatausahaan</p>
+         </div>,
+         { toastId: 'singkron_data', isLoading: true }
+      )
       try {
          const { id_daerah, tahun } = validateSipdPetaSession(session)
          await syncJadwalAnggaranPenatausahaan({ id_daerah, tahun })
          toast.update('singkron_data', {
-            render: `Selesai singkron data jadwal anggaran penatausahaan`,
+            render: (
+               <div>
+                  <p className='text-sm font-bold'>Berhasil...</p>
+                  <p className='text-xs font-bold'>Selesai Singkron Data Anggaran Penatausahaan</p>
+               </div>
+            ),
             isLoading: false,
             autoClose: 2000,
-            type: 'info',
+            type: 'success',
          })
          return true
       } catch (error: any) {
          toast.update('singkron_data', {
-            render: error?.message || 'Gagal singkron data jadwal',
+            render: (
+               <div>
+                  <p className='text-sm font-bold'>Gagal...</p>
+                  <p className='text-xs font-bold'>{error?.message}</p>
+               </div>
+            ),
             isLoading: false,
             autoClose: 2000,
             type: 'error',

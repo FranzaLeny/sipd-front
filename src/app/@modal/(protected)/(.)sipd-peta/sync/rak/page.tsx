@@ -39,7 +39,13 @@ const ModalSingkron = () => {
 
    const action = useCallback(async () => {
       setIsLoading(true)
-      toast('Mohon tunggu', { toastId: 'singkron_data', isLoading: true })
+      toast(
+         <div>
+            <p className='text-sm font-bold'>Mohon tunggu...</p>
+            <p className='text-xs font-bold'>Sedang singkron data RAK Belanja</p>
+         </div>,
+         { toastId: 'singkron_data', isLoading: true }
+      )
       try {
          if (!isValid) {
             throw new Error('Maksimal data tidak valid')
@@ -74,7 +80,12 @@ const ModalSingkron = () => {
          setIsLoading(false)
 
          toast.update('singkron_data', {
-            render: `Selesai singkron data jadwal RAK`,
+            render: (
+               <div>
+                  <p className='text-sm font-bold'>Berhasil</p>
+                  <p className='text-xs font-bold'>Selesai singkron data RAK Belanja...</p>
+               </div>
+            ),
             isLoading: false,
             autoClose: 2000,
             type: 'info',
@@ -119,7 +130,7 @@ const ModalSingkron = () => {
             label='Per Request'
          />
          <JadwalInput
-            params={{ id_daerah, tahun, jadwal_penatausahaan: 'true' }}
+            params={{ id_daerah, tahun, jadwal_penatausahaan: 'true', filter: 'has-bl-sub-giat' }}
             isReadOnly={isLoading}
             ref={jadwalInput}
             isInvalid={!jadwalInput}
@@ -154,7 +165,12 @@ const _getRakBlSkpdSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) =
    try {
       const { jadwal_anggaran_id, jadwal_anggaran_murni_id } = params
       toast.update('singkron_data', {
-         render: `Sedang Mengambil Rak SKPD`,
+         render: (
+            <div>
+               <p className='text-sm font-bold'>Mohon tunggu...</p>
+               <p className='text-xs font-bold'>Proses Chek RAK Belanja Belanja SKPD</p>
+            </div>
+         ),
       })
       const rakSkpd = await getRakSkpdSipdPeta({ page: 1, limit: 100 })
       const dataRakSkpd: RakSkpdUncheckedCreateInput[] = []
@@ -166,6 +182,15 @@ const _getRakBlSkpdSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) =
             jadwal_anggaran_id,
             jadwal_anggaran_murni_id: jadwal_anggaran_murni_id || null,
          }
+         toast.update('singkron_data', {
+            render: (
+               <div>
+                  <p className='text-sm font-bold'>Mohon tunggu...</p>
+                  <p className='text-xs font-bold'>Proses Chek data Sub Kegiatan</p>
+                  <p className='text-xs font-bold'>{rak.nama_skpd}</p>
+               </div>
+            ),
+         })
          dataRakSkpd.push(dataRak)
          await _getRakBlSubGiatSipdPeta({
             ...params,
@@ -183,11 +208,9 @@ const _getRakBlSkpdSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) =
 const _getRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) => {
    try {
       const data: RakUncheckedCreateInput[] = []
-      toast.update('singkron_data', {
-         render: `Chek List Sub Kegiatan`,
-      })
+
       const subGiats = await getBlSubGiatByJadwalUnit(params)
-      if (subGiats?.length) {
+      if (!subGiats?.length) {
          throw new Error('Data Sub Kgiatan untuk jadwal ini tidak ditemukan')
       }
       for await (const sbl of subGiats) {
@@ -210,9 +233,10 @@ const _getRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams
          toast.update('singkron_data', {
             render: (
                <div>
-                  <p>Cek data Sub Kegiatan:</p>
-                  <p>{nama_sub_giat}</p>
-                  <p>{nama_sub_skpd}</p>
+                  <p className='text-sm font-bold'>Mohon tunggu...</p>
+                  <p className='text-xs font-bold'>Proses Chek RAK Sub Kegiatan</p>
+                  <p className='text-xs font-bold'>{nama_sub_giat}</p>
+                  <p className='text-xs font-bold'>{nama_sub_skpd}</p>
                </div>
             ),
          })
