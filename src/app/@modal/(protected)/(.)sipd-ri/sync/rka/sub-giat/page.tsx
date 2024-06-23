@@ -124,10 +124,6 @@ const ModalSingkronJadwal = () => {
             isReadOnly={isLoading}
             fullWidth
             ref={jadwalInput}
-            name='jadwal_murni'
-            radius='sm'
-            labelPlacement='inside'
-            label='Jadwal'
             isInvalid={!jadwal}
             isRequired
             selectedKey={jadwal?.id}

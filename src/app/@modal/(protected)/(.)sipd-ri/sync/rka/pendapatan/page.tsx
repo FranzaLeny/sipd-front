@@ -167,13 +167,8 @@ const ModalSingkronPendapatan = () => {
                label='Per Request'
             />
             <JadwalInput
-               fullWidth
                isReadOnly={isLoading}
                ref={jadwalInput}
-               name='jadwal_murni'
-               radius='sm'
-               labelPlacement='inside'
-               label='Jadwal SIPD'
                isInvalid={!jadwalInput}
                isRequired
                selectedKey={jadwal?.id}
@@ -182,7 +177,6 @@ const ModalSingkronPendapatan = () => {
                onChange={setJadwal}
                inputMode='text'
                shouldCloseOnBlur
-               isLocked={false}
                allowsCustomValue={false}
             />
             <div className='border-warning rounded-small border p-1 text-center'>

@@ -208,7 +208,7 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
                            {waktu_mulai}
                            {waktu_selesai}
                            <JadwalInput
-                              radius='sm'
+                              params={{}}
                               label='Jadwal Murni'
                               placeholder='Pilih Jadwal Murni'
                               keyByIdUnik

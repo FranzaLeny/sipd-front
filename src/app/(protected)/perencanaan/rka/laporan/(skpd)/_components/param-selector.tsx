@@ -22,7 +22,7 @@ export default function ParamSelector({
    const defaultTahun = searchParams.get('tahun') ?? tahun?.toString() ?? undefined
    const defaultSkpd = searchParams.get('id_skpd') ?? undefined
    const defaultUnit = searchParams.get('id_unit') ?? id_unit?.toString() ?? undefined
-
+   const isPendapatan = pathname.endsWith('pendapatan')
    const handleParamsChange = useCallback(
       (params?: {
          jadwal_anggara_id?: string
@@ -73,11 +73,13 @@ export default function ParamSelector({
             <JadwalInput
                selectedKey={defaultJadwal}
                onSelectionChange={(jadwal_anggara_id) => handleParamsChange({ jadwal_anggara_id })}
-               labelPlacement='inside'
-               radius='md'
-               label='Pilih Jadwal'
+               label={`Pilih Jadwal ${isPendapatan ? 'Pendapatan' : 'Rincian Belanja'}`}
                isInvalid={!defaultJadwal}
-               defaultParams={{ hasRincian: 'true', id_daerah }}
+               params={{
+                  tahun: Number(tahun ?? 0),
+                  id_daerah: Number(id_daerah ?? 0),
+                  filter: isPendapatan ? 'has-pendapatan' : 'has-rincian',
+               }}
             />
          </div>
       </div>

@@ -209,10 +209,9 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
                            {waktu_mulai}
                            {waktu_selesai}
                            <JadwalInput
-                              radius='sm'
-                              label='Jadwal Murni'
                               placeholder='Pilih Jadwal Murni'
                               keyByIdUnik
+                              params={{ is_perubahan: 1 }}
                               defaultSelectedKey={data?.id_unik_murni ?? data?.id_unik ?? undefined}
                               isRequired={isPerubahan}
                               onChange={onJadwalChange}

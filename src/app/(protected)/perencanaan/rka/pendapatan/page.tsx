@@ -36,14 +36,12 @@ const Page = async ({ searchParams: { jadwal_anggaran_id } }: Props) => {
    const jadwal = await getAllJadwalAnggaran({
       id_daerah: id_daerah,
       tahun: tahun,
-      orderBy: ['-is_active', '-id_jadwal', 'is_lokal', '-id'],
+      filter: 'has-pendapatan',
+   }).catch((e) => {
+      let errorCode = 500
+      e.response?.status && (errorCode = e.response?.status)
+      return { errorCode, message: e?.message }
    })
-      .then((d) => d?.data)
-      .catch((e) => {
-         let errorCode = 500
-         e.response?.status && (errorCode = e.response?.status)
-         return { errorCode, message: e?.message }
-      })
 
    if ('errorCode' in jadwal)
       return (

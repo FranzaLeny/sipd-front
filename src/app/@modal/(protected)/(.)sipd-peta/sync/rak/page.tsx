@@ -11,7 +11,7 @@ import {
 import { getBlSubGiatByJadwalUnit } from '@actions/perencanaan/rka/bl-sub-giat'
 import { validateSipdPetaSession } from '@actions/perencanaan/token-sipd'
 import DialogConfirm from '@components/modal/dialog-confirm'
-import { JadwalAnggaranPetaInput } from '@components/perencanaan/jadwal-anggaran'
+import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
 import { processChunks } from '@utils/hof'
 import {
@@ -39,7 +39,7 @@ const ModalSingkron = () => {
 
    const action = useCallback(async () => {
       setIsLoading(true)
-      toast('Sedang mengambil data jadwal dari sipd', { toastId: 'singkron_data', isLoading: true })
+      toast('Mohon tunggu', { toastId: 'singkron_data', isLoading: true })
       try {
          if (!isValid) {
             throw new Error('Maksimal data tidak valid')
@@ -72,8 +72,9 @@ const ModalSingkron = () => {
             schema: RakSkpdUncheckedCreateInputSchema,
          })
          setIsLoading(false)
+
          toast.update('singkron_data', {
-            render: `Selesai singkron data jadwal anggaran penatausahaan`,
+            render: `Selesai singkron data jadwal RAK`,
             isLoading: false,
             autoClose: 2000,
             type: 'info',
@@ -81,7 +82,12 @@ const ModalSingkron = () => {
          return true
       } catch (error: any) {
          toast.update('singkron_data', {
-            render: error?.message || 'Gagal singkron data jadwal',
+            render: (
+               <div>
+                  <p className='text-sm font-bold'>Gagal singkron data RAK</p>
+                  <p className='text-xs'>{error?.message}</p>
+               </div>
+            ),
             isLoading: false,
             autoClose: 2000,
             type: 'error',
@@ -102,7 +108,7 @@ const ModalSingkron = () => {
          action={action}
          disabledSubmit={!session?.user?.accountPeta}
          data_key={['rak', 'rak_skpd', 'penatausahan']}
-         header='Singkron Jadwal Anggaran Penatausahaan'>
+         header='Singkron RAK'>
          <MaxDataInput
             isReadOnly={isLoading}
             ref={maxInput}
@@ -112,9 +118,8 @@ const ModalSingkron = () => {
             autoFocus
             label='Per Request'
          />
-         <JadwalAnggaranPetaInput
-            defaultParams={{ id_daerah, tahun }}
-            fullWidth
+         <JadwalInput
+            params={{ id_daerah, tahun, jadwal_penatausahaan: 'true' }}
             isReadOnly={isLoading}
             ref={jadwalInput}
             isInvalid={!jadwalInput}
@@ -127,8 +132,8 @@ const ModalSingkron = () => {
             PERHATIAN!! <span className='font-semibold'>Proses membutuhkan waktu.</span>
          </p>
          <p className='text-small'>
-            Data Jadwal Anggara Penatausahaan akan diganti dengan data dari SIPD-Penatausahaan.
-            Apakah anda yakin?
+            Data Rancanngan Anggaran Khas akan diganti dengan data dari SIPD-Penatausahaan. Apakah
+            anda yakin?
          </p>
       </DialogConfirm>
    )
@@ -171,7 +176,7 @@ const _getRakBlSkpdSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) =
       }
       return { dataRakSkpd, dataRakSbl }
    } catch (error: any) {
-      throw new Error(error?.message ?? 'Gagal back up data rak')
+      throw new Error(error?.message ?? 'Chek back up data rak')
    }
 }
 
@@ -179,9 +184,12 @@ const _getRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams
    try {
       const data: RakUncheckedCreateInput[] = []
       toast.update('singkron_data', {
-         render: `Sedang Mengambil Sub Kegiatan`,
+         render: `Chek List Sub Kegiatan`,
       })
       const subGiats = await getBlSubGiatByJadwalUnit(params)
+      if (subGiats?.length) {
+         throw new Error('Data Sub Kgiatan untuk jadwal ini tidak ditemukan')
+      }
       for await (const sbl of subGiats) {
          const {
             id: bl_sub_giat_id,
@@ -239,6 +247,6 @@ const _getRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams
       }
       return data
    } catch (error: any) {
-      throw new Error(error?.message ?? 'Gagal back up data rak')
+      throw new Error(error?.message ?? 'Chek data rak sub kegiatan')
    }
 }

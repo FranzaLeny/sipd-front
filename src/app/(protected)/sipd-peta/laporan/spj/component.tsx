@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { getRakBlByJadwal } from '@actions/penatausahaan/pengeluaran/rak'
 import { getSpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
 import { getStatistikBlSkpdSipd } from '@actions/penatausahaan/pengeluaran/statistik'
-import { JadwalRakInput } from '@components/perencanaan/jadwal-anggaran'
+import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Autocomplete, AutocompleteItem, Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
@@ -146,11 +146,17 @@ export default function Component({
                      </AutocompleteItem>
                   )}
                </Autocomplete>
-               <JadwalRakInput
+               <JadwalInput
                   selectedKey={jadwal}
                   onListJadwalChange={(d) => setJadwal(d[0]?.id)}
                   onSelectionChange={setJadwal}
-                  defaultParams={{ id_daerah, id_skpd, tahun }}
+                  params={{
+                     id_daerah,
+                     id_skpd,
+                     tahun,
+                     filter: 'has-bl-sub-giat',
+                     jadwal_penatausahaan: 'true',
+                  }}
                />
             </div>
 

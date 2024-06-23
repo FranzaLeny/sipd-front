@@ -74,10 +74,12 @@ export default function RinciBl({
    id,
    daerah,
    unit,
+   tahun,
 }: {
    id: string
    unit: number
    daerah: number
+   tahun: number
 }) {
    const [blSubGiatId, setBlSubGiatId] = useState<string | null>(id)
    const [selectedDok, setSelectedDok] = useState<Selection>(new Set(['rka']))
@@ -173,11 +175,9 @@ export default function RinciBl({
             <div className='bg-content1 space-y-2 p-2 sm:p-4'>
                <JadwalInput
                   selectedKey={jadwal}
-                  defaultParams={{ hasSubGiat: 'true', id_daerah: daerah }}
+                  params={{ tahun, id_daerah: daerah, filter: 'has-bl-sub-giat' }}
                   onSelectionChange={handleJadwalChange}
-                  labelPlacement='inside'
-                  label='Pilih Jadwal Anggaran'
-                  radius='md'
+                  label='Pilih Jadwal Rincian Belanja'
                />
                {jadwal && (
                   <BlSubGiatSelector

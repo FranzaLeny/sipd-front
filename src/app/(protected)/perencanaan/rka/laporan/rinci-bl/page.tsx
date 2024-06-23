@@ -21,6 +21,7 @@ export default async function Page({ searchParams: { id } }: { searchParams: { i
          <RinciBl
             daerah={user?.id_daerah ?? 0}
             unit={user?.id_unit ?? 0}
+            tahun={user?.tahun ?? 0}
             id={id}
          />
       </>

@@ -407,7 +407,7 @@
                "routes": [
                   {
                      "key": "/sipd/sipd-peta/data",
-                     "title": "Sync Data SIPD",
+                     "title": "Singkron",
                      "keywords": "penatausahaan,sipd,data",
                      "access": ["auth"],
                      "path": "/sipd-peta/sync"

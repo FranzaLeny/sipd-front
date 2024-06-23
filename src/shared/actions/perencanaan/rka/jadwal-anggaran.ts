@@ -98,24 +98,27 @@ export const getJadwalAnggaran = async (
    )
 }
 
-export const getAllJadwalAnggaran = async (
-   params: GetJadwalAnggaranParams & {
-      hasPendapatan?: 'true' | 'false'
-      hasRincian?: 'true' | 'false'
-      hasSubGiat?: 'true' | 'false'
-      orderBy?: string[] | string
-   }
-) => {
-   return await axios.get<ResponseApi<JadwalAnggaran[]>>('api/perencanaan/rka/jadwal/all', {
-      params,
-      paramsSerializer: {
-         indexes: null, // by default: false
-      },
-   })
-}
-export type AllJadwalAnggaranRakParams = {
+// export const getAllJadwalAnggaran = async (
+//    params: GetJadwalAnggaranParams & {
+//       hasPendapatan?: 'true' | 'false'
+//       hasRincian?: 'true' | 'false'
+//       hasSubGiat?: 'true' | 'false'
+//       orderBy?: string[] | string
+//    }
+// ) => {
+//    return await axios.get<ResponseApi<JadwalAnggaran[]>>('api/perencanaan/rka/jadwal/all', {
+//       params,
+//       paramsSerializer: {
+//          indexes: null, // by default: false
+//       },
+//    })
+// }
+
+export type GetAllJadwalAnggaranParams = {
    id_daerah: number
    tahun: number
+   is_lokal?: 'true' | 'false'
+   id_jadwal?: number
    id_unit?: number
    id_sub_skpd?: number
    id_bidang_urusan?: number
@@ -124,26 +127,28 @@ export type AllJadwalAnggaranRakParams = {
    id_skpd?: number
    id_sub_giat?: number
    id_urusan?: number
+   is_perubahan?: number
+   jadwal_penatausahaan?: 'true'
+   filter?:
+      | 'has-pendapatan'
+      | 'has-bl-sub-giat'
+      | 'has-rincian'
+      | 'has-rak'
+      | 'penatausahaan'
+      | 'has-bl-skpd'
+      | 'all'
 }
 
-export const getAllJadwalAnggaranRak = async (params: AllJadwalAnggaranRakParams) => {
-   return await axios.get<ResponseApi<JadwalAnggaran[]>>('api/perencanaan/rka/jadwal/has-rak', {
-      params,
-      paramsSerializer: {
-         indexes: null, // by default: false
-      },
-   })
-}
-
-export const getAllJadwalAnggaranPenatausahaan = async (params: AllJadwalAnggaranRakParams) => {
+export const getAllJadwalAnggaran = async (query: GetAllJadwalAnggaranParams) => {
+   const { filter = 'all', ...params } = query
    return await axios
-      .get<ResponseApi<JadwalAnggaran[]>>('api/perencanaan/rka/jadwal/penatausahaan', {
+      .get<ResponseApi<JadwalAnggaran[]>>(`api/perencanaan/rka/jadwal/${filter}`, {
          params,
          paramsSerializer: {
             indexes: null, // by default: false
          },
       })
-      .then((d) => d.data)
+      .then((res) => res.data)
 }
 
 export async function getTotalJadwalAnggaran<T extends GetJadwalAnggaranParams>(params?: T) {

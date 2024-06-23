@@ -4,11 +4,8 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import {
-   AllJadwalAnggaranRakParams,
    getAllJadwalAnggaran,
-   getAllJadwalAnggaranPenatausahaan,
-   getAllJadwalAnggaranRak,
-   GetJadwalAnggaranParams,
+   GetAllJadwalAnggaranParams,
    JadwalAnggaran,
 } from '@actions/perencanaan/rka/jadwal-anggaran'
 import Timer from '@components/ui/timer'
@@ -36,17 +33,10 @@ interface Props
          'onChange' | 'children' | 'onSelectionChange' | 'defaultItems' | 'items' | 'ref'
       >
    > {
+   onListJadwalChange?: (listJadwal: JadwalAnggaran[]) => void
    onChange?: (jadwal?: JadwalAnggaran) => void
    onJadwalMurniChange?: (jadwal?: JadwalAnggaran) => void
-   defaultParams?: GetJadwalAnggaranParams & {
-      hasPendapatan?: 'true' | 'false'
-      hasRincian?: 'true' | 'false'
-      hasSubGiat?: 'true' | 'false'
-      orderBy?: string[] | string
-   }
-   localOnly?: boolean
-   sipdOnly?: boolean
-   isLocked?: boolean
+   params?: Partial<GetAllJadwalAnggaranParams>
    keyByIdUnik?: boolean
    onSelectionChange?: (id: string) => void
 }
@@ -54,68 +44,37 @@ interface Props
 export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLInputElement>) => {
    const {
       onChange,
-      sipdOnly,
-      localOnly,
-      isLocked,
       keyByIdUnik,
       onSelectionChange = () => {},
+      onListJadwalChange = () => {},
       onJadwalMurniChange,
-      defaultParams = {},
+      params = { id_daerah: 0, tahun: 0 },
       selectedKey = '',
       ...props
    } = jadwalProps
 
    const { data: session, status } = useSession()
-   const params_jadwal = useMemo(() => {
-      if (session?.user) {
+   const params_jadwal: GetAllJadwalAnggaranParams = useMemo(() => {
+      if (session?.user && !(!!params?.id_daerah && !!params.tahun)) {
          const { id_daerah, tahun } = session.user
          return {
-            id_daerah,
-            tahun,
-            orderBy: ['-is_active', '-id_jadwal', 'is_lokal', '-id'],
-            ...defaultParams,
+            ...params,
+            id_daerah: params?.id_daerah ?? id_daerah,
+            tahun: params?.tahun ?? tahun,
          }
       }
-      return defaultParams
-   }, [session?.user, defaultParams])
+      return { id_daerah: 0, tahun: 0, ...params }
+   }, [session?.user, params])
 
    const { data, isFetching } = useQuery({
-      queryKey: [params_jadwal, 'jadwal_anggaran'],
-      queryFn: async ({ queryKey: [params] }) => {
-         if (params && typeof params === 'object') {
-            return await getAllJadwalAnggaran(params).then((res) => {
-               return res?.data
-            })
-         } else {
-            return []
-         }
-      },
-      enabled: status === 'authenticated',
+      queryKey: [params_jadwal, 'jadwal_anggaran'] as [GetAllJadwalAnggaranParams, ...any],
+      queryFn: async ({ queryKey: [params] }) => getAllJadwalAnggaran(params),
+      enabled: !!params_jadwal?.id_daerah && !!params_jadwal?.tahun,
    })
-   const disabledKeys = useMemo(() => {
-      const keys = props?.disabledKeys ? [...props?.disabledKeys] : []
-      if (data?.length) {
-         if (localOnly) {
-            const _data = data.filter((d) => d?.is_lokal === true)
-            _data.map((d) => {
-               keyByIdUnik ? keys.push(d.id_unik) : keys.push(d.id)
-            })
-         }
-         if (sipdOnly) {
-            const _data = data.filter((d) => !d?.is_lokal === true)
-            _data.map((d) => {
-               keyByIdUnik ? keys.push(d.id_unik) : keys.push(d.id)
-            })
-         }
-         if (isLocked) {
-            const _data = data.filter((d) => !d.is_locked)
-            _data.map((d) => {
-               keyByIdUnik ? keys.push(d.id_unik) : keys.push(d.id)
-            })
-         }
-      }
-      return keys
-   }, [localOnly, sipdOnly, isLocked, data, keyByIdUnik, props?.disabledKeys])
+
+   useEffect(() => {
+      !!data?.length && onListJadwalChange(data)
+   }, [data, onListJadwalChange])
    const handleSelect = useCallback(
       (select: React.Key | null) => {
          onSelectionChange && onSelectionChange(select?.toString() ?? '')
@@ -134,17 +93,14 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
 
    return (
       <Autocomplete
-         radius='full'
-         label='Jadwal :'
-         placeholder='Pilih Jadwal Anggaran...'
-         variant='bordered'
-         labelPlacement='outside'
+         label='Jadwal Anggaran'
+         fullWidth
+         placeholder='Pilih Jadwal...'
          {...props}
          selectedKey={selectedKey}
          onSelectionChange={handleSelect}
          ref={ref}
          defaultItems={data || []}
-         disabledKeys={[...disabledKeys]}
          isDisabled={props?.isDisabled || !data?.length}
          isLoading={props?.isLoading || isFetching || status === 'loading'}>
          {({ is_locked, nama_sub_tahap, id, id_unik, is_lokal }) => (
@@ -163,179 +119,23 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
 JadwalInput.displayName = 'JadwalInput'
 export default JadwalInput
 
-interface JadwalRakInputProps
-   extends Pick<
-      AutocompleteProps,
-      Exclude<
-         keyof AutocompleteProps,
-         'onChange' | 'children' | 'onSelectionChange' | 'defaultItems' | 'items' | 'ref'
-      >
-   > {
-   onChange?: (jadwal?: JadwalAnggaran) => void
-   onListJadwalChange?: (listJadwal: JadwalAnggaran[]) => void
-   defaultParams: AllJadwalAnggaranRakParams
-   onSelectionChange?: (id: string) => void
+export function TypeJadwal({
+   is_active,
+   is_lokal,
+}: {
+   is_active?: boolean | null
+   is_lokal?: boolean | null
+}) {
+   return (
+      <div className='flex gap-4'>
+         <Chip
+            variant={is_active ? 'dot' : 'light'}
+            color={is_active ? 'success' : 'default'}>
+            {is_lokal ? 'LOKAL' : 'SIPD'}
+         </Chip>
+      </div>
+   )
 }
-
-export const JadwalRakInput = forwardRef(
-   (jadwalProps: JadwalRakInputProps, ref?: React.Ref<HTMLInputElement>) => {
-      const {
-         onChange,
-         onSelectionChange = () => {},
-         defaultParams,
-         onListJadwalChange = () => {},
-         selectedKey = '',
-         ...props
-      } = jadwalProps
-
-      const { data, isFetching } = useQuery({
-         queryKey: [defaultParams, 'jadwal_anggaran', 'jadwal_anggaran_rak'] as [
-            AllJadwalAnggaranRakParams,
-            string,
-            string,
-         ],
-         queryFn: async ({ queryKey: [params] }) => {
-            if (params && typeof params === 'object') {
-               return await getAllJadwalAnggaranRak(params).then((res) => {
-                  return res?.data
-               })
-            } else {
-               return []
-            }
-         },
-         enabled: !!defaultParams?.id_daerah && !!defaultParams?.tahun,
-      })
-
-      const handleSelect = useCallback(
-         (select: React.Key | null) => {
-            onSelectionChange && onSelectionChange(select?.toString() ?? '')
-            if (data?.length && select) {
-               const jadwal = data?.find((d) => d.id === select)
-               !!onChange && onChange(jadwal)
-            } else {
-               !!onChange && onChange(undefined)
-            }
-         },
-         [onChange, data, onSelectionChange]
-      )
-
-      useEffect(() => {
-         onListJadwalChange(data ?? [])
-      }, [data, onListJadwalChange])
-      return (
-         <Autocomplete
-            label='Jadwal RAK :'
-            placeholder='Pilih Jadwal RAK...'
-            variant='bordered'
-            {...props}
-            selectedKey={selectedKey}
-            onSelectionChange={handleSelect}
-            ref={ref}
-            defaultItems={data || []}
-            isDisabled={props?.isDisabled || !data?.length}
-            isLoading={props?.isLoading || isFetching}>
-            {({ is_locked, nama_sub_tahap, id, is_lokal }) => (
-               <AutocompleteItem
-                  className='data-[selected=true]:text-primary'
-                  classNames={{ title: 'whitespace-normal' }}
-                  endContent={is_locked ? '' : 'Masih Terbuka'}
-                  textValue={nama_sub_tahap}
-                  key={id}>
-                  {nama_sub_tahap} {!is_lokal && <span className={`font-bold `}>(SIPD)</span>}
-               </AutocompleteItem>
-            )}
-         </Autocomplete>
-      )
-   }
-)
-
-JadwalRakInput.displayName = 'JadwalRakInput'
-
-interface JadwalAnggaranPetaInputProps
-   extends Pick<
-      AutocompleteProps,
-      Exclude<
-         keyof AutocompleteProps,
-         'onChange' | 'children' | 'onSelectionChange' | 'defaultItems' | 'items' | 'ref'
-      >
-   > {
-   onChange?: (jadwal?: JadwalAnggaran) => void
-   onListJadwalChange?: (listJadwal: JadwalAnggaran[]) => void
-   defaultParams: AllJadwalAnggaranRakParams
-   onSelectionChange?: (id: string) => void
-}
-
-export const JadwalAnggaranPetaInput = forwardRef(
-   (jadwalProps: JadwalAnggaranPetaInputProps, ref?: React.Ref<HTMLInputElement>) => {
-      const {
-         onChange = () => {},
-         onSelectionChange = () => {},
-         defaultParams,
-         onListJadwalChange = () => {},
-         selectedKey = '',
-         ...props
-      } = jadwalProps
-
-      const { data, isFetching } = useQuery({
-         queryKey: [defaultParams, 'jadwal_anggaran', 'jadwal_anggaran_peta'] as [
-            AllJadwalAnggaranRakParams,
-            string,
-            string,
-         ],
-         queryFn: async ({ queryKey: [params] }) => {
-            if (params && typeof params === 'object') {
-               return await getAllJadwalAnggaranPenatausahaan(params)
-            } else {
-               return []
-            }
-         },
-         enabled: !!defaultParams?.id_daerah && !!defaultParams?.tahun,
-      })
-
-      const handleSelect = useCallback(
-         (select: React.Key | null) => {
-            onSelectionChange && onSelectionChange(select?.toString() ?? '')
-            if (data?.length && select) {
-               const jadwal = data?.find((d) => d.id === select)
-               onChange(jadwal)
-            } else {
-               onChange(undefined)
-            }
-         },
-         [onChange, data, onSelectionChange]
-      )
-
-      useEffect(() => {
-         onListJadwalChange(data ?? [])
-      }, [data, onListJadwalChange])
-      return (
-         <Autocomplete
-            label='Jadwal Anggaran:'
-            placeholder='Pilih Anggaran Penatausahaan'
-            variant='bordered'
-            {...props}
-            selectedKey={selectedKey}
-            onSelectionChange={handleSelect}
-            ref={ref}
-            defaultItems={data || []}
-            isDisabled={props?.isDisabled || !data?.length}
-            isLoading={props?.isLoading || isFetching}>
-            {({ is_locked, nama_sub_tahap, id, id_unik, is_lokal }) => (
-               <AutocompleteItem
-                  className='data-[selected=true]:text-primary'
-                  classNames={{ title: 'whitespace-normal' }}
-                  endContent={is_locked ? '' : 'Masih Terbuka'}
-                  textValue={nama_sub_tahap}
-                  key={id}>
-                  {nama_sub_tahap} {!is_lokal && <span className={`font-bold `}>(SIPD)</span>}
-               </AutocompleteItem>
-            )}
-         </Autocomplete>
-      )
-   }
-)
-
-JadwalAnggaranPetaInput.displayName = 'JadwalAnggaranPetaInput'
 
 export const JadwalAnggaranSearchParams: React.FC<{
    data: JadwalAnggaran[]
@@ -395,24 +195,6 @@ export const JadwalAnggaranSearchParams: React.FC<{
             )}
          </DropdownMenu>
       </Dropdown>
-   )
-}
-
-export function TypeJadwal({
-   is_active,
-   is_lokal,
-}: {
-   is_active?: boolean | null
-   is_lokal?: boolean | null
-}) {
-   return (
-      <div className='flex gap-4'>
-         <Chip
-            variant={is_active ? 'dot' : 'light'}
-            color={is_active ? 'success' : 'default'}>
-            {is_lokal ? 'LOKAL' : 'SIPD'}
-         </Chip>
-      </div>
    )
 }
 

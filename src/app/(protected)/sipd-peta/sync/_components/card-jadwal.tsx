@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react'
 import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/pengeluaran/jadwal'
 import {
-   AllJadwalAnggaranRakParams,
-   getAllJadwalAnggaranPenatausahaan,
+   getAllJadwalAnggaran,
+   GetAllJadwalAnggaranParams,
 } from '@actions/perencanaan/rka/jadwal-anggaran'
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
@@ -31,12 +31,11 @@ function CardDataJadwal({ data }: Props) {
 
    const lokal = useQuery({
       queryKey: [
-         { id_daerah: data?.id_daerah, tahun: data?.tahun },
+         { id_daerah: data?.id_daerah, tahun: data?.tahun, jadwal_penatausahaan: 'true' },
          'jadwal_anggaran',
-         'jadwal_anggaran_penatausahaan_total',
          'jadwal_anggaran_penatausahaan',
-      ] as [AllJadwalAnggaranRakParams, ...any],
-      queryFn: async ({ queryKey: [q] }) => await getAllJadwalAnggaranPenatausahaan(q),
+      ] as [GetAllJadwalAnggaranParams, ...any],
+      queryFn: async ({ queryKey: [q] }) => await getAllJadwalAnggaran(q),
       refetchOnMount: false,
       enabled: enabled && access.lokal,
    })

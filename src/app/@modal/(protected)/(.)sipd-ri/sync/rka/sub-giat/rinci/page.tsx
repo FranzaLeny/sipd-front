@@ -99,12 +99,8 @@ const ModalSingkronJadwal = () => {
          </p>
          <JadwalInput
             isReadOnly={isLoading}
-            fullWidth
+            params={{ filter: 'has-bl-sub-giat' }}
             ref={jadwalInput}
-            name='jadwal_murni'
-            radius='sm'
-            labelPlacement='inside'
-            label='Jadwal'
             isInvalid={!jadwal}
             isRequired
             selectedKey={jadwal?.id}
