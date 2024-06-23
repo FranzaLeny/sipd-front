@@ -55,26 +55,29 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
 
    const { data: session, status } = useSession()
    const params_jadwal: GetAllJadwalAnggaranParams = useMemo(() => {
-      if (session?.user && !(!!params?.id_daerah && !!params.tahun)) {
-         const { id_daerah, tahun } = session.user
+      if (!!session?.user && !(!!params?.id_daerah && !!params.tahun)) {
+         const { id_daerah, tahun } = session?.user
+
          return {
             ...params,
-            id_daerah: params?.id_daerah ?? id_daerah,
-            tahun: params?.tahun ?? tahun,
+            id_daerah: !!params?.id_daerah ? params?.id_daerah : id_daerah,
+            tahun: !!params?.tahun ? params?.tahun : tahun,
          }
+      } else {
+         return { id_daerah: 0, tahun: 0, ...params }
       }
-      return { id_daerah: 0, tahun: 0, ...params }
    }, [session?.user, params])
 
    const { data, isFetching } = useQuery({
       queryKey: [params_jadwal, 'jadwal_anggaran'] as [GetAllJadwalAnggaranParams, ...any],
-      queryFn: async ({ queryKey: [params] }) => getAllJadwalAnggaran(params),
+      queryFn: async ({ queryKey: [params] }) => await getAllJadwalAnggaran(params),
       enabled: !!params_jadwal?.id_daerah && !!params_jadwal?.tahun,
    })
 
    useEffect(() => {
       !!data?.length && onListJadwalChange(data)
    }, [data, onListJadwalChange])
+
    const handleSelect = useCallback(
       (select: React.Key | null) => {
          onSelectionChange && onSelectionChange(select?.toString() ?? '')
@@ -95,13 +98,14 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
       <Autocomplete
          label='Jadwal Anggaran'
          fullWidth
+         variant='bordered'
          placeholder='Pilih Jadwal...'
          {...props}
          selectedKey={selectedKey}
          onSelectionChange={handleSelect}
          ref={ref}
          defaultItems={data || []}
-         isDisabled={props?.isDisabled || !data?.length}
+         isDisabled={props?.isDisabled}
          isLoading={props?.isLoading || isFetching || status === 'loading'}>
          {({ is_locked, nama_sub_tahap, id, id_unik, is_lokal }) => (
             <AutocompleteItem
