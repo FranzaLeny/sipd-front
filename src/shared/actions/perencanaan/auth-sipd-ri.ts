@@ -29,7 +29,8 @@ const signInToSipdRi = async (params: SingInToSipdParams) => {
             return res
          })
    } catch (error: any) {
-      throw new Error(error?.message ?? 'Error from fetcher sipd')
+      console.log('signInToSipdRi', error?.message)
+      throw new Error('Error from fetcher sipd')
    }
 }
 
@@ -59,8 +60,8 @@ const getUserByTokenFromSipd = async (params: GetUserByTokenParam) => {
          withCredentials: false,
       })
    } catch (error: any) {
-      console.error(error)
-      throw new Error(error?.message ?? 'Error')
+      console.error('getUserByTokenFromSipd', error?.message)
+      throw new Error('Gagal mengambil data user dari sipd', { cause: 'fetcher' })
    }
 }
 const getSkpdUserFromSipd = async (params: GetUserByTokenParam & { id_skpd: number }) => {
@@ -83,7 +84,8 @@ const getSkpdUserFromSipd = async (params: GetUserByTokenParam & { id_skpd: numb
          }
       )
    } catch (error: any) {
-      throw new Error(error?.message ?? 'Error')
+      console.error('getSkpdUserFromSipd', error?.message)
+      throw new Error('Gagal mengambil data skpd user dari sipd')
    }
 }
 
@@ -111,7 +113,6 @@ const signInUserToSipdRi = async (params: SingInToSipdParams): Promise<Session['
          id_level: number
          id_user: number
       }
-
       if (signInResult.token && accessData) {
          const { id_daerah, id_level, id_user } = accessData
          const userData = await getUserByTokenFromSipd({
@@ -177,7 +178,10 @@ const signInUserToSipdRi = async (params: SingInToSipdParams): Promise<Session['
       }
       return null
    } catch (error: any) {
-      console.log(error?.message)
+      console.error('signInUserToSipdRi', error?.message)
+      if (error?.cause === 'fetcher') {
+         throw new Error(error?.message)
+      }
       throw new Error('Gagal Login ke sipd')
    }
 }

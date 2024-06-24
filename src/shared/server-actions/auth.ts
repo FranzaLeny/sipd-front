@@ -4,6 +4,7 @@ import { z } from '@zod'
 import { unionBy } from 'lodash-es'
 import { getServerSession as _getServerSession, AuthOptions, User } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { fromZodError } from 'zod-validation-error'
 
 import { signInUserToApi } from './auth-api'
 
@@ -70,14 +71,20 @@ export const authOptions: AuthOptions = {
                      : await signInUserToApi(validCredentials)
 
                if (!user) {
-                  throw new Error('User not found')
+                  throw new Error('User not tidak ditemukan')
                }
 
                return user
-            } catch (error) {
-               console.error({ loginerror: error })
-               const errorMessage = 'Periksa kembali data anda.'
-               throw new Error(errorMessage)
+            } catch (error: any) {
+               let message = error?.message
+               if (error instanceof z.ZodError) {
+                  message = fromZodError(error, {
+                     prefix: null,
+                     maxIssuesInMessage: 10,
+                  })?.message?.replace(/\bat\b/g, 'pada')
+               }
+               console.error('loginerror', error?.message)
+               throw new Error(message)
             }
          },
       }),

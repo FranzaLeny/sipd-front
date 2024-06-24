@@ -25,10 +25,9 @@ export const getListNewSkpdSipd = async (payload: SkpdListSipdPayload) => {
 }
 
 export const viewSkdSipd = async (params: SkpdViewSipdPayload) => {
-   const data = await getFromSipd('viewSkpd', {
+   return await getFromSipd('viewSkpd', {
       params: params,
-   }).then((res) => res)
-   return data
+   })
 }
 export const getSkpd = async (id: string) => {
    return await axios

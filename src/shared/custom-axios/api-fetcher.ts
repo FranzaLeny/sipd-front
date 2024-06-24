@@ -14,7 +14,7 @@ axios.interceptors.response.use(
    (response) => response.data,
    (error: AxiosError<any>) => {
       error?.response?.data?.message &&
-         (error.message = error?.response?.data?.message ?? `Gagal: ${error.message}`)
+         (error.message = error?.response?.data?.message ?? `Gagal: ${error?.message}`)
       return Promise.reject(error)
    }
 )

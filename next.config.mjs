@@ -3,6 +3,7 @@ import optimizeLocales from '@react-aria/optimize-locales-plugin'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
    reactStrictMode: true,
+   // output: 'standalone',
    compiler: {
       styledComponents: true,
       // removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,
@@ -31,6 +32,7 @@ const nextConfig = {
             locales: ['id-ID', 'en-US'],
          })
       )
+      // config.resolve.symlinks = false
       return config
    },
 }

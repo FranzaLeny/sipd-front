@@ -1,7 +1,7 @@
 # NODE_OPTIONS=--max_old_space_size=8096 pnpm build
 # NODE_OPTIONS=--max_old_space_size=3000 pnpm dev --turbo
 # pnpm prettier --write src/* 
-pnpm dev -H 192.168.144.16 -p 3000
+pnpm dev -H 192.168.144.16 -p 3000 --experimental-https
 New-Item -ItemType SymbolicLink -Path "F:\sipd-lokal\sipd-ri-frontend\node_modules" -Target "F:\_node_\sipd-ri-frontend\node_modules"
 Remove-Item "F:\sipd-lokal\sipd-ri-frontend\node_modules"
 

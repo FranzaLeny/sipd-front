@@ -49,20 +49,17 @@ async function signInToApi(data: ApiSignIn) {
 const signInUserToApi = async (
    params: ApiSignIn & { tahun: number }
 ): Promise<Session['user'] | null> => {
-   const { tahun, ...signInParams } = params
    try {
+      const { tahun, ...signInParams } = params
       const response = await signInToApi(signInParams)
       const userData = response.data
-
-      // Add 'sipd_ri' role if user has a token with the name 'sipd_ri'
       if (userData?.tokens?.some((token) => token.name === 'sipd_ri')) {
          userData.roles = Array.from(new Set([...userData.roles, 'sipd_ri']))
       }
-
       return { ...userData, tahun: tahun ?? 0 }
-   } catch {
-      // It's best practice to handle errors in a higher-level function
-      return null
+   } catch (error: any) {
+      console.error('signInUserToApi', error?.message)
+      throw new Error('Gagal sigin user ke api', { cause: 'fetcher' })
    }
 }
 
@@ -105,8 +102,8 @@ async function signInToUserApiBySipdRi(data: {
          baseURL,
       })
       .catch((error) => {
-         console.error(error)
-         throw new Error('Gagal sigin user ke api menggunakan akun-sipd ri  ' + error?.message)
+         console.error('signInToUserApiBySipdRi', error?.message)
+         throw new Error('Gagal sigin user ke api menggunakan akun-sipd ri', { cause: 'fetcher' })
       })
 }
 

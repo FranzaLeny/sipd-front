@@ -16,6 +16,7 @@ import {
    DropdownTrigger,
 } from '@nextui-org/react'
 import { sumBy } from 'lodash-es'
+import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
 import { useSipdPetaFetcher } from '@shared/hooks/use-sipd-peta-fetcher'
@@ -655,8 +656,12 @@ export default function DpaSkpd({
                         <Button
                            variant='bordered'
                            color='secondary'
+                           startContent={<Settings className='size-5' />}
+                           className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
                            isDisabled={!!!dpaSkpd || isFetching}>
-                           {dokumen?.name ? 'Nama Dokumen : ' + dokumen?.name : 'Nama Dokumen'}
+                           <span className='hidden sm:inline-flex'>
+                              {dokumen?.name ? 'Nama Dokumen : ' + dokumen?.name : 'Nama Dokumen'}
+                           </span>
                         </Button>
                      </DropdownTrigger>
                      <DropdownMenu
@@ -676,16 +681,20 @@ export default function DpaSkpd({
                      </DropdownMenu>
                   </Dropdown>
                   <Button
+                     endContent={<Printer className='size-5' />}
+                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
                      color='primary'
                      onPress={handlePrint}
                      isDisabled={isFetching}>
-                     Cetak
+                     <span className='hidden sm:inline-flex'>Cetak</span>
                   </Button>
                   <Button
-                     color='secondary'
+                     endContent={<Download className='size-5' />}
+                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                     color='primary'
                      onPress={handleExport}
                      isDisabled={isFetching}>
-                     Export Excel
+                     <span className='hidden sm:inline-flex'>Export Excel</span>
                   </Button>
                </div>
                <div className='content pb-10'>

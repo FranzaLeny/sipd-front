@@ -1,3 +1,5 @@
+// 'use server'
+
 import {
    GetUrlKey,
    listSipdGet,
@@ -107,27 +109,38 @@ function setHeaders(config: any, apiDetails: { token: string; apikey: string }) 
    config.headers['X-Api-Key'] = apiDetails.apikey
    config.headers['Content-Type'] = 'multipart/form-data'
 }
+
 async function getFromSipd<T extends GetUrlKey>(
    route: T,
    {
       params,
    }: {
       params: PayloadGet<T>
-   }
+   },
+   maxRetry = 5,
+   retry = 1
 ): Promise<PayloadResponseGetSipd[T]['response']> {
    try {
       const routeConfig = listSipdGet[route]
       const defaultPayload = routeConfig.defaultPayload
       const parameterKeys = routeConfig.key_for_params || []
       let routeUrl = routeConfig.url
-
       for (const key of parameterKeys) {
          const value = params[key] !== undefined ? params[key] : defaultPayload[key]
          routeUrl += `/${value}`
       }
-
-      return await axios.get<PayloadResponseGetSipd[T]['response']>(routeUrl)
+      if (retry === 1) {
+         console.time('Get SIPD ' + routeUrl)
+      }
+      const res = await axios.get<PayloadResponseGetSipd[T]['response']>(routeUrl)
+      console.timeEnd('Get SIPD ' + routeUrl)
+      return res
    } catch (error: any) {
+      if (maxRetry && retry < maxRetry) {
+         await delay(retry * 100)
+         console.error('Percobaan Get ke...' + (retry + 1) + '/' + maxRetry)
+         return await getFromSipd(route, { params }, maxRetry, ++retry)
+      }
       throw new Error(error.response?.data?.message || 'Error fetching data from SIPD')
    }
 }
@@ -176,7 +189,7 @@ async function postToSipd<T extends PostUrlKey>(
    } catch (error: any) {
       if (maxRetry && retry < maxRetry) {
          await delay(retry * 100)
-         console.error('Percobaan ke...' + (retry + 1) + '/' + maxRetry)
+         console.error('Percobaan Post ke...' + (retry + 1) + '/' + maxRetry)
          return await postToSipd(route, { params, keys: uniqueKeys }, maxRetry, ++retry)
       }
       throw new Error(error?.message ?? 'Error')
