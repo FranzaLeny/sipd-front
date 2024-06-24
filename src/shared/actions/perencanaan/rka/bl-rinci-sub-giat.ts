@@ -263,3 +263,29 @@ export const getRinciSubGiatByBlSubgiatId = async (bl_sub_giat_id: string) =>
    await axios
       .get<ResponseApi<RinciBlSubGiat[]>>(`api/perencanaan/rka/sub-giat/${bl_sub_giat_id}/rinci`)
       .then((res) => res.data)
+
+export interface SumberDanaAkunRinciSubGiat {
+   kode_sub_skpd: string
+   kode_sub_giat: string
+   nama_dana: string
+   kode_akun: string
+   id_dana: number
+   total_harga: number
+   total_harga_murni: number
+}
+export const getSumberDanaAkunRinciSubGiat = async (params: {
+   jadwal_anggaran_id: string
+   id_giat?: number
+   id_program?: number
+   id_skpd?: number
+   id_sub_giat?: number
+   id_sub_skpd?: number
+   id_unit?: number
+   id_bidang_urusan?: number
+   id_urusan?: number
+}) =>
+   await axios
+      .get<
+         ResponseApi<SumberDanaAkunRinciSubGiat[]>
+      >(`api/perencanaan/rka/sub-giat/rinci/sumber-dana-akun`, { params })
+      .then((res) => res.data)

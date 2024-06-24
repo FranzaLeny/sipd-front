@@ -1,12 +1,16 @@
 import { SpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
+import { SumberDanaAkunRinciSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { borderAll, createExcelData } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 import { sortBy } from 'lodash-es'
 
 type Params = SpjFungsional & {
+   dana: SumberDanaAkunRinciSubGiat[]
    bulan: string
    pembukuan2: (SpjFungsional['pembukuan2'][number] & {
+      nama_dana?: string
+      id_dana?: string
       rak?: {
          bulan_sd_sekarang: number
          bulan_ini: number
@@ -27,7 +31,7 @@ function numberToColumn(number: number) {
 }
 
 const dowloadExcelSpjFungsional = async (dpaRician: Params) => {
-   const { pembukuan2, tahun, bulan = 'Bulan Ini', kode_skpd, nama_skpd } = dpaRician
+   const { pembukuan2, tahun, dana, bulan = 'Bulan Ini', kode_skpd, nama_skpd } = dpaRician
    const date = new Intl.DateTimeFormat('id-ID', {
       dateStyle: 'short',
       timeStyle: 'short',
@@ -45,6 +49,23 @@ const dowloadExcelSpjFungsional = async (dpaRician: Params) => {
    formatDefaultRka(ws)
    let currRow = fillTableHead({ ws, bulan })
    currRow = fillPembukuan2({ startRow: currRow, items: pembukuan2, ws })
+   const rowDana = dana.map((d) => {
+      const data = new Array(30).fill(null).map((_, i) => {
+         if (i == 0) {
+            return d.nama_dana
+         } else if (i >= 7 && i !== 19 && i !== 28) {
+            return {
+               formula: `=SUMIF(${numberToColumn(20)}${currRow - pembukuan2.length}:${numberToColumn(20)}${currRow - 2},${d.id_dana},${numberToColumn(i + 1)}${currRow - pembukuan2.length}:${numberToColumn(i + 1)}${currRow - 2})`,
+            }
+         }
+      })
+
+      const row = ws.addRow(data)
+      ws.mergeCellsWithoutStyle(row.number, 1, row.number, 7)
+      borderAll({ row, ws, bold: true, excludeColumns: [20] })
+      return row.number
+   })
+   currRow = Math.max(...rowDana)
    ws.headerFooter.oddFooter = `&L&\"Arial\"&9&I${footer}&R&\"Arial\"&9SPJ Fungsional ${bulan} ${tahun}| &B&P`
    ws.pageSetup.printArea = `A1:S${currRow + 2}`
    // const password = kode_skpd.slice(-4)
@@ -202,6 +223,11 @@ function formatDefaultRka(ws: Excel.Worksheet) {
          style,
       },
       {
+         key: 'dana',
+         width: 11.71,
+         style,
+      },
+      {
          key: 'rak_bulan',
          width: 11.71,
          style,
@@ -246,6 +272,11 @@ function formatDefaultRka(ws: Excel.Worksheet) {
          width: 11.71,
          style,
       },
+      {
+         key: 'total',
+         width: 11.71,
+         style,
+      },
    ]
    ws.views = [
       {
@@ -253,7 +284,7 @@ function formatDefaultRka(ws: Excel.Worksheet) {
          style: 'pageBreakPreview',
          state: 'frozen',
          xSplit: 7,
-         ySplit: 2,
+         ySplit: 3,
          topLeftCell: 'H10',
          activeCell: 'H10',
       },
@@ -284,6 +315,7 @@ function fillTableHead({ ws, bulan }: { ws: Excel.Worksheet; bulan: string }) {
                26: `Sisa Bulan ${bulan}`,
                27: 'RAK Total',
                28: 'Sisa Total',
+               29: 'DANA',
                30: 'Rak Semester 2',
             },
          }),
@@ -438,32 +470,28 @@ function fillPembukuan2(params: {
          isSubTotal
             ? generateSubTotal(19, lengthKode, index, currRow)
             : { formula: `=${numberToColumn(8)}${currRow}-${numberToColumn(18)}${currRow}` },
-         null,
-
+         isSubTotal ? undefined : rinci?.id_dana,
          isSubTotal ? generateSubTotal(21, lengthKode, index, currRow) : rinci?.rak?.semester_1,
          isSubTotal
             ? generateSubTotal(22, lengthKode, index, currRow)
             : { formula: `=${numberToColumn(21)}${currRow}-${numberToColumn(18)}${currRow}` },
-
          isSubTotal
             ? generateSubTotal(23, lengthKode, index, currRow)
             : rinci?.rak?.bulan_sd_sekarang,
          isSubTotal
             ? generateSubTotal(24, lengthKode, index, currRow)
             : { formula: `=${numberToColumn(23)}${currRow}-${numberToColumn(18)}${currRow}` },
-
          isSubTotal ? generateSubTotal(25, lengthKode, index, currRow) : rinci?.rak?.bulan_ini,
          isSubTotal
             ? generateSubTotal(26, lengthKode, index, currRow)
             : {
                  formula: `=${numberToColumn(25)}${currRow}-(${numberToColumn(10)}${currRow}+${numberToColumn(13)}${currRow}+${numberToColumn(16)}${currRow})`,
               },
-
          isSubTotal ? generateSubTotal(27, lengthKode, index, currRow) : rinci?.rak?.total,
          isSubTotal
             ? generateSubTotal(28, lengthKode, index, currRow)
             : { formula: `=${numberToColumn(27)}${currRow}-${numberToColumn(18)}${currRow}` },
-         null,
+         isSubTotal ? undefined : rinci?.nama_dana,
          isSubTotal ? generateSubTotal(29, lengthKode, index, currRow) : rinci?.rak?.semester_2,
       ]
 
@@ -502,7 +530,7 @@ function fillPembukuan2(params: {
    })
 
    const rowTotal = ws.addRow(total)
-   borderAll({ row: rowTotal, ws, bold: true })
+   borderAll({ row: rowTotal, ws, bold: true, excludeColumns: [20] })
    ws.mergeCellsWithoutStyle(rowTotal.number, 1, rowTotal.number, 7)
    const rowDivider = ws.addRow(undefined)
 

@@ -5,9 +5,11 @@ import dynamic from 'next/dynamic'
 import { getRakBlByJadwal } from '@actions/penatausahaan/pengeluaran/rak'
 import { getSpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
 import { getStatistikBlSkpdSipd } from '@actions/penatausahaan/pengeluaran/statistik'
+import { getSumberDanaAkunRinciSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Autocomplete, AutocompleteItem, Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import { uniqBy } from 'lodash-es'
 import { toast } from 'react-toastify'
 
 import dowloadExcelSpjFungsional from './export-excel'
@@ -68,6 +70,27 @@ export default function Component({
       enabled: !!jadwal,
    })
 
+   const { data: sumberDana } = useQuery({
+      queryKey: [{ jadwal_anggaran_id: jadwal, id_skpd, id_daerah, tahun }, 'dana_akun_rinci'] as [
+         {
+            jadwal_anggaran_id: string
+            id_giat?: number
+            id_program?: number
+            id_skpd?: number
+            id_sub_giat?: number
+            id_sub_skpd?: number
+            id_unit?: number
+            id_bidang_urusan?: number
+            tahun?: number
+            id_daerah?: number
+            id_urusan?: number
+         },
+         ...any,
+      ],
+      queryFn: ({ queryKey: [q] }) => getSumberDanaAkunRinciSubGiat(q),
+      enabled: !!jadwal && !!id_skpd && !!id_daerah && !!tahun,
+   })
+
    const namaBulan = useMemo(() => {
       return months?.find((item) => item.key == month)?.name || 'Bulan'
    }, [month])
@@ -75,6 +98,7 @@ export default function Component({
    const handle = useCallback(() => {
       try {
          if (!!dataSpj && !!namaBulan) {
+            const dana = uniqBy(sumberDana, 'id_dana')
             const pembukuan2 = dataSpj?.pembukuan2?.map((d) => {
                const kode = d?.kode_unik?.split('-')
                if (kode?.length === 5) {
@@ -88,6 +112,17 @@ export default function Component({
                         item?.kode_sub_skpd === kode_sub_skpd &&
                         item?.kode_akun === kode_akun
                   )
+                  const dana = sumberDana?.filter(
+                     (item) =>
+                        d.kode_akun === item?.kode_akun &&
+                        item?.kode_sub_giat === kode_sub_giat &&
+                        item?.kode_sub_skpd === kode_sub_skpd &&
+                        item?.kode_akun === kode_akun
+                  )
+                  const namaDana = dana?.map(
+                     (dn) => dn.nama_dana + ': ' + (dn?.total_harga || 0).toLocaleString('id-ID')
+                  )
+                  const idDana = dana?.map((dn) => dn.id_dana)
                   if (!!itemRak) {
                      const dataRak = Object.entries(itemRak).reduce(
                         (acc, [key, value]) => {
@@ -112,20 +147,25 @@ export default function Component({
                            total: 0,
                         }
                      )
-                     return { ...d, rak: dataRak }
+                     return {
+                        ...d,
+                        rak: dataRak,
+                        nama_dana: namaDana?.join(', '),
+                        id_dana: idDana?.join(';'),
+                     }
                   }
+                  return { ...d, nama_dana: namaDana?.join(', '), id_dana: idDana?.join(';') }
                }
                return d
             })
-
-            dowloadExcelSpjFungsional({ ...dataSpj, pembukuan2, bulan: namaBulan })
+            dowloadExcelSpjFungsional({ ...dataSpj, dana, pembukuan2, bulan: namaBulan })
          } else {
             throw new Error('Data SPJ Fungsional tidak ditemukan')
          }
       } catch (error: any) {
          toast.error(error?.message ?? 'Gagal download excel SPJ fungsional', { autoClose: 5000 })
       }
-   }, [dataSpj, namaBulan, rak, month])
+   }, [dataSpj, namaBulan, rak, month, sumberDana])
 
    return (
       <div className='content relative z-0 space-y-3'>

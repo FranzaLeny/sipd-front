@@ -59,11 +59,6 @@ export default function Page() {
          ),
       enabled: !!skpd,
    })
-   // const { data: listJadwal, isFetching: loadingJadwal } = useQuery({
-   //    queryKey: ['jadwal_penatausahaan', jadwal],
-   //    queryFn: () => getJadwaPergeseranDpaFromSipd(),
-   //    enabled: !!session,
-   // })
 
    const { data: rak, isFetching: loadingRak } = useQuery({
       queryKey: [subGiat, 'rak_penatausahaan'] as [
