@@ -142,7 +142,7 @@ const dowloadRkaRinciBl = async (data: Data) => {
             8: isRinci ? { formula: `=${volume?.join('*')}` } : undefined,
             9: harga_satuan,
             10: isRinci ? satuan?.join(' ') : undefined,
-            11: isRinci ? pajak : undefined,
+            11: isRinci ? { formula: `${pajak || 0}/100` } : undefined,
             12: { formula: total },
          },
       })
