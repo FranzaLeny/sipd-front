@@ -93,7 +93,14 @@ const dowloadRkaRinciBl = async (data: Data) => {
    let namaFile =
       dokumen?.kode + '_' + subGiat?.kode_sub_giat + subGiat?.nama_sub_giat.substring(0, 100)
    namaFile = namaFile?.replace(/[^\w.-]/g, ' ')?.replaceAll('.', '_')
-   const sheet_name = subGiat?.kode_sub_giat + ' ' + subGiat?.nama_sub_giat.substring(0, 12)
+   const singkatan = subGiat?.nama_sub_giat
+      ?.replace(/[^a-zA-Z]/g, ' ')
+      ?.replaceAll('dan', '')
+      ?.replaceAll('pada', '')
+      .split(' ')
+      ?.map((x) => x?.substring(0, 4))
+      ?.join('')
+   const sheet_name = subGiat?.kode_sub_giat?.substring(5) + singkatan
    let footer = subGiat?.kode_sub_giat + '-' + subGiat?.nama_sub_giat
    if (footer.length > 100) {
       footer = footer.substring(0, 97) + '...'
@@ -105,7 +112,7 @@ const dowloadRkaRinciBl = async (data: Data) => {
    }
 
    const wb = new Excel.Workbook()
-   const ws = wb.addWorksheet(sheet_name)
+   const ws = wb.addWorksheet(sheet_name?.substring(0, 30))
    formatDefaultRka(ws)
    fillDokJudul({ ws, dokumen, tahun: subGiat?.tahun })
    fillDataKegiatan({ ws, subGiat })

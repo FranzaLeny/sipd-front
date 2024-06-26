@@ -89,6 +89,7 @@ export const KetRinciSelector = forwardRef(
       }
       return (
          <Autocomplete
+            listboxProps={{ emptyContent: 'Tidak ada data keteragan' }}
             onKeyDown={(e: any) => e.continuePropagation()}
             popoverProps={{ isOpen: true, defaultOpen: true }}
             aria-labelledby='Keterangan'

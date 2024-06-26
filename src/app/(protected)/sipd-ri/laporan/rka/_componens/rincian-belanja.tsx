@@ -127,11 +127,12 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
             <div className='flex items-center gap-2'>
                <div className='bg-primary/20 rounded-medium flex-1 p-2'>
                   <Autocomplete
+                     listboxProps={{ emptyContent: 'Tidak ada data Sub Kegiatan' }}
                      variant='faded'
                      color='secondary'
                      isLoading={isFetching}
                      fullWidth
-                     placeholder='Cari Sub Giat...'
+                     placeholder='Cari Sub Kegiatan...'
                      onSelectionChange={handleSelected}
                      aria-labelledby='cari Sub Kegiatan'
                      defaultItems={slbAktif ?? []}>

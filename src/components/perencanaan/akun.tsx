@@ -304,6 +304,7 @@ export const ObjekBlSelector: React.FC<ObjekBlProps> = ({
 
    return (
       <Autocomplete
+         listboxProps={{ emptyContent: 'Tidak ada data' }}
          variant='bordered'
          aria-labelledby='Object Belanja'
          placeholder='Pilih Jenis Belanja...'

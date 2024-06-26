@@ -98,6 +98,7 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
       <Autocomplete
          label='Jadwal Anggaran'
          fullWidth
+         listboxProps={{ emptyContent: 'Tidak ada data jadwal' }}
          variant='bordered'
          placeholder='Pilih Jadwal...'
          {...props}

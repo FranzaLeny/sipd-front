@@ -616,6 +616,7 @@ export default function DpaSkpd({
          )}
          <div className='content sticky left-0 space-y-3 pt-4'>
             <Autocomplete
+               listboxProps={{ emptyContent: 'Tidak ada data SKPD' }}
                isInvalid={!skpd}
                variant='bordered'
                isLoading={loadingSkpd}
@@ -632,6 +633,7 @@ export default function DpaSkpd({
                )}
             </Autocomplete>
             <Autocomplete
+               listboxProps={{ emptyContent: 'Tidak ada data Jadwal' }}
                isInvalid={!jadwal}
                variant='bordered'
                isLoading={loadingJadwal}

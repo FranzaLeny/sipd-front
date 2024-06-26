@@ -785,6 +785,7 @@ export default function DpaRkaBelanja({
          )}
          <div className='content sticky left-0 flex flex-col gap-4 pt-4'>
             <Autocomplete
+               listboxProps={{ emptyContent: 'Tidak ada data skpd' }}
                isInvalid={!skpd}
                variant='bordered'
                isLoading={loadingSkpd}
@@ -801,6 +802,7 @@ export default function DpaRkaBelanja({
                )}
             </Autocomplete>
             <Autocomplete
+               listboxProps={{ emptyContent: 'Tidak ada data jadwal' }}
                isInvalid={!jadwal}
                variant='bordered'
                isLoading={loadingJadwal}

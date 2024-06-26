@@ -68,6 +68,7 @@ export const SubsRinciSelector = forwardRef(
       }
       return (
          <Autocomplete
+            listboxProps={{ emptyContent: 'Tidak ada data kelompok rincian' }}
             onKeyDown={(e: any) => e.continuePropagation()}
             popoverProps={{ isOpen: true, defaultOpen: true }}
             aria-labelledby='Kelompok rincian'

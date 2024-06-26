@@ -216,6 +216,7 @@ export const SkpdSelect = forwardRef(
 
       return (
          <Autocomplete
+            listboxProps={{ emptyContent: 'Tidak ada data SKPD' }}
             aria-labelledby='SKPD'
             placeholder='Pilih SKPD...'
             variant='bordered'

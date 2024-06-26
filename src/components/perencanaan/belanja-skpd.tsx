@@ -72,6 +72,7 @@ export const BlSkpdSelector = forwardRef(
       }
       return (
          <Autocomplete
+            listboxProps={{ emptyContent: 'Tidak ada data SKPD' }}
             onKeyDown={(e: any) => e.continuePropagation()}
             popoverProps={{ isOpen: true, defaultOpen: true }}
             aria-labelledby='SKPD'

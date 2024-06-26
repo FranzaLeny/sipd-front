@@ -603,6 +603,7 @@ export const TapdAnggaranSelector = forwardRef(
          <Autocomplete
             onKeyDown={(e: any) => e.continuePropagation()}
             popoverProps={{ isOpen: true, defaultOpen: true }}
+            listboxProps={{ emptyContent: 'Tidak ada data TAPD anggaran' }}
             aria-labelledby='Tapd Anggaran'
             placeholder='Pilih Tapd Anggaran...'
             variant='bordered'

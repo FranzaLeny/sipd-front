@@ -767,6 +767,7 @@ export default function DpaRincianBelanja({
          )}
          <div className='content sticky left-0 space-y-3 pt-4'>
             <Autocomplete
+               listboxProps={{ emptyContent: 'Tidak ada data SKPD' }}
                isInvalid={!skpd}
                variant='bordered'
                isLoading={loadingSkpd}
@@ -783,6 +784,7 @@ export default function DpaRincianBelanja({
                )}
             </Autocomplete>
             <Autocomplete
+               listboxProps={{ emptyContent: 'Tidak ada data jadwal' }}
                isLoading={loadingJadwal}
                label='Pilih Jadwal'
                isInvalid={!jadwal}
@@ -799,6 +801,7 @@ export default function DpaRincianBelanja({
                )}
             </Autocomplete>
             <Autocomplete
+               listboxProps={{ emptyContent: 'Tidak ada data sub kegiatan' }}
                isInvalid={!selectedSubGiat}
                isLoading={loadingSubGiat}
                label='Pilih Sub Kegiatan'

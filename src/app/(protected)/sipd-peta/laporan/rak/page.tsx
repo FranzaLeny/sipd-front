@@ -95,6 +95,7 @@ export default function Page() {
       <div>
          <div className='w-fit border-collapse space-y-6'>
             <Autocomplete
+               listboxProps={{ emptyContent: 'Tidak ada data SKPD' }}
                isInvalid={!skpd}
                isLoading={loadingSkpd}
                label='Pilih SKPD'
@@ -111,6 +112,7 @@ export default function Page() {
                )}
             </Autocomplete>
             <Autocomplete
+               listboxProps={{ emptyContent: 'Tidak ada data Sub Kegiatan' }}
                isInvalid={!subGiat}
                isLoading={loadingSbl}
                label='Pilih Sub Kegiatan'

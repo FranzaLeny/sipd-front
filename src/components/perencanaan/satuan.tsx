@@ -111,6 +111,7 @@ export const SatuanSelector = forwardRef(
 
       return (
          <Autocomplete
+            listboxProps={{ emptyContent: 'Tidak ada data satuan' }}
             onKeyDown={(e: any) => e.continuePropagation()}
             variant='bordered'
             aria-labelledby='Satuan'

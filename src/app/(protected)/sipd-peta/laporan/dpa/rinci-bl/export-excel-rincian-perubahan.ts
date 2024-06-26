@@ -37,7 +37,15 @@ const dowloadExcelRincianBelanja = async (dpaRician: Params) => {
       data?.nama_sub_giat.substring(0, 100) +
       '_05_BELANJA'
    namaFile = namaFile?.replace(/[^\w.-]/g, ' ')?.replaceAll('.', '_')
-   const sheet_name = 'BELANJA'
+
+   const singkatan = data?.nama_sub_giat
+      ?.replace(/[^a-zA-Z]/g, ' ')
+      ?.replaceAll('dan', '')
+      ?.replaceAll('pada', '')
+      .split(' ')
+      ?.map((x) => x?.substring(0, 4))
+      ?.join('')
+   const sheet_name = data?.kode_sub_giat?.substring(5) + singkatan
    let footer = data.nama_sub_giat
    if (footer.length > 100) {
       footer = footer.substring(0, 100) + '...'
@@ -45,7 +53,7 @@ const dowloadExcelRincianBelanja = async (dpaRician: Params) => {
    const { item: items, rak, ...subGiat } = data
 
    const wb = new Excel.Workbook()
-   const ws = wb.addWorksheet(sheet_name)
+   const ws = wb.addWorksheet(sheet_name?.substring(0, 30))
    formatDefaultRka(ws)
    let currRow = fillDokJudul({ ws, dokumen, subGiat })
    currRow = fillTableHead({ ws })

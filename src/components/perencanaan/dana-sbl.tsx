@@ -63,6 +63,7 @@ export const DanaSelector = forwardRef(
       }
       return (
          <Autocomplete
+            listboxProps={{ emptyContent: 'Tidak ada data sumber dana' }}
             onKeyDown={(e: any) => e.continuePropagation()}
             popoverProps={{ isOpen: true, defaultOpen: true }}
             aria-labelledby='Sumber dana'

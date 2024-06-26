@@ -172,6 +172,7 @@ export default function Component({
          <div className='bg-content1 flex items-center gap-4 rounded p-4'>
             <div className='flex w-full flex-1 flex-col gap-2 sm:flex-row'>
                <Autocomplete
+                  listboxProps={{ emptyContent: 'Tidak ada data bulan' }}
                   selectedKey={month?.toString() ?? ''}
                   onSelectionChange={setMonth}
                   fullWidth
