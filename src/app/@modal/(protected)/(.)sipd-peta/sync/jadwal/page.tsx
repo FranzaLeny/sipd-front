@@ -13,7 +13,7 @@ const ModalSingkronJadwal = () => {
       toast(
          <div>
             <p className='text-sm font-bold'>Mohon tunggu...</p>
-            <p className='text-xs font-bold'>Sedang singkron data Anggaran Penatausahaan</p>
+            <p className='text-xs'>Sedang singkron data Anggaran Penatausahaan</p>
          </div>,
          { toastId: 'singkron_data', isLoading: true }
       )
@@ -24,7 +24,7 @@ const ModalSingkronJadwal = () => {
             render: (
                <div>
                   <p className='text-sm font-bold'>Berhasil...</p>
-                  <p className='text-xs font-bold'>Selesai Singkron Data Anggaran Penatausahaan</p>
+                  <p className='text-xs'>Selesai Singkron Data Anggaran Penatausahaan</p>
                </div>
             ),
             isLoading: false,
@@ -37,7 +37,7 @@ const ModalSingkronJadwal = () => {
             render: (
                <div>
                   <p className='text-sm font-bold'>Gagal...</p>
-                  <p className='text-xs font-bold'>{error?.message}</p>
+                  <p className='text-xs'>{error?.message}</p>
                </div>
             ),
             isLoading: false,

@@ -9,22 +9,26 @@ import { NumberInput, TextInput } from '@components/form/text-input'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
 import { useQueryClient } from '@tanstack/react-query'
-import { createTsForm } from '@ts-react/form'
+import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
 import { z } from '@zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
+const booleanSchema = createUniqueFieldSchema(z.number().int().max(1), 'boolean')
 export const JadwalAnggaranEditInputSchema = z
    .object({
       id_jadwal_murni: z.coerce.number().int(),
       id_unik_murni: z.string().optional().nullable(),
-      nama_jadwal_murni: z.string().optional().nullable(),
-      is_locked: z.boolean({ description: 'Kunci' }),
       is_perubahan: z.boolean({ description: 'Perubahan' }),
       nama_sub_tahap: z.string({ description: 'Nama Sub Tahap' }),
       waktu_selesai: z.date({ description: 'Waktu Selesai // Pilih Tanggal' }),
       waktu_mulai: z.date({ description: 'Waktu Mulai // Pilih Tanggal' }),
-      is_active: z.boolean({ description: 'Aktif' }).default(false),
+      nama_jadwal_murni: z.string({ description: 'Nama Jadwal Murni' }).nullable(),
+   })
+   .extend({
+      is_locked: booleanSchema,
+      is_active: booleanSchema,
+      is_perubahan: booleanSchema,
    })
    .strip()
    .superRefine((data, ctx) => {
@@ -55,7 +59,7 @@ const mapping = [
    [z.string(), TextInput] as const,
    [z.date(), DateInput] as const,
    [z.number(), NumberInput] as const,
-   [z.boolean(), BooleanInput] as const,
+   [booleanSchema, BooleanInput] as const,
 ] as const
 
 export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
@@ -78,12 +82,13 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
    const defaultValues = {
       id_jadwal_murni: data?.id_jadwal_murni,
       id_unik_murni: data?.id_unik_murni,
-      is_active: !!data.is_active,
-      is_locked: !!data.is_locked,
-      is_perubahan: !!data.is_perubahan,
+      is_active: data.is_active,
+      is_locked: data.is_locked,
+      is_perubahan: data.is_perubahan,
       nama_sub_tahap: data?.nama_sub_tahap,
       waktu_mulai: new Date(data?.waktu_mulai),
       waktu_selesai: new Date(data?.waktu_selesai),
+      nama_jadwal_murni: data?.nama_jadwal_murni,
    }
    const form = useForm<Schema>({
       defaultValues,
@@ -121,9 +126,9 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
       try {
          const valida_data = {
             ...value,
-            is_lokal: true,
-            is_locked: +value.is_locked,
-            is_perubahan: +value.is_perubahan,
+            is_lokal: 1,
+            is_locked: value.is_locked,
+            is_perubahan: value.is_perubahan,
          }
          await updateJadwalAnggaran(data.id, valida_data).then((res) => {
             if (res?.success) {
@@ -158,10 +163,10 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
          if (data) {
             handleValueChange('id_jadwal_murni', data.id_jadwal)
             handleValueChange('id_unik_murni', data.id_unik)
-            handleValueChange('nama_jadwal_murni', data.nama_sub_tahap)
-            handleValueChange('is_perubahan', true)
+            handleValueChange('nama_jadwal_murni', data.nama_jadwal_murni)
+            handleValueChange('is_perubahan', 1)
          } else {
-            handleValueChange('is_perubahan', false)
+            handleValueChange('is_perubahan', 0)
             handleValueChange('id_jadwal_murni', 0)
             handleValueChange('id_unik_murni', null)
             handleValueChange('nama_jadwal_murni', null)
@@ -171,7 +176,7 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
       [handleValueChange]
    )
    useEffect(() => {
-      if (!isPerubahan) {
+      if (!!!isPerubahan) {
          handleValueChange('id_jadwal_murni', 0)
          handleValueChange('id_unik_murni', null)
          handleValueChange('nama_jadwal_murni', null)
@@ -191,6 +196,9 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
                   props={{
                      waktu_mulai: { labelPlacement: 'outside' },
                      waktu_selesai: { labelPlacement: 'outside' },
+                     is_active: { label: 'Aktif', typeValue: 'number' },
+                     is_perubahan: { label: 'Perubahan', typeValue: 'number' },
+                     is_locked: { label: 'Kunci', typeValue: 'number' },
                   }}
                   onSubmit={onSubmit}>
                   {({
@@ -214,7 +222,7 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
                               keyByIdUnik
                               defaultSelectedKey={data?.id_unik_murni ?? undefined}
                               disabledKeys={[data?.id_unik]}
-                              isRequired={isPerubahan}
+                              isRequired={!!isPerubahan}
                               selectedKey={idUnikMurni}
                               isInvalid={!!errors?.id_jadwal_murni?.message}
                               errorMessage={!!errors?.id_jadwal_murni?.message}

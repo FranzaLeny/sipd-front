@@ -10,7 +10,7 @@
 interface JadwalAnggranCekAktifSipdPayload {
    id_daerah: number
    tahun: number
-   is_anggaran: number
+   is_anggaran?: number
 }
 
 interface JadwalAnggranCekAktifSipdResponse {

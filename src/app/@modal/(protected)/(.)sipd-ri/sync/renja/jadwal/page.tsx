@@ -97,7 +97,6 @@ async function processSync(isValid: boolean, session: Session | null, lengthData
    const { id_daerah, tahun } = validateSipdSession(session)
    const jadwalActive = await getJadwalAnggaranAktifFromSipd({
       id_daerah,
-      is_anggaran: 1,
       tahun,
    })
 

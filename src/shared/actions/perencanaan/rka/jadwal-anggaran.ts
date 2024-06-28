@@ -162,8 +162,8 @@ export async function getTotalJadwalAnggaran<T extends GetJadwalAnggaranParams>(
 type GetJadwalAnggaranAktifParams = {
    id_daerah: number
    tahun: number
-   id_jadwal?: number | undefined
-   is_lokal?: boolean | undefined
+   id_jadwal?: number
+   is_lokal?: number
 }
 
 export const getJadwalAnggaranAktif = async (params: GetJadwalAnggaranAktifParams) => {
@@ -173,7 +173,7 @@ export const getJadwalAnggaranAktif = async (params: GetJadwalAnggaranAktifParam
 }
 
 export const checkJadwalAnggaranAktif = async (
-   params: JadwalAnggranCekAktifSipdPayload & { is_lokal?: boolean }
+   params: JadwalAnggranCekAktifSipdPayload & { is_lokal?: number }
 ) => {
    if (!!params.is_lokal) {
       return await getJadwalAnggaranAktif(params).then((res) => res.data)
@@ -187,7 +187,7 @@ export const checkJadwalAnggaranAktif = async (
       id_daerah: params.id_daerah,
    })
 
-   if (jadwal_lokal?.data?.is_active) {
+   if (!!jadwal_lokal?.data?.is_active) {
       return jadwal_lokal?.data
    }
    return null

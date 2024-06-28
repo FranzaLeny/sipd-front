@@ -76,9 +76,9 @@ export default function DetailGiat({
             {numberToMonth(waktu_awal)} s.d {numberToMonth(waktu_akhir)}
          </TrGiat>
          <TrGiat label='Kelompok Sasaran'>{sasaran}</TrGiat>
-         <TrGiat label={`Alokasi ${tahun - 1}`}>Rp. {numberToText(pagu_n_lalu)}</TrGiat>
-         <TrGiat label={`Alokasi ${tahun}`}>Rp. {numberToText(pagu)}</TrGiat>
-         <TrGiat label={`Alokasi ${tahun + 1}`}>Rp. {numberToText(pagu_n_depan)}</TrGiat>
+         <TrGiat label={`Alokasi ${tahun - 1}`}>Rp{numberToText(pagu_n_lalu)}</TrGiat>
+         <TrGiat label={`Alokasi ${tahun}`}>Rp{numberToText(pagu)}</TrGiat>
+         <TrGiat label={`Alokasi ${tahun + 1}`}>Rp{numberToText(pagu_n_depan)}</TrGiat>
       </>
    )
 }

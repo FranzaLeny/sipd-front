@@ -1,5 +1,6 @@
 'use client'
 
+import { numberToRupiah } from '@utils'
 import { LaporanPendapatan } from '@/types/api/laporan'
 
 export const RowPerubahan = ({ item }: { item: LaporanPendapatan['list_pendapatan'][number] }) => {
@@ -28,33 +29,17 @@ export const RowPerubahan = ({ item }: { item: LaporanPendapatan['list_pendapata
             <>
                <td className='cell-print'>1</td>
                <td className='cell-print'>Tahun</td>
-               <td className='cell-print text-right'>
-                  {pendapatan_murni?.harga?.toLocaleString('id-ID', {
-                     maximumFractionDigits: 0,
-                     style: 'currency',
-                     currency: 'IDR',
-                  })}
-               </td>
+               <td className='cell-print text-right'>{numberToRupiah(pendapatan_murni?.harga)}</td>
             </>
          )}
          <td className='cell-print text-right'>
-            {pendapatan_murni?.total_harga_murni?.toLocaleString('id-ID', {
-               maximumFractionDigits: 0,
-               style: 'currency',
-               currency: 'IDR',
-            })}
+            {numberToRupiah(pendapatan_murni?.total_harga_murni)}
          </td>
          {is_rinci ? (
             <>
                <td className='cell-print'>1</td>
                <td className='cell-print'>Tahun</td>
-               <td className='cell-print text-right'>
-                  {pendapatan?.total_harga?.toLocaleString('id-ID', {
-                     maximumFractionDigits: 0,
-                     style: 'currency',
-                     currency: 'IDR',
-                  })}
-               </td>
+               <td className='cell-print text-right'>{numberToRupiah(pendapatan?.total_harga)}</td>
             </>
          ) : (
             <td
@@ -63,20 +48,8 @@ export const RowPerubahan = ({ item }: { item: LaporanPendapatan['list_pendapata
                {is_jumlah ? uraian : ''}
             </td>
          )}
-         <td className='cell-print text-right'>
-            {pendapatan?.total_harga?.toLocaleString('id-ID', {
-               maximumFractionDigits: 0,
-               style: 'currency',
-               currency: 'IDR',
-            })}
-         </td>
-         <td className='cell-print text-right'>
-            {selisih?.toLocaleString('id-ID', {
-               maximumFractionDigits: 0,
-               style: 'currency',
-               currency: 'IDR',
-            })}
-         </td>
+         <td className='cell-print text-right'>{numberToRupiah(pendapatan?.total_harga)}</td>
+         <td className='cell-print text-right'>{numberToRupiah(selisih)}</td>
       </tr>
    )
 }
@@ -167,7 +140,7 @@ export const TheadMurni = () => {
             <th
                colSpan={2}
                className='cell-print'>
-               Jumlah (Rp.)
+               Jumlah (Rp)
             </th>
          </tr>
          <tr>
@@ -195,22 +168,10 @@ export const RowMurni = ({ item }: { item: LaporanPendapatan['list_pendapatan'][
             <>
                <td className='cell-print'>1</td>
                <td className='cell-print'>Tahun</td>
-               <td className='cell-print text-right'>
-                  {pendapatan?.total_harga?.toLocaleString('id-ID', {
-                     maximumFractionDigits: 0,
-                     style: 'currency',
-                     currency: 'IDR',
-                  })}
-               </td>
+               <td className='cell-print text-right'>{numberToRupiah(pendapatan?.total_harga)}</td>
             </>
          )}
-         <td className='cell-print text-right'>
-            {pendapatan?.total_harga?.toLocaleString('id-ID', {
-               maximumFractionDigits: 0,
-               style: 'currency',
-               currency: 'IDR',
-            })}
-         </td>
+         <td className='cell-print text-right'>{numberToRupiah(pendapatan?.total_harga)}</td>
       </tr>
    )
 }

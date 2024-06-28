@@ -40,7 +40,7 @@ const diffForHumans = (value?: string | number | Date | null) => {
 
 const chekStatus = (data: JadwalAnggaranWithTahapan) => {
    let status = ''
-   let isActive = data.is_active
+   let isActive = !!data.is_active
    const end = new Date(data.waktu_selesai)
    const now = new Date()
    const locked = data.is_locked === 1

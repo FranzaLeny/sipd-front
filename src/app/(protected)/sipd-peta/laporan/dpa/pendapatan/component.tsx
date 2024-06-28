@@ -15,6 +15,7 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
+import { numberToRupiah } from '@utils'
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
@@ -185,13 +186,7 @@ function TableRak(props: PropsTableRak) {
                         key={key}
                         className={`${key === 'jumlah' ? 'bg-content1 font-bold print:bg-slate-100' : ''} break-inside-avoid`}>
                         <td className='cell-print p-2 text-left capitalize'>{key}</td>
-                        <td className='cell-print p-2 text-right'>
-                           {value?.toLocaleString('id', {
-                              style: 'currency',
-                              currency: 'IDR',
-                              minimumFractionDigits: 0,
-                           })}
-                        </td>
+                        <td className='cell-print p-2 text-right'>{numberToRupiah(value)}</td>
                      </tr>
                   )
                })}
@@ -346,13 +341,7 @@ function TableRincian({ ringkasan }: { ringkasan: DpaPendapatanPeta['ringkasan']
                         </>
                      )}
 
-                     <td className='cell-print  p-2 text-right'>
-                        {item.nilai?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
+                     <td className='cell-print  p-2 text-right'>{numberToRupiah(item.nilai)}</td>
                   </tr>
                )
             })}
@@ -362,13 +351,7 @@ function TableRincian({ ringkasan }: { ringkasan: DpaPendapatanPeta['ringkasan']
                   className='cell-print'>
                   Jumlah
                </td>
-               <td className='cell-print'>
-                  {jumlah?.nilai?.toLocaleString('id-ID', {
-                     maximumFractionDigits: 0,
-                     style: 'currency',
-                     currency: 'IDR',
-                  })}
-               </td>
+               <td className='cell-print'>{numberToRupiah(jumlah?.nilai)}</td>
             </tr>
          </tbody>
       </table>
@@ -461,11 +444,7 @@ function TableRincianPergeseran({
             {data?.map((item, i) => {
                const selisih = (item?.setelah_nilai || 0) - (item?.sebelum_nilai || 0)
                const isRinci = !!item?.sebelum_koefisien || !!item?.setelah_koefisien
-               const strSelisih = Math.abs(selisih)?.toLocaleString('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  minimumFractionDigits: 0,
-               })
+               const strSelisih = numberToRupiah(Math.abs(selisih))
                return (
                   <tr
                      key={item?.kode_rekening + i}
@@ -498,11 +477,7 @@ function TableRincianPergeseran({
                         </>
                      )}
                      <td className='cell-print text-right'>
-                        {item?.sebelum_nilai?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
+                        {numberToRupiah(item?.sebelum_nilai)}
                      </td>
                      {item?.kode_rekening === '1' ? (
                         <>
@@ -529,11 +504,7 @@ function TableRincianPergeseran({
                         </>
                      )}
                      <td className='cell-print text-right'>
-                        {item?.setelah_nilai?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
+                        {numberToRupiah(item?.setelah_nilai)}
                      </td>
                      <td className='cell-print w-0 text-right'>
                         {selisih >= 0 ? strSelisih : `(${strSelisih})`}

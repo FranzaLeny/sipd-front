@@ -60,7 +60,7 @@ function CardDataJadwal({ data }: Props) {
          { id_daerah: data?.id_daerah, is_anggaran: 1, tahun: data?.tahun },
          'jadwal_anggaran_aktif',
          'jadwal_anggaran',
-      ] as [JadwalAnggranCekAktifSipdPayload & { is_lokal?: boolean }, string, string],
+      ] as [JadwalAnggranCekAktifSipdPayload & { is_lokal?: number }, string, string],
       queryFn: async ({ queryKey: [q] }) => await checkJadwalAnggaranAktif(q),
       refetchOnMount: false,
       enabled: enabled && access.sync,
@@ -100,7 +100,7 @@ function CardDataJadwal({ data }: Props) {
                <CardData
                   canPres={enabled && access.sipd_ri}
                   results={active}
-                  hasAccess={access.sync && data?.jadwal_anggaran_id !== active?.data?.id}
+                  hasAccess={access.sync}
                   key_value='is_active'
                   title='Aktif'
                   action_title='Update'

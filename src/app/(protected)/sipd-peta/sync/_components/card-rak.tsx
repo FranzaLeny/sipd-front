@@ -14,7 +14,6 @@ import CardData from './card-data'
 type Props = {
    data: {
       jadwal_anggaran_id: string
-      id_jadwal_penatausahaan: number
       id_daerah: number
       id_skpd: number
       tahun: number
@@ -25,10 +24,11 @@ function CardDataRak({ data }: Props) {
    const access = useMemo(() => {
       const sipd_peta = hasAccess(['sipd_peta'], data?.roles)
       const lokal = hasAccess(['super_admin', 'admin'], data?.roles)
-      const sync = sipd_peta && !!data.id_jadwal_penatausahaan
+      const sync = sipd_peta
       return { sipd_peta, lokal, sync }
    }, [data])
    const [enabled, setEnabled] = useState(false)
+   console.log({ data })
 
    const lokal = useQuery({
       queryKey: [

@@ -24,10 +24,10 @@ export const UserSchema = z.object({
          'Format Nitp Tidak Sesuai'
       )
       .nullish(),
-   active: z.boolean(),
+   active: z.number(),
    roles: z.string().array(),
    access: z.string().array(),
-   is_locked: z.boolean(),
+   is_locked: z.number(),
    image: z.string().nullish(),
    updated_at: z.coerce.date(),
    created_at: z.coerce.date(),

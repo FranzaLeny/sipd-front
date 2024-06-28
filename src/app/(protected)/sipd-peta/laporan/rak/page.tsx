@@ -12,6 +12,7 @@ import { getSkpdPenatausahaanFromSipd } from '@actions/penatausahaan/pengeluaran
 import { validateSipdPetaSession } from '@actions/perencanaan/token-sipd'
 import { Autocomplete, AutocompleteItem } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import { numberToRupiah } from '@utils'
 import { sumBy } from 'lodash-es'
 import { useSession } from '@shared/hooks/use-session'
 
@@ -102,7 +103,7 @@ export default function Page() {
                selectedKey={skpd}
                variant='bordered'
                onSelectionChange={(v) => setSkpd(v || '')}
-               items={listSkpd || []}>
+               defaultItems={listSkpd || []}>
                {(item) => (
                   <AutocompleteItem
                      startContent={item.kode_skpd}
@@ -119,19 +120,13 @@ export default function Page() {
                selectedKey={subGiat?.kode_unik || ''}
                variant='bordered'
                onSelectionChange={handleSubGiatSelect}
-               items={listSbl || []}>
+               defaultItems={listSbl || []}>
                {(item) => (
                   <AutocompleteItem
                      textValue={item?.nama_sub_giat}
                      key={item.kode_unik}>
                      <p>
-                        {item?.nama_sub_giat}{' '}
-                        <span>
-                           {item?.nilai_rak?.toLocaleString('id', {
-                              style: 'currency',
-                              currency: 'IDR',
-                           })}
-                        </span>
+                        {item?.nama_sub_giat} <span>{numberToRupiah(item?.nilai_rak)}</span>
                      </p>
                      <p className='text-xs italic'>{item?.nama_sub_skpd}</p>
                   </AutocompleteItem>
@@ -262,7 +257,7 @@ const RakTable = ({ rak: { items } }: { rak: ResponseLaporanRakBlSubGiatSipdPeta
 
    return (
       <>
-         {items
+         {rincian
             ?.filter((d) => d?.kode_rekening?.startsWith('5'))
             ?.map((item, i) => {
                const isRinci = item?.kode_rekening?.length === 17
@@ -273,181 +268,68 @@ const RakTable = ({ rak: { items } }: { rak: ResponseLaporanRakBlSubGiatSipdPeta
                      <td className='cell-print'>{item?.kode_rekening}</td>
                      <td className='cell-print'>{item?.uraian}</td>
                      <td className='cell-print text-right'>
-                        {item?.anggaran_tahun_ini?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
+                        {numberToRupiah(item?.anggaran_tahun_ini)}
                      </td>
-                     <td className='cell-print text-right'>
-                        {item?.total_rak?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_1?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_2?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_3?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_4?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_5?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_6?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_7?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_8?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_9?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_10?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_11?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print text-right'>
-                        {item?.bulan_12?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
+                     <td className='cell-print text-right'>{numberToRupiah(item?.total_rak)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_1)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_2)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_3)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_4)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_5)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_6)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_7)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_8)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_9)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_10)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_11)}</td>
+                     <td className='cell-print text-right'>{numberToRupiah(item?.bulan_12)}</td>
+                     <td className='cell-print bg-foreground/5 text-right font-semibold print:hidden'>
+                        {numberToRupiah(item?.bulan_1 + item?.bulan_2 + item?.bulan_3)}
                      </td>
                      <td className='cell-print bg-foreground/5 text-right font-semibold print:hidden'>
-                        {(item?.bulan_1 + item?.bulan_2 + item?.bulan_3)?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
+                        {numberToRupiah(item?.bulan_4 + item?.bulan_5 + item?.bulan_6)}
                      </td>
                      <td className='cell-print bg-foreground/5 text-right font-semibold print:hidden'>
-                        {(item?.bulan_4 + item?.bulan_5 + item?.bulan_6)?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
-                     <td className='cell-print bg-foreground/5 text-right font-semibold print:hidden'>
-                        {(item?.bulan_7 + item?.bulan_8 + item?.bulan_9)?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
+                        {numberToRupiah(item?.bulan_7 + item?.bulan_8 + item?.bulan_9)}
                      </td>
                      <td className='cell-print  bg-foreground/5 text-right font-semibold print:hidden'>
-                        {(item?.bulan_10 + item?.bulan_11 + item?.bulan_12)?.toLocaleString(
-                           'id-ID',
-                           {
-                              maximumFractionDigits: 0,
-                              style: 'currency',
-                              currency: 'IDR',
-                           }
-                        )}
+                        {numberToRupiah(item?.bulan_10 + item?.bulan_11 + item?.bulan_12)}
                      </td>
                      <td className='cell-print  bg-foreground/10 text-right font-bold print:hidden'>
-                        {(
+                        {numberToRupiah(
                            item?.bulan_1 +
-                           item?.bulan_2 +
-                           item?.bulan_3 +
-                           item?.bulan_4 +
-                           item?.bulan_5 +
-                           item?.bulan_6
-                        )?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
+                              item?.bulan_2 +
+                              item?.bulan_3 +
+                              item?.bulan_4 +
+                              item?.bulan_5 +
+                              item?.bulan_6
+                        )}
                      </td>
                      <td className='cell-print bg-foreground/10 text-right font-bold print:hidden'>
-                        {(
+                        {numberToRupiah(
                            item?.bulan_7 +
-                           item?.bulan_8 +
-                           item?.bulan_9 +
-                           item?.bulan_10 +
-                           item?.bulan_11 +
-                           item?.bulan_12
-                        )?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
+                              item?.bulan_8 +
+                              item?.bulan_9 +
+                              item?.bulan_10 +
+                              item?.bulan_11 +
+                              item?.bulan_12
+                        )}
                      </td>
                      <td className='cell-print bg-foreground/20 text-right font-bold print:hidden'>
-                        {(
+                        {numberToRupiah(
                            item?.bulan_1 +
-                           item?.bulan_2 +
-                           item?.bulan_3 +
-                           item?.bulan_4 +
-                           item?.bulan_5 +
-                           item?.bulan_6 +
-                           item?.bulan_7 +
-                           item?.bulan_8 +
-                           item?.bulan_9 +
-                           item?.bulan_10 +
-                           item?.bulan_11 +
-                           item?.bulan_12
-                        )?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
+                              item?.bulan_2 +
+                              item?.bulan_3 +
+                              item?.bulan_4 +
+                              item?.bulan_5 +
+                              item?.bulan_6 +
+                              item?.bulan_7 +
+                              item?.bulan_8 +
+                              item?.bulan_9 +
+                              item?.bulan_10 +
+                              item?.bulan_11 +
+                              item?.bulan_12
+                        )}
                      </td>
                   </tr>
                )
@@ -459,103 +341,21 @@ const RakTable = ({ rak: { items } }: { rak: ResponseLaporanRakBlSubGiatSipdPeta
                JUMLAH ALOKASI KAS YANG TERSEDIA DARI BELANJA PER BULAN
             </td>
             <td className='cell-print text-right'>
-               {sumBy(rincian, 'anggaran_tahun_ini')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
+               {numberToRupiah(sumBy(rincian, 'anggaran_tahun_ini'))}
             </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'total_rak')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_1')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_2')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_3')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_4')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_5')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_6')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_7')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_8')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_9')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_10')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_11')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'bulan_12')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'total_rak'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_1'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_2'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_3'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_4'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_5'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_6'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_7'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_8'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_9'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_10'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_11'))}</td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'bulan_12'))}</td>
             <td colSpan={7}>#</td>
          </tr>
          <tr className='font-bold'>
@@ -565,70 +365,38 @@ const RakTable = ({ rak: { items } }: { rak: ResponseLaporanRakBlSubGiatSipdPeta
                JUMLAH ALOKASI KAS YANG TERSEDIA DARI BELANJA PER TRIWULAN
             </td>
             <td className='cell-print text-right'>
-               {sumBy(rincian, 'anggaran_tahun_ini')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
+               {numberToRupiah(sumBy(rincian, 'anggaran_tahun_ini'))}
             </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'total_rak')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'total_rak'))}</td>
+            <td
+               colSpan={3}
+               className='cell-print text-right'>
+               {numberToRupiah(
+                  sumBy(rincian, 'bulan_1') + sumBy(rincian, 'bulan_2') + sumBy(rincian, 'bulan_3')
+               )}
             </td>
             <td
                colSpan={3}
                className='cell-print text-right'>
-               {(
-                  sumBy(rincian, 'bulan_1') +
-                  sumBy(rincian, 'bulan_2') +
-                  sumBy(rincian, 'bulan_3')
-               )?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
+               {numberToRupiah(
+                  sumBy(rincian, 'bulan_4') + sumBy(rincian, 'bulan_5') + sumBy(rincian, 'bulan_6')
+               )}
             </td>
             <td
                colSpan={3}
                className='cell-print text-right'>
-               {(
-                  sumBy(rincian, 'bulan_4') +
-                  sumBy(rincian, 'bulan_5') +
-                  sumBy(rincian, 'bulan_6')
-               )?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
+               {numberToRupiah(
+                  sumBy(rincian, 'bulan_7') + sumBy(rincian, 'bulan_8') + sumBy(rincian, 'bulan_9')
+               )}
             </td>
             <td
                colSpan={3}
                className='cell-print text-right'>
-               {(
-                  sumBy(rincian, 'bulan_7') +
-                  sumBy(rincian, 'bulan_8') +
-                  sumBy(rincian, 'bulan_9')
-               )?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
-            <td
-               colSpan={3}
-               className='cell-print text-right'>
-               {(
+               {numberToRupiah(
                   sumBy(rincian, 'bulan_10') +
-                  sumBy(rincian, 'bulan_11') +
-                  sumBy(rincian, 'bulan_12')
-               )?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
+                     sumBy(rincian, 'bulan_11') +
+                     sumBy(rincian, 'bulan_12')
+               )}
             </td>
          </tr>
          <tr className='font-bold'>
@@ -638,50 +406,32 @@ const RakTable = ({ rak: { items } }: { rak: ResponseLaporanRakBlSubGiatSipdPeta
                JUMLAH ALOKASI KAS YANG TERSEDIA DARI BELANJA PER SEMESTE
             </td>
             <td className='cell-print text-right'>
-               {sumBy(rincian, 'anggaran_tahun_ini')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
+               {numberToRupiah(sumBy(rincian, 'anggaran_tahun_ini'))}
             </td>
-            <td className='cell-print text-right'>
-               {sumBy(rincian, 'total_rak')?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
+            <td className='cell-print text-right'>{numberToRupiah(sumBy(rincian, 'total_rak'))}</td>
             <td
                colSpan={6}
                className='cell-print text-right'>
-               {(
+               {numberToRupiah(
                   sumBy(rincian, 'bulan_1') +
-                  sumBy(rincian, 'bulan_2') +
-                  sumBy(rincian, 'bulan_3') +
-                  sumBy(rincian, 'bulan_4') +
-                  sumBy(rincian, 'bulan_5') +
-                  sumBy(rincian, 'bulan_6')
-               )?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
+                     sumBy(rincian, 'bulan_2') +
+                     sumBy(rincian, 'bulan_3') +
+                     sumBy(rincian, 'bulan_4') +
+                     sumBy(rincian, 'bulan_5') +
+                     sumBy(rincian, 'bulan_6')
+               )}
             </td>
             <td
                colSpan={6}
                className='cell-print text-right'>
-               {(
+               {numberToRupiah(
                   sumBy(rincian, 'bulan_7') +
-                  sumBy(rincian, 'bulan_8') +
-                  sumBy(rincian, 'bulan_9') +
-                  sumBy(rincian, 'bulan_10') +
-                  sumBy(rincian, 'bulan_11') +
-                  sumBy(rincian, 'bulan_12')
-               )?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
+                     sumBy(rincian, 'bulan_8') +
+                     sumBy(rincian, 'bulan_9') +
+                     sumBy(rincian, 'bulan_10') +
+                     sumBy(rincian, 'bulan_11') +
+                     sumBy(rincian, 'bulan_12')
+               )}
             </td>
          </tr>
       </>

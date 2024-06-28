@@ -9,10 +9,12 @@ import { NumberInput, TextInput } from '@components/form/text-input'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
 import { useQueryClient } from '@tanstack/react-query'
-import { createTsForm } from '@ts-react/form'
+import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
 import { JadwalAnggaran, z } from '@zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
+
+const booleanSchema = createUniqueFieldSchema(z.number().int().max(1), 'boolean')
 
 export const JadwalAnggaranCopyInputSchema = z
    .object({
@@ -20,12 +22,14 @@ export const JadwalAnggaranCopyInputSchema = z
       id_unik_murni: z.string().optional().nullable(),
       id_jadwal_murni: z.coerce.number().int(),
       nama_jadwal_murni: z.string({ description: 'Nama Jadwal Murni' }).nullable(),
-      is_locked: z.boolean({ description: 'Kunci' }),
-      is_perubahan: z.boolean({ description: 'Perubahan' }),
       nama_sub_tahap: z.string({ description: 'Nama Jadwal' }),
       waktu_selesai: z.date({ description: 'Waktu Selesai' }),
       waktu_mulai: z.date({ description: 'Waktu Mulai' }),
-      is_active: z.boolean({ description: 'Aktif' }).default(false),
+   })
+   .extend({
+      is_locked: booleanSchema,
+      is_active: booleanSchema,
+      is_perubahan: booleanSchema,
    })
    .strip()
    .superRefine((data, ctx) => {
@@ -36,7 +40,7 @@ export const JadwalAnggaranCopyInputSchema = z
             path: ['waktu_selesai'],
          })
       }
-      if (data?.is_perubahan && (!data.id_jadwal_murni || !data.id_unik_murni)) {
+      if (!!data?.is_perubahan && (!data.id_jadwal_murni || !data.id_unik_murni)) {
          ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Jadwal Anggaran Murni tidak boleh kosong',
@@ -56,7 +60,7 @@ const mapping = [
    [z.string(), TextInput] as const,
    [z.number(), NumberInput] as const,
    [z.date(), DateInput] as const,
-   [z.boolean(), BooleanInput] as const,
+   [booleanSchema, BooleanInput] as const,
 ] as const
 
 export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
@@ -79,9 +83,9 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
          nama_jadwal_murni: data?.nama_sub_tahap,
          id_unik: 'DLH Lembata',
          id_unik_murni: data?.id_unik,
-         is_active: !!data.is_active,
-         is_locked: !!data.is_locked,
-         is_perubahan: !!data.id_jadwal_murni,
+         is_active: data.is_active,
+         is_locked: data.is_locked,
+         is_perubahan: !!data.id_jadwal_murni ? 1 : 0,
          nama_sub_tahap: data?.nama_sub_tahap + '(DLH Lembata)',
          waktu_mulai: new Date(),
          waktu_selesai: currentDate,
@@ -116,16 +120,20 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [isSubmitting])
 
+   useEffect(() => {
+      console.log(errors)
+   }, [errors])
+
    const onSubmit = async (value: Schema) => {
       try {
          const valida_data = {
             ...data,
             ...value,
             id_unik: data?.id_unik + ' || ' + value.id_unik,
-            is_lokal: true,
+            is_lokal: 1,
             id: undefined,
-            is_locked: +value.is_locked,
-            is_perubahan: +value.is_perubahan,
+            is_locked: value.is_locked,
+            is_perubahan: value.is_perubahan,
          }
 
          await createJadwalAnggaran(valida_data).then((res) => {
@@ -161,9 +169,9 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
             handleValueChange('id_jadwal_murni', data.id_jadwal)
             handleValueChange('id_unik_murni', data.id_unik)
             handleValueChange('nama_jadwal_murni', data.nama_sub_tahap)
-            handleValueChange('is_perubahan', true)
+            handleValueChange('is_perubahan', 1)
          } else {
-            handleValueChange('is_perubahan', false)
+            handleValueChange('is_perubahan', 0)
             handleValueChange('id_jadwal_murni', 0)
             handleValueChange('id_unik_murni', null)
             handleValueChange('nama_jadwal_murni', null)
@@ -191,6 +199,11 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
                <TsForm
                   form={form}
                   schema={JadwalAnggaranCopyInputSchema}
+                  props={{
+                     is_locked: { label: 'Kunci Jadwal', typeValue: 'number' },
+                     is_perubahan: { label: 'Perubahan', typeValue: 'number' },
+                     is_active: { label: 'Aktif', typeValue: 'number' },
+                  }}
                   onSubmit={onSubmit}>
                   {({
                      is_active,
@@ -202,7 +215,7 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
                      id_unik,
                   }) => (
                      <>
-                        <ModalHeader>Form Tambah Jadwal</ModalHeader>
+                        <ModalHeader>Form Salin Jadwal</ModalHeader>
                         <ModalBody className='gap-3 transition-all duration-75'>
                            {id_unik}
                            {nama_sub_tahap}
@@ -213,7 +226,7 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
                               keyByIdUnik
                               params={{ is_perubahan: 1 }}
                               defaultSelectedKey={data?.id_unik_murni ?? data?.id_unik ?? undefined}
-                              isRequired={isPerubahan}
+                              isRequired={!!isPerubahan}
                               onChange={onJadwalChange}
                               selectedKey={idUnikJadwalMurni}
                               isInvalid={!!errors?.id_jadwal_murni?.message}

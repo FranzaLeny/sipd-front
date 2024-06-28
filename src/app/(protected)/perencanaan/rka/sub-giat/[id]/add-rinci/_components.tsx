@@ -428,11 +428,11 @@ const ModalAddRincian = ({ data }: { data: BlSubGiat; user?: UserWithoutToken })
                         <>
                            <AkunSelector
                               params={{
-                                 tahun: data.tahun,
                                  set_input: 1,
                                  is_bl: 1,
                                  set_kab_kota: 1,
                                  ...objBelanja.akun,
+                                 tahun: data.tahun,
                               }}
                               selectedKey={idAkun}
                               onValueChange={(v) => handleValueChange('nama_akun', v)}

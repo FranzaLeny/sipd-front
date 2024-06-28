@@ -68,7 +68,7 @@ const getValue = (key: keyof StandarHargaById, standar_harga: StandarHargaById) 
       case 'is_sipd':
          return value ? 'Ya' : 'Tidak'
       case 'harga':
-         return 'Rp. ' + numberToText(value as StandarHargaById['harga'], 2)
+         return 'Rp' + numberToText(value as StandarHargaById['harga'], 2)
       case 'nilai_tkdn':
          return numberToText(value as StandarHargaById['nilai_tkdn'], 2) + ' %'
       case 'kelompok':

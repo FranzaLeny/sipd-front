@@ -7,6 +7,7 @@ import {
 } from '@actions/perencanaan/rka/bl-sub-giat'
 import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import { numberToRupiah } from '@utils'
 
 type BlSubGiat = AsyncReturnType<typeof getBlSubGiatByJadwalUnit>
 
@@ -85,8 +86,7 @@ const BlSubGiatSelector = forwardRef(
                   key={id}>
                   <div>
                      <p>
-                        {nama_sub_giat ?? ''}{' '}
-                        {pagu?.toLocaleString('id', { style: 'currency', currency: 'IDR' })}
+                        {nama_sub_giat ?? ''} {numberToRupiah(pagu)}
                      </p>
                      <p className='text-xs italic'>{nama_sub_skpd}</p>
                   </div>

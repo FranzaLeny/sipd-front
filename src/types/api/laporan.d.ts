@@ -32,7 +32,7 @@ interface _JadwalLaporan {
    tahun: number
    is_perubahan: number
    nama_sub_tahap: string
-   is_active: boolean
+   is_active: number
    waktu_selesai: Date
    jadwal_murni: {
       id: string

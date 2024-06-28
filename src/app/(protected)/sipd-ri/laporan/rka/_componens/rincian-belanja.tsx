@@ -12,15 +12,10 @@ import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import Loading from '@components/ui/loading'
 import { Autocomplete, AutocompleteItem, Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import { numberToRupiah } from '@utils'
 import { keyBy } from 'lodash-es'
 import { Printer } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
-
-const currOpt: Intl.NumberFormatOptions = {
-   maximumFractionDigits: 0,
-   style: 'currency',
-   currency: 'IDR',
-}
 
 function TrSubGiat({ label, value }: { label: string; value: string | number }) {
    let text = value?.toString()?.replace(':', '').trim() || '-'
@@ -32,16 +27,7 @@ function TrSubGiat({ label, value }: { label: string; value: string | number }) 
       </tr>
    )
 }
-const convertToRupiah = (value: string | number) => {
-   let newVal: number | string = Number(value)
 
-   if (!isNaN(newVal)) {
-      newVal = newVal.toLocaleString('id-ID', currOpt)
-   } else {
-      newVal = value.toString()
-   }
-   return newVal as string
-}
 export default function RingkasanPerubahanRincianBelanjaSubGiat({
    skpd: { skpd, sub_skpd, tapd: dataTapd },
 }: {
@@ -138,7 +124,7 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                      defaultItems={slbAktif ?? []}>
                      {(item) => (
                         <AutocompleteItem
-                           endContent={convertToRupiah(item?.pagu)}
+                           endContent={numberToRupiah(item?.pagu)}
                            key={item.kode_sbl}>
                            {item.nama_sub_giat}
                         </AutocompleteItem>
@@ -219,19 +205,19 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                               />
                               <TrSubGiat
                                  label={dataSubGiat[`alokasi_${(skpd?.tahun ?? 0) - 1}`]?.colom_1}
-                                 value={convertToRupiah(
+                                 value={numberToRupiah(
                                     dataSubGiat[`alokasi_${(skpd?.tahun ?? 0) - 1}`]?.colom_2
                                  )}
                               />
                               <TrSubGiat
                                  label={dataSubGiat[`alokasi_${skpd?.tahun ?? 0}`]?.colom_1}
-                                 value={convertToRupiah(
+                                 value={numberToRupiah(
                                     dataSubGiat[`alokasi_${skpd?.tahun ?? 0}`]?.colom_2
                                  )}
                               />
                               <TrSubGiat
                                  label={dataSubGiat[`alokasi_${(skpd?.tahun ?? 0) + 1}`]?.colom_1}
-                                 value={convertToRupiah(
+                                 value={numberToRupiah(
                                     dataSubGiat[`alokasi_${(skpd?.tahun ?? 0) + 1}`]?.colom_2
                                  )}
                               />
@@ -281,9 +267,9 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                               <TrIndikator
                                  colom_1={dataSubGiat['masukan']?.colom_1}
                                  colom_2={dataSubGiat['masukan']?.colom_2?.replace(':', '').trim()}
-                                 colom_3={convertToRupiah(dataSubGiat['masukan']?.colom_3)}
+                                 colom_3={numberToRupiah(dataSubGiat['masukan']?.colom_3)}
                                  colom_4={dataSubGiat['masukan']?.colom_5}
-                                 colom_5={convertToRupiah(dataSubGiat['masukan']?.colom_6)}
+                                 colom_5={numberToRupiah(dataSubGiat['masukan']?.colom_6)}
                               />
 
                               <TrIndikator
@@ -423,7 +409,7 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                                                 ?.join(' x ')}
                                           </td>
                                           <td className='cell-print'>
-                                             {convertToRupiah(d?.harga_murni)}
+                                             {numberToRupiah(d?.harga_murni)}
                                           </td>
                                           <td className='cell-print twxt-left'>
                                              {d?.satuan_murni}
@@ -434,7 +420,7 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                                        </>
                                     )}
                                     <td className='cell-print'>
-                                       {convertToRupiah(d?.rincian_murni)}
+                                       {numberToRupiah(d?.rincian_murni)}
                                     </td>
                                     {isRinci ? (
                                        <>
@@ -459,7 +445,7 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                                                 ?.join(' x ')}
                                           </td>
                                           <td className='cell-print'>
-                                             {convertToRupiah(d?.harga_geser)}
+                                             {numberToRupiah(d?.harga_geser)}
                                           </td>
                                           <td className='cell-print text-left'>
                                              {d?.satuan_geser}
@@ -474,12 +460,12 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                                           className='cell-print'></td>
                                     )}
                                     <td className='cell-print'>
-                                       {convertToRupiah(d?.rincian_geser)}
+                                       {numberToRupiah(d?.rincian_geser)}
                                     </td>
                                     <td className='cell-print text-right'>
                                        {d?.selisih < 0
-                                          ? `(${convertToRupiah(Math.abs(d?.selisih))})`
-                                          : convertToRupiah(d?.selisih)}
+                                          ? `(${numberToRupiah(Math.abs(d?.selisih))})`
+                                          : numberToRupiah(d?.selisih)}
                                     </td>
                                  </tr>
                               )

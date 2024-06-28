@@ -33,7 +33,9 @@ const ModalSingkron = () => {
 
       try {
          const user = validateSipdSession(session)
-         const data = await geAllAkunSipd(user)
+         const data = await geAllAkunSipd(user)?.then((res) =>
+            res?.map((akun) => ({ ...akun, tahun: [akun.tahun] }))
+         )
 
          if (!data?.length) {
             throw new Error('Tidak ada data untuk disingkronkan')

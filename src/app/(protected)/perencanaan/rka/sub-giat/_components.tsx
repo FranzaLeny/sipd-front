@@ -68,7 +68,7 @@ function generateRupiah(nilai?: number | null) {
          radius='none'
          variant='flat'
          className='w-full bg-transparent  p-0'
-         symbol='Rp. '
+         symbol='Rp'
          tooltipProps={{ content: 'Salin' }}
          hideCopyButton={typeof nilai !== 'number'}
          codeString={nilai ? String(nilai) : '0'}>

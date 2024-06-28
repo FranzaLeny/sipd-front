@@ -124,19 +124,13 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
 JadwalInput.displayName = 'JadwalInput'
 export default JadwalInput
 
-export function TypeJadwal({
-   is_active,
-   is_lokal,
-}: {
-   is_active?: boolean | null
-   is_lokal?: boolean | null
-}) {
+export function TypeJadwal({ is_active, is_lokal }: { is_active?: number; is_lokal?: number }) {
    return (
       <div className='flex gap-4'>
          <Chip
-            variant={is_active ? 'dot' : 'light'}
-            color={is_active ? 'success' : 'default'}>
-            {is_lokal ? 'LOKAL' : 'SIPD'}
+            variant={!!is_active ? 'dot' : 'light'}
+            color={!!is_active ? 'success' : 'default'}>
+            {!!is_lokal ? 'LOKAL' : 'SIPD'}
          </Chip>
       </div>
    )
@@ -148,7 +142,7 @@ export const JadwalAnggaranSearchParams: React.FC<{
 }> = ({ data, defaultSelected }) => {
    const searchParams = useSearchParams()
    const [selected, setSelected] = useState<Selection>(
-      new Set([defaultSelected ? defaultSelected : data?.find((d) => d.is_active)?.id || ''])
+      new Set([defaultSelected ? defaultSelected : data?.find((d) => !!d.is_active)?.id || ''])
    )
    useEffect(() => {
       const id = searchParams.get('jadwal_anggaran_id')
@@ -204,17 +198,17 @@ export const JadwalAnggaranSearchParams: React.FC<{
 }
 
 interface JadwalAnggaranPreviewProps {
-   isLocked?: boolean | null | undefined
-   isActive?: boolean | null | undefined
+   isLocked?: number
+   isActive?: number
    nama: string
    waktuSelesai: Date
 }
 
 export const JadwalAnggaranSelected: React.FunctionComponent<JadwalAnggaranPreviewProps> = ({
-   isLocked = true,
+   isLocked = 1,
    nama = '',
    waktuSelesai = new Date(),
-   isActive = false,
+   isActive = 0,
 }) => {
    const [isOpen, setIsOpen] = useState(false)
    return (
@@ -228,9 +222,9 @@ export const JadwalAnggaranSelected: React.FunctionComponent<JadwalAnggaranPrevi
          <Chip
             classNames={{ base: 'animate-pulse' }}
             onClick={() => setIsOpen(!isOpen)}
-            variant={isLocked ? 'light' : isActive ? 'dot' : 'light'}
-            color={isLocked ? 'danger' : 'success'}>
-            <p>{isLocked ? 'Jadwal Dikunci' : <Timer waktuSelesai={waktuSelesai} />}</p>
+            variant={!!isLocked ? 'light' : !!isActive ? 'dot' : 'light'}
+            color={!!isLocked ? 'danger' : 'success'}>
+            <p>{!!isLocked ? 'Jadwal Dikunci' : <Timer waktuSelesai={waktuSelesai} />}</p>
          </Chip>
       </Tooltip>
    )

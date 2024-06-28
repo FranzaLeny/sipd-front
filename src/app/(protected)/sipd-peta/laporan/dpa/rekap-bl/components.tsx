@@ -15,6 +15,7 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
+import { numberToRupiah } from '@utils'
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
@@ -206,13 +207,7 @@ function TableRak(props: PropsTableRak) {
                         key={key}
                         className={`${key === 'jumlah' ? 'bg-content1 font-bold print:bg-slate-100' : ''} break-inside-avoid`}>
                         <td className='cell-print p-2 text-left capitalize'>{key}</td>
-                        <td className='cell-print p-2 text-right'>
-                           {value?.toLocaleString('id', {
-                              style: 'currency',
-                              currency: 'IDR',
-                              minimumFractionDigits: 0,
-                           })}
-                        </td>
+                        <td className='cell-print p-2 text-right'>{numberToRupiah(value)}</td>
                      </tr>
                   )
                })}
@@ -432,13 +427,7 @@ function TableRincian({ data }: { data: DpaBelanja['index'] }) {
                      <td className='cell-print p-2 text-right'>{item.bel_modal}</td>
                      <td className='cell-print p-2 text-right'>{item.bel_btt}</td>
                      <td className='cell-print p-2 text-right'>{item.bel_transfer}</td>
-                     <td className='cell-print  p-2 text-right'>
-                        {item.jumlah?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
+                     <td className='cell-print  p-2 text-right'>{numberToRupiah(item.jumlah)}</td>
                      <td className='cell-print  p-2 text-right'>{item.t2}</td>
                   </tr>
                )
@@ -550,11 +539,7 @@ function TableRincianPergeseran({ data }: { data: DpaBelanja['index_pergeseran']
             {data?.map((item, i) => {
                const selisih = item.bertambah_berkurang || 0
                const isRinci = !!item?.lokasi
-               const strSelisih = Math.abs(selisih)?.toLocaleString('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  minimumFractionDigits: 0,
-               })
+               const strSelisih = numberToRupiah(Math.abs(selisih))
                const kode = item?.kode_rekening?.split('.')
                const isSkpd = item?.kode_rekening?.length === 22
                return (
@@ -592,76 +577,16 @@ function TableRincianPergeseran({ data }: { data: DpaBelanja['index_pergeseran']
                         </>
                      )}
                      <td className='cell-print'>{item?.t1}</td>
-                     <td className='cell-print'>
-                        {item?.sebelum_bel_operasi?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
-                     <td className='cell-print'>
-                        {item?.sebelum_bel_modal?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
-                     <td className='cell-print'>
-                        {item?.sebelum_bel_btt?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
-                     <td className='cell-print'>
-                        {item?.sebelum_bel_transfer?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
-                     <td className='cell-print'>
-                        {item?.sebelum_jumlah?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
-                     <td className='cell-print'>
-                        {item?.setelah_bel_operasi?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
-                     <td className='cell-print'>
-                        {item?.setelah_bel_modal?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
-                     <td className='cell-print'>
-                        {item?.setelah_bel_btt?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
-                     <td className='cell-print'>
-                        {item?.setelah_bel_transfer?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
-                     <td className='cell-print'>
-                        {item?.setelah_jumlah?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
-                     </td>
+                     <td className='cell-print'>{numberToRupiah(item?.sebelum_bel_operasi)}</td>
+                     <td className='cell-print'>{numberToRupiah(item?.sebelum_bel_modal)}</td>
+                     <td className='cell-print'>{numberToRupiah(item?.sebelum_bel_btt)}</td>
+                     <td className='cell-print'>{numberToRupiah(item?.sebelum_bel_transfer)}</td>
+                     <td className='cell-print'>{numberToRupiah(item?.sebelum_jumlah)}</td>
+                     <td className='cell-print'>{numberToRupiah(item?.setelah_bel_operasi)}</td>
+                     <td className='cell-print'>{numberToRupiah(item?.setelah_bel_modal)}</td>
+                     <td className='cell-print'>{numberToRupiah(item?.setelah_bel_btt)}</td>
+                     <td className='cell-print'>{numberToRupiah(item?.setelah_bel_transfer)}</td>
+                     <td className='cell-print'>{numberToRupiah(item?.setelah_jumlah)}</td>
                      <td className='cell-print w-0 text-right'>
                         {selisih >= 0 ? strSelisih : `(${strSelisih})`}
                      </td>

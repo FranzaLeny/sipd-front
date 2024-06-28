@@ -15,6 +15,7 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
+import { numberToRupiah } from '@utils'
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
@@ -262,13 +263,7 @@ function TableRak(props: PropsTableRak) {
                         key={key}
                         className={`${key === 'jumlah' ? 'bg-content1 font-bold print:bg-slate-100' : ''} break-inside-avoid`}>
                         <td className='cell-print p-2 text-left capitalize'>{key}</td>
-                        <td className='cell-print p-2 text-right'>
-                           {value?.toLocaleString('id', {
-                              style: 'currency',
-                              currency: 'IDR',
-                              minimumFractionDigits: 0,
-                           })}
-                        </td>
+                        <td className='cell-print p-2 text-right'>{numberToRupiah(value)}</td>
                      </tr>
                   )
                })}
@@ -413,13 +408,7 @@ function TableRincian({
                         </>
                      )}
 
-                     <td className='cell-print  p-2 text-right'>
-                        {item.nilai?.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
+                     <td className='cell-print  p-2 text-right'>{numberToRupiah(item.nilai)}</td>
                   </tr>
                )
             })}
@@ -429,13 +418,7 @@ function TableRincian({
                   className='cell-print'>
                   Jumlah Anggaran Sub Kegiatan
                </td>
-               <td className='cell-print'>
-                  {jumlah?.nilai?.toLocaleString('id-ID', {
-                     maximumFractionDigits: 0,
-                     style: 'currency',
-                     currency: 'IDR',
-                  })}
-               </td>
+               <td className='cell-print'>{numberToRupiah(jumlah?.nilai)}</td>
             </tr>
          </tbody>
       </table>
@@ -450,11 +433,7 @@ function TableRincianPergeseran({
    idSubSkpd: number
 }) {
    const [jumlah] = rincian
-   const strSelisih = Math.abs(jumlah.bertambah_berkurang || 0).toLocaleString('id-ID', {
-      maximumFractionDigits: 0,
-      style: 'currency',
-      currency: 'IDR',
-   })
+   const strSelisih = numberToRupiah(Math.abs(jumlah.bertambah_berkurang || 0))
    return (
       <table className='min-w-full leading-snug'>
          <thead className='bg-content1 break-inside-avoid text-center font-bold leading-none print:bg-slate-100'>
@@ -508,11 +487,7 @@ function TableRincianPergeseran({
          <tbody>
             {rincian?.map((item, i) => {
                const isRinci = !item.kode_akun && !item.uraian?.startsWith('[')
-               const strSelisih = Math.abs(item?.bertambah_berkurang)?.toLocaleString('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  minimumFractionDigits: 0,
-               })
+               const strSelisih = numberToRupiah(Math.abs(item?.bertambah_berkurang))
                return (
                   <tr
                      key={idSubSkpd + item?.kode_akun + i}
@@ -534,11 +509,7 @@ function TableRincianPergeseran({
                         </>
                      )}
                      <td className='cell-print text-right'>
-                        {item?.sebelum_nilai?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
+                        {numberToRupiah(item?.sebelum_nilai)}
                      </td>
                      {isRinci ? (
                         <>
@@ -556,11 +527,7 @@ function TableRincianPergeseran({
                         />
                      )}
                      <td className='cell-print text-right'>
-                        {item?.setelah_nilai?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                           maximumFractionDigits: 0,
-                        })}
+                        {numberToRupiah(item?.setelah_nilai)}
                      </td>
                      <td className='cell-print w-0 text-right'>
                         {item?.bertambah_berkurang >= 0 ? strSelisih : `(${strSelisih})`}
@@ -574,25 +541,13 @@ function TableRincianPergeseran({
                   className='cell-print'>
                   Jumlah Anggaran Sub Kegiatan
                </td>
-               <td className='cell-print'>
-                  {jumlah?.sebelum_nilai?.toLocaleString('id-ID', {
-                     maximumFractionDigits: 0,
-                     style: 'currency',
-                     currency: 'IDR',
-                  })}
-               </td>
+               <td className='cell-print'>{numberToRupiah(jumlah?.sebelum_nilai)}</td>
                <td
                   colSpan={4}
                   className='cell-print '>
                   Jumlah Anggaran Sub Kegiatan
                </td>
-               <td className='cell-print'>
-                  {jumlah?.setelah_nilai?.toLocaleString('id-ID', {
-                     maximumFractionDigits: 0,
-                     style: 'currency',
-                     currency: 'IDR',
-                  })}
-               </td>
+               <td className='cell-print'>{numberToRupiah(jumlah?.setelah_nilai)}</td>
                <td className='cell-print'>
                   {jumlah?.bertambah_berkurang >= 0 ? strSelisih : `(${strSelisih})`}
                </td>
@@ -820,10 +775,7 @@ export default function DpaRincianBelanja({
                         <div>Kegiatan: {item?.nama_giat}</div>
                         <div className='font-bold'>
                            {item?.nama_sub_giat} {}
-                           {item?.nilai?.toLocaleString('id', {
-                              style: 'currency',
-                              currency: 'IDR',
-                           })}
+                           {numberToRupiah(item?.nilai)}
                         </div>
                      </div>
                   </AutocompleteItem>
@@ -945,32 +897,17 @@ export default function DpaRincianBelanja({
                            <tr className='border-print break-inside-avoid'>
                               <td className='pl-2'>Alokasi Tahun -1</td>
                               <td>:</td>
-                              <td className='pr-2'>
-                                 {dpaSkpd?.pagu_n_lalu?.toLocaleString('id', {
-                                    style: 'currency',
-                                    currency: 'IDR',
-                                 })}
-                              </td>
+                              <td className='pr-2'>{numberToRupiah(dpaSkpd?.pagu_n_lalu)}</td>
                            </tr>
                            <tr className='border-print break-inside-avoid'>
                               <td className='pl-2'>Alokasi Tahun</td>
                               <td>:</td>
-                              <td className='pr-2'>
-                                 {dpaSkpd?.pagu?.toLocaleString('id', {
-                                    style: 'currency',
-                                    currency: 'IDR',
-                                 })}
-                              </td>
+                              <td className='pr-2'>{numberToRupiah(dpaSkpd?.pagu)}</td>
                            </tr>
                            <tr className='border-print break-inside-avoid'>
                               <td className='pl-2'>Alokasi Tahun + 1</td>
                               <td>:</td>
-                              <td className='pr-2'>
-                                 {dpaSkpd?.pagu_n_depan?.toLocaleString('id', {
-                                    style: 'currency',
-                                    currency: 'IDR',
-                                 })}
-                              </td>
+                              <td className='pr-2'>{numberToRupiah(dpaSkpd?.pagu_n_depan)}</td>
                            </tr>
                         </tbody>
                      </table>
@@ -1076,20 +1013,12 @@ export default function DpaRincianBelanja({
                                  <>
                                     <td className='cell-print'>Dana Yang Dibutuhkan</td>
                                     <td className='cell-print'>
-                                       {dpaSkpd?.item[0]?.sebelum_nilai?.toLocaleString('id', {
-                                          style: 'currency',
-                                          currency: 'IDR',
-                                       })}
+                                       {numberToRupiah(dpaSkpd?.item[0]?.sebelum_nilai)}
                                     </td>
                                  </>
                               )}
                               <td className='cell-print'>Dana Yang Dibutuhkan</td>
-                              <td className='cell-print'>
-                                 {dpaSkpd?.total?.toLocaleString('id', {
-                                    style: 'currency',
-                                    currency: 'IDR',
-                                 })}
-                              </td>
+                              <td className='cell-print'>{numberToRupiah(dpaSkpd?.total)}</td>
                            </tr>
                            <tr className='break-inside-avoid'>
                               <td className='cell-print'>Keluaran</td>

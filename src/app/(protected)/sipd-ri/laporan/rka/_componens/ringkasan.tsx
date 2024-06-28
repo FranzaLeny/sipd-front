@@ -7,6 +7,7 @@ import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import { Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import { numberToRupiah } from '@utils'
 import { Printer } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 
@@ -143,25 +144,13 @@ export default function RingkasanPerubahanSkpd({
                               <td className='cell-print'>{d?.kode_akun}</td>
                               <td className='cell-print'>{d?.nama_akun}</td>
                               <td className='cell-print text-right'>
-                                 {d?.nilai_sebelum?.toLocaleString('id-ID', {
-                                    maximumFractionDigits: 0,
-                                    style: 'currency',
-                                    currency: 'IDR',
-                                 })}
+                                 {numberToRupiah(d?.nilai_sebelum)}
                               </td>
                               <td className='cell-print text-right'>
-                                 {d?.nilai_sesudah?.toLocaleString('id-ID', {
-                                    maximumFractionDigits: 0,
-                                    style: 'currency',
-                                    currency: 'IDR',
-                                 })}
+                                 {numberToRupiah(d?.nilai_sesudah)}
                               </td>
                               <td className='cell-print text-right'>
-                                 {d?.selisih?.toLocaleString('id-ID', {
-                                    maximumFractionDigits: 0,
-                                    style: 'currency',
-                                    currency: 'IDR',
-                                 })}
+                                 {numberToRupiah(d?.selisih)}
                               </td>
                            </tr>
                         )

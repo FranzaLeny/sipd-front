@@ -7,25 +7,10 @@ import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import { Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import { numberToRupiah } from '@utils'
 import { groupBy } from 'lodash-es'
 import { Printer } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
-
-const currOpt: Intl.NumberFormatOptions = {
-   maximumFractionDigits: 0,
-   style: 'currency',
-   currency: 'IDR',
-}
-
-const convertToRupiah = (value?: string | number | null) => {
-   let newVal: number | string | undefined = Number(value)
-   if (!isNaN(newVal)) {
-      newVal = newVal?.toLocaleString('id-ID', currOpt)
-   } else {
-      newVal = value ? value?.toString() : '-'
-   }
-   return newVal as string
-}
 
 export default function RkaPergeseranBelanjaSkpd({
    skpd: { skpd, sub_skpd, tapd: dataTapd },
@@ -234,29 +219,27 @@ export default function RkaPergeseranBelanjaSkpd({
                                     className='cell-print text-left'>
                                     {key} {sub?.nama_sub_skpd}
                                  </td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.pagu_n_lalu)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.bo_murni)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.bm_murni)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.btt_murni)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.bt_murni)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.total_murni)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.bo_geser)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.bm_geser)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.btt_geser)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.bt_geser)}</td>
-                                 <td className='cell-print'>{convertToRupiah(sub?.total_geser)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.pagu_n_lalu)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.bo_murni)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.bm_murni)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.btt_murni)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.bt_murni)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.total_murni)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.bo_geser)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.bm_geser)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.btt_geser)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.bt_geser)}</td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.total_geser)}</td>
                                  {selisihSub < 0 ? (
                                     <td className='cell-print text-right text-red-800'>
-                                       (<span>{convertToRupiah(-selisihSub)}</span>)
+                                       (<span>{numberToRupiah(-selisihSub)}</span>)
                                     </td>
                                  ) : (
                                     <td className='cell-print text-right'>
-                                       {convertToRupiah(selisihSub)}
+                                       {numberToRupiah(selisihSub)}
                                     </td>
                                  )}
-                                 <td className='cell-print'>
-                                    {convertToRupiah(sub?.pagu_n_depan)}
-                                 </td>
+                                 <td className='cell-print'>{numberToRupiah(sub?.pagu_n_depan)}</td>
                               </tr>
                               {items?.map((item) => {
                                  const selisih = (item?.total_geser ?? 0) - (item?.total_murni || 0)
@@ -293,49 +276,49 @@ export default function RkaPergeseranBelanjaSkpd({
                                           </>
                                        )}
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item?.pagu_n_lalu)}
+                                          {numberToRupiah(item?.pagu_n_lalu)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item?.bo_murni)}
+                                          {numberToRupiah(item?.bo_murni)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item?.bm_murni)}
+                                          {numberToRupiah(item?.bm_murni)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item?.btt_murni)}
+                                          {numberToRupiah(item?.btt_murni)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item.bt_murni)}
+                                          {numberToRupiah(item.bt_murni)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item?.total_murni)}
+                                          {numberToRupiah(item?.total_murni)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item.bo_geser)}
+                                          {numberToRupiah(item.bo_geser)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item.bm_geser)}
+                                          {numberToRupiah(item.bm_geser)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item?.btt_geser)}
+                                          {numberToRupiah(item?.btt_geser)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item.bt_geser)}
+                                          {numberToRupiah(item.bt_geser)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item?.total_geser)}
+                                          {numberToRupiah(item?.total_geser)}
                                        </td>
                                        {selisih < 0 ? (
                                           <td className='cell-print text-right text-red-800 print:text-red-800'>
-                                             (<span>{convertToRupiah(-selisih)}</span>)
+                                             (<span>{numberToRupiah(-selisih)}</span>)
                                           </td>
                                        ) : (
                                           <td className='cell-print text-right'>
-                                             {convertToRupiah(selisih)}
+                                             {numberToRupiah(selisih)}
                                           </td>
                                        )}
                                        <td className='cell-print text-right'>
-                                          {convertToRupiah(item.pagu_n_depan)}
+                                          {numberToRupiah(item.pagu_n_depan)}
                                        </td>
                                     </tr>
                                  )
@@ -351,39 +334,39 @@ export default function RkaPergeseranBelanjaSkpd({
                         </td>
 
                         <td className='cell-print'>
-                           {convertToRupiah(laporan?.summary?.sum_pagu_n_lalu)}
+                           {numberToRupiah(laporan?.summary?.sum_pagu_n_lalu)}
                         </td>
                         <td className='cell-print'>
-                           {convertToRupiah(laporan?.summary?.sum_bo_murni)}
+                           {numberToRupiah(laporan?.summary?.sum_bo_murni)}
                         </td>
                         <td className='cell-print'>
-                           {convertToRupiah(laporan?.summary?.sum_bm_murni)}
+                           {numberToRupiah(laporan?.summary?.sum_bm_murni)}
                         </td>
                         <td className='cell-print'>
-                           {convertToRupiah(laporan?.summary?.sum_btt_murni)}
+                           {numberToRupiah(laporan?.summary?.sum_btt_murni)}
                         </td>
                         <td className='cell-print'>
-                           {convertToRupiah(laporan?.summary?.sum_bt_murni)}
+                           {numberToRupiah(laporan?.summary?.sum_bt_murni)}
                         </td>
                         <td className='cell-print'>
-                           {convertToRupiah(laporan?.summary?.sum_total_murni)}
+                           {numberToRupiah(laporan?.summary?.sum_total_murni)}
                         </td>
-                        <td className='cell-print'>{convertToRupiah(laporan?.summary?.sum_bo)}</td>
-                        <td className='cell-print'>{convertToRupiah(laporan?.summary?.sum_bm)}</td>
-                        <td className='cell-print'>{convertToRupiah(laporan?.summary?.sum_btt)}</td>
-                        <td className='cell-print'>{convertToRupiah(laporan?.summary?.sum_bt)}</td>
+                        <td className='cell-print'>{numberToRupiah(laporan?.summary?.sum_bo)}</td>
+                        <td className='cell-print'>{numberToRupiah(laporan?.summary?.sum_bm)}</td>
+                        <td className='cell-print'>{numberToRupiah(laporan?.summary?.sum_btt)}</td>
+                        <td className='cell-print'>{numberToRupiah(laporan?.summary?.sum_bt)}</td>
                         <td className='cell-print'>
-                           {convertToRupiah(laporan?.summary?.sum_total)}
+                           {numberToRupiah(laporan?.summary?.sum_total)}
                         </td>
                         {selisihSum < 0 ? (
                            <td className='cell-print text-right text-red-800'>
-                              (<span>{convertToRupiah(-selisihSum)}</span>)
+                              (<span>{numberToRupiah(-selisihSum)}</span>)
                            </td>
                         ) : (
-                           <td className='cell-print text-right'>{convertToRupiah(selisihSum)}</td>
+                           <td className='cell-print text-right'>{numberToRupiah(selisihSum)}</td>
                         )}
                         <td className='cell-print'>
-                           {convertToRupiah(laporan?.summary?.sum_pagu_n_depan)}
+                           {numberToRupiah(laporan?.summary?.sum_pagu_n_depan)}
                         </td>
                      </tr>
                   </tbody>

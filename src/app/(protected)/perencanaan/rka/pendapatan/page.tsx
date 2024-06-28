@@ -52,7 +52,7 @@ const Page = async ({ searchParams: { jadwal_anggaran_id } }: Props) => {
       )
    let jadwal_selected = jadwal?.find((d) => d.id === jadwal_anggaran_id)
    if (!jadwal_selected) {
-      jadwal_selected = jadwal?.find((d) => d.is_active && !!d.is_lokal)
+      jadwal_selected = jadwal?.find((d) => !!d.is_active && !!d.is_lokal)
    }
    if (!jadwal_selected) {
       jadwal_selected = jadwal[0]
@@ -65,7 +65,7 @@ const Page = async ({ searchParams: { jadwal_anggaran_id } }: Props) => {
          <div className='sticky left-0 mx-auto mb-2 flex w-full items-center justify-center sm:fixed sm:bottom-2 sm:left-auto sm:right-2 sm:z-10 sm:w-fit'>
             <JadwalAnggaranSelected
                isActive={is_active}
-               isLocked={!!is_locked}
+               isLocked={is_locked}
                nama={nama_sub_tahap}
                waktuSelesai={waktu_selesai}
             />

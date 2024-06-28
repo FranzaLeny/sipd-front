@@ -6,9 +6,8 @@ import { HelperColumns } from '@components/table'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import hasAccess from '@utils/chek-roles'
+import { Akun } from '@zod'
 import { MoreVertical } from 'lucide-react'
-
-import { Akun } from './page'
 
 const diffForHumans = (value?: string | number | Date | null) => {
    return <DiffForHumans value={value} />
@@ -113,6 +112,13 @@ export const helperColumns: HelperColumns<Akun> = {
       name: 'Gaji',
       hide: true,
       cell: toBooleanText,
+      sortable: true,
+   },
+   tahun: {
+      key: 'tahun',
+      name: 'Tahun',
+      hide: true,
+      cell: (v) => v?.join(', '),
       sortable: true,
    },
    updated_at: {

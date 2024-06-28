@@ -1,5 +1,6 @@
 'use client'
 
+import { numberToRupiah } from '@utils'
 import { LaporanSkpd } from '@/types/api/laporan'
 
 export const TheadMurni = () => (
@@ -33,16 +34,8 @@ export const TbodyMurni = ({ items = [] }: { items: LaporanSkpd['list_rekapan'] 
       items?.find((item) => item?.kode_akun === '6.2')?.total_harga || 0
    const surplus = totalPendapatan - totalBelanja
    const netto = totalPenerimaanPembiayaan - totalPengeluaranPembiayaan
-   const strSurplus = Math.abs(surplus)?.toLocaleString('id-ID', {
-      maximumFractionDigits: 0,
-      style: 'currency',
-      currency: 'IDR',
-   })
-   const strNetto = Math.abs(netto)?.toLocaleString('id-ID', {
-      maximumFractionDigits: 0,
-      style: 'currency',
-      currency: 'IDR',
-   })
+   const strSurplus = numberToRupiah(Math.abs(surplus))
+   const strNetto = numberToRupiah(Math.abs(netto))
    return (
       <tbody>
          {items?.map((d) => {
@@ -57,13 +50,7 @@ export const TbodyMurni = ({ items = [] }: { items: LaporanSkpd['list_rekapan'] 
                      className={`cell-print ${isJumlah && 'text-right'}`}>
                      {d?.nama_akun}
                   </td>
-                  <td className='cell-print text-right'>
-                     {d?.total_harga?.toLocaleString('id-ID', {
-                        maximumFractionDigits: 0,
-                        style: 'currency',
-                        currency: 'IDR',
-                     })}
-                  </td>
+                  <td className='cell-print text-right'>{numberToRupiah(d?.total_harga)}</td>
                </tr>
             )
          })}
@@ -84,13 +71,7 @@ export const TbodyMurni = ({ items = [] }: { items: LaporanSkpd['list_rekapan'] 
                className={`cell-print text-right`}>
                Jumlah Penerimaan Pembiayaan
             </td>
-            <td className='cell-print text-right'>
-               {totalPenerimaanPembiayaan?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
+            <td className='cell-print text-right'>{numberToRupiah(totalPenerimaanPembiayaan)}</td>
          </tr>
          <tr className={`bg-foreground/5 font-bold print:bg-slate-300/20`}>
             <td
@@ -98,13 +79,7 @@ export const TbodyMurni = ({ items = [] }: { items: LaporanSkpd['list_rekapan'] 
                className={`cell-print text-right`}>
                Jumlah Pengeluaran Pembiayaan
             </td>
-            <td className='cell-print text-right'>
-               {totalPengeluaranPembiayaan?.toLocaleString('id-ID', {
-                  maximumFractionDigits: 0,
-                  style: 'currency',
-                  currency: 'IDR',
-               })}
-            </td>
+            <td className='cell-print text-right'>{numberToRupiah(totalPengeluaranPembiayaan)}</td>
          </tr>
          <tr className={`bg-foreground/5 font-bold print:bg-slate-300/30`}>
             <td
@@ -167,27 +142,9 @@ export const TbodyPerubahan = ({ items = [] }: { items: LaporanSkpd['list_rekapa
                      className={`cell-print ${isJumlah && 'text-right'}`}>
                      {d?.nama_akun}
                   </td>
-                  <td className='cell-print text-right'>
-                     {d?.total_harga_murni?.toLocaleString('id-ID', {
-                        maximumFractionDigits: 0,
-                        style: 'currency',
-                        currency: 'IDR',
-                     })}
-                  </td>
-                  <td className='cell-print text-right'>
-                     {d?.total_harga?.toLocaleString('id-ID', {
-                        maximumFractionDigits: 0,
-                        style: 'currency',
-                        currency: 'IDR',
-                     })}
-                  </td>
-                  <td className='cell-print text-right'>
-                     {selisih?.toLocaleString('id-ID', {
-                        maximumFractionDigits: 0,
-                        style: 'currency',
-                        currency: 'IDR',
-                     })}
-                  </td>
+                  <td className='cell-print text-right'>{numberToRupiah(d?.total_harga_murni)}</td>
+                  <td className='cell-print text-right'>{numberToRupiah(d?.total_harga)}</td>
+                  <td className='cell-print text-right'>{numberToRupiah(selisih)}</td>
                </tr>
             )
          })}

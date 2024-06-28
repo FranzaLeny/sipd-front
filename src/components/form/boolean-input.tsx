@@ -1,9 +1,11 @@
+import { useCallback } from 'react'
 import { Checkbox, CheckboxProps } from '@nextui-org/react'
 import { useFieldInfo, useTsController } from '@ts-react/form'
 import { titleCase } from '@utils'
 
 const BooleanInput = ({
    enumValues,
+   typeValue,
    ...props
 }: Omit<CheckboxProps, 'children'> & {
    label?: string
@@ -15,9 +17,12 @@ const BooleanInput = ({
       error,
       field: { onChange, value, name },
    } = useTsController<boolean | 0 | 1>()
-   const handleChange = (value: boolean) => {
-      props.typeValue === 'number' ? onChange(value ? 1 : 0) : onChange(value)
-   }
+   const handleChange = useCallback(
+      (v: boolean) => {
+         typeValue === 'number' ? onChange(v ? 1 : 0) : onChange(v)
+      },
+      [onChange, typeValue]
+   )
 
    return (
       <div className='flex flex-col gap-2'>
@@ -30,6 +35,7 @@ const BooleanInput = ({
             classNames={props?.classNames}
             defaultSelected={defaultValue ?? false}
             {...props}
+            title={error?.errorMessage}
             isInvalid={!!error}
             name={name}
             id={name}

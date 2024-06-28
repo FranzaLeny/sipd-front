@@ -96,6 +96,10 @@ export type PayloadResponsePostSipd = {
    }
 
    // RENJA
+   listJadwalRenja: {
+      payload: ListJadwalAnggranSipdPayload
+      response: ListJadwalAnggranSipdResponse
+   }
    listDataLampiranLaporan: {
       payload: ListDataLampiranLaporanSipdPayload
       response: ListDataLampiranLaporanSipdResponse
@@ -435,7 +439,13 @@ export const listSipdPost: ListSipdPost = {
    },
 
    //RENJA
-
+   listJadwalRenja: {
+      url: 'api/jadwal/renja_jadwal/list',
+      defaultPayload: {
+         id_daerah: ID_DAERAH,
+         tahun: TAHUN,
+      },
+   },
    // Laporan
    listDataLampiranLaporan: {
       url: 'api/renja/renja_laporan/listDataLampiranLaporan',

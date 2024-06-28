@@ -102,7 +102,7 @@ export function TableIndikatorGiat(props: TableIndikatorGiatProps) {
                <tr className='print:break-inside-avoid'>
                   <td className='cell-print'>Masukan</td>
                   <td className='cell-print'>Dana yang dibutuhkan</td>
-                  <td className='cell-print'>Rp.{numberToText(pagu)}</td>
+                  <td className='cell-print'>Rp{numberToText(pagu)}</td>
                </tr>
 
                {Array.from({ length: og_length }, (_, index) => index + 1)?.map((__, i) => (

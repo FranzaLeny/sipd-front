@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
-import { getJadwalAnggaranAktif } from '@actions/perencanaan/rka/jadwal-anggaran'
+import { getAllJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import { validateSipdPetaSession } from '@actions/perencanaan/token-sipd'
+import { JadwalAnggaranSearchParams } from '@components/perencanaan/jadwal-anggaran'
 import Breadcrumb from '@components/ui/Breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card'
 import ErrorPage from '@components/ui/error'
@@ -25,33 +26,48 @@ const getUser = (user: any) => {
 
 const PATHS = [{ title: 'SIPD' }, { title: 'Perencanaan' }, { title: 'Data RKA' }]
 
-const getData = async () => {
+const getData = async ({ jadwal_anggaran_id }: SearchParams) => {
    try {
       const { user, hasAccess } = await getServerSession(['super_admin', 'admin', 'sipd_peta'])
       if (!hasAccess) {
          return { errorCode: 403, message: 'Anda tidak diizinkan untuk mengakses halaman ini' }
       }
-      const jadwal = await getJadwalAnggaranAktif({
+      const listJadwal = await getAllJadwalAnggaran({
          tahun: user.tahun,
          id_daerah: user.id_daerah,
-      }).then((res) => res.data)
-
+         filter: 'has-rincian',
+      })
+      const jadwal = listJadwal?.find((d, i) =>
+         !!jadwal_anggaran_id
+            ? d.id === jadwal_anggaran_id
+            : !!d.is_lokal || !!d.is_active || !!d.jadwal_penatausahaan || i === 0
+      )
       if (!!jadwal) {
          return {
+            listJadwal,
             user,
             jadwal_anggaran_id: jadwal?.id,
             id_jadwal_penatausahaan: jadwal?.id_jadwal_penatausahaan ?? 0,
          }
       }
-      return { user, jadwal_anggaran_id: '', id_jadwal_penatausahaan: 0 }
+      return { user, jadwal_anggaran_id: '', id_jadwal_penatausahaan: 0, listJadwal }
    } catch (e: any) {
       let errorCode = 403
       if (e.response?.status) errorCode = e.response?.status
       return { errorCode, message: e?.message }
    }
 }
-const Page = async () => {
-   const data = await getData()
+
+interface Props {
+   searchParams: SearchParams
+}
+
+interface SearchParams {
+   jadwal_anggaran_id?: string
+}
+
+const Page = async ({ searchParams }: Props) => {
+   const data = await getData(searchParams)
    if ('errorCode' in data)
       return (
          <ErrorPage
@@ -59,13 +75,14 @@ const Page = async () => {
             description={data?.message}
          />
       )
-   const { user: _user, jadwal_anggaran_id, id_jadwal_penatausahaan } = data
+   const { user: _user, id_jadwal_penatausahaan, listJadwal, jadwal_anggaran_id } = data
    const user = getUser(_user)
 
    return (
       <>
          <Breadcrumb paths={PATHS} />
          <div className='content'>
+            <JadwalAnggaranSearchParams data={listJadwal} />
             <Card isBlurred>
                <CardHeader>
                   <CardTitle>Data-Data Penganggran (RKA)</CardTitle>
@@ -84,7 +101,6 @@ const Page = async () => {
                         id_skpd: user?.id_skpd ?? 0,
                         tahun: user?.tahun,
                         jadwal_anggaran_id: jadwal_anggaran_id,
-                        id_jadwal_penatausahaan: id_jadwal_penatausahaan,
                         roles: user?.roles,
                      }}
                   />

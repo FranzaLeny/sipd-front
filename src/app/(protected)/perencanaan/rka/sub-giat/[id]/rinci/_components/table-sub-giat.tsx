@@ -46,7 +46,7 @@ export default function TableSubGiat({
                      {item.nama_dana}
                      <span className='font-bold print:hidden'>
                         {' '}
-                        Rp.{numberToText(item.pagu_dana)}
+                        Rp{numberToText(item.pagu_dana)}
                      </span>
                   </div>
                ))}

@@ -104,6 +104,25 @@ export const numberToText = (v?: number | null, minimumFractionDigits = 0, useBr
    }
    return '0'
 }
+
+export const numberToRupiah = (
+   v = 0 as number | string | null | undefined,
+   minimumFractionDigits = 0
+) => {
+   if (typeof v !== 'string') {
+      const value = v?.toFixed(minimumFractionDigits)
+      return Number(value || 0)
+         .toLocaleString('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits,
+         })
+         .toString()
+         ?.replace(/\s/g, '')
+   }
+   return v
+}
+
 export const splitKodeAkun = (kode_akun: string) => {
    const kode_akuns = kode_akun.split('.')
    return {

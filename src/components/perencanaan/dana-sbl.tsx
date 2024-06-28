@@ -5,6 +5,7 @@ import { getDanaBlSubGiat, GetDanaListParams } from '@actions/perencanaan/rka/bl
 import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/react'
 import { useLocale } from '@react-aria/i18n'
 import { useQuery } from '@tanstack/react-query'
+import { numberToRupiah } from '@utils'
 import { DanaBlSubGiat } from '@zod'
 
 export interface DanaSelectorProps
@@ -82,10 +83,7 @@ export const DanaSelector = forwardRef(
                   className='data-[selected=true]:text-primary'
                   classNames={{ title: 'whitespace-normal' }}
                   value={id_dana_sub_bl}
-                  endContent={pagu_dana.toLocaleString(locale, {
-                     style: 'currency',
-                     currency: 'IDR',
-                  })}
+                  endContent={numberToRupiah(pagu_dana)}
                   key={id_dana_sub_bl}>
                   {nama_dana ?? ''}
                </AutocompleteItem>

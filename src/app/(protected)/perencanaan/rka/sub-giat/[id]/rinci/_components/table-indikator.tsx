@@ -73,7 +73,7 @@ export default function TableIndikatorGiat(
             <tr className='print:break-inside-avoid'>
                <td className='cell-print'>Masukan</td>
                <td className='cell-print'>Dana yang dibutuhkan</td>
-               <td className='cell-print'>Rp.{numberToText(pagu)}</td>
+               <td className='cell-print'>Rp{numberToText(pagu)}</td>
             </tr>
             <tr className='print:break-inside-avoid'>
                <td
@@ -200,9 +200,9 @@ export function TableIndikatorGiatPerubahan(props: Props) {
             <tr className='print:break-inside-avoid'>
                <td className='cell-print'>Masukan</td>
                <td className='cell-print'>Dana yang dibutuhkan</td>
-               <td className='cell-print'>Rp.{numberToText(pagu_murni)}</td>
+               <td className='cell-print'>Rp{numberToText(pagu_murni)}</td>
                <td className='cell-print'>Dana yang dibutuhkan</td>
-               <td className='cell-print'>Rp.{numberToText(pagu)}</td>
+               <td className='cell-print'>Rp{numberToText(pagu)}</td>
             </tr>
 
             {Array.from(

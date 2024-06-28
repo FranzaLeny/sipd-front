@@ -7,6 +7,7 @@ import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import { Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import { numberToRupiah } from '@utils'
 import { Printer } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 
@@ -172,30 +173,11 @@ export default function RingkasanPerubahanPendapatanSkpd({
                            className='cell-print text-left'>
                            {sub_skpd?.nama_skpd}
                         </td>
-                        <td className='cell-print'>
-                           {sum?.nilai_sebelum?.toLocaleString('id-ID', {
-                              maximumFractionDigits: 0,
-                              style: 'currency',
-                              currency: 'IDR',
-                           })}
-                        </td>
+                        <td className='cell-print'>{numberToRupiah(sum?.nilai_sebelum)}</td>
                         <td colSpan={3} />
+                        <td className='cell-print'>{numberToRupiah(sum?.nilai_sesudah)}</td>
                         <td className='cell-print'>
-                           {sum?.nilai_sesudah?.toLocaleString('id-ID', {
-                              maximumFractionDigits: 0,
-                              style: 'currency',
-                              currency: 'IDR',
-                           })}
-                        </td>
-                        <td className='cell-print'>
-                           {((sum?.nilai_sesudah || 0) - (sum?.nilai_sebelum || 0))?.toLocaleString(
-                              'id-ID',
-                              {
-                                 maximumFractionDigits: 0,
-                                 style: 'currency',
-                                 currency: 'IDR',
-                              }
-                           )}
+                           {numberToRupiah((sum?.nilai_sesudah || 0) - (sum?.nilai_sebelum || 0))}
                         </td>
                      </tr>
                      {laporan?.data?.map((d) => {
@@ -212,29 +194,17 @@ export default function RingkasanPerubahanPendapatanSkpd({
                                     {d?.nama_akun}
                                  </td>
                                  <td className='cell-print text-right'>
-                                    {d?.nilai_sebelum?.toLocaleString('id-ID', {
-                                       maximumFractionDigits: 0,
-                                       style: 'currency',
-                                       currency: 'IDR',
-                                    })}
+                                    {numberToRupiah(d?.nilai_sebelum)}
                                  </td>
                                  <td
                                     colSpan={3}
                                     className='cell-print'
                                  />
                                  <td className='cell-print text-right'>
-                                    {d?.nilai_sesudah?.toLocaleString('id-ID', {
-                                       maximumFractionDigits: 0,
-                                       style: 'currency',
-                                       currency: 'IDR',
-                                    })}
+                                    {numberToRupiah(d?.nilai_sesudah)}
                                  </td>
                                  <td className='cell-print text-right'>
-                                    {d?.selisih?.toLocaleString('id-ID', {
-                                       maximumFractionDigits: 0,
-                                       style: 'currency',
-                                       currency: 'IDR',
-                                    })}
+                                    {numberToRupiah(d?.selisih)}
                                  </td>
                               </tr>
                               {hasKeterangan && (
@@ -249,29 +219,17 @@ export default function RingkasanPerubahanPendapatanSkpd({
                                           :: {d?.keterangan}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {d?.nilai_sebelum?.toLocaleString('id-ID', {
-                                             maximumFractionDigits: 0,
-                                             style: 'currency',
-                                             currency: 'IDR',
-                                          })}
+                                          {numberToRupiah(d?.nilai_sebelum)}
                                        </td>
                                        <td
                                           colSpan={3}
                                           className='cell-print'
                                        />
                                        <td className='cell-print text-right'>
-                                          {d?.nilai_sesudah?.toLocaleString('id-ID', {
-                                             maximumFractionDigits: 0,
-                                             style: 'currency',
-                                             currency: 'IDR',
-                                          })}
+                                          {numberToRupiah(d?.nilai_sesudah)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {d?.selisih?.toLocaleString('id-ID', {
-                                             maximumFractionDigits: 0,
-                                             style: 'currency',
-                                             currency: 'IDR',
-                                          })}
+                                          {numberToRupiah(d?.selisih)}
                                        </td>
                                     </tr>
                                     <tr key={d?.kode_akun + d.keterangan + 'detail'}>
@@ -280,41 +238,21 @@ export default function RingkasanPerubahanPendapatanSkpd({
                                        <td className='cell-print'>{d?.koefisien}</td>
                                        <td className='cell-print'>{d?.satuan}</td>
                                        <td className='cell-print text-right'>
-                                          {d?.nilai_sebelum?.toLocaleString('id-ID', {
-                                             maximumFractionDigits: 0,
-                                             style: 'currency',
-                                             currency: 'IDR',
-                                          })}
+                                          {numberToRupiah(d?.nilai_sebelum)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {d?.nilai_sebelum?.toLocaleString('id-ID', {
-                                             maximumFractionDigits: 0,
-                                             style: 'currency',
-                                             currency: 'IDR',
-                                          })}
+                                          {numberToRupiah(d?.nilai_sebelum)}
                                        </td>
                                        <td className='cell-print'>{d?.koefisien}</td>
                                        <td className='cell-print'>{d?.satuan}</td>
                                        <td className='cell-print text-right'>
-                                          {d?.nilai_sesudah?.toLocaleString('id-ID', {
-                                             maximumFractionDigits: 0,
-                                             style: 'currency',
-                                             currency: 'IDR',
-                                          })}
+                                          {numberToRupiah(d?.nilai_sesudah)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {d?.nilai_sesudah?.toLocaleString('id-ID', {
-                                             maximumFractionDigits: 0,
-                                             style: 'currency',
-                                             currency: 'IDR',
-                                          })}
+                                          {numberToRupiah(d?.nilai_sesudah)}
                                        </td>
                                        <td className='cell-print text-right'>
-                                          {d?.selisih?.toLocaleString('id-ID', {
-                                             maximumFractionDigits: 0,
-                                             style: 'currency',
-                                             currency: 'IDR',
-                                          })}
+                                          {numberToRupiah(d?.selisih)}
                                        </td>
                                     </tr>
                                  </>

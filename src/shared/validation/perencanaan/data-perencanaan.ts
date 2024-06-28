@@ -1,7 +1,7 @@
 import { z } from '../zod'
 
 export const AkunSchema = z.object({
-   id: z.string(),
+   id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
    id_akun: z.number().int(),
    id_daerah: z
       .number()
@@ -17,82 +17,25 @@ export const AkunSchema = z.object({
       .string()
       .transform((v) => (v === '' ? null : v))
       .nullish(),
-   is_bagi_hasil: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_bankeu_khusus: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_bankeu_umum: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_barjas: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_bl: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_bos: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_btt: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_bunga: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_gaji_asn: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_hibah_brg: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_hibah_uang: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_locked: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_modal_tanah: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_pembiayaan: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_pendapatan: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_sosial_brg: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_sosial_uang: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_subsidi: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   is_tkdn: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
+   is_bagi_hasil: z.number().int(),
+   is_bankeu_khusus: z.number().int(),
+   is_bankeu_umum: z.number().int(),
+   is_barjas: z.number().int(),
+   is_bl: z.number().int(),
+   is_bos: z.number().int(),
+   is_btt: z.number().int(),
+   is_bunga: z.number().int(),
+   is_gaji_asn: z.number().int(),
+   is_hibah_brg: z.number().int(),
+   is_hibah_uang: z.number().int(),
+   is_locked: z.number().int(),
+   is_modal_tanah: z.number().int(),
+   is_pembiayaan: z.number().int(),
+   is_pendapatan: z.number().int(),
+   is_sosial_brg: z.number().int(),
+   is_sosial_uang: z.number().int(),
+   is_subsidi: z.number().int(),
+   is_tkdn: z.number().int(),
    ket_akun: z
       .string()
       .transform((v) => (v === '' ? null : v))
@@ -109,34 +52,31 @@ export const AkunSchema = z.object({
    kunci_tahun: z.number().int().nullish(),
    level: z.number().int(),
    mulai_tahun: z.number().int().nullish(),
-   nama_akun: z.string(),
-   set_input: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   set_kab_kota: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
+   nama_akun: z.string().trim().min(1),
+   set_input: z.number().int(),
+   set_kab_kota: z.number().int(),
    set_lokus: z
       .string()
       .transform((v) => (v === '' ? null : v))
       .nullish(),
-   set_prov: z
-      .number()
-      .int()
-      .transform((v) => (!!v ? v : 0)),
-   tahun: z.number().int(),
-   created_by: z.string().nullish(),
+   set_prov: z.number().int(),
+   tahun: z.number().int().array(),
+   created_by: z
+      .string()
+      .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+      .nullish(),
    created_at: z.coerce.date(),
    updated_at: z.coerce.date(),
-   updated_by: z.string().nullish(),
+   updated_by: z
+      .string()
+      .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+      .nullish(),
 })
+
 export type Akun = z.infer<typeof AkunSchema>
 
 export const AkunUncheckedCreateInputSchema = z
    .object({
-      id: z.string().optional(),
       id_akun: z.number().int(),
       id_daerah: z
          .number()
@@ -155,101 +95,25 @@ export const AkunUncheckedCreateInputSchema = z
          .transform((v) => (v === '' ? null : v))
          .optional()
          .nullable(),
-      is_bagi_hasil: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_bankeu_khusus: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_bankeu_umum: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_barjas: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_bl: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_bos: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_btt: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_bunga: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_gaji_asn: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_hibah_brg: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_hibah_uang: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_locked: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_modal_tanah: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_pembiayaan: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_pendapatan: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_sosial_brg: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_sosial_uang: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_subsidi: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      is_tkdn: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
+      is_bagi_hasil: z.number().int(),
+      is_bankeu_khusus: z.number().int(),
+      is_bankeu_umum: z.number().int(),
+      is_barjas: z.number().int(),
+      is_bl: z.number().int(),
+      is_bos: z.number().int(),
+      is_btt: z.number().int(),
+      is_bunga: z.number().int(),
+      is_gaji_asn: z.number().int(),
+      is_hibah_brg: z.number().int(),
+      is_hibah_uang: z.number().int(),
+      is_locked: z.number().int(),
+      is_modal_tanah: z.number().int(),
+      is_pembiayaan: z.number().int(),
+      is_pendapatan: z.number().int(),
+      is_sosial_brg: z.number().int(),
+      is_sosial_uang: z.number().int(),
+      is_subsidi: z.number().int(),
+      is_tkdn: z.number().int(),
       ket_akun: z
          .string()
          .transform((v) => (v === '' ? null : v))
@@ -267,37 +131,23 @@ export const AkunUncheckedCreateInputSchema = z
          .optional()
          .nullable(),
       kunci_tahun: z.number().int().optional().nullable(),
-      level: z
-         .number()
-         .int()
-         .nullable()
-         .transform((v) => (!!v ? v : 0)),
+      level: z.number().int(),
       mulai_tahun: z.number().int().optional().nullable(),
-      nama_akun: z.string(),
-      set_input: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      set_kab_kota: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
+      nama_akun: z.string().trim().min(1),
+      set_input: z.number().int(),
+      set_kab_kota: z.number().int(),
       set_lokus: z
          .string()
          .transform((v) => (v === '' ? null : v))
          .optional()
          .nullable(),
-      set_prov: z
-         .number()
-         .int()
-         .nullish()
-         .transform((v) => (!!v ? v : 0)),
-      tahun: z.number().int(),
+      set_prov: z.number().int(),
+      tahun: z.number().int().array().optional(),
    })
    .strip()
+
 export type AkunUncheckedCreateInput = z.infer<typeof AkunUncheckedCreateInputSchema>
+
 export const SkpdSchema = z.object({
    id: z.string(),
    id_unik: z.string(),
@@ -502,7 +352,7 @@ export const StandarHargaSchema = z.object({
    spek: z.string().nullish(),
    tahun: z.number().int(),
    tipe_standar_harga: z.string(),
-   is_sipd: z.boolean(),
+   is_sipd: z.coerce.number().int(),
    id_akun: z.number().int().array(),
    created_by: z.string().nullish(),
    created_at: z.coerce.date(),
@@ -519,10 +369,7 @@ export const StandarHargaQuerySchema = z.object({
    tahun: z.coerce.number().optional(),
    id_daerah: z.coerce.number().optional(),
    kelompok: z.coerce.number().optional(),
-   is_sipd: z
-      .string()
-      .transform((v) => !!v && (v === 'true' || v === '1'))
-      .optional(),
+   is_sipd: z.coerce.number().optional(),
    id_kel_standar_harga: z.coerce.number().optional(),
 })
 
@@ -552,7 +399,7 @@ export const StandarHargaUncheckedCreateInputSchema = z
          .nullable(),
       tahun: z.number().int(),
       tipe_standar_harga: z.string(),
-      is_sipd: z.boolean().optional().nullable(),
+      is_sipd: z.coerce.number().nullable().optional(),
       id_akun: z.number().int().array().optional(),
    })
    .strip()
@@ -560,13 +407,13 @@ export const StandarHargaUncheckedCreateInputSchema = z
 export const TahapanSchema = z.object({
    id: z.string(),
    id_tahap: z.number().int(),
-   is_active: z.boolean().nullish(),
+   is_active: z.coerce.number().int().max(1).optional().default(0),
    is_locked: z.number().int(),
    nama_tahap: z.string(),
    set_nomor: z.number().int(),
    set_perda: z.number().int(),
    set_perkada: z.number().int(),
-   status_aktif: z.boolean(),
+   status_aktif: z.coerce.number().int().max(1).optional().default(1),
    status_tahap: z.string(),
    tipe_tahap: z.string(),
    urut_apbd: z.number().int(),
@@ -581,13 +428,13 @@ export const TahapanUncheckedCreateInputSchema = z
    .object({
       id: z.string().optional(),
       id_tahap: z.number().int(),
-      is_active: z.boolean().optional().nullable(),
+      is_active: z.coerce.number().int().max(1).optional().default(1),
       is_locked: z.number().int(),
       nama_tahap: z.string(),
       set_nomor: z.number().int(),
       set_perda: z.number().int(),
       set_perkada: z.number().int(),
-      status_aktif: z.boolean(),
+      status_aktif: z.coerce.number().int().max(1).optional().default(0),
       status_tahap: z.string(),
       tipe_tahap: z.string(),
       urut_apbd: z.number().int(),

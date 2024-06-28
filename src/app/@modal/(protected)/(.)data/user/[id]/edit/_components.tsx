@@ -18,24 +18,24 @@ import {
    SelectItem,
 } from '@nextui-org/react'
 import { useQueryClient } from '@tanstack/react-query'
-import { createTsForm } from '@ts-react/form'
+import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
 import { titleCase } from '@utils'
 import { IUser, UserSchema, z } from '@zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
-const mapping = [[z.string(), TextInput] as const, [z.boolean(), BooleanInput] as const] as const
-
 export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
-
+const booleanSchema = createUniqueFieldSchema(z.number().int().max(1), 'boolean')
+const mapping = [[z.string(), TextInput] as const, [booleanSchema, BooleanInput] as const] as const
 const Schema = UserSchema.pick({
-   active: true,
-   is_locked: true,
    nama: true,
    jabatan: true,
    roles: true,
    username: true,
    nip: true,
+}).extend({
+   active: booleanSchema,
+   is_locked: booleanSchema,
 })
 type ISchema = z.infer<typeof Schema>
 
@@ -119,6 +119,7 @@ const ModalCopy = ({ data, roles }: { data: IUser; roles: RoleUser[] }) => {
       errorMessage: errors?.roles?.message,
       items: roles,
    })
+
    return (
       <Modal
          isOpen={isOpen}
@@ -131,15 +132,15 @@ const ModalCopy = ({ data, roles }: { data: IUser; roles: RoleUser[] }) => {
                   form={form}
                   schema={Schema}
                   props={{
-                     active: { label: 'Aktif' },
-                     is_locked: { label: 'Kunci' },
+                     active: { label: 'Aktif', typeValue: 'number' },
+                     is_locked: { label: 'Kunci', typeValue: 'number' },
                      username: { label: 'Nama Pengguna' },
                      nip: { label: 'NIP' },
                   }}
                   onSubmit={onSubmit}>
                   {({ active, is_locked, jabatan, nama, username, nip }) => (
                      <>
-                        <ModalHeader>Form Tambah Jadwal</ModalHeader>
+                        <ModalHeader>Form Ubah User</ModalHeader>
                         <ModalBody className='gap-3 transition-all duration-75'>
                            {nama}
                            {jabatan}

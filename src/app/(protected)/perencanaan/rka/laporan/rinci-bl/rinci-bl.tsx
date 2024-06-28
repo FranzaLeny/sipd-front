@@ -376,11 +376,11 @@ function TableGiat({
                   {subGiat.kode_giat} {subGiat.nama_giat}
                </TrGiat>
                <TrGiat label={`Alokasi ${subGiat.tahun - 1}`}>
-                  Rp. {numberToText(subGiat.pagu_n_lalu)}
+                  Rp{numberToText(subGiat.pagu_n_lalu)}
                </TrGiat>
-               <TrGiat label={`Alokasi ${subGiat.tahun}`}>Rp. {numberToText(subGiat.pagu)}</TrGiat>
+               <TrGiat label={`Alokasi ${subGiat.tahun}`}>Rp{numberToText(subGiat.pagu)}</TrGiat>
                <TrGiat label={`Alokasi ${subGiat.tahun + 1}`}>
-                  Rp. {numberToText(subGiat.pagu_n_depan)}
+                  Rp{numberToText(subGiat.pagu_n_depan)}
                </TrGiat>
             </tbody>
          </table>
@@ -433,7 +433,7 @@ function TableSubGiat({ subGiat = {} as any }: { subGiat: LaporanRinciBl['sub_ke
                      <div key={i}>
                         {item.nama_dana}
                         <span className='px-2 font-bold print:hidden'>
-                           Rp.{numberToText(item.pagu_dana)}
+                           Rp{numberToText(item.pagu_dana)}
                         </span>
                      </div>
                   ))}

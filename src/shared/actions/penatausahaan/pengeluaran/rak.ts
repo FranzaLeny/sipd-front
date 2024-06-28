@@ -4,6 +4,7 @@ import {
    RakSkpd,
    RakSkpdUncheckedCreateInput,
    RakUncheckedCreateInput,
+   RealisasiRakInput,
 } from '@validations/keuangan/rak'
 
 // SIPD PENATAUSAHAAN
@@ -228,6 +229,7 @@ export const syncRakBlSkpd = async (data: RakSkpdUncheckedCreateInput[]) => {
 }
 
 interface RakByJadwal {
+   id: string
    bulan_1: number
    bulan_2: number
    bulan_3: number
@@ -240,6 +242,8 @@ interface RakByJadwal {
    bulan_10: number
    bulan_11: number
    bulan_12: number
+   nilai: number
+   nilai_rak: number
    kode_sub_skpd: string
    kode_program: string
    kode_giat: string
@@ -266,6 +270,9 @@ export const getRakSkpdBlBySkpd = async (params: {
          params,
       })
       ?.then((res) => res.data)
+}
+export const syncRelalisasiRak = async (data: RealisasiRakInput[]) => {
+   return await apiFetcher.patch<ResponseApi>('api/keuangan/rak/realisasi', data)
 }
 
 // OTHER

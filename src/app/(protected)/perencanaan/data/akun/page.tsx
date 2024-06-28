@@ -9,22 +9,6 @@ export const metadata = {
    title: 'Akun',
 }
 
-export type Akun = {
-   id: string
-   id_akun: number
-   is_bagi_hasil: number
-   is_barjas: number
-   is_bl: number
-   is_gaji_asn: number
-   is_locked: number
-   is_pembiayaan: number
-   is_pendapatan: number
-   nama_akun: string
-   set_input: number
-   kode_akun: string
-   updated_at: Date
-}
-
 const PATHS = [{ title: 'Perencanaan' }, { title: 'Data' }, { title: 'Akun' }]
 
 const Page = async () => {

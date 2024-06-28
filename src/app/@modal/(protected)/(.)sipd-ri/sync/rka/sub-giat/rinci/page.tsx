@@ -38,7 +38,7 @@ const ModalSingkronJadwal = () => {
    const [jadwal, setJadwal] = useState<{
       id: string
       id_jadwal: number
-      is_active: boolean
+      is_active: number
       id_jadwal_murni: number
    }>()
    const [jadwalMurni, setJadwalMurni] = useState<{ id: string }>()

@@ -31,7 +31,6 @@ const Page = async ({ params: { id } }: Props) => {
          />
       )
    }
-
    return (
       <ModalEdit
          data={data}

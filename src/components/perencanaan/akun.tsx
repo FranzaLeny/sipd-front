@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, useEffect, useState } from 'react'
-import { GetAkunListParams, getListAkun } from '@actions/perencanaan/data/akun'
+import { AkunParams, GetAkunListParams, getListAkun } from '@actions/perencanaan/data/akun'
 import { Autocomplete, AutocompleteItem, AutocompleteProps, Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { Akun } from '@zod'
@@ -53,7 +53,7 @@ export const AkunSelector = forwardRef(
       const [options, setOptions] = useState<Akun[]>([])
       const { data, isFetching, status, isFetched } = useQuery({
          queryKey: ['data_akun', { ...queryParams }] as [string, GetAkunListParams],
-         queryFn: async ({ queryKey: [key, params] }) => {
+         queryFn: async ({ queryKey: [_, params] }) => {
             return await getListAkun(params)
          },
          placeholderData: (previousData) => previousData,
@@ -154,7 +154,26 @@ AkunSelector.displayName = 'AkunSelector'
 export default AkunSelector
 
 export interface ObjectBl {
-   akun: Partial<Akun>
+   akun: Partial<
+      Pick<
+         AkunParams,
+         | 'is_gaji_asn'
+         | 'is_barjas'
+         | 'is_bunga'
+         | 'is_subsidi'
+         | 'is_hibah_brg'
+         | 'is_bagi_hasil'
+         | 'is_bankeu_khusus'
+         | 'is_btt'
+         | 'is_bos'
+         | 'is_hibah_uang'
+         | 'is_sosial_uang'
+         | 'is_bankeu_umum'
+         | 'set_lokus'
+         | 'is_sosial_brg'
+         | 'is_modal_tanah'
+      >
+   >
    label: string
    value:
       | 'BTL-GAJI'

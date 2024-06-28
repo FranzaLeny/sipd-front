@@ -67,7 +67,7 @@ const DATA_KEY = [
 ]
 const ModalSingkronJadwal = () => {
    const { data: session } = useSession()
-   const [jadwal, setJadwal] = useState<{ id: string; id_jadwal: number; is_active: boolean }>()
+   const [jadwal, setJadwal] = useState<{ id: string; id_jadwal: number; is_active: number }>()
    const [onlyPaguMurni, setOnlyPaguMurni] = useState(false)
    const [jadwalMurni, setJadwalMurni] = useState<{
       id: string

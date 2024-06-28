@@ -15,6 +15,7 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
+import { numberToRupiah } from '@utils'
 import { sumBy } from 'lodash-es'
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
@@ -214,11 +215,7 @@ function TableRak(props: PropsTableRak) {
                               <Fragment key={key + '-' + j}>
                                  <td className='cell-print p-2 text-left capitalize'>{key}</td>
                                  <td className='cell-print p-2 text-right'>
-                                    {value?.toLocaleString('id', {
-                                       style: 'currency',
-                                       currency: 'IDR',
-                                       minimumFractionDigits: 0,
-                                    })}
+                                    {numberToRupiah(value)}
                                  </td>
                               </Fragment>
                            )
@@ -332,22 +329,10 @@ function TableRincian({ dpaSkpd }: { dpaSkpd?: DpaSkpdPeta }) {
             o.kode_akun?.length > 3 ? o.nilai : 0
          )
          const selisih = totalPendapatan - totalBelanja
-         const stringSelish = Math.abs(selisih).toLocaleString('id', {
-            style: 'currency',
-            currency: 'IDR',
-            maximumFractionDigits: 0,
-         })
+         const stringSelish = numberToRupiah(Math.abs(selisih))
          return {
-            belanja: totalBelanja.toLocaleString('id', {
-               style: 'currency',
-               currency: 'IDR',
-               maximumFractionDigits: 0,
-            }),
-            pendapatan: totalPendapatan.toLocaleString('id', {
-               style: 'currency',
-               currency: 'IDR',
-               maximumFractionDigits: 0,
-            }),
+            belanja: numberToRupiah(totalBelanja),
+            pendapatan: numberToRupiah(totalPendapatan),
             selisih: selisih >= 0 ? stringSelish : `(${stringSelish})`,
          }
       } else {
@@ -378,13 +363,7 @@ function TableRincian({ dpaSkpd }: { dpaSkpd?: DpaSkpdPeta }) {
                      <td className='cell-print w-0'>{kode[1]}</td>
                      <td className='cell-print w-0'>{kode[2]}</td>
                      <td className='cell-print p-2'>{i.uraian}</td>
-                     <td className='cell-print  p-2 text-right'>
-                        {i.nilai.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
+                     <td className='cell-print  p-2 text-right'>{numberToRupiah(i.nilai)}</td>
                   </tr>
                )
             })}
@@ -406,13 +385,7 @@ function TableRincian({ dpaSkpd }: { dpaSkpd?: DpaSkpdPeta }) {
                      <td className='cell-print w-0'>{kode[1]}</td>
                      <td className='cell-print w-0'>{kode[2]}</td>
                      <td className='cell-print p-2'>{i.uraian}</td>
-                     <td className='cell-print p-2 text-right'>
-                        {i.nilai.toLocaleString('id-ID', {
-                           maximumFractionDigits: 0,
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
-                     </td>
+                     <td className='cell-print p-2 text-right'>{numberToRupiah(i.nilai)}</td>
                   </tr>
                )
             })}
@@ -438,7 +411,7 @@ function TableRincian({ dpaSkpd }: { dpaSkpd?: DpaSkpdPeta }) {
                   className='cell-print'>
                   Jumlah Penerimaan Pembiayaan
                </td>
-               <td className='cell-print'>Rp. 0</td>
+               <td className='cell-print'>Rp0</td>
             </tr>
             <tr className='bg-content1 text-right font-bold print:bg-slate-100'>
                <td
@@ -446,7 +419,7 @@ function TableRincian({ dpaSkpd }: { dpaSkpd?: DpaSkpdPeta }) {
                   className='cell-print'>
                   Jumlah Pengeluaran Pembiayaan
                </td>
-               <td className='cell-print'>Rp. 0</td>
+               <td className='cell-print'>Rp0</td>
             </tr>
             <tr className='bg-content1 text-right font-bold print:bg-slate-100'>
                <td
@@ -454,7 +427,7 @@ function TableRincian({ dpaSkpd }: { dpaSkpd?: DpaSkpdPeta }) {
                   className='cell-print'>
                   Pembiayaan Neto
                </td>
-               <td className='cell-print'>Rp. 0</td>
+               <td className='cell-print'>Rp0</td>
             </tr>
          </tbody>
       </table>
@@ -496,11 +469,7 @@ function TableRincianPergeseran({ dpaSkpd }: { dpaSkpd: DpaSkpdPergeseranPeta })
          <tbody>
             {dpaSkpd?.rincian_pergeseran?.map((item, i) => {
                const selisih = (item?.setelah_nilai || 0) - (item?.sebelum_nilai || 0)
-               const strSelisih = Math.abs(selisih)?.toLocaleString('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  minimumFractionDigits: 0,
-               })
+               const strSelisih = numberToRupiah(Math.abs(selisih))
                const kode = item?.kode_akun?.split('.')
                return (
                   <tr
@@ -511,16 +480,10 @@ function TableRincianPergeseran({ dpaSkpd }: { dpaSkpd: DpaSkpdPergeseranPeta })
                      <td className='cell-print w-0'>{kode[2]}</td>
                      <td className='cell-print'>{item?.uraian}</td>
                      <td className='cell-print w-0 text-right'>
-                        {item?.sebelum_nilai?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
+                        {numberToRupiah(item?.sebelum_nilai)}
                      </td>
                      <td className='cell-print w-0 text-right'>
-                        {item?.setelah_nilai?.toLocaleString('id-ID', {
-                           style: 'currency',
-                           currency: 'IDR',
-                        })}
+                        {numberToRupiah(item?.setelah_nilai)}
                      </td>
                      <td className='cell-print w-0 text-right'>
                         {selisih >= 0 ? strSelisih : `(${strSelisih})`}

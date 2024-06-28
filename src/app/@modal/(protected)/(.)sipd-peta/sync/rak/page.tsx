@@ -1,10 +1,9 @@
 'use client'
 
-import { useCallback, useMemo, useRef, useState } from 'react'
 import {
+   ResponseRakBlSubGiatSipdPeta,
    getRakBlSubGiatSipdPeta,
    getRakSkpdSipdPeta,
-   ResponseRakBlSubGiatSipdPeta,
    syncRakBlSkpd,
    syncRakBlSubGiat,
 } from '@actions/penatausahaan/pengeluaran/rak'
@@ -13,6 +12,7 @@ import { validateSipdPetaSession } from '@actions/perencanaan/token-sipd'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
+import { useSession } from '@shared/hooks/use-session'
 import { processChunks } from '@utils/hof'
 import {
    RakSkpdUncheckedCreateInput,
@@ -20,8 +20,8 @@ import {
    RakUncheckedCreateInput,
    RakUncheckedCreateInputSchema,
 } from '@validations/keuangan/rak'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
-import { useSession } from '@shared/hooks/use-session'
 
 const ModalSingkron = () => {
    const { data: session } = useSession(['admin', 'super_admin', 'sipd_peta'])
@@ -42,7 +42,7 @@ const ModalSingkron = () => {
       toast(
          <div>
             <p className='text-sm font-bold'>Mohon tunggu...</p>
-            <p className='text-xs font-bold'>Sedang singkron data RAK Belanja</p>
+            <p className='text-xs'>Sedang singkron data RAK Belanja</p>
          </div>,
          { toastId: 'singkron_data', isLoading: true }
       )
@@ -83,7 +83,7 @@ const ModalSingkron = () => {
             render: (
                <div>
                   <p className='text-sm font-bold'>Berhasil</p>
-                  <p className='text-xs font-bold'>Selesai singkron data RAK Belanja...</p>
+                  <p className='text-xs'>Selesai singkron data RAK Belanja...</p>
                </div>
             ),
             isLoading: false,
@@ -108,10 +108,11 @@ const ModalSingkron = () => {
       }
    }, [session, jadwal, isValid, lengthData])
 
-   const { id_daerah, tahun } = useMemo(() => {
+   const { id_daerah, tahun, id_skpd } = useMemo(() => {
       const id_daerah = session?.user?.accountPeta?.id_daerah || 0
+      const id_skpd = session?.user?.accountPeta?.id_skpd || 0
       const tahun = session?.user?.tahun || 0
-      return { id_daerah, tahun }
+      return { id_daerah, tahun, id_skpd }
    }, [session?.user])
 
    return (
@@ -130,7 +131,7 @@ const ModalSingkron = () => {
             label='Per Request'
          />
          <JadwalInput
-            params={{ id_daerah, tahun, jadwal_penatausahaan: 'true', filter: 'has-bl-sub-giat' }}
+            params={{ id_daerah, tahun, id_skpd, filter: 'has-rincian' }}
             isReadOnly={isLoading}
             ref={jadwalInput}
             isInvalid={!jadwalInput}
@@ -168,7 +169,7 @@ const _getRakBlSkpdSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) =
          render: (
             <div>
                <p className='text-sm font-bold'>Mohon tunggu...</p>
-               <p className='text-xs font-bold'>Proses Chek RAK Belanja Belanja SKPD</p>
+               <p className='text-xs'>Proses Chek RAK Belanja Belanja SKPD</p>
             </div>
          ),
       })
@@ -186,8 +187,8 @@ const _getRakBlSkpdSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) =
             render: (
                <div>
                   <p className='text-sm font-bold'>Mohon tunggu...</p>
-                  <p className='text-xs font-bold'>Proses Chek data Sub Kegiatan</p>
-                  <p className='text-xs font-bold'>{rak.nama_skpd}</p>
+                  <p className='text-xs'>Proses Chek data Sub Kegiatan</p>
+                  <p className='text-xs'>{rak.nama_skpd}</p>
                </div>
             ),
          })
@@ -234,9 +235,9 @@ const _getRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams
             render: (
                <div>
                   <p className='text-sm font-bold'>Mohon tunggu...</p>
-                  <p className='text-xs font-bold'>Proses Chek RAK Sub Kegiatan</p>
-                  <p className='text-xs font-bold'>{nama_sub_giat}</p>
-                  <p className='text-xs font-bold'>{nama_sub_skpd}</p>
+                  <p className='text-xs'>Proses Chek RAK Sub Kegiatan</p>
+                  <p className='text-xs'>{nama_sub_giat}</p>
+                  <p className='text-xs'>{nama_sub_skpd}</p>
                </div>
             ),
          })
