@@ -14,7 +14,7 @@ export type JadwalAnggaranWithTahapan = Zod.infer<typeof JadwalAnggaranSchema> &
    tahapan: Zod.infer<typeof TahapanSchema>
 }
 
-const PATHS = [{ title: 'Perencanaan' }, { title: 'RKA' }, { title: 'Jadwal Anggaran' }]
+const PATHS = [{ title: 'Perencanaan' }, { title: 'RKPD' }, { title: 'Jadwal' }]
 const Page = async () => {
    const { hasAccess, user } = await getServerSession([
       'super_admin',
@@ -31,12 +31,12 @@ const Page = async () => {
          <TableServerSide
             tableUiProps={{ isCompact: true }}
             helperColumns={helperColumns}
-            data_key='jadwal_anggaran'
+            data_key='jadwal_rkpd'
             searchParamsStatic={{
                tahun,
                id_daerah,
                orderBy: '-waktu_selesai',
-               is_rinci_bl: 1,
+               is_rinci_bl: 0,
             }}
             endpoint='api/perencanaan/rka/jadwal'
             tableActions={<ActionTableJadwalAnggaran />}

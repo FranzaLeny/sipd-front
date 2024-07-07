@@ -24,7 +24,6 @@ const ModalSingkronJadwal = () => {
          const res = await getJadwalAnggaranAktifFromSipd({
             id_daerah,
             tahun,
-            is_anggaran: 1,
          }).catch(() => {
             throw new Error('Gagal mengambil data jadwal aktif dari sipd')
          })

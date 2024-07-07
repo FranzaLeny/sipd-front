@@ -112,7 +112,7 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
             <AutocompleteItem
                className='data-[selected=true]:text-primary'
                classNames={{ title: 'whitespace-normal' }}
-               endContent={is_locked ? '' : 'Masih Terbuka'}
+               endContent={is_locked === 3 ? 'DIHAPUS' : 'Masih Terbuka'}
                textValue={nama_sub_tahap}
                key={keyByIdUnik ? id_unik : id}>
                {nama_sub_tahap} {!is_lokal && <span className={`font-bold `}>(SIPD)</span>}

@@ -3,7 +3,6 @@ import { JadwalAnggaranSelected } from '@components/perencanaan/jadwal-anggaran'
 import TableServerSide from '@components/table'
 import Breadcrumb from '@components/ui/Breadcrumbs'
 import ErrorPage from '@components/ui/error'
-import { BlSkpdSchema } from '@zod'
 import { getServerSession } from '@shared/server-actions/auth'
 
 import { ActionTableBlSkpd, helperColumns } from './_components'
@@ -11,8 +10,6 @@ import { ActionTableBlSkpd, helperColumns } from './_components'
 export const metadata = {
    title: 'SKPD',
 }
-
-export type BlSkpd = Zod.infer<typeof BlSkpdSchema> & { id: string }
 
 const PATHS = [{ title: 'Perencanaan' }, { title: 'RKA' }, { title: 'Anggaran SKPD' }]
 

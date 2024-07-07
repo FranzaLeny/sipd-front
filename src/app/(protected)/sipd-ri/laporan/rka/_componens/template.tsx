@@ -8,7 +8,11 @@ import RingkasanPerubahanPendapatanSkpd from './pendapatan'
 import RingkasanPerubahanRincianBelanjaSubGiat from './rincian-belanja'
 import RingkasanPerubahanSkpd from './ringkasan'
 
-export default function Template({ skpd }: { skpd: ResponseSkpdTapdAnggaranBySkpd }) {
+export default function Template({
+   skpd,
+}: {
+   skpd: ResponseSkpdTapdAnggaranBySkpd
+}) {
    return (
       <Accordion
          motionProps={{
@@ -26,7 +30,7 @@ export default function Template({ skpd }: { skpd: ResponseSkpdTapdAnggaranBySkp
             key='rekapitulasi'
             aria-label='Rekapitulasi'
             title='Rekapitulasi SKPD'>
-            <RingkasanPerubahanSkpd skpd={skpd} />
+            <RingkasanPerubahanSkpd  skpd={skpd} />
          </AccordionItem>
          <AccordionItem
             key='pendapatan'

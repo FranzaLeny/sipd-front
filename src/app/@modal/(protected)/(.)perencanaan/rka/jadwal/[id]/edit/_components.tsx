@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { JadwalAnggaran, updateJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
-import BooleanInput from '@components/form/boolean-input'
 import DateInput from '@components/form/date-time-input'
+import RadioGroupInput from '@components/form/radio-input'
 import { NumberInput, TextInput } from '@components/form/text-input'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
@@ -14,7 +14,8 @@ import { z } from '@zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
-const booleanSchema = createUniqueFieldSchema(z.number().int().max(1), 'boolean')
+const numberSelect = createUniqueFieldSchema(z.number().int(), 'numberSelect')
+
 export const JadwalAnggaranEditInputSchema = z
    .object({
       id_jadwal_murni: z.coerce.number().int(),
@@ -26,9 +27,10 @@ export const JadwalAnggaranEditInputSchema = z
       nama_jadwal_murni: z.string({ description: 'Nama Jadwal Murni' }).nullable(),
    })
    .extend({
-      is_locked: booleanSchema,
-      is_active: booleanSchema,
-      is_perubahan: booleanSchema,
+      is_locked: numberSelect,
+      is_active: numberSelect,
+      is_perubahan: numberSelect,
+      is_rinci_bl: numberSelect,
    })
    .strip()
    .superRefine((data, ctx) => {
@@ -37,6 +39,11 @@ export const JadwalAnggaranEditInputSchema = z
             code: z.ZodIssueCode.custom,
             message: 'Waktu Selesai tidak boleh kurang dari Waktu Mulai',
             path: ['waktu_selesai'],
+         })
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Waktu Mulai tidak boleh besar dari Waktu Selesai',
+            path: ['waktu_mulai'],
          })
       }
       if (data?.is_perubahan && !data?.id_jadwal_murni) {
@@ -53,13 +60,25 @@ export const JadwalAnggaranEditInputSchema = z
             path: ['is_perubahan'],
          })
       }
+      if (data?.is_perubahan === 1 && data?.is_rinci_bl === 0) {
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Centang perubahan hanya jika merupakan jadwal anggaran',
+            path: ['is_perubahan'],
+         })
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Jadwal anggaran harus dicentang jika perubahan di centang',
+            path: ['is_rinci_bl'],
+         })
+      }
    })
 
 const mapping = [
    [z.string(), TextInput] as const,
    [z.date(), DateInput] as const,
    [z.number(), NumberInput] as const,
-   [booleanSchema, BooleanInput] as const,
+   [numberSelect, RadioGroupInput] as const,
 ] as const
 
 export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
@@ -84,6 +103,7 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
       id_unik_murni: data?.id_unik_murni,
       is_active: data.is_active,
       is_locked: data.is_locked,
+      is_rinci_bl: data.is_rinci_bl,
       is_perubahan: data.is_perubahan,
       nama_sub_tahap: data?.nama_sub_tahap,
       waktu_mulai: new Date(data?.waktu_mulai),
@@ -182,6 +202,7 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
          handleValueChange('nama_jadwal_murni', null)
       }
    }, [isPerubahan, handleValueChange])
+
    return (
       <Modal
          isOpen={isOpen}
@@ -194,11 +215,45 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
                   form={form}
                   schema={JadwalAnggaranEditInputSchema}
                   props={{
-                     waktu_mulai: { labelPlacement: 'outside' },
-                     waktu_selesai: { labelPlacement: 'outside' },
-                     is_active: { label: 'Aktif', typeValue: 'number' },
-                     is_perubahan: { label: 'Perubahan', typeValue: 'number' },
-                     is_locked: { label: 'Kunci', typeValue: 'number' },
+                     // waktu_mulai: { labelPlacement: 'outside' },
+                     // waktu_selesai: { labelPlacement: 'outside' },
+                     is_locked: {
+                        label: 'Status Jadwal',
+                        typeValue: 'number',
+                        orientation: 'horizontal',
+                        options: [
+                           { value: '0', label: 'Dibuka' },
+                           { value: '1', label: 'Dikunci' },
+                           { value: '3', label: 'Dihapus' },
+                        ],
+                     },
+                     is_perubahan: {
+                        label: 'Jenis Jadwal',
+                        typeValue: 'number',
+                        orientation: 'horizontal',
+                        options: [
+                           { value: '0', label: 'Murni' },
+                           { value: '1', label: 'Perubahan' },
+                        ],
+                     },
+                     is_active: {
+                        label: 'Status Aktif',
+                        typeValue: 'number',
+                        orientation: 'horizontal',
+                        options: [
+                           { value: '0', label: 'Non Aktif' },
+                           { value: '1', label: 'Aktif' },
+                        ],
+                     },
+                     is_rinci_bl: {
+                        label: 'Kelompok Jadwal',
+                        typeValue: 'number',
+                        orientation: 'horizontal',
+                        options: [
+                           { value: '0', label: 'Jadwal RKPD' },
+                           { value: '1', label: 'Jadwal RKA' },
+                        ],
+                     },
                   }}
                   onSubmit={onSubmit}>
                   {({
@@ -208,15 +263,23 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
                      nama_sub_tahap,
                      waktu_mulai,
                      waktu_selesai,
+                     is_rinci_bl,
                   }) => (
                      <>
                         <ModalHeader>Form Tambah Jadwal</ModalHeader>
                         <ModalBody className='gap-3 transition-all duration-75'>
+                           {is_rinci_bl}
                            {nama_sub_tahap}
                            {waktu_mulai}
                            {waktu_selesai}
+                           {is_perubahan}
                            <JadwalInput
-                              params={{}}
+                              params={{
+                                 tahun: data?.tahun,
+                                 id_daerah: data?.id_daerah,
+                                 is_rinci_bl: 1,
+                              }}
+                              isDisabled={isPerubahan === 0}
                               label='Jadwal Murni'
                               placeholder='Pilih Jadwal Murni'
                               keyByIdUnik
@@ -228,11 +291,8 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
                               errorMessage={!!errors?.id_jadwal_murni?.message}
                               onChange={onJadwalChange}
                            />
-                           <div className='flex w-full justify-around'>
-                              {is_locked}
-                              {is_perubahan}
-                              {is_active}
-                           </div>
+                           {is_locked}
+                           {is_active}
                         </ModalBody>
                         <ModalFooter>
                            <Button

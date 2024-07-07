@@ -117,7 +117,7 @@ async function getFromSipd<T extends GetUrlKey>(
    }: {
       params: PayloadGet<T>
    },
-   maxRetry = 5,
+   maxRetry = 10,
    retry = 1
 ): Promise<PayloadResponseGetSipd[T]['response']> {
    try {
@@ -138,10 +138,11 @@ async function getFromSipd<T extends GetUrlKey>(
    } catch (error: any) {
       if (maxRetry && retry < maxRetry) {
          await delay(retry * 100)
-         console.error('Percobaan Get ke...' + (retry + 1) + '/' + maxRetry)
          return await getFromSipd(route, { params }, maxRetry, ++retry)
       }
-      throw new Error(error.response?.data?.message || 'Error fetching data from SIPD')
+      console.error('Sudah coba sebanyak ' + maxRetry + ' kali')
+
+      throw new Error(error?.message ?? 'Gagal Get dari SIPD')
    }
 }
 
@@ -154,7 +155,7 @@ async function postToSipd<T extends PostUrlKey>(
       params: Payload<T>
       keys: Array<keyof Payload<T>>
    },
-   maxRetry = 5,
+   maxRetry = 10,
    retry = 1
 ): Promise<PayloadResponsePostSipd[T]['response']> {
    const uniqueKeys = [...new Set(inputKeys)]
@@ -189,10 +190,10 @@ async function postToSipd<T extends PostUrlKey>(
    } catch (error: any) {
       if (maxRetry && retry < maxRetry) {
          await delay(retry * 100)
-         console.error('Percobaan Post ke...' + (retry + 1) + '/' + maxRetry)
          return await postToSipd(route, { params, keys: uniqueKeys }, maxRetry, ++retry)
       }
-      throw new Error(error?.message ?? 'Error')
+      console.error('Sudah coba sebanyak ' + maxRetry + ' kali')
+      throw new Error(error?.message ?? 'Gagal Post Ke SIPD')
    }
 }
 

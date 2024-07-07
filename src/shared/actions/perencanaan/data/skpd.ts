@@ -36,10 +36,10 @@ export const getSkpd = async (id: string) => {
 }
 
 export type SkpdParams = {
-   tahun?: number | undefined | string
-   id_daerah?: number | undefined | string
-   id_skpd?: number | undefined | string
-   id_unit?: number | undefined | string
+   tahun?: number
+   id_daerah?: number
+   id_skpd?: number
+   id_unit?: number
 }
 
 export type GetSkpdListParams = {
@@ -80,8 +80,8 @@ export const syncSkpdSipd = async (data: Zod.infer<typeof SkpdUncheckedCreateInp
 }
 
 export type ResponseSkpdTapdAnggaranBySkpd = {
-   skpd: Skpd
-   sub_skpd: Skpd
+   skpd: Skpd & { tahun: number }
+   sub_skpd: Skpd & { tahun: number }
    tapd: AnggotaTapd[] | null
 }
 

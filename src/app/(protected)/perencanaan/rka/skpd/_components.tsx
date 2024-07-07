@@ -8,9 +8,8 @@ import { HelperColumns } from '@components/table'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import hasAccess from '@utils/chek-roles'
+import { BlSkpd } from '@zod'
 import { MoreVertical } from 'lucide-react'
-
-import { BlSkpd } from './page'
 
 export const ActionTableBlSkpd: React.FC<{ jadwal: JadwalAnggaran[]; roles?: RoleUser[] }> = ({
    jadwal,

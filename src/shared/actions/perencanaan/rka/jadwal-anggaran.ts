@@ -28,7 +28,7 @@ export const getJadwalAnggaranFromSipd = async (payload: ListJadwalAnggranSipdPa
 
 export const getJadwalAnggaranAktifFromSipd = async (params: JadwalAnggranCekAktifSipdPayload) => {
    return await postToSipd('jadwalAnggaranAktif', {
-      keys: ['id_daerah', 'is_anggaran', 'tahun'],
+      keys: ['id_daerah', 'tahun', 'is_anggaran'],
       params,
    }).then((res) => res.data)
 }
@@ -98,26 +98,11 @@ export const getJadwalAnggaran = async (
    )
 }
 
-// export const getAllJadwalAnggaran = async (
-//    params: GetJadwalAnggaranParams & {
-//       hasPendapatan?: 'true' | 'false'
-//       hasRincian?: 'true' | 'false'
-//       hasSubGiat?: 'true' | 'false'
-//       orderBy?: string[] | string
-//    }
-// ) => {
-//    return await axios.get<ResponseApi<JadwalAnggaran[]>>('api/perencanaan/rka/jadwal/all', {
-//       params,
-//       paramsSerializer: {
-//          indexes: null, // by default: false
-//       },
-//    })
-// }
-
 export type GetAllJadwalAnggaranParams = {
    id_daerah: number
    tahun: number
-   is_lokal?: 'true' | 'false'
+   is_rinci_bl?: number
+   is_lokal?: number
    id_jadwal?: number
    id_unit?: number
    id_sub_skpd?: number
@@ -163,12 +148,16 @@ type GetJadwalAnggaranAktifParams = {
    id_daerah: number
    tahun: number
    id_jadwal?: number
+   is_locked?: number
+   is_rinci_bl?: number
+   jadwal_penatausahaan?: number
+   is_perubahan?: number
    is_lokal?: number
 }
 
 export const getJadwalAnggaranAktif = async (params: GetJadwalAnggaranAktifParams) => {
    return await axios.get<ResponseApi<JadwalAnggaran | null>>(`api/perencanaan/rka/jadwal/aktif`, {
-      params,
+      params: { is_rinci_bl: 1, ...params },
    })
 }
 

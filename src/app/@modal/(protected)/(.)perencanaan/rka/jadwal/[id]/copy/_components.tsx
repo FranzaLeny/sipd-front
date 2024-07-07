@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
-import BooleanInput from '@components/form/boolean-input'
 import DateInput from '@components/form/date-time-input'
+import RadioGroupInput from '@components/form/radio-input'
 import { NumberInput, TextInput } from '@components/form/text-input'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
@@ -14,7 +14,7 @@ import { JadwalAnggaran, z } from '@zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
-const booleanSchema = createUniqueFieldSchema(z.number().int().max(1), 'boolean')
+const numberSelect = createUniqueFieldSchema(z.number().int(), 'numberSelect')
 
 export const JadwalAnggaranCopyInputSchema = z
    .object({
@@ -27,9 +27,10 @@ export const JadwalAnggaranCopyInputSchema = z
       waktu_mulai: z.date({ description: 'Waktu Mulai' }),
    })
    .extend({
-      is_locked: booleanSchema,
-      is_active: booleanSchema,
-      is_perubahan: booleanSchema,
+      is_locked: numberSelect,
+      is_rinci_bl: numberSelect,
+      is_active: numberSelect,
+      is_perubahan: numberSelect,
    })
    .strip()
    .superRefine((data, ctx) => {
@@ -38,6 +39,11 @@ export const JadwalAnggaranCopyInputSchema = z
             code: z.ZodIssueCode.custom,
             message: 'Waktu Selesai tidak boleh kurang dari Waktu Mulai',
             path: ['waktu_selesai'],
+         })
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Waktu Mulai tidak boleh besar dari Waktu Selesai',
+            path: ['waktu_mulai'],
          })
       }
       if (!!data?.is_perubahan && (!data.id_jadwal_murni || !data.id_unik_murni)) {
@@ -54,13 +60,25 @@ export const JadwalAnggaranCopyInputSchema = z
             path: ['is_perubahan'],
          })
       }
+      if (data?.is_perubahan === 1 && data?.is_rinci_bl === 0) {
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Centang perubahan hanya jika merupakan jadwal anggaran',
+            path: ['is_perubahan'],
+         })
+         ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Jadwal anggaran harus dicentang jika perubahan di centang',
+            path: ['is_rinci_bl'],
+         })
+      }
    })
 
 const mapping = [
    [z.string(), TextInput] as const,
    [z.number(), NumberInput] as const,
    [z.date(), DateInput] as const,
-   [booleanSchema, BooleanInput] as const,
+   [numberSelect, RadioGroupInput] as const,
 ] as const
 
 export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
@@ -83,8 +101,9 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
          nama_jadwal_murni: data?.nama_sub_tahap,
          id_unik: 'DLH Lembata',
          id_unik_murni: data?.id_unik,
-         is_active: data.is_active,
-         is_locked: data.is_locked,
+         is_rinci_bl: 1,
+         is_active: 1,
+         is_locked: data?.is_locked,
          is_perubahan: !!data.id_jadwal_murni ? 1 : 0,
          nama_sub_tahap: data?.nama_sub_tahap + '(DLH Lembata)',
          waktu_mulai: new Date(),
@@ -128,12 +147,10 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
       try {
          const valida_data = {
             ...data,
-            ...value,
-            id_unik: data?.id_unik + ' || ' + value.id_unik,
-            is_lokal: 1,
             id: undefined,
-            is_locked: value.is_locked,
-            is_perubahan: value.is_perubahan,
+            ...value,
+            is_lokal: 1,
+            id_unik: data?.id_unik + ' || ' + value.id_unik,
          }
 
          await createJadwalAnggaran(valida_data).then((res) => {
@@ -181,10 +198,12 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
    )
 
    useEffect(() => {
-      if (!isPerubahan) {
+      if (isPerubahan === 0) {
          handleValueChange('id_jadwal_murni', 0)
          handleValueChange('id_unik_murni', null)
          handleValueChange('nama_jadwal_murni', null)
+      } else if (isPerubahan === 1) {
+         handleValueChange('is_rinci_bl', 1)
       }
    }, [isPerubahan, handleValueChange])
 
@@ -193,16 +212,50 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
          isOpen={isOpen}
          onClose={handleClose}
          scrollBehavior='outside'
-         size='3xl'>
+         size='xl'>
          <ModalContent>
             {(onClose) => (
                <TsForm
                   form={form}
                   schema={JadwalAnggaranCopyInputSchema}
                   props={{
-                     is_locked: { label: 'Kunci Jadwal', typeValue: 'number' },
-                     is_perubahan: { label: 'Perubahan', typeValue: 'number' },
-                     is_active: { label: 'Aktif', typeValue: 'number' },
+                     is_locked: {
+                        label: 'Status Jadwal',
+                        typeValue: 'number',
+                        orientation: 'horizontal',
+                        options: [
+                           { value: '0', label: 'Dibuka' },
+                           { value: '1', label: 'Dikunci' },
+                           { value: '3', label: 'Dihapus' },
+                        ],
+                     },
+                     is_perubahan: {
+                        label: 'Jenis Jadwal',
+                        typeValue: 'number',
+                        orientation: 'horizontal',
+                        options: [
+                           { value: '0', label: 'Murni' },
+                           { value: '1', label: 'Perubahan' },
+                        ],
+                     },
+                     is_active: {
+                        label: 'Status Aktif',
+                        typeValue: 'number',
+                        orientation: 'horizontal',
+                        options: [
+                           { value: '0', label: 'Non Aktif' },
+                           { value: '1', label: 'Aktif' },
+                        ],
+                     },
+                     is_rinci_bl: {
+                        label: 'Kelompok Jadwal',
+                        typeValue: 'number',
+                        orientation: 'horizontal',
+                        options: [
+                           { value: '0', label: 'Jadwal RKPD' },
+                           { value: '1', label: 'Jadwal RKA' },
+                        ],
+                     },
                   }}
                   onSubmit={onSubmit}>
                   {({
@@ -213,14 +266,17 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
                      waktu_mulai,
                      waktu_selesai,
                      id_unik,
+                     is_rinci_bl,
                   }) => (
                      <>
                         <ModalHeader>Form Salin Jadwal</ModalHeader>
                         <ModalBody className='gap-3 transition-all duration-75'>
+                           {is_rinci_bl}
                            {id_unik}
                            {nama_sub_tahap}
                            {waktu_mulai}
                            {waktu_selesai}
+                           {is_perubahan}
                            <JadwalInput
                               placeholder='Pilih Jadwal Murni'
                               keyByIdUnik
@@ -232,11 +288,8 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
                               isInvalid={!!errors?.id_jadwal_murni?.message}
                               errorMessage={errors?.id_jadwal_murni?.message}
                            />
-                           <div className='flex w-full justify-around'>
-                              {is_locked}
-                              {is_perubahan}
-                              {is_active}
-                           </div>
+                           {is_locked}
+                           {is_active}
                         </ModalBody>
                         <ModalFooter>
                            <Button

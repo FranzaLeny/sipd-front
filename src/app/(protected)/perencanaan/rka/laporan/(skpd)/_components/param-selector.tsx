@@ -12,7 +12,7 @@ export default function ParamSelector({
    id_daerah,
 }: {
    tahun: string | number
-   id_unit?: string | number
+   id_unit?: number
    id_daerah?: number
 }) {
    const router = useRouter()
@@ -24,11 +24,7 @@ export default function ParamSelector({
    const defaultUnit = searchParams.get('id_unit') ?? id_unit?.toString() ?? undefined
    const isPendapatan = pathname.endsWith('pendapatan')
    const handleParamsChange = useCallback(
-      (params?: {
-         jadwal_anggara_id?: string
-         id_unit?: string | number
-         id_skpd?: string | number
-      }) => {
+      (params?: { jadwal_anggara_id?: string; id_unit?: number; id_skpd?: number }) => {
          if (!!!params) {
             toast.error('Parameter tidak ditemukan')
             return
@@ -64,7 +60,7 @@ export default function ParamSelector({
                selectionKey='id_skpd'
                isInvalid={!defaultUnit}
                selectedKey={defaultSkpd ?? defaultUnit}
-               params={{ id_unit: defaultUnit }}
+               params={{ id_unit: Number(defaultUnit ?? 0), tahun: Number(tahun ?? 0) }}
                onChange={handleParamsChange}
                labelPlacement='inside'
                label='Pilih Skpd'

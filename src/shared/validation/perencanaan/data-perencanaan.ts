@@ -95,25 +95,139 @@ export const AkunUncheckedCreateInputSchema = z
          .transform((v) => (v === '' ? null : v))
          .optional()
          .nullable(),
-      is_bagi_hasil: z.number().int(),
-      is_bankeu_khusus: z.number().int(),
-      is_bankeu_umum: z.number().int(),
-      is_barjas: z.number().int(),
-      is_bl: z.number().int(),
-      is_bos: z.number().int(),
-      is_btt: z.number().int(),
-      is_bunga: z.number().int(),
-      is_gaji_asn: z.number().int(),
-      is_hibah_brg: z.number().int(),
-      is_hibah_uang: z.number().int(),
-      is_locked: z.number().int(),
-      is_modal_tanah: z.number().int(),
-      is_pembiayaan: z.number().int(),
-      is_pendapatan: z.number().int(),
-      is_sosial_brg: z.number().int(),
-      is_sosial_uang: z.number().int(),
-      is_subsidi: z.number().int(),
-      is_tkdn: z.number().int(),
+      is_bagi_hasil: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_bankeu_khusus: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_bankeu_umum: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_barjas: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_bl: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_bos: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_btt: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_bunga: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_gaji_asn: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_hibah_brg: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_hibah_uang: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_locked: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_modal_tanah: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_pembiayaan: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_pendapatan: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_sosial_brg: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_sosial_uang: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_subsidi: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
+      is_tkdn: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
       ket_akun: z
          .string()
          .transform((v) => (v === '' ? null : v))
@@ -131,17 +245,35 @@ export const AkunUncheckedCreateInputSchema = z
          .optional()
          .nullable(),
       kunci_tahun: z.number().int().optional().nullable(),
-      level: z.number().int(),
+      level: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
       mulai_tahun: z.number().int().optional().nullable(),
       nama_akun: z.string().trim().min(1),
       set_input: z.number().int(),
-      set_kab_kota: z.number().int(),
+      set_kab_kota: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
       set_lokus: z
          .string()
          .transform((v) => (v === '' ? null : v))
          .optional()
          .nullable(),
-      set_prov: z.number().int(),
+      set_prov: z
+         .number()
+         .int()
+         .optional()
+         .nullable()
+         .default(0)
+         .transform((v) => (v === null ? 0 : v)),
       tahun: z.number().int().array().optional(),
    })
    .strip()
@@ -184,7 +316,7 @@ export const SkpdSchema = z.object({
    pangkat_kepala: z.string(),
    set_input: z.number().int(),
    status_kepala: z.string(),
-   tahun: z.number().int(),
+   tahun: z.number().int().array(),
    kode_opd: z
       .string()
       .transform((v) => (v === '' ? null : v))
@@ -282,7 +414,7 @@ export const SkpdUncheckedCreateInputSchema = z
       pangkat_kepala: z.string(),
       set_input: z.number().int(),
       status_kepala: z.string(),
-      tahun: z.number().int(),
+      tahun: z.number().int().array().min(1),
       kode_opd: z
          .string()
          .transform((v) => (v === '' ? null : v))

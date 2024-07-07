@@ -5,9 +5,8 @@ import Link from 'next/link'
 import { HelperColumns } from '@components/table'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import hasAccess from '@utils/chek-roles'
+import { Skpd } from '@zod'
 import { MoreVertical } from 'lucide-react'
-
-import { Skpd } from './page'
 
 export const ActionSkpdTable = ({ roles }: { roles?: RoleUser[] }) => {
    const canSync = useMemo(() => {
@@ -103,6 +102,12 @@ export const helperColumns: HelperColumns<Skpd> = {
    status_kepala: {
       key: 'status_kepala',
       name: 'Status Kepala',
+   },
+   tahun: {
+      key: 'tahun',
+      name: 'Tahun',
+      cell: (tahun: number[]) => tahun?.join(', '),
+      hide: true,
    },
    aksi: {
       key: 'id',

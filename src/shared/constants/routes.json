@@ -223,7 +223,6 @@
                "keywords": "rkpd",
                "access": ["auth"],
                "defaultOpen": false,
-               "comingSoon": true,
                "routes": [
                   {
                      "key": "/perencanaan/rkpd/cascading",
@@ -238,8 +237,7 @@
                      "title": "Jadwal",
                      "keywords": "jadwal",
                      "path": "/perencanaan/rkpd/jadwal",
-                     "access": ["auth"],
-                     "comingSoon": true
+                     "access": ["auth"]
                   },
                   {
                      "key": "/perencanaan/rkpd/laporan",

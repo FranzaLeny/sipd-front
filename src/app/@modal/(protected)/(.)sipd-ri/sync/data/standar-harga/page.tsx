@@ -19,26 +19,34 @@ const ModalSingkron = () => {
 
    const action = useCallback(async () => {
       const toastId = 'singkron_data'
-      toast('Mohon tunggu...', {
-         toastId,
-         isLoading: true,
-         progress: 0,
-         closeButton: false,
-      })
+      toast(
+         <div>
+            <p className='font-bold'>Mohon tunggu...</p>
+            <p>Proses sedang berjalan</p>
+         </div>,
+         {
+            toastId,
+            isLoading: true,
+            progress: 0,
+         }
+      )
 
       if (!isValidTipes || !isValidLength) {
-         toast.error('Data tidak sesuai periksa kembali')
-         return false
+         throw new Error('Inputan tidak valid')
       }
 
       const user = validateSipdSession(session)
       let progressStart = 0.01
       const progressIncrement = (1 - progressStart) / tipes.length
-
       try {
          for (const tipe of tipes) {
             toast.update(toastId, {
-               render: `Chek data standar harga ${tipe} dari SIPD-RI`,
+               render: (
+                  <div>
+                     <p className='font-bold'>Mohon tunggu...</p>
+                     <p>Chek data standar harga {tipe} dari SIPD-RI</p>
+                  </div>
+               ),
                progress: progressStart,
             })
 
@@ -51,12 +59,15 @@ const ModalSingkron = () => {
             }).catch((error) => {
                throw new Error(`Gagal mengambil data standar harga dari SIPD: ${error.message}`)
             })
-
             toast.update(toastId, {
-               render: `Berhasil Chek data standar harga ${tipe} dari SIPD-RI`,
+               render: (
+                  <div>
+                     <p className='font-bold'>Mohon tunggu...</p>
+                     <p>Selesai chek data standar harga {tipe} dari SIPD-RI</p>
+                  </div>
+               ),
                progress: progressStart + progressIncrement / 2,
             })
-
             progressStart += progressIncrement / 2
 
             if (data?.length) {
@@ -66,13 +77,28 @@ const ModalSingkron = () => {
                   max: lengthData,
                   schema: StandarHargaUncheckedCreateInputSchema,
                   onSuccess: (res, progress, n) => {
+                     const message = res?.data?.message ?? 'Berhasil singkron data'
                      toast.update(toastId, {
-                        render: `${res?.data?.message ?? 'Berhasil singkron data'}  KE- ${n}`,
+                        render: (
+                           <div>
+                              <p className='font-bold'>Proses ke {n} berhasil</p>
+                              <p>{message}</p>
+                           </div>
+                        ),
                         progress: progressStart + (progressIncrement / 2) * progress,
                      })
                   },
                   onError: (err: any, progress, n) => {
-                     toast.error(`${err?.message ?? 'Gagal singkron data'}  KE- ${n}`)
+                     const message = err?.message ?? 'Gagal singkron data'
+                     toast.error(
+                        <div>
+                           <p className='font-bold'>Proses ke {n} gagal</p>
+                           <p>{message}</p>
+                        </div>,
+                        {
+                           progress: progressStart + (progressIncrement / 2) * progress,
+                        }
+                     )
                   },
                })
             }

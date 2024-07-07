@@ -5,7 +5,7 @@ import { getListSatuanSipd, syncSatuan } from '@actions/perencanaan/data/satuan'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
 import { SatuanUncheckedCreateInputSchema } from '@zod'
-import { toast } from 'react-toastify'
+import { toast, ToastContent } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
 import { processChunks } from '@shared/utils/hof'
 
@@ -18,27 +18,35 @@ const ModalSingkron = () => {
       const toastId = 'singkron_data'
       const startProgress = 0.1
       const endProgress = 1.0
-
-      toast('Sedang mengambil data satuan dari sipd', {
-         toastId,
-         isLoading: true,
-         progress: 0,
-      })
+      toast(
+         <div>
+            <p className='font-bold'>Mohon tunggu...</p>
+            <p>Sedang mengambil data satuan dari sipd</p>
+         </div>,
+         {
+            toastId,
+            isLoading: true,
+            progress: 0,
+         }
+      )
 
       if (!isValid) {
-         toast.error('Maksimal data tidak valid')
-         return false
+         throw new Error('Maksimal data tidak valid')
       }
 
       try {
          const data = await getListSatuanSipd({ length: 10000 }).then((res) => res.data)
 
          if (!data?.length) {
-            throw new Error('Tidak ada data untuk disingkronkan')
+            throw new Error('Tidak ada data satuan')
          }
-
          toast.update(toastId, {
-            render: `Singkron data satuan`,
+            render: (
+               <div>
+                  <p className='font-bold'>Mohon tunggu...</p>
+                  <p>Sedang simpan data satuan</p>
+               </div>
+            ),
             progress: startProgress,
          })
 
@@ -50,26 +58,62 @@ const ModalSingkron = () => {
             onSuccess: (res, progress, n) => {
                const message = res?.data?.message ?? 'Berhasil singkron data'
                toast.update(toastId, {
-                  render: `${message} KE- ${n}`,
+                  render: (
+                     <div>
+                        <p className='font-bold'>Proses ke {n} berhasil</p>
+                        <p>{message}</p>
+                     </div>
+                  ),
                   progress: startProgress + (endProgress - startProgress) * progress,
                })
             },
             onError: (err: any, progress, n) => {
                const message = err?.message ?? 'Gagal singkron data'
-               toast.error(`${message} KE- ${n}`, {
-                  progress: startProgress + (endProgress - startProgress) * progress,
-               })
+               toast.error(
+                  <div>
+                     <p className='font-bold'>Proses ke {n} gagal</p>
+                     <p>{message}</p>
+                  </div>,
+                  {
+                     progress: startProgress + (endProgress - startProgress) * progress,
+                  }
+               )
             },
          })
 
          toast.success(`Selesai singkron ${data.length} data satuan`)
+         return true
       } catch (error: any) {
-         toast.error(error.message || 'Gagal singkron data satuan')
+         const errMsg = error?.message || 'Gagal singkron data akun'
+         if (typeof errMsg === 'string') {
+            let message: ToastContent = errMsg
+            const messages = errMsg?.split?.('\n')
+            if (messages?.length > 1) {
+               message = (
+                  <div>
+                     {messages?.map((msg, i) => (
+                        <p
+                           key={i}
+                           className={`${i === 0 ? 'font-bold' : 'italic'}`}>
+                           {msg}
+                        </p>
+                     ))}
+                  </div>
+               )
+            } else {
+               message = (
+                  <div>
+                     <p className='font-bold'>Terjadi Kesalahan</p>
+                     <p>{message}</p>
+                  </div>
+               )
+            }
+            toast.error(message)
+         }
+         return false
       } finally {
          toast.done(toastId)
       }
-
-      return true
    }, [lengthData, isValid])
 
    return (

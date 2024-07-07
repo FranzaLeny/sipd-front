@@ -57,7 +57,7 @@ function CardDataJadwal({ data }: Props) {
 
    const active = useQuery({
       queryKey: [
-         { id_daerah: data?.id_daerah, is_anggaran: 1, tahun: data?.tahun },
+         { id_daerah: data?.id_daerah, tahun: data?.tahun },
          'jadwal_anggaran_aktif',
          'jadwal_anggaran',
       ] as [JadwalAnggranCekAktifSipdPayload & { is_lokal?: number }, string, string],

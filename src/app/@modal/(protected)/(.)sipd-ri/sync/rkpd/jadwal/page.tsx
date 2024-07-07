@@ -1,17 +1,17 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import { syncJadwalAnggaranSipd } from '@actions/perencanaan/rka/jadwal-anggaran'
 import {
-   getJadwalAnggaranAktifFromSipd,
-   getJadwalAnggaranFromSipd,
-   syncJadwalAnggaranSipd,
-} from '@actions/perencanaan/rka/jadwal-anggaran'
+   getJadwaRkpdAktifFromSipd,
+   getJadwaRkpdFromSipd,
+} from '@actions/perencanaan/rkpd/jadwal-rkpd'
 import { validateSipdSession } from '@actions/perencanaan/token-sipd'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
 import { processChunks } from '@utils/hof'
 import { JadwalAnggaranUncheckedCreateInputSchema } from '@zod'
-import { toast } from 'react-toastify'
+import { toast, ToastContent } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
 
 async function singkronData(
@@ -19,23 +19,23 @@ async function singkronData(
    n: number
 ) {
    toast.update('singkron_data', {
-      render: `Sedang Update data jadwal ke-${n}`,
+      render: (
+         <div>
+            <p className='font-bold'>Mohon tunggu</p>
+            <p>`Sedang simpan data jadwal ke-{n}</p>
+         </div>
+      ),
+      isLoading: true,
    })
-   await syncJadwalAnggaranSipd(data)
-      .then((res) => {
-         toast(res.data?.message ?? 'Berhasil singkron data jadwal ' + ' ke-' + n, {
-            autoClose: res.success ? 1000 : 3000,
-            type: res.success ? 'success' : 'error',
-            position: 'bottom-left',
-         })
-      })
-      .catch((error: any) => [
-         toast(error?.message ?? 'Gagal singkron data jadwal' + ' ke-' + n, {
-            autoClose: 3000,
-            type: 'error',
-            position: 'bottom-left',
-         }),
-      ])
+
+   await syncJadwalAnggaranSipd(data).catch((error: any) => {
+      toast.error(
+         <div>
+            <p className='font-bold'>Gagal</p>
+            <p>{error?.message ?? 'Gagal singkron data jadwal' + ' ke-' + n}</p>
+         </div>
+      )
+   })
 }
 
 const ModalSingkronJadwal = () => {
@@ -45,24 +45,64 @@ const ModalSingkronJadwal = () => {
    const [isLoading, setIsLoading] = useState(false)
    const action = useCallback(async () => {
       setIsLoading(true)
-      toast('Sedang mengambil data jadwal dari sipd', { toastId: 'singkron_data', isLoading: true })
+      toast(
+         <div>
+            <p className='font-bold'>Mohon tunggu...</p>
+            <p>Sedang mengambil data jadwal dari sipd</p>
+         </div>,
+         {
+            toastId: 'singkron_data',
+            isLoading: true,
+         }
+      )
       try {
          const data = await processSync(isValid, session, lengthData)
+         const content = (
+            <div>
+               <p className='font-bold'>Berhasil</p>
+               <p>Selesai singkron {data.length} data jadwal anggaran</p>
+            </div>
+         )
          toast.update('singkron_data', {
-            render: `Selesai singkron ${data.length} data jadwal anggaran`,
+            render: content,
             isLoading: false,
             autoClose: 2000,
-            type: 'info',
+            type: 'success',
          })
          setIsLoading(false)
          return true
       } catch (error: any) {
-         toast.update('singkron_data', {
-            render: error?.message || 'Gagal singkron data jadwal',
-            isLoading: false,
-            autoClose: 2000,
-            type: 'error',
-         })
+         const errMsg = error?.message || 'Gagal singkron data akun'
+         if (typeof errMsg === 'string') {
+            let message: ToastContent = errMsg
+            const messages = errMsg?.split?.('\n')
+            if (messages?.length > 1) {
+               message = (
+                  <div>
+                     {messages?.map((msg, i) => (
+                        <p
+                           key={i}
+                           className={`${i === 0 ? 'font-bold' : 'italic'}`}>
+                           {msg}
+                        </p>
+                     ))}
+                  </div>
+               )
+            } else {
+               message = (
+                  <div>
+                     <p className='font-bold'>Terjadi Kesalahan</p>
+                     <p>{message}</p>
+                  </div>
+               )
+            }
+            toast.update('singkron_data', {
+               render: message,
+               isLoading: false,
+               autoClose: 2000,
+               type: 'error',
+            })
+         }
          setIsLoading(false)
          return false
       }
@@ -72,7 +112,7 @@ const ModalSingkronJadwal = () => {
       <DialogConfirm
          action={action}
          disabledSubmit={!isValid}
-         data_key={['jadwal_anggaran', 'rka']}
+         data_key={['jadwal_rkpd', 'rkpd']}
          header='Singkron Jadwal Penganggaran'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-semibold'>Proses membutuhkan waktu.</span>
@@ -95,37 +135,43 @@ export default ModalSingkronJadwal
 async function processSync(isValid: boolean, session: Session | null, lengthData: number) {
    if (!isValid) throw new Error('Maksimal data tidak valid')
    const { id_daerah, tahun } = validateSipdSession(session)
-   const jadwalActive = await getJadwalAnggaranAktifFromSipd({
+   const jadwalActive = await getJadwaRkpdAktifFromSipd({
       id_daerah,
       tahun,
    })
 
    try {
-      const jadwalData = await getJadwalAnggaranFromSipd({ id_daerah, tahun })
+      const jadwalData = await getJadwaRkpdFromSipd({ id_daerah, tahun })
       const processedData = jadwalData.map((jadwal) => {
          const isActive = jadwalActive.some((active) => active.id_jadwal === jadwal.id_jadwal)
          const murni =
             jadwal.is_perubahan && jadwal.id_jadwal_murni
                ? jadwalData.find((data) => data.id_jadwal === jadwal.id_jadwal_murni)
                : null
+         console.log('jadwal', jadwal?.geser_khusus)
 
          return {
             ...jadwal,
             is_active: isActive ? 1 : 0,
+            geser_khusus: jadwal?.geser_khusus ? 1 : 0,
             id_unik_murni: murni?.id_unik ?? null,
             nama_jadwal_murni: murni?.nama_sub_tahap ?? null,
-            is_lokal: false,
+            is_lokal: 0,
             waktu_mulai: new Date(jadwal.waktu_mulai.replace(' GMT', '')),
             waktu_selesai: new Date(jadwal.waktu_selesai.replace(' GMT', '')),
          }
       })
 
       if (processedData.length === 0) throw new Error('Tidak ada data jadwal anggaran')
-
+      const content = (
+         <div>
+            <p className='font-bold'>Mohon tunggu</p>
+            <p>Sedang proses data jadwal</p>
+         </div>
+      )
       toast.update('singkron_data', {
-         render: 'Sedang Update data jadwal',
+         render: content,
       })
-
       await processChunks({
          data: processedData,
          action: singkronData,
@@ -135,6 +181,8 @@ async function processSync(isValid: boolean, session: Session | null, lengthData
 
       return processedData
    } catch (error) {
+      console.log({ error })
+
       throw new Error('Gagal mengambil data jadwal dari sipd')
    }
 }

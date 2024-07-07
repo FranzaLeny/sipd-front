@@ -119,7 +119,7 @@ export const helperColumns: HelperColumns<Akun> = {
       name: 'Tahun',
       hide: true,
       cell: (v) => v?.join(', '),
-      sortable: true,
+      sortable: false,
    },
    updated_at: {
       key: 'updated_at',

@@ -100,6 +100,10 @@ export type PayloadResponsePostSipd = {
       payload: ListJadwalAnggranSipdPayload
       response: ListJadwalAnggranSipdResponse
    }
+   jadwalRenjaAktif: {
+      payload: JadwalAnggranCekAktifSipdPayload & { is_anggaran?: 0 }
+      response: JadwalAnggranCekAktifSipdResponse
+   }
    listDataLampiranLaporan: {
       payload: ListDataLampiranLaporanSipdPayload
       response: ListDataLampiranLaporanSipdResponse
@@ -446,6 +450,15 @@ export const listSipdPost: ListSipdPost = {
          tahun: TAHUN,
       },
    },
+
+   jadwalRenjaAktif: {
+      url: 'api/jadwal/renja_jadwal/cek_aktif',
+      defaultPayload: {
+         id_daerah: ID_DAERAH,
+         tahun: TAHUN,
+         is_anggaran: 0,
+      },
+   },
    // Laporan
    listDataLampiranLaporan: {
       url: 'api/renja/renja_laporan/listDataLampiranLaporan',
@@ -475,6 +488,7 @@ export const listSipdPost: ListSipdPost = {
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
+         is_anggaran: 1,
       },
    },
    listBelanjaSkpd: {

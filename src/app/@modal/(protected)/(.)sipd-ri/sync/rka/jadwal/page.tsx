@@ -97,7 +97,6 @@ async function processSync(isValid: boolean, session: Session | null, lengthData
    const { id_daerah, tahun } = validateSipdSession(session)
    const jadwalActive = await getJadwalAnggaranAktifFromSipd({
       id_daerah,
-      is_anggaran: 1,
       tahun,
    })
 
@@ -115,7 +114,7 @@ async function processSync(isValid: boolean, session: Session | null, lengthData
             is_active: isActive ? 1 : 0,
             id_unik_murni: murni?.id_unik ?? null,
             nama_jadwal_murni: murni?.nama_sub_tahap ?? null,
-            is_lokal: false,
+            is_lokal: 1,
             waktu_mulai: new Date(jadwal.waktu_mulai.replace(' GMT', '')),
             waktu_selesai: new Date(jadwal.waktu_selesai.replace(' GMT', '')),
          }

@@ -1,4 +1,5 @@
 import { z } from '@zod'
+import { fromZodError } from 'zod-validation-error'
 
 interface ChunkDataParams<T, U, V> {
    data: T[]
@@ -31,7 +32,23 @@ export async function processChunks<T, U, V>(
 
    let dataToProcess = initialData
    if ('schema' in params) {
-      dataToProcess = params.schema.array().min(1).parse(initialData)
+      const validation = params.schema.array().min(1).safeParse(initialData)
+      if (validation.success) {
+         dataToProcess = validation.data
+      } else {
+         const message = fromZodError(validation.error, {
+            maxIssuesInMessage: 4,
+            includePath: true,
+            prefix: 'Data Error',
+            prefixSeparator: '\n',
+            issueSeparator: '\n',
+         })
+            .toString()
+            ?.replaceAll(' at ', ' pada ')
+         console.log(message)
+
+         throw new Error(message)
+      }
    }
 
    for (let chunkIndex = 0; chunkIndex < numChunks; chunkIndex++) {

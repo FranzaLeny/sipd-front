@@ -24,11 +24,11 @@ export const ActionTableJadwalAnggaran = () => {
       <>
          <Button
             as={Link}
-            href='jadwal/add'
+            href='/sipd-ri/sync/rkpd/jadwal'
             prefetch={false}
             scroll={false}
             color='primary'>
-            Baru
+            Singkron
          </Button>
       </>
    ) : null
@@ -44,8 +44,11 @@ const chekStatus = (data: JadwalAnggaranWithTahapan) => {
    const end = new Date(data.waktu_selesai)
    const now = new Date()
    const locked = data.is_locked === 1
+   const isDeleted = data.is_locked === 3
    const selisihMilidetik: number = now.getTime() - end.getTime()
-   if (selisihMilidetik > 0) {
+   if (isDeleted) {
+      status = 'Dihapus'
+   } else if (selisihMilidetik > 0) {
       locked ? (status = 'Selesai dan Dikunci') : (status = 'Selesai')
    } else if (locked) {
       status = 'Dikunci'
@@ -56,7 +59,15 @@ const chekStatus = (data: JadwalAnggaranWithTahapan) => {
       <div className='flex w-full items-center justify-center'>
          <Chip
             size='sm'
-            color={status === 'Berjalan' ? 'success' : isActive ? 'primary' : 'default'}>
+            color={
+               isDeleted
+                  ? 'danger'
+                  : status === 'Berjalan'
+                    ? 'success'
+                    : isActive
+                      ? 'primary'
+                      : 'default'
+            }>
             {status}
          </Chip>
       </div>
@@ -114,7 +125,7 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
                key='copy'
                color='success'
                endContent={<Copy className='size-4' />}
-               href={`jadwal/${id}/copy`}>
+               href={`/perencanaan/rka/jadwal/${id}/copy`}>
                Salin
             </DropdownItem>
             <DropdownItem
@@ -123,7 +134,7 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
                // @ts-expect-error
                prefetch={false}
                scroll={false}
-               href={`jadwal/${id}/edit`}
+               href={`/perencanaan/rka/jadwal/${id}/edit`}
                color='warning'
                endContent={<Edit className='size-4' />}>
                Ubah
@@ -135,7 +146,7 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
                // @ts-expect-error
                prefetch={false}
                scroll={false}
-               href={`jadwal/${id}/delete`}
+               href={`/perencanaan/rka/jadwal/${id}/delete`}
                endContent={<Trash className='size-4' />}
                color='danger'>
                Hapus

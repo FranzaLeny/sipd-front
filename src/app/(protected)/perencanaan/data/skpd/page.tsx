@@ -9,17 +9,6 @@ export const metadata = {
    title: 'SKPD',
 }
 
-export type Skpd = {
-   id: string
-   nama_bendahara: string
-   nama_kepala: string
-   nama_skpd: string
-   nip_bendahara: string
-   nip_kepala: string
-   pangkat_kepala: string
-   status_kepala: string
-}
-
 const PATHS = [{ title: 'Perencanaan' }, { title: 'Data' }, { title: 'Skpd' }]
 
 const Page = async () => {
