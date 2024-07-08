@@ -626,7 +626,7 @@ export const DanaBlSubGiatSchema = z.object({
    is_locked: z.string(),
    kode_dana: z.string(),
    nama_dana: z.string(),
-   pagu_dana: z.number().int(),
+   pagu_dana: z.number(),
    tahun: z.number().int(),
    created_by: z.string().nullish(),
    created_at: z.coerce.date(),
@@ -663,7 +663,7 @@ export const DanaBlSubGiatUncheckedCreateInputSchema = z
       is_locked: z.string(),
       kode_dana: z.string(),
       nama_dana: z.string(),
-      pagu_dana: z.number().int(),
+      pagu_dana: z.number(),
       tahun: z.number().int(),
       bl_sub_giat_id: z.string().optional().nullable(),
       jadwal_anggaran_id: z.string(),
@@ -1335,10 +1335,7 @@ export const RinciBlSubGiatSchema = z.object({
       .string()
       .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
       .nullish(),
-   bl_sub_giat_id: z
-      .string()
-      .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
-      .nullish(),
+   bl_sub_giat_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
 })
 
 export type RinciBlSubGiat = z.infer<typeof RinciBlSubGiatSchema>
@@ -1549,9 +1546,13 @@ export const RinciBlSubGiatUncheckedCreateInputSchema = z
       pajak_murni: z.number().optional().nullable(),
       harga_satuan_murni: z.number().optional().nullable(),
       nama_standar_harga: z.string(),
-      jadwal_anggaran_id: z.string(),
-      jadwal_anggaran_murni_id: z.string().optional().nullable(),
-      bl_sub_giat_id: z.string().optional().nullable(),
+      jadwal_anggaran_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
+      jadwal_anggaran_murni_id: z
+         .string()
+         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+         .optional()
+         .nullable(),
+      bl_sub_giat_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
       nama_sub_giat: z.string(),
       nama_giat: z.string(),
       nama_program: z.string(),

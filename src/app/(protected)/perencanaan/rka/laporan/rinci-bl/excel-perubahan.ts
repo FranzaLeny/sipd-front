@@ -819,6 +819,7 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }): number {
       orientation: 'landscape',
       showGridLines: false,
       blackAndWhite: true,
+      paperSize: 9,
       margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.2, footer: 0.2 },
       printTitlesRow: `${row_th[0].number}:${row_th[row_th.length - 1].number}`,
    }

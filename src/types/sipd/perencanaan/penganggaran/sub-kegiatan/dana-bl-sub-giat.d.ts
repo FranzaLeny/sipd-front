@@ -3,6 +3,7 @@ interface ListDanaBlSubGiatSipdPayload {
    tahun: number
    id_sub_bl: number
    id_jadwal?: number
+   is_anggaran?: number
 }
 interface ListDanaBlSubGiatSipdResponse {
    status: boolean

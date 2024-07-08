@@ -88,8 +88,21 @@ type Data = {
    subGiat: LaporanRinciBl['sub_kegiatan']
 }
 
-const dowloadRkaRinciBl = async (data: Data) => {
+const dowloadRkaRinciBl = async (data: Data[]) => {
+   const wb = new Excel.Workbook()
+   let namaFile = 'RKA'
+   for await (const item of data) {
+      namaFile = await createSheet(item, wb)
+   }
+   wb.creator = 'FXIL'
+   const buf = await wb.xlsx.writeBuffer()
+   saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
+}
+
+const createSheet = async (data: Data, wb: Excel.Workbook) => {
    const { dokumen, items, skpd, tapd, subGiat } = data
+   const kodeGiat = subGiat?.kode_giat?.split('.').map((x) => +x.trim())
+
    let namaFile =
       dokumen?.kode + '_' + subGiat?.kode_sub_giat + subGiat?.nama_sub_giat.substring(0, 100)
    namaFile = namaFile?.replace(/[^\w.-]/g, ' ')?.replaceAll('.', '_')
@@ -111,8 +124,14 @@ const dowloadRkaRinciBl = async (data: Data) => {
       return `=SUBTOTAL(9,L${nextRow}:L${endRow})`
    }
 
-   const wb = new Excel.Workbook()
-   const ws = wb.addWorksheet(sheet_name?.substring(0, 30))
+   const lastKodeGiat = kodeGiat[kodeGiat.length - 1] || 1
+   // chek kode giat ganjil atau genap
+   const isOdd = lastKodeGiat % 2 === 1
+   const isEmptyData = items?.length === 1
+   const ws = wb.addWorksheet(sheet_name?.substring(0, 30), {
+      properties: { tabColor: { argb: isEmptyData ? 'FFC0000' : isOdd ? '3FDFFF' : 'B3FFB3' } },
+   })
+
    formatDefaultRka(ws)
    fillDokJudul({ ws, dokumen, tahun: subGiat?.tahun })
    fillDataKegiatan({ ws, subGiat })
@@ -188,17 +207,15 @@ const dowloadRkaRinciBl = async (data: Data) => {
    fillKeterangan({ ws })
    lastRow = fillTapd({ ws, tapd })
    ws.headerFooter.oddFooter = `&L&\"Arial\"&9&I${footer}&R&\"Arial\"&9${dokumen?.kode}| &B&P`
-   const password = subGiat.kode_sub_giat.slice(-4)
-   await ws.protect(password, {
-      insertRows: true,
-      formatRows: true,
-      formatColumns: true,
-      formatCells: true,
-   })
+   // const password = subGiat.kode_sub_giat.slice(-4)
+   // await ws.protect(password, {
+   //    insertRows: true,
+   //    formatRows: true,
+   //    formatColumns: true,
+   //    formatCells: true,
+   // })
 
-   wb.creator = 'FXIL'
-   const buf = await wb.xlsx.writeBuffer()
-   saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
+   return namaFile
 }
 
 export default dowloadRkaRinciBl
@@ -584,6 +601,7 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }): number {
       orientation: 'portrait',
       blackAndWhite: true,
       showGridLines: false,
+      paperSize: 9,
       margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.2, footer: 0.2 },
       printTitlesRow: `${row_th[0].number}:${row_th[row_th.length - 1].number}`,
    }

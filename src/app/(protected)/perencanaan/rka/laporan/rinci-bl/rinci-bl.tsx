@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { getBlSubGiatByJadwalUnit } from '@actions/perencanaan/rka/bl-sub-giat'
 import { getLaporanSubGiat } from '@actions/perencanaan/rka/laporan'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import BlSubGiatSelector from '@components/perencanaan/bl-sub-giat'
@@ -22,6 +23,7 @@ import { useQuery } from '@tanstack/react-query'
 import { numberToMonth, numberToText } from '@utils'
 import { ArrowLeftCircle, Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
+import { LaporanBlSubGiat } from '@/types/api/laporan'
 
 import dowloadRkaRinciBl from './excel-murni'
 import dowloadRkpaRinciBl from './excel-perubahan'
@@ -152,11 +154,50 @@ export default function RinciBl({
          tapd: tapd ?? data?.skpd?.tapd,
       }
       if (jenisDok.type === 'murni') {
-         await dowloadRkaRinciBl(params)
+         await dowloadRkaRinciBl([params])
       } else {
          await dowloadRkpaRinciBl(params)
       }
    }, [jenisDok, data, tapd])
+
+   const handleExporAllSub = useCallback(async () => {
+      if (!jadwal) {
+         return
+      }
+      const listSubGiat = await getBlSubGiatByJadwalUnit({
+         id_unit: unit,
+         jadwal_anggaran_id: jadwal,
+         id_daerah: daerah,
+         tahun: tahun,
+      })
+      if (!data) return
+      const listData: {
+         dokumen: typeof jenisDok
+         items: LaporanBlSubGiat['rincian']
+         skpd: LaporanBlSubGiat['skpd']['sub_skpd']
+         subGiat: LaporanBlSubGiat['sub_kegiatan']
+         tapd: LaporanBlSubGiat['skpd']['tapd']
+      }[] = []
+      for await (const sbl of listSubGiat) {
+         await getLaporanSubGiat(sbl?.id).then((data) => {
+            const item = {
+               dokumen: jenisDok,
+               items: data.rincian,
+               skpd: data?.skpd?.sub_skpd,
+               subGiat: data?.sub_kegiatan,
+               tapd: tapd ?? data?.skpd?.tapd,
+            }
+            listData.push(item)
+         })
+      }
+      console.log(listData)
+
+      if (jenisDok.type === 'murni') {
+         await dowloadRkaRinciBl(listData)
+      } else {
+         // await dowloadRkpaRinciBl(params)
+      }
+   }, [daerah, data, jadwal, jenisDok, tahun, tapd, unit])
 
    const isPerubahan = jenisDok?.type === 'perubahan'
    const componentRef = useRef(null)
@@ -180,13 +221,22 @@ export default function RinciBl({
                   label='Pilih Jadwal Rincian Belanja'
                />
                {jadwal && (
-                  <BlSubGiatSelector
-                     label='Pilih Sub Kegiatan'
-                     labelPlacement='inside'
-                     selectedKey={blSubGiatId}
-                     params={{ id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }}
-                     onSelectionChange={setBlSubGiatId}
-                  />
+                  <div>
+                     <BlSubGiatSelector
+                        label='Pilih Sub Kegiatan'
+                        labelPlacement='inside'
+                        selectedKey={blSubGiatId}
+                        params={{ id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }}
+                        onSelectionChange={setBlSubGiatId}
+                     />
+                     <Button
+                        color='primary'
+                        className='sm:rounded-medium min-w-10 rounded-full px-2 backdrop-blur-sm sm:min-w-20'
+                        endContent={<Download className='size-5' />}
+                        onPress={handleExporAllSub}>
+                        <span className='hidden sm:inline-flex'>Download Semua</span>
+                     </Button>
+                  </div>
                )}
             </div>
          </div>

@@ -1,8 +1,8 @@
+import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 import manifest from '@constants/tpd.json'
 import { borderAll, calcRowHeight, createExcelData, numberToColumn } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
-import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 
 function formatDefaultRka(ws: Excel.Worksheet) {
    const font = { name: 'Arial', size: 10 }
@@ -360,6 +360,7 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }) {
    const row_column = ws.addRow(data_column)
    borderAll({ row: row_column, ws, center: true, wrapText: false, italic: true })
    ws.pageSetup = {
+      paperSize: 9,
       fitToWidth: 1,
       fitToPage: true,
       fitToHeight: 0,

@@ -173,6 +173,10 @@ interface UserSipd {
    tahun: number
 }
 
+const handleOnError = (error: any) => {
+   toast.error(error.message ?? 'Terjadi kesalahan')
+}
+
 async function syncDataSubKegiatan({
    userSipd,
    jadwal,
@@ -321,46 +325,55 @@ async function syncDataSubKegiatan({
       render: 'Sedang hapus data lama',
       progress: 0.76,
    })
+
    await processChunks({
       action: syncCapaianBlGiat,
       data: capaianBl,
       max: 500,
+      onError: handleOnError,
    })
    await processChunks({
       action: syncOutputBlGiat,
       data: outputBl,
       max: 500,
+      onError: handleOnError,
    })
    await processChunks({
       action: syncHasilBlGiat,
       data: hasilBl,
       max: 500,
+      onError: handleOnError,
    })
    await processChunks({
       action: syncDanaBlSubGiat,
       data: danaSbl,
       max: 500,
+      onError: handleOnError,
    })
 
    await processChunks({
       action: syncTagSubGiat,
       data: tagSbl,
       max: 500,
+      onError: handleOnError,
    })
    await processChunks({
       action: syncLabelSubGiat,
       data: labelSbl,
       max: 500,
+      onError: handleOnError,
    })
    await processChunks({
       action: syncLokasiSubGiat,
       data: lokasiSbl,
       max: 500,
+      onError: handleOnError,
    })
    await processChunks({
       action: syncOutputSubGiat,
       data: outputSbl,
       max: 500,
+      onError: handleOnError,
    })
 
    await deleteOldData({

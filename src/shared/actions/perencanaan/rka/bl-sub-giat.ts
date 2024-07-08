@@ -120,7 +120,7 @@ export const getBlSubGiatSipd = async (payload: BlSubGiatSipdPayload) => {
 
 export const getDanaBlSubGiatSipd = async (payload: ListDanaBlSubGiatSipdPayload) => {
    return await postToSipd('listDanaBlSubGiat', {
-      keys: ['id_daerah', 'tahun', 'id_sub_bl', 'id_jadwal'],
+      keys: ['id_daerah', 'tahun', 'id_sub_bl', 'id_jadwal', 'is_anggaran'],
       params: payload,
    })
       .then((res) => res.data)

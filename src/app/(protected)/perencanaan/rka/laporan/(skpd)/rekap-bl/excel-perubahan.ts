@@ -461,6 +461,7 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }) {
    borderAll({ row: row_column, ws, center: true, wrapText: false, italic: true })
    ws.pageSetup = {
       fitToWidth: 1,
+      paperSize: 9,
       fitToPage: true,
       fitToHeight: 0,
       orientation: 'landscape',
