@@ -46,7 +46,7 @@ export const SkpdMultipleSelect = forwardRef(
       const [list, setList] = useState<(Skpd & { hidden: boolean })[]>([])
       const [search, setSearch] = useState('')
       const { data, isFetching } = useQuery({
-         queryKey: [params, 'skpd', 'all_skpd'] as [SkpdParams, ...any],
+         queryKey: [params, 'data_skpd', 'all_skpd'] as [SkpdParams, ...any],
          queryFn: async ({ queryKey: [params] }) => {
             return await getAllSkpd(params)
          },
@@ -189,7 +189,7 @@ export const SkpdSelect = forwardRef(
       const [list, setList] = useState<(Skpd & { hidden: boolean })[]>([])
 
       const { data, isFetching } = useQuery({
-         queryKey: [params, 'skpd', 'all_skpd'] as [SkpdParams, ...any],
+         queryKey: [params, 'data_skpd', 'all_skpd'] as [SkpdParams, ...any],
          queryFn: async ({ queryKey: [params] }) => {
             return await getAllSkpd(params)
          },

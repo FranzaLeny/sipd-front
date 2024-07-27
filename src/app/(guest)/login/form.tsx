@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { NumberInput, PasswordInput, TextInput } from '@components/form/text-input'
 import { Card } from '@components/ui/card'
-import { Button, CardBody, CardFooter } from '@nextui-org/react'
+import { Button, CardBody, CardFooter, Select, Selection, SelectItem } from '@nextui-org/react'
 import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
 import { z } from '@zod'
 import { signIn } from 'next-auth/react'
@@ -42,8 +42,7 @@ const SingInSchema = z
             description: 'Tahun ',
          })
          .min(2024)
-         .max(new Date().getFullYear() + 1)
-         .default(2024),
+         .max(new Date().getFullYear() + 1),
       username: z
          .string({
             description: 'Nama Pengguna ',
@@ -60,11 +59,11 @@ const SingInSchema = z
    })
    .strict()
    .superRefine((data, ctx) => {
-      if (data.username.startsWith('sipd:') && !data.id_daerah) {
+      if (data.username.endsWith('sipd') && !data.id_daerah) {
          ctx.addIssue({
             code: 'custom',
             path: ['id_daerah'],
-            message: 'Id Daerah tidak boleh kosong jika menggunakan akun "sipd-ri"',
+            message: 'Daerah tidak boleh kosong jika menggunakan akun "sipd-ri"',
          })
       }
    })
@@ -72,7 +71,9 @@ type SignIn = z.infer<typeof SingInSchema>
 
 // HACK refractor komponen
 
-const FormLogin: React.FC<{}> = ({}) => {
+const FormLogin: React.FC<{
+   listDaerah: { id_daerah: number; id_prop: number; id_kab_kota: number; nama_daerah: string }[]
+}> = ({ listDaerah }) => {
    const param = useSearchParams()
    const error = param.get('error') || ''
    const callbackUrl = param.get('callbackUrl') || '/dashboard'
@@ -81,13 +82,15 @@ const FormLogin: React.FC<{}> = ({}) => {
    })
 
    const {
-      formState: { isSubmitting: isLoading },
+      formState: { isSubmitting: isLoading, errors },
       watch,
       setValue,
       clearErrors,
    } = formDlh
 
    const isSipd = watch('username')?.endsWith('-sipd')
+   const idDaerah = watch('id_daerah')
+   const tahun = watch('tahun')
    useEffect(() => {
       if (isSipd) {
          clearErrors('id_daerah')
@@ -105,6 +108,55 @@ const FormLogin: React.FC<{}> = ({}) => {
          ...data,
       })
    }
+   const years = useMemo(() => {
+      const startYear = 2024
+      const currentYear = new Date().getFullYear()
+      const endYear = currentYear + 1
+
+      const YEARS: number[] = []
+      for (let year = startYear; year <= endYear; year++) {
+         YEARS.push(year)
+      }
+      return YEARS
+   }, [])
+   const handleIdDaerahChange = useCallback(
+      (value: Selection) => {
+         if (typeof value !== 'string' && Array.from(value)?.length) {
+            const key = Array.from(value)
+            const selectedIdDaerah = Number(key[0])
+            if (!isNaN(selectedIdDaerah)) {
+               clearErrors('id_daerah')
+               setValue('id_daerah', selectedIdDaerah)
+            } else {
+               clearErrors('id_daerah')
+               setValue('id_daerah', 0)
+            }
+         } else {
+            clearErrors('id_daerah')
+            setValue('id_daerah', undefined)
+         }
+      },
+      [clearErrors, setValue]
+   )
+   const handleTahunChange = useCallback(
+      (value: Selection) => {
+         if (typeof value !== 'string' && Array.from(value)?.length) {
+            const key = Array.from(value)
+            const selectedTahun = Number(key[0])
+            if (!isNaN(selectedTahun)) {
+               clearErrors('tahun')
+               setValue('tahun', selectedTahun)
+            } else {
+               clearErrors('tahun')
+               setValue('tahun', 0)
+            }
+         } else {
+            clearErrors('tahun')
+            setValue('tahun', 0)
+         }
+      },
+      [clearErrors, setValue]
+   )
 
    const errorComponent = () => (
       <div className='text-center'>
@@ -143,27 +195,51 @@ const FormLogin: React.FC<{}> = ({}) => {
                      onSubmit={signInHandler}
                      props={{
                         username: { isClearable: true },
-                        tahun: {
-                           isRequired: true,
-                           numberFormatOptions: {
-                              useGrouping: false,
-                           },
-                        },
                         password: {
                            autoComplete: 'password',
                            label: 'Kata Sandi',
                         },
-                        id_daerah: {
-                           autoComplete: 'id_daerah',
-                           label: 'Id Daerah',
-                        },
                      }}>
-                     {({ password, tahun, username, id_daerah }) => (
+                     {({ password, username }) => (
                         <>
                            {username}
                            {password}
-                           {tahun}
-                           {isSipd ? id_daerah : null}
+                           <Select
+                              errorMessage={errors?.tahun?.message}
+                              label='Tahun'
+                              isInvalid={!!errors?.tahun}
+                              variant='bordered'
+                              required={true}
+                              onSelectionChange={handleTahunChange}
+                              defaultSelectedKeys={[TAHUN?.toString() ?? '']}
+                              selectedKeys={[tahun?.toString() ?? '']}>
+                              {years.map((year) => (
+                                 <SelectItem
+                                    key={year?.toString()}
+                                    textValue={year?.toString()}>
+                                    Tahun: {year}
+                                 </SelectItem>
+                              ))}
+                           </Select>
+                           {isSipd && (
+                              <Select
+                                 errorMessage={errors?.id_daerah?.message}
+                                 label='Daerah'
+                                 isInvalid={!!errors?.id_daerah}
+                                 variant='bordered'
+                                 required={isSipd}
+                                 onSelectionChange={handleIdDaerahChange}
+                                 defaultSelectedKeys={[ID_DAERAH?.toString() ?? '']}
+                                 selectedKeys={[idDaerah?.toString() ?? '']}>
+                                 {listDaerah.map((daerah) => (
+                                    <SelectItem
+                                       key={daerah.id_daerah}
+                                       value={daerah.id_daerah}>
+                                       {daerah.nama_daerah?.replace('Kab.', 'Kabupaten')}
+                                    </SelectItem>
+                                 ))}
+                              </Select>
+                           )}
                         </>
                      )}
                   </TsForm>

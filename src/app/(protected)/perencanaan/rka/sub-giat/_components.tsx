@@ -79,8 +79,9 @@ function generateRupiah(nilai?: number | null) {
 
 export default function rowActions(data: Data) {
    const id = data?.bl_sub_giat[0]?.id
-   const canCopy = sumBy(data?.bl_sub_giat[0]?.rinci_bl_sub_giat, 'total_harga')
-   const disabledKeys = canCopy ? [] : ['copy']
+   const canCopy = data?.bl_sub_giat[0]?.rinci_bl_sub_giat?.length > 0
+
+   const disabledKeys = !!canCopy ? [] : ['copy']
    // TODO AKSI RKA SUB GIAT tambah hak akses
    return (
       <Dropdown>
@@ -132,7 +133,7 @@ export default function rowActions(data: Data) {
                   // @ts-expect-error
                   prefetch={false}
                   scroll={false}
-                  href={`sub-giat/${id}/rinci`}
+                  href={`rinci?id=${id}`}
                   key='rinci'>
                   Rincian RKA
                </DropdownItem>
@@ -193,7 +194,7 @@ export const helperColumnsPergeseran: HelperColumns<Data> = {
    },
    pagu: {
       key: 'pagu',
-      name: 'Setelah Perubahan',
+      name: 'Pagu',
       headerProps: {
          align: 'center',
          className: 'text-center',

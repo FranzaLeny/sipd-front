@@ -6,6 +6,7 @@ import { getRakBlByJadwal, syncRelalisasiRak } from '@actions/penatausahaan/peng
 import { getSpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
 import { getStatistikBlSkpdSipd } from '@actions/penatausahaan/pengeluaran/statistik'
 import { getSumberDanaAkunRinciSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
+import { getAllBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Autocomplete, AutocompleteItem, Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
@@ -52,7 +53,7 @@ export default function Component({
 
    const currMonth = new Date().getMonth() + 1
    const { data: dataSpj, isFetching } = useQuery({
-      queryKey: [{ bulan: month, type: 'SKPD' }, 'spj-fungsional'] as [
+      queryKey: [{ bulan: month, type: 'SKPD' }, 'spj-fungsional-peta'] as [
          { type: string; bulan: string },
          ...any,
       ],
@@ -60,38 +61,17 @@ export default function Component({
    })
 
    const { data: apbd, isFetching: isFetchingApbd } = useQuery({
-      queryKey: ['statistik-belanja'],
+      queryKey: ['statistik-belanja-peta'],
       queryFn: async () => await getStatistikBlSkpdSipd(),
    })
 
-   const { data: rak, isFetching: isFetchinRak } = useQuery({
-      queryKey: [{ jadwal_anggaran_id: jadwal, id_skpd }, 'rak'] as [
+   const { data: rak, isFetching: isFetchingRak } = useQuery({
+      queryKey: [{ jadwal_anggaran_id: jadwal, id_skpd }, 'data_rak', 'jadwal_anggaran'] as [
          { jadwal_anggaran_id: string; id_skpd: number },
          ...any,
       ],
       queryFn: async ({ queryKey: [params] }) => await getRakBlByJadwal(params),
       enabled: !!jadwal,
-   })
-
-   const { data: sumberDana } = useQuery({
-      queryKey: [{ jadwal_anggaran_id: jadwal, id_skpd, id_daerah, tahun }, 'dana_akun_rinci'] as [
-         {
-            jadwal_anggaran_id: string
-            id_giat?: number
-            id_program?: number
-            id_skpd?: number
-            id_sub_giat?: number
-            id_sub_skpd?: number
-            id_unit?: number
-            id_bidang_urusan?: number
-            tahun?: number
-            id_daerah?: number
-            id_urusan?: number
-         },
-         ...any,
-      ],
-      queryFn: ({ queryKey: [q] }) => getSumberDanaAkunRinciSubGiat(q),
-      enabled: !!jadwal && !!id_skpd && !!id_daerah && !!tahun,
    })
 
    const namaBulan = useMemo(() => {
@@ -117,6 +97,7 @@ export default function Component({
                   realisasi_gaji_bulan_ini,
                   realisasi_ls_selain_gaji_bulan_ini,
                   realisasi_up_gu_tu_bulan_ini,
+                  jumlah_sd_saat_ini,
                } = realisasi
                const id = rak?.find(
                   (ren) =>
@@ -131,6 +112,7 @@ export default function Component({
                if (id) {
                   data.push({
                      id,
+                     nilai_realisasi: jumlah_sd_saat_ini,
                      [key]:
                         realisasi_gaji_bulan_ini +
                         realisasi_ls_selain_gaji_bulan_ini +
@@ -161,34 +143,54 @@ export default function Component({
       setIsLoading(false)
    }, [month, rak, dataSpj?.pembukuan2])
 
-   const exportExcel = useCallback(() => {
+   const exportExcel = useCallback(async () => {
       try {
-         if (!!dataSpj && !!namaBulan) {
-            const dana = uniqBy(sumberDana, 'id_dana')
+         if (!!dataSpj && !!namaBulan && !!jadwal) {
+            const listSubGiat = await getAllBlSubGiat({
+               id_unit: id_skpd,
+               jadwal_anggaran_id: jadwal,
+               id_daerah: id_daerah,
+            })
+            const listDana = await getSumberDanaAkunRinciSubGiat({
+               id_unit: id_skpd,
+               jadwal_anggaran_id: jadwal,
+            })
+            const dana = uniqBy(listDana, 'id_dana')
             const pembukuan2 = dataSpj?.pembukuan2?.map((d) => {
                const kode = d?.kode_unik?.split('-')
                if (kode?.length === 5) {
                   const [kode_sub_skpd, kode_program, kode_giat, kode_sub_giat, kode_akun] = kode
+                  const subGiat = listSubGiat?.find(
+                     (sbl) =>
+                        sbl?.kode_sub_skpd === kode_sub_skpd &&
+                        sbl?.kode_program === kode_program &&
+                        sbl?.kode_giat === kode_giat &&
+                        sbl?.kode_sub_giat === kode_sub_giat
+                  )
+
                   const itemRak = rak?.find(
+                     (rak) =>
+                        d.kode_akun === rak?.kode_akun &&
+                        rak?.kode_giat === kode_giat &&
+                        rak?.kode_sub_giat === kode_sub_giat &&
+                        rak?.kode_program === kode_program &&
+                        rak?.kode_sub_skpd === kode_sub_skpd &&
+                        rak?.kode_akun === kode_akun
+                  )
+
+                  const dana = listDana?.filter(
                      (item) =>
                         d.kode_akun === item?.kode_akun &&
-                        item?.kode_giat === kode_giat &&
-                        item?.kode_sub_giat === kode_sub_giat &&
-                        item?.kode_program === kode_program &&
-                        item?.kode_sub_skpd === kode_sub_skpd &&
+                        item?.bl_sub_giat_id === subGiat?.id &&
                         item?.kode_akun === kode_akun
                   )
-                  const dana = sumberDana?.filter(
-                     (item) =>
-                        d.kode_akun === item?.kode_akun &&
-                        item?.kode_sub_giat === kode_sub_giat &&
-                        item?.kode_sub_skpd === kode_sub_skpd &&
-                        item?.kode_akun === kode_akun
-                  )
+
                   const namaDana = dana?.map(
                      (dn) => dn.nama_dana + ': ' + (dn?.total_harga || 0).toLocaleString('id-ID')
                   )
+
                   const idDana = dana?.map((dn) => dn.id_dana)
+
                   if (!!itemRak) {
                      const dataRak = Object.entries(itemRak).reduce(
                         (acc, [key, value]) => {
@@ -231,7 +233,7 @@ export default function Component({
       } catch (error: any) {
          toast.error(error?.message ?? 'Gagal download excel SPJ fungsional', { autoClose: 5000 })
       }
-   }, [dataSpj, namaBulan, rak, month, sumberDana])
+   }, [dataSpj, namaBulan, rak, month, jadwal, id_skpd, id_daerah])
 
    return (
       <div className='content relative z-0 space-y-3'>
@@ -268,13 +270,13 @@ export default function Component({
                <div>
                   <Button
                      color='primary'
-                     isLoading={isFetching || isFetchinRak || isFetchingApbd || isLoading}
+                     isLoading={isFetching || isFetchingRak || isFetchingApbd || isLoading}
                      onPress={exportExcel}>
                      Download Excel
                   </Button>
                   <Button
                      color='secondary'
-                     isLoading={isFetching || isFetchinRak || isFetchingApbd || isLoading}
+                     isLoading={isFetching || isFetchingRak || isFetchingApbd || isLoading}
                      onPress={updateRealiasasi}>
                      Back Up
                   </Button>

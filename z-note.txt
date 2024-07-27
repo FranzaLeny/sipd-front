@@ -5,6 +5,7 @@ pnpm dev -H 192.168.144.16 -p 3000 --experimental-https
 New-Item -ItemType SymbolicLink -Path "F:\sipd-lokal\sipd-ri-frontend\node_modules" -Target "F:\_node_\sipd-ri-frontend\node_modules"
 Remove-Item "F:\sipd-lokal\sipd-ri-frontend\node_modules"
 
+      "sharp": "0.32.6",
 
 
 

@@ -81,7 +81,7 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
    const handleSelect = useCallback(
       (select: React.Key | null) => {
          onSelectionChange && onSelectionChange(select?.toString() ?? '')
-         if (data?.length && select) {
+         if (data?.length && !!select) {
             const jadwal = data?.find((d) => (keyByIdUnik ? d.id_unik === select : d.id === select))
             const jadwal_murni = data?.find((d) => d.id_unik === jadwal?.id_unik_murni)
             !!onChange && onChange(jadwal)
@@ -112,7 +112,7 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
             <AutocompleteItem
                className='data-[selected=true]:text-primary'
                classNames={{ title: 'whitespace-normal' }}
-               endContent={is_locked === 3 ? 'DIHAPUS' : 'Masih Terbuka'}
+               endContent={is_locked === 3 ? 'Dihapus' : is_locked === 1 ? 'Dikunci' : 'Dibuka'}
                textValue={nama_sub_tahap}
                key={keyByIdUnik ? id_unik : id}>
                {nama_sub_tahap} {!is_lokal && <span className={`font-bold `}>(SIPD)</span>}

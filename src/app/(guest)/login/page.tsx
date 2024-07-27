@@ -1,3 +1,5 @@
+import { getDaerahLogin } from '@shared/server-actions/auth-api'
+
 import FormLogin from './form'
 
 interface PageProps {
@@ -10,6 +12,11 @@ interface SearchParams {
 }
 
 const Page = async (props: PageProps) => {
-   return <FormLogin />
+   const listDaerah = await getDaerahLogin().catch((e) => {
+      console.log(e)
+
+      return []
+   })
+   return <FormLogin listDaerah={listDaerah} />
 }
 export default Page

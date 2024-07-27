@@ -17,7 +17,7 @@ export type GetSatuanListParams = {
 
 export async function getListSatuan(params: GetSatuanListParams) {
    return await axios
-      .get<ResponseApi<CursorPaginate<Satuan>>>(`api/perencanaan/master/satuan`, { params })
+      .get<ResponseApi<CursorPaginate<Satuan>>>(`/api/perencanaan/data/satuan`, { params })
       .then((res) => res?.data)
 }
 
@@ -25,7 +25,7 @@ export async function getTolalSatuan<T extends Partial<{}>>(params?: T) {
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/master/satuan/total`, { params })
+      >(`/api/perencanaan/data/satuan/total`, { params })
       .then((res) => res?.data)
 }
 
@@ -40,5 +40,5 @@ export type SatuanById = {
 
 // APi
 export async function syncSatuan(data: Zod.infer<typeof SatuanUncheckedCreateInputSchema>[]) {
-   return await axios.put('api/perencanaan/master/satuan', data)
+   return await axios.put('/api/perencanaan/data/satuan', data)
 }

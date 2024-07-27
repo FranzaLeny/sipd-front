@@ -107,6 +107,13 @@
                      "comingSoon": true
                   },
                   {
+                     "key": "/perencanaan/data/sumber-dana",
+                     "title": "Sumber Dana",
+                     "keywords": "sumber-dana",
+                     "path": "/perencanaan/data/sumber-dana",
+                     "access": ["admin_perencanaan"]
+                  },
+                  {
                      "key": "/perencanaan/data/user",
                      "title": "User SIPD",
                      "keywords": "user-sipd",
@@ -292,6 +299,13 @@
                      "defaultOpen": false,
                      "routes": [
                         {
+                           "key": "/perencanaan/rka/laporan/cover",
+                           "title": "Cover",
+                           "keywords": "cover",
+                           "path": "/perencanaan/rka/laporan/cover",
+                           "access": ["perencanaan", "admin_perencanaan"]
+                        },
+                        {
                            "key": "/perencanaan/rka/laporan/skpd",
                            "title": "Ringkasan Skpd",
                            "keywords": "skpd",
@@ -318,6 +332,13 @@
                            "keywords": "rinci-bl",
                            "path": "/perencanaan/rka/laporan/rinci-bl",
                            "access": ["perencanaan", "admin_perencanaan"]
+                        },
+                        {
+                           "key": "/perencanaan/rka/laporan/sumber-dana",
+                           "title": "Sumber Dana",
+                           "keywords": "sumber-dana",
+                           "path": "/perencanaan/rka/laporan/sumber-dana",
+                           "access": ["perencanaan", "admin_perencanaan"]
                         }
                      ]
                   }
@@ -330,8 +351,23 @@
          "title": "Keuangan",
          "keywords": "keuangan",
          "access": ["auth"],
-         "path": "/keuangan",
-         "comingSoon": true
+         "routes": [
+            {
+               "key": "/keuangan/realisasi",
+               "title": "Realisasi Anggaran",
+               "keywords": "realisasi,anggaran",
+               "access": ["auth"],
+               "path": "/keuangan/realisasi"
+            },
+            {
+               "key": "/keuangan/dpa",
+               "title": "DPA",
+               "keywords": "dpa,keuangan",
+               "access": ["auth"],
+               "path": "/keuangan/dpa",
+               "comingSoon": true
+            }
+         ]
       },
       {
          "key": "/sipd",

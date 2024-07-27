@@ -1,15 +1,12 @@
 'use client'
 
 import { forwardRef } from 'react'
-import {
-   getBlSubGiatByJadwalUnit,
-   GetSubGiatListParams,
-} from '@actions/perencanaan/rka/bl-sub-giat'
+import { getAllBlSubGiat, GetSubGiatListParams } from '@actions/perencanaan/rka/bl-sub-giat'
 import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
 
-type BlSubGiat = AsyncReturnType<typeof getBlSubGiatByJadwalUnit>
+type BlSubGiat = AsyncReturnType<typeof getAllBlSubGiat>
 
 export interface BlSubGiatSelectorProps
    extends Pick<
@@ -22,7 +19,7 @@ export interface BlSubGiatSelectorProps
    onChange?: (blsubGiat: BlSubGiat[number] | null) => void
    onValueChange?: (nama: string | null) => void
    onSelectionChange?: (id: string | null) => void
-   params: GetSubGiatListParams
+   params: GetSubGiatListParams | { bl_sub_giat_id?: string }
    delayFetch?: number
 }
 
@@ -43,9 +40,12 @@ const BlSubGiatSelector = forwardRef(
          isFetching,
          status,
       } = useQuery({
-         queryKey: ['bl_sub_giat', { ...params }] as [string, GetSubGiatListParams],
-         queryFn: async ({ queryKey: [key, params] }) => {
-            return await getBlSubGiatByJadwalUnit(params)
+         queryKey: [{ ...params }, 'bl_sub_giat', 'jadwal_anggaran'] as [
+            GetSubGiatListParams | { bl_sub_giat_id?: string },
+            ...any,
+         ],
+         queryFn: async ({ queryKey: [params] }) => {
+            return await getAllBlSubGiat(params)
          },
          placeholderData: (previousData) => previousData,
       })

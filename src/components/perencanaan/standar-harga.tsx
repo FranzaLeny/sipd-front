@@ -64,11 +64,11 @@ export const StandarHargaSelector = forwardRef(
       }, [params])
       const [options, setOptions] = useState<StandarHarga[]>([])
       const { data, isFetching, status, isFetched } = useQuery({
-         queryKey: ['data_standar_harga', { ...queryParams }] as [
-            string,
+         queryKey: [{ ...queryParams }, 'data_standar_harga'] as [
             GetStandarHargaListParams,
+            string,
          ],
-         queryFn: async ({ queryKey: [key, params] }) => {
+         queryFn: async ({ queryKey: [params] }) => {
             return await getListStandarHarga(params)
          },
          placeholderData: (previousData) => previousData,

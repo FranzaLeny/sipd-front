@@ -18,13 +18,6 @@ axios.interceptors.response.use(
       return Promise.reject(error)
    }
 )
-// axios.interceptors.response.use(
-//   (response) => response.data,
-//   (error: AxiosError<any>) => {
-//     const errorMessage = error?.response?.data?.message ?? `Gagal: ${error.message}`
-//     return Promise.reject(new Error(errorMessage))
-//   }
-// )
 
 axios.interceptors.request.use(
    async (config) => {
@@ -38,7 +31,8 @@ axios.interceptors.request.use(
             const header = headers()
             const host = header.get('host')
             const proto = header.get('x-forwarded-proto')
-            baseURL = `${proto}://${host}:${port}`
+            const hostname = host?.split(':')[0]
+            baseURL = `${proto}://${hostname}:${port}`
          }
          const token = cookiesValue.get('next-auth.session-token')?.value
          const tokenSeccure = cookiesValue.get('__Secure-next-auth.session-token')?.value
@@ -47,7 +41,9 @@ axios.interceptors.request.use(
          if (!baseURL && !!port) {
             const proto = location.protocol
             const host = location.host
-            baseURL = `${proto}//${host}:${port}`
+            const hostname = host?.split(':')[0]
+
+            baseURL = `${proto}//${hostname}:${port}`
          }
          const tokenSeccure = Cookies.get('__Secure-next-auth.session-token')
          const token = Cookies.get('next-auth.session-token')
@@ -55,11 +51,6 @@ axios.interceptors.request.use(
       }
       baseURL && (config.baseURL = baseURL)
       tokenValue && (config.headers['Authorization'] = `Bearer ${tokenValue}`)
-      // config.url = config.url
-      //   ?.replace('api-strict', 'services')
-      //   .replace('api-rka', 'services/perencanaan/rka')
-      //   .replace('api-data-ren', 'services/perencanaan/data')
-
       return config
    },
    (error) => {

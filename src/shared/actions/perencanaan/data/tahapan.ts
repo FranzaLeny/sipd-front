@@ -14,11 +14,11 @@ export const getListTahapanSipd = async (payload: ListTahapanSipdPayload) => {
 export const syncTahapanSipd = async (
    data: Zod.infer<typeof TahapanUncheckedCreateInputSchema>[]
 ) => {
-   return await axios.put<ResponseApi>('api/perencanaan/master/tahapan', data)
+   return await axios.put<ResponseApi>('/api/perencanaan/data/tahapan', data)
 }
 
 export async function getTolalTahapan() {
    return axios
-      .get<ResponseApi<{ totalCount: number; query: {} }>>(`api/perencanaan/master/tahapan/total`)
+      .get<ResponseApi<{ totalCount: number; query: {} }>>(`/api/perencanaan/data/tahapan/total`)
       .then((res) => res?.data)
 }

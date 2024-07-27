@@ -33,8 +33,9 @@ function CardDataRak({ data }: Props) {
    const lokal = useQuery({
       queryKey: [
          { id_skpd: data?.id_skpd, jadwal_anggaran_id: data?.jadwal_anggaran_id },
-         'rak_skpd',
-         'rak',
+         'data_rak_skpd',
+         'data_rak',
+         'jadwal_anggaran',
       ] as [
          {
             jadwal_anggaran_id: string

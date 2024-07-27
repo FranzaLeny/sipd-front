@@ -142,7 +142,7 @@ export const authOptions: AuthOptions = {
    cookies: {
       sessionToken: {
          name:
-            process.env.NEXTAUTH_URL?.startsWith('https://') ?? !!process.env.VERCEL
+            (process.env.NEXTAUTH_URL?.startsWith('https://') ?? !!process.env.VERCEL)
                ? '__Secure-next-auth.session-token'
                : 'next-auth.session-token',
          options: {

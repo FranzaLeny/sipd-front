@@ -68,7 +68,11 @@ const ModalSingkron = () => {
                   id_daerah: temp.id_daerah,
                   id_skpd: temp.id_skpd,
                   tahun: temp.tahun,
-               }).then((res) => ({ ...res.data[0], tahun: [res.data[0]?.tahun] }))
+               }).then((res) => ({
+                  ...res.data[0],
+                  tahun: [res.data[0]?.tahun],
+                  is_prop: user.is_prop,
+               }))
             })
          ).catch((d) => {
             throw new Error('Gagal mengambil detail data skpd dari sipd')
@@ -131,7 +135,7 @@ const ModalSingkron = () => {
       <DialogConfirm
          action={action}
          disabledSubmit={!isValid}
-         data_key={['data_skpd', 'perencanaan']}
+         data_key={['data_skpd']}
          header='Singkron data skpd'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-normal'>Proses tidak dapat dibatalkan.</span>

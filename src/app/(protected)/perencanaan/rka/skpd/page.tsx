@@ -75,9 +75,9 @@ const Page = async ({ searchParams: { jadwal_anggaran_id } }: Props) => {
                <TableServerSide
                   tableUiProps={{ isCompact: true }}
                   helperColumns={helperColumns}
-                  data_key='bl_skpd'
+                  data_key={['bl_skpd', 'jadwal_anggaran']}
                   searchParamsStatic={{ tahun, id_daerah, jadwal_anggaran_id: id }}
-                  endpoint='api/perencanaan/rka/skpd'
+                  endpoint='/api/perencanaan/rka/skpd'
                   tableActions={
                      <ActionTableBlSkpd
                         jadwal={jadwal}

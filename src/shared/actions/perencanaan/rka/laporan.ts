@@ -1,10 +1,12 @@
 import axios from '@custom-axios/api-fetcher'
 import { postToSipd } from '@custom-axios/sipd-fetcher'
 import {
+   GetLaporanRkaSkpdParams,
    LaporanBelanjaSkpd,
    LaporanBlSubGiat,
    LaporanPendapatan,
    LaporanSkpd,
+   RekapanSumberDana,
 } from '@/types/api/laporan'
 
 export const getRkaRekapBlSipd = async (payload: RkaBlSkpdSipdPayload) => {
@@ -103,15 +105,8 @@ export const getRkaBlSubGiatPergeseranSipd = async (payload: RkaSubGiatPergesera
       })
 }
 
-type GetLaporanRkaSkpdParams = {
-   jadwal_anggaran_id: string
-   id_skpd?: string | number
-   id_unit: string | number
-   tahun: string | number
-}
-
 export const getLaporanSkpd = async (params: GetLaporanRkaSkpdParams) => {
-   const { data } = await axios.get<ResponseApi<LaporanSkpd>>('api/perencanaan/rka/skpd/laporan', {
+   const { data } = await axios.get<ResponseApi<LaporanSkpd>>('/api/perencanaan/rka/skpd/laporan', {
       params,
    })
    return data
@@ -119,7 +114,7 @@ export const getLaporanSkpd = async (params: GetLaporanRkaSkpdParams) => {
 
 export const getLaporanBelanjaSkpd = async (params: GetLaporanRkaSkpdParams) => {
    return await axios
-      .get<ResponseApi<LaporanBelanjaSkpd>>('api/perencanaan/rka/skpd/laporan/belanja', {
+      .get<ResponseApi<LaporanBelanjaSkpd>>('/api/perencanaan/rka/skpd/laporan/belanja', {
          params,
       })
       .then((res) => res.data)
@@ -129,12 +124,20 @@ export const getLaporanPendapatanSkpd = async (params: GetLaporanRkaSkpdParams) 
    return await axios
       .get<
          ResponseApi<LaporanPendapatan>
-      >('api/perencanaan/rka/skpd/laporan/pendapatan', { params })
+      >('/api/perencanaan/rka/skpd/laporan/pendapatan', { params })
       .then((res) => res.data)
 }
 
 export const getLaporanSubGiat = async (id: string) => {
    return await axios
-      .get<ResponseApi<LaporanBlSubGiat>>(`api/perencanaan/rka/sub-giat/${id}/laporan`)
+      .get<ResponseApi<LaporanBlSubGiat>>(`/api/perencanaan/rka/sub-giat/${id}/laporan`)
+      .then((res) => res.data)
+}
+
+export const getLaporanSumberDana = async (params: GetLaporanRkaSkpdParams) => {
+   return await axios
+      .get<ResponseApi<RekapanSumberDana>>('/api/perencanaan/rka/skpd/laporan/sumber-dana', {
+         params,
+      })
       .then((res) => res.data)
 }

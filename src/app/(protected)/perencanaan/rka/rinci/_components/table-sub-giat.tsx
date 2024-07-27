@@ -1,6 +1,6 @@
 import { numberToMonth, numberToText } from '@shared/utils'
 
-import { DataType } from './sub-giat'
+import { SubGiatWithRinci } from './rincian'
 
 function TrGiat({ label, children }: { label: string; children: React.ReactNode }) {
    return (
@@ -11,11 +11,10 @@ function TrGiat({ label, children }: { label: string; children: React.ReactNode 
       </tr>
    )
 }
-type Props = DataType
 export default function TableSubGiat({
    subKegiatan = {} as any,
 }: {
-   subKegiatan: Props['sub_kegiatan']
+   subKegiatan: SubGiatWithRinci['sub_kegiatan']
 }) {
    const {
       kode_sub_giat,

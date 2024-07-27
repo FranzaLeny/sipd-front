@@ -51,8 +51,11 @@ export const BlSkpdSelector = forwardRef(
       })
 
       const { data, isFetching, status } = useQuery({
-         queryKey: ['bl_skpd', { ...queryParams }] as [string, GetBlSkpdListParams],
-         queryFn: async ({ queryKey: [key, params] }) => {
+         queryKey: [{ ...queryParams }, 'bl_skpd', 'jadwal_anggaran'] as [
+            GetBlSkpdListParams,
+            ...any,
+         ],
+         queryFn: async ({ queryKey: [params] }) => {
             return await getBlSkpdList(params)
          },
          placeholderData: (previousData) => previousData,
@@ -139,8 +142,11 @@ export const BlSkpdSelectorMultiple = forwardRef(
       const [list, setList] = useState<(BlSkpd & { hidden: boolean })[]>([])
       const [search, setSearch] = useState('')
       const { data, isFetching, status } = useQuery({
-         queryKey: ['bl_skpd', { limit: 1000, ...params }] as [string, GetBlSkpdListParams],
-         queryFn: async ({ queryKey: [_, params] }) => {
+         queryKey: [{ limit: 1000, ...params }, 'bl_skpd', 'jadwal_anggaran'] as [
+            GetBlSkpdListParams,
+            ...any,
+         ],
+         queryFn: async ({ queryKey: [params] }) => {
             return await getBlSkpdList(params)
          },
          placeholderData: (previousData) => previousData,

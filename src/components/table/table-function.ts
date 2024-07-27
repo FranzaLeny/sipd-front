@@ -6,7 +6,7 @@ type TableServerSideProps<T> = {
    tableUiProps?: TableUiProps
    tableActions?: React.ReactNode
    endpoint: string
-   data_key: string
+   data_key: string[]
    searchParamsStatic?: { [k: string]: any }
    helperColumns: HelperColumns<T>
 }
@@ -165,7 +165,7 @@ const generateCellProps = <T>(helperColumns: HelperColumns<T>, item: T, columnKe
    }
 }
 
-export { COLORS, INITIAL_LIMIT, SELECTIONS, generateCellProps, generateColumns, generateTableUi }
+export { COLORS, generateCellProps, generateColumns, generateTableUi, INITIAL_LIMIT, SELECTIONS }
 
 export type {
    BaseData,

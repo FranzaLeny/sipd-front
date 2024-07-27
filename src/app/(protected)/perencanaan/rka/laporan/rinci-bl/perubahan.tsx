@@ -96,6 +96,7 @@ interface TableIndikatorGiatProps {
    output_bl_sub_giat_murni: { target_teks: string; tolak_ukur: string }[]
    hasil_bl_giat: { target_teks: string; tolak_ukur: string }[]
    hasil_bl_giat_murni: { target_teks: string; tolak_ukur: string }[]
+   keluaranSub: boolean
 }
 
 export function TableIndikatorGiatPerubahan(props: TableIndikatorGiatProps) {
@@ -106,13 +107,18 @@ export function TableIndikatorGiatPerubahan(props: TableIndikatorGiatProps) {
       output_bl_giat_murni: og_murni,
       hasil_bl_giat: hasil,
       hasil_bl_giat_murni: hasil_murni,
+      output_bl_sub_giat,
+      output_bl_sub_giat_murni,
       pagu,
       pagu_murni,
+      keluaranSub = false,
    } = props
    const capaian_length = capaian?.length || 1
    const hasil_length = hasil?.length || 1
    const og_length = og?.length || 1
    const og_murni_length = og_murni?.length || 1
+   const osbl_length = output_bl_sub_giat?.length || 1
+   const osbl_murni_length = output_bl_sub_giat_murni?.length || 1
    const capaian_murni_length = capaian_murni?.length || 0
    const hasil_murni_length = hasil_murni?.length || 0
    return (
@@ -209,7 +215,6 @@ export function TableIndikatorGiatPerubahan(props: TableIndikatorGiatProps) {
                      <td className='cell-print'>{og?.length ? og[i]?.target_teks : ''}</td>
                   </tr>
                ))}
-
                {Array.from(
                   { length: Math.max(hasil_length, hasil_murni_length) },
                   (_, index) => index + 1
@@ -234,6 +239,38 @@ export function TableIndikatorGiatPerubahan(props: TableIndikatorGiatProps) {
                      <td className='cell-print'>{hasil?.length ? hasil[i]?.target_teks : ''}</td>
                   </tr>
                ))}
+               {Array.from(
+                  { length: Math.max(osbl_length, osbl_murni_length) },
+                  (_, index) => index + 1
+               )?.map((__, i) => (
+                  <tr
+                     key={i}
+                     className='print:break-inside-avoid'>
+                     {i === 0 && (
+                        <td
+                           colSpan={Math.max(osbl_length, osbl_murni_length)}
+                           className='cell-print'>
+                           Hasil
+                        </td>
+                     )}
+                     <td className='cell-print'>
+                        {output_bl_sub_giat_murni?.length
+                           ? output_bl_sub_giat_murni[i]?.tolak_ukur
+                           : ''}
+                     </td>
+                     <td className='cell-print'>
+                        {output_bl_sub_giat_murni?.length
+                           ? output_bl_sub_giat_murni[i]?.target_teks
+                           : ''}
+                     </td>
+                     <td className='cell-print'>
+                        {output_bl_sub_giat?.length ? output_bl_sub_giat[i]?.tolak_ukur : ''}
+                     </td>
+                     <td className='cell-print'>
+                        {output_bl_sub_giat?.length ? output_bl_sub_giat[i]?.target_teks : ''}
+                     </td>
+                  </tr>
+               ))}
             </tbody>
          </table>
          <div className='h-2' />
@@ -245,8 +282,8 @@ const TrSubTotal = ({ rinci }: { rinci: any }) => {
    const { group, nama_dana, total_harga, total_harga_murni, uraian, kode, selisih } = rinci || {}
    const totalText = numberToText(total_harga)
    const totalMurniText = numberToText(total_harga_murni)
-   const different = selisih ? total_harga - total_harga_murni : 0
-   const totalVariationText = numberToText(different, 0, true)
+   // const different = selisih ? total_harga - total_harga_murni : 0
+   const totalVariationText = numberToText(selisih, 0, true)
 
    return (
       <tr
@@ -287,7 +324,7 @@ const TrSubTotal = ({ rinci }: { rinci: any }) => {
             className='cell-print text-right'></td>
          <td className={`cell-print max-w-fit text-right`}>{totalText}</td>
          <td
-            className={`cell-print max-w-fit text-right print:bg-transparent ${different < 0 ? 'bg-yellow-500/10' : 'bg-green-500/10'}`}>
+            className={`cell-print max-w-fit text-right print:bg-transparent ${selisih < 0 ? 'bg-yellow-500/10' : 'bg-green-500/10'}`}>
             {totalVariationText}
          </td>
       </tr>

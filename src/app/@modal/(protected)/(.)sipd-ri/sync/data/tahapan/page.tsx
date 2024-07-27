@@ -51,7 +51,7 @@ const ModalSingkronTahapan = () => {
    return (
       <DialogConfirm
          action={action}
-         data_key={['data_tahapan', 'anggaran']}
+         data_key={['data_tahapan', 'jadwal_anggaran']}
          header='Singkron data tahapan'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-normal'>Proses tidak dapat dibatalkan.</span>

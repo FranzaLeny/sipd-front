@@ -48,7 +48,8 @@ function CardDataSubGiatAktif({ data }: Props) {
             jadwal_anggaran_id: data?.jadwal_anggaran_id,
          },
          'bl_sub_giat_aktif',
-         'total_bl_sub_giat_aktif',
+         'total',
+         'jadwal_anggaran',
       ] as [Partial<GetSubGiatListParams>, ...any],
       queryFn: async ({ queryKey: [q] }) => {
          const { id_daerah, tahun, id_unit, id_skpd, jadwal_anggaran_id } = q

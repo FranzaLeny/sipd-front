@@ -52,8 +52,8 @@ export const AkunSelector = forwardRef(
       })
       const [options, setOptions] = useState<Akun[]>([])
       const { data, isFetching, status, isFetched } = useQuery({
-         queryKey: ['data_akun', { ...queryParams }] as [string, GetAkunListParams],
-         queryFn: async ({ queryKey: [_, params] }) => {
+         queryKey: [{ ...queryParams }, 'data_akun'] as [GetAkunListParams, string],
+         queryFn: async ({ queryKey: [params] }) => {
             return await getListAkun(params)
          },
          placeholderData: (previousData) => previousData,

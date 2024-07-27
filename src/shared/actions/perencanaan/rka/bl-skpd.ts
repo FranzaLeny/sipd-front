@@ -42,7 +42,7 @@ export const syncBlListSkpd = async (
    data: Zod.infer<typeof BlSkpdUncheckedCreateInputSchema>[]
 ) => {
    const valid = BlSkpdUncheckedCreateInputSchema.array().min(1).parse(data)
-   return await axios.put('api/perencanaan/rka/skpd', valid)
+   return await axios.put('/api/perencanaan/rka/skpd', valid)
 }
 
 export type ListBlSkpdParams = {
@@ -61,12 +61,12 @@ export type GetBlSkpdListParams = {
 
 export const getBlSkpdList = async (params: GetBlSkpdListParams) => {
    return await axios
-      .get<ResponseApi<CursorPaginate<BlSkpd>>>('api/perencanaan/rka/skpd', { params })
+      .get<ResponseApi<CursorPaginate<BlSkpd>>>('/api/perencanaan/rka/skpd', { params })
       .then((res) => res.data)
 }
 export const getBlSkpd = async (id: string) => {
    return await axios
-      .get<ResponseApi<BlSkpd>>(`api/perencanaan/rka/skpd/${id}`)
+      .get<ResponseApi<BlSkpd>>(`/api/perencanaan/rka/skpd/${id}`)
       .then((res) => res.data)
 }
 
@@ -74,6 +74,6 @@ export async function getTotalBlSkpd<T extends ListBlSkpdParams>(params?: T) {
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/rka/skpd/total`, { params })
+      >(`/api/perencanaan/rka/skpd/total`, { params })
       .then((res) => res?.data)
 }

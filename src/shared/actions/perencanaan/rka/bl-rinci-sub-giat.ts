@@ -144,7 +144,7 @@ export async function getTotalRinciBlSubGiat<T extends GetRinciListParams>(param
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/rka/sub-giat/rinci/total`, { params })
+      >(`/api/perencanaan/rka/sub-giat/rinci/total`, { params })
       .then((res) => res?.data)
 }
 
@@ -166,7 +166,7 @@ export type PaginateKetRinciListParams = {
 export const getKetRinciBlSubGiat = async (params: PaginateKetRinciListParams) =>
    await axios
       .get<ResponseApi<CursorPaginate<KetRinciBlSubGiat>>>(
-         `api/perencanaan/rka/sub-giat/rinci/ket`,
+         `/api/perencanaan/rka/sub-giat/rinci/ket`,
          {
             params,
          }
@@ -179,7 +179,7 @@ export async function getTotalKetRinciBlSubGiat<T extends Partial<GetKetRinciLis
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/rka/sub-giat/rinci/ket/total`, { params })
+      >(`/api/perencanaan/rka/sub-giat/rinci/ket/total`, { params })
       .then((res) => res?.data)
 }
 
@@ -201,7 +201,7 @@ export type PaginateSubsRinciListParams = {
 export const getSubsRinciBlSubGiat = async (params: PaginateSubsRinciListParams) =>
    await axios
       .get<ResponseApi<CursorPaginate<SubsRinciBlSubGiat>>>(
-         `api/perencanaan/rka/sub-giat/rinci/subs`,
+         `/api/perencanaan/rka/sub-giat/rinci/subs`,
          {
             params,
          }
@@ -214,29 +214,29 @@ export async function getTotalSubsRinciBlSubGiat<T extends Partial<GetSubsRinciL
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/rka/sub-giat/rinci/subs/total`, { params })
+      >(`/api/perencanaan/rka/sub-giat/rinci/subs/total`, { params })
       .then((res) => res?.data)
 }
 
 // SYNC RINCIAN
 
 export async function syncKetRinciBlSubGiat(data: KetRinciBlSubGiatUncheckedCreateInput[]) {
-   return await axios.put('api/perencanaan/rka/sub-giat/rinci/ket', data)
+   return await axios.put('/api/perencanaan/rka/sub-giat/rinci/ket', data)
 }
 
 export async function addKetRinciBlSubGiat(data: KetRinciBlSubGiatUncheckedCreateInput) {
-   return await axios.post('api/perencanaan/rka/sub-giat/rinci/ket', data)
+   return await axios.post('/api/perencanaan/rka/sub-giat/rinci/ket', data)
 }
 export async function syncRinciBlSubGiat(
    data: Zod.infer<typeof RinciBlSubGiatUncheckedCreateInputSchema>[]
 ) {
-   return await axios.put('api/perencanaan/rka/sub-giat/rinci', data)
+   return await axios.put('/api/perencanaan/rka/sub-giat/rinci', data)
 }
 
 export async function syncSubsRinciBlSubGiat(
    data: Zod.infer<typeof SubsRinciBlSubGiatUncheckedCreateInputSchema>[]
 ) {
-   return await axios.put('api/perencanaan/rka/sub-giat/rinci/subs', data)
+   return await axios.put('/api/perencanaan/rka/sub-giat/rinci/subs', data)
 }
 
 // Delete Data Kegiatan
@@ -244,29 +244,30 @@ export async function deleteRinciBlSubGiatByListId(
    payload: Zod.infer<typeof RinciBlSubGiatDeleteByListIdValidationSchema>
 ) {
    const data = RinciBlSubGiatDeleteByListIdValidationSchema.parse(payload)
-   await axios.delete(`api/perencanaan/rka/sub-giat/rinci`, { data })
+   await axios.delete(`/api/perencanaan/rka/sub-giat/rinci`, { data })
 }
 export async function deleteKetRinciBlSubGiatByListId(
    payload: Zod.infer<typeof KetRinciBlSubGiatDeleteByListIdValidationSchema>
 ) {
    const data = KetRinciBlSubGiatDeleteByListIdValidationSchema.parse(payload)
-   await axios.delete(`api/perencanaan/rka/sub-giat/rinci/ket`, { data })
+   await axios.delete(`/api/perencanaan/rka/sub-giat/rinci/ket`, { data })
 }
 
 export async function deleteSubsRinciBlSubGiatByListId(
    payload: Zod.infer<typeof SubsRinciBlSubGiatDeleteByListIdValidationSchema>
 ) {
    const data = SubsRinciBlSubGiatDeleteByListIdValidationSchema.parse(payload)
-   await axios.delete(`api/perencanaan/rka/sub-giat/rinci/subs`, { data })
+   await axios.delete(`/api/perencanaan/rka/sub-giat/rinci/subs`, { data })
 }
 export const getRinciSubGiatByBlSubgiatId = async (bl_sub_giat_id: string) =>
    await axios
-      .get<ResponseApi<RinciBlSubGiat[]>>(`api/perencanaan/rka/sub-giat/${bl_sub_giat_id}/rinci`)
+      .get<
+         ResponseApi<RinciBlSubGiat[]>
+      >(`/api/perencanaan/rka/sub-giat/rinci`, { params: { bl_sub_giat_id } })
       .then((res) => res.data)
 
 export interface SumberDanaAkunRinciSubGiat {
-   kode_sub_skpd: string
-   kode_sub_giat: string
+   bl_sub_giat_id: string
    nama_dana: string
    kode_akun: string
    id_dana: number
@@ -287,5 +288,5 @@ export const getSumberDanaAkunRinciSubGiat = async (params: {
    await axios
       .get<
          ResponseApi<SumberDanaAkunRinciSubGiat[]>
-      >(`api/perencanaan/rka/sub-giat/rinci/sumber-dana-akun`, { params })
+      >(`/api/perencanaan/rka/sub-giat/rinci/sumber-dana-akun`, { params })
       .then((res) => res.data)

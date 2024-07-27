@@ -40,18 +40,18 @@ export type GetListPendapatanParams = {
 
 export const getListPendapatan = async (params: GetListPendapatanParams) =>
    await axios
-      .get<ResponseApi<CursorPaginate<unknown>>>(`api/perencanaan/rka/pendapatan`, {
+      .get<ResponseApi<CursorPaginate<unknown>>>(`/api/perencanaan/rka/pendapatan`, {
          params,
       })
       .then((res) => res.data)
 
 export const syncPendapatan = async (data: PendapatanUncheckedCreateInput[]) =>
-   await axios.put<ResponseApi>(`api/perencanaan/rka/pendapatan`, data)
+   await axios.put<ResponseApi>(`/api/perencanaan/rka/pendapatan`, data)
 
 export async function getTotalPendapatan<T extends Partial<ListPendapatanParams>>(params?: T) {
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/rka/pendapatan/total`, { params })
+      >(`/api/perencanaan/rka/pendapatan/total`, { params })
       .then((res) => res?.data)
 }

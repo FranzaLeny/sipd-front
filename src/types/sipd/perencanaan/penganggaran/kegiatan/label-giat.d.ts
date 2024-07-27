@@ -1,4 +1,4 @@
-// 'api/master/label_giat/list
+// '/api/master/label_giat/list
 
 interface ListLabelBlGiatDaerahSipdPayload {
    tahun: number

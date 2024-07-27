@@ -49,7 +49,7 @@ const MappingAkun = ({ standar_harga }: Props) => {
    return (
       <DialogConfirm
          action={action}
-         data_key={['data_standar_harga', 'perencanaan']}
+         data_key={['data_standar_harga']}
          header='Singkron akun standar harga'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-normal'>Proses tidak dapat dibatalkan.</span>

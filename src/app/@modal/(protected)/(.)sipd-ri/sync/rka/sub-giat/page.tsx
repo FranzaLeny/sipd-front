@@ -63,7 +63,6 @@ const DATA_KEY = [
    'bl_sub_giat_tag',
    'bl_sub_giat_label',
    'bl_sub_giat_lokasi',
-   'rka',
 ]
 const ModalSingkronJadwal = () => {
    const { data: session } = useSession()

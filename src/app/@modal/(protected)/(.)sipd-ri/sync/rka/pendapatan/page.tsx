@@ -94,7 +94,7 @@ const ModalSingkronPendapatan = () => {
                            ...item,
                            id_unit,
                            id_skpd,
-                           volume: onlyPaguMurni ? item?.murni ?? 0 : item.volume,
+                           volume: onlyPaguMurni ? (item?.murni ?? 0) : item.volume,
                            murni: onlyPaguMurni ? null : item.murni,
                            jadwal_anggaran_id: jadwal?.id,
                            id_jadwal: jadwal?.id_jadwal,
@@ -154,7 +154,7 @@ const ModalSingkronPendapatan = () => {
          size='xl'
          action={action}
          disabledSubmit={!isValid || !jadwal}
-         data_key={['bl_pendapatan', 'perencanaan']}
+         data_key={['bl_pendapatan']}
          header='Singkron Belanja SKPD'>
          <div className='flex flex-col gap-3'>
             <MaxDataInput

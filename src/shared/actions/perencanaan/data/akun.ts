@@ -20,7 +20,7 @@ export const geAllAkunSipd = async (params: ListAkunSipdPayload) => {
 // API
 
 export async function syncAkun(data: Zod.infer<typeof AkunUncheckedCreateInputSchema>[]) {
-   return await axios.put('api/perencanaan/master/akun', data)
+   return await axios.put('/api/perencanaan/data/akun', data)
 }
 export type AkunParams = {
    id_akun: number
@@ -62,13 +62,13 @@ export type GetAkunListParams = {
 
 export async function getListAkun(params: GetAkunListParams) {
    return axios
-      .get<ResponseApi<CursorPaginate<Akun>>>(`api/perencanaan/master/akun`, { params })
+      .get<ResponseApi<CursorPaginate<Akun>>>(`/api/perencanaan/data/akun`, { params })
       .then((res) => res?.data)
 }
 export async function getTolalAkun<T extends Partial<AkunParams>>(params: T) {
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/master/akun/total`, { params })
+      >(`/api/perencanaan/data/akun/total`, { params })
       .then((res) => res?.data)
 }

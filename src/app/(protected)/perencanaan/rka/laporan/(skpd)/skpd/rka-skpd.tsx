@@ -10,10 +10,15 @@ import {
    DropdownItem,
    DropdownMenu,
    DropdownTrigger,
-   Selection,
+   Popover,
+   PopoverContent,
+   PopoverTrigger,
+   Radio,
+   RadioGroup,
 } from '@nextui-org/react'
-import { ArrowBigLeft, Printer, Settings } from 'lucide-react'
+import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
+import { toast } from 'react-toastify'
 import { LaporanSkpd } from '@/types/api/laporan'
 
 import { TbodyMurni, TbodyPerubahan, TheadMurni, TheadPerubahan } from './components'
@@ -68,20 +73,21 @@ export default function RkaSkpd({
    jadwalTipe: 'perubahan' | 'murni'
    anggotaTapd: LaporanSkpd['skpd']['tapd']
 }) {
-   const [selectedDok, setSelectedDok] = useState<Selection>(
-      new Set(jadwalTipe === 'murni' ? ['rka'] : ['rkpa'])
-   )
+   const [selectedDok, setSelectedDok] = useState('rka')
    const [tapd, setTapd] = useState(anggotaTapd)
    const router = useRouter()
    const printRef = useRef(null)
 
    const jenisDok = useMemo(() => {
-      const key = Array.from(selectedDok)[0]
-      if (key) {
-         return LIST_DOKUMEN.find((item) => item.key === key)
+      if (selectedDok) {
+         return LIST_DOKUMEN.find((item) => item.key === selectedDok)
       }
       return LIST_DOKUMEN[0]
    }, [selectedDok])
+
+   useEffect(() => {
+      setSelectedDok(jadwalTipe === 'murni' ? 'rka' : 'rkpa')
+   }, [jadwalTipe])
 
    const documentTitle = useMemo(() => {
       let text = 'RKA_03_SKPD'
@@ -102,59 +108,89 @@ export default function RkaSkpd({
       content: () => printRef.current,
       documentTitle,
    })
-
-   useEffect(() => {
-      const _dok = new Set(jadwalTipe === 'murni' ? ['rka'] : ['rkpa'])
-      setSelectedDok(_dok)
-   }, [jadwalTipe])
+   const handleExport = () => {
+      toast.warning('Export excel masih dalam proses pengembangan')
+   }
 
    return (
       <>
          <div className='top-navbar content sticky left-1/2 z-10 flex w-fit -translate-x-1/2 gap-4 rounded-b-3xl py-2 backdrop-blur'>
-            <Button
-               variant='shadow'
-               color='danger'
-               startContent={<ArrowBigLeft className='-ml-2' />}
-               onPress={() => router.back()}>
-               Kembali
-            </Button>
-            <Button
-               disabled={!listRekapan?.length}
-               variant='shadow'
-               color='primary'
-               endContent={<Printer className='-mr-2' />}
-               onPress={handlePrint}>
-               Cetak
-            </Button>
+            <Popover
+               placement='bottom'
+               showArrow
+               offset={10}>
+               <PopoverTrigger>
+                  <Button
+                     variant='shadow'
+                     color='secondary'
+                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                     startContent={<Settings className='size-5' />}>
+                     <span className='hidden sm:inline-flex'>Pengaturan</span>
+                  </Button>
+               </PopoverTrigger>
+               <PopoverContent>
+                  {(titleProps) => (
+                     <div className='w-full px-1 py-2'>
+                        <p
+                           className='text-small text-foreground font-bold'
+                           {...titleProps}>
+                           Pengaturan Cetak / Unduh
+                        </p>
+                        <div className='flex w-full flex-col gap-3 pt-3'>
+                           <RadioGroup
+                              size='sm'
+                              value={selectedDok}
+                              onValueChange={setSelectedDok}
+                              label='Cetak Sabagai'>
+                              {LIST_DOKUMEN?.map(({ key, name }) => {
+                                 return (
+                                    <Radio
+                                       key={key}
+                                       value={key}>
+                                       {name}
+                                    </Radio>
+                                 )
+                              })}
+                           </RadioGroup>
+                        </div>
+                     </div>
+                  )}
+               </PopoverContent>
+            </Popover>
             <Dropdown>
                <DropdownTrigger>
                   <Button
                      variant='shadow'
-                     color='secondary'
-                     endContent={<Settings className='-mr-2' />}
-                     className='capitalize'>
-                     {jenisDok?.name || 'Pilih Jenis Dokumen'}
+                     color='primary'
+                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                     startContent={<Download className='size-5' />}>
+                     <span className='hidden sm:inline-flex'>Cetak</span>
                   </Button>
                </DropdownTrigger>
                <DropdownMenu
                   selectionMode='single'
-                  items={LIST_DOKUMEN}
-                  onSelectionChange={setSelectedDok}
-                  selectedKeys={selectedDok}
-                  disabledKeys={selectedDok}
-                  aria-label='Jenis Dokumen'>
-                  {(item) => (
-                     <DropdownItem key={item.key}>
-                        {item.name} {jadwalTipe !== item?.type && '(FORM)'}
-                     </DropdownItem>
-                  )}
+                  aria-label='Cetak/dowload'>
+                  <DropdownItem
+                     color='primary'
+                     key={'cetak'}
+                     onPress={handlePrint}
+                     endContent={<Printer className='size-5' />}>
+                     Print
+                  </DropdownItem>
+                  <DropdownItem
+                     color='secondary'
+                     key={'export'}
+                     onPress={handleExport}
+                     endContent={<Download className='size-5' />}>
+                     Export Excel
+                  </DropdownItem>
                </DropdownMenu>
             </Dropdown>
          </div>
          <div className='content size-fit min-w-full max-w-max pb-10'>
             <div
                ref={printRef}
-               className='bg-content1 rounded-medium p-2 shadow sm:p-4 print:bg-white print:p-0 print:text-black'>
+               className='bg-content1 rounded-medium p-2 shadow sm:p-4 print:bg-white print:p-0 print:text-sm print:text-black'>
                <table className='min-w-full'>
                   <tbody className='text-center font-bold uppercase'>
                      <tr>

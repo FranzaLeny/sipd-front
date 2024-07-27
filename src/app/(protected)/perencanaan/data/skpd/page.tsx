@@ -27,9 +27,9 @@ const Page = async () => {
          <TableServerSide
             tableUiProps={{ isCompact: true }}
             helperColumns={helperColumns}
-            data_key='data_skpd'
+            data_key={['data_skpd']}
             searchParamsStatic={{ tahun, id_daerah }}
-            endpoint='api/perencanaan/master/skpd'
+            endpoint='/api/perencanaan/data/skpd'
             tableActions={<ActionSkpdTable roles={user?.roles} />}
          />
       </>

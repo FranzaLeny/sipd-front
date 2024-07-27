@@ -20,6 +20,7 @@ const Schema = SkpdSchema.pick({
    nip_kepala: true,
    nama_bendahara: true,
    nip_bendahara: true,
+   singkatan_skpd: true,
 })
 
 const mapping = [[z.string(), TextInput]] as const

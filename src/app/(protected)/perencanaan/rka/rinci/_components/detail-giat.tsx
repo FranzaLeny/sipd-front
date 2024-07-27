@@ -1,8 +1,8 @@
 import { numberToMonth, numberToText } from '@shared/utils'
 
-import { DataType } from './sub-giat'
+import { SubGiatWithRinci } from './rincian'
 
-type Props = DataType
+type Props = SubGiatWithRinci
 export default function DetailGiat({
    subKegiatan = {} as any,
 }: {

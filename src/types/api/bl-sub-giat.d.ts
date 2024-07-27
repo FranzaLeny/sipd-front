@@ -6,8 +6,10 @@ export interface ResponseGetSubGiatWithRinci {
 }
 
 interface Jadwal {
+   id: string
    nama_jadwal_murni: string | null
    is_locked: number
+   tahun: number
    is_perubahan: number
    nama_sub_tahap: string
    is_active: number
@@ -103,6 +105,7 @@ interface Danablsubgiat {
 }
 
 interface Rincian {
+   id: string
    id_rinci_sub_bl: number
    kode_akun: string
    total_harga: number

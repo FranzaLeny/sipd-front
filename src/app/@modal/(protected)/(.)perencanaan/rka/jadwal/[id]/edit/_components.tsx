@@ -146,7 +146,6 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
       try {
          const valida_data = {
             ...value,
-            is_lokal: 1,
             is_locked: value.is_locked,
             is_perubahan: value.is_perubahan,
          }

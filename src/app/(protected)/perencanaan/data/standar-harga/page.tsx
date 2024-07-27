@@ -35,8 +35,8 @@ const Page = async ({ searchParams: { tipe, id_akun } }: Props) => {
          <TableServerSide
             tableUiProps={{ isCompact: true }}
             helperColumns={helperColumns}
-            endpoint='api/perencanaan/master/standar-harga'
-            data_key={'data_standar_harga'}
+            endpoint='/api/perencanaan/data/standar-harga'
+            data_key={['data_standar_harga']}
             searchParamsStatic={{ kelompok, tahun, id_akun, id_daerah }}
             tableActions={<ActionStandarHargaTable roles={user?.roles} />}
          />

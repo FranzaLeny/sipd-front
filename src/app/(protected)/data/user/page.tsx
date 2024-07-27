@@ -20,8 +20,8 @@ const Page = async () => {
          <TableServerSide
             tableUiProps={{ isCompact: true, isStriped: true }}
             helperColumns={helperColumns}
-            data_key='user'
-            endpoint='api/master/user'
+            data_key={['user']}
+            endpoint='/api/master/user'
             tableActions={<ActionUserTable />}
          />
       </>

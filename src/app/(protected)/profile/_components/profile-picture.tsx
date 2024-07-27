@@ -61,7 +61,7 @@ export default function ProfilePicture({
             success: boolean
             data?: { path: string }
             message: string
-         }>('/api/upload', formData, {
+         }>('/profile/upload', formData, {
             headers: {
                'Content-Type': 'multipart/form-data',
             },

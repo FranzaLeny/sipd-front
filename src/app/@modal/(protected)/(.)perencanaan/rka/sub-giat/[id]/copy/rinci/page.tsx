@@ -5,7 +5,7 @@ import {
    getRinciSubGiatByBlSubgiatId,
    syncRinciBlSubGiat,
 } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
-import { getBlSubGiatById } from '@actions/perencanaan/rka/bl-sub-giat'
+import { getBlSubGiatById, getBlSubGiatByIdUnik } from '@actions/perencanaan/rka/bl-sub-giat'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
@@ -37,19 +37,19 @@ const ModalSingkronJadwal = ({ params: { id } }: Props) => {
 
    const jadwalInput = useRef<HTMLInputElement>(null)
    const { data } = useQuery({
-      queryKey: [id, 'rinci_bl_sub_giat', 'perencanaan'],
-      queryFn: async ({ queryKey: [subKegiatan] }) => {
-         if (subKegiatan) {
-            return await getRinciSubGiatByBlSubgiatId(subKegiatan)
+      queryKey: [{ id }, 'bl_sub_giat_rinci', 'bl_sub_giat'] as [{ id: string }, ...any],
+      queryFn: async ({ queryKey: [{ id }] }) => {
+         if ({ id }) {
+            return await getRinciSubGiatByBlSubgiatId(id)
          }
          return null
       },
    })
    const { data: currSubGiat } = useQuery({
-      queryKey: [id, 'bl_sub_giat', 'perencanaan'],
-      queryFn: async ({ queryKey: [subKegiatan] }) => {
-         if (subKegiatan) {
-            return await getBlSubGiatById(subKegiatan)
+      queryKey: [{ id }, 'bl_sub_giat'] as [{ id: string }, ...any],
+      queryFn: async ({ queryKey: [{ id }] }) => {
+         if ({ id }) {
+            return await getBlSubGiatById(id)
          }
          return null
       },
@@ -63,7 +63,11 @@ const ModalSingkronJadwal = ({ params: { id } }: Props) => {
       ] as any,
       queryFn: async ({ queryKey: [uniq, idUnik] }) => {
          if (idUnik && uniq?.jadwal_anggaran_id && uniq?.id_unit) {
-            return await getBlSubGiatById(idUnik, undefined, uniq)
+            return await getBlSubGiatByIdUnik({
+               id_unik: idUnik,
+               id_unit: uniq.id_unit,
+               jadwal_anggaran_id: uniq.jadwal_anggaran_id,
+            })
          }
          return null
       },
@@ -89,17 +93,17 @@ const ModalSingkronJadwal = ({ params: { id } }: Props) => {
             return res
          })
       } catch (error: any) {
-         toast.error(error?.message || 'Gagal singkron data rincian sub kegiatan')
+         toast.error(error?.message || 'Gagal salin data rincian sub kegiatan')
          toast.done('salin_data')
          setIsLoading(false)
          return false
       }
    }, [lengthData, isValid, data, currSubGiat, targetSubGiat, deleteVolume])
-   const disabledKeys = currSubGiat ? currSubGiat?.jadwal_anggaran_id ?? undefined : undefined
+   const disabledKeys = !!currSubGiat ? ([currSubGiat?.jadwal_anggaran_id] ?? []) : []
    return (
       <DialogConfirm
          action={action}
-         data_key={['bl_sub_giat_rinci_ket', 'bl_sub_giat_rinci_subs', 'bl_sub_giat_rinci', 'rka']}
+         data_key={['bl_sub_giat_rinci', 'bl_sub_giat']}
          header='Singkron Rincian Sub Kegiatan'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-normal'>Proses tidak dapat dibatalkan.</span>

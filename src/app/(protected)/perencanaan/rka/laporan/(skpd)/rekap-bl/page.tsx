@@ -26,6 +26,8 @@ export default async function Page(props: Props) {
       return <div className='content text-danger mx-auto p-8'>Pilih Jadwal dan SKPD</div>
    }
    const data = await getLaporanBelanjaSkpd(props?.searchParams).catch((e) => {
+      console.log(e)
+
       let errorCode = 500
       e.response?.status && (errorCode = e.response?.status)
       return { errorCode, message: e?.message }

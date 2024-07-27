@@ -79,7 +79,7 @@ export const mappingAkunStandarHarga = async (
    return await getAkunStandarHargaSipd(p).then(async (res) => {
       if (typeof res === 'object') {
          const id_akun = res?.map((d) => d.id_akun) || []
-         return await axios.patch(`api/perencanaan/master/standar-harga/${p.id}`, { id_akun })
+         return await axios.patch(`/api/perencanaan/data/standar-harga/${p.id}`, { id_akun })
       }
       return 'Tidak ada data akun'
    })
@@ -90,7 +90,7 @@ export const getStandarHargaById = async (
    params?: { with_akun?: string | number | boolean }
 ) => {
    return await axios
-      .get<ResponseApi<StandarHargaById>>(`api/perencanaan/master/standar-harga/${id}`, { params })
+      .get<ResponseApi<StandarHargaById>>(`/api/perencanaan/data/standar-harga/${id}`, { params })
       .then((res) => res.data)
 }
 
@@ -105,7 +105,7 @@ export async function getListStandarHarga(params: GetStandarHargaListParams) {
    return axios
       .get<
          ResponseApi<CursorPaginate<StandarHarga>>
-      >(`api/perencanaan/master/standar-harga`, { params })
+      >(`/api/perencanaan/data/standar-harga`, { params })
       .then((res) => res?.data)
 }
 
@@ -113,7 +113,7 @@ export async function getTolalStandarHarga<T extends StandarHargaQuery>(params?:
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/master/standar-harga/total`, { params })
+      >(`/api/perencanaan/data/standar-harga/total`, { params })
       .then((res) => res?.data)
 }
 
@@ -149,5 +149,5 @@ export const getAllStandarHargaByAkunFromSipd = async (
 export async function syncStandarHaga(
    data: Zod.infer<typeof StandarHargaUncheckedCreateInputSchema>[]
 ) {
-   return await axios.put('api/perencanaan/master/standar-harga', data)
+   return await axios.put('/api/perencanaan/data/standar-harga', data)
 }

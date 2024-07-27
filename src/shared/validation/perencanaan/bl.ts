@@ -71,7 +71,7 @@ export const JadwalAnggaranUncheckedCreateInputSchema = z
       id_jadwal_pembahasan: z.number().int(),
       id_jadwal_rpjmd: z.number().int(),
       id_sub_rkpd: z.number().int(),
-      id_tahap: z.number().int(),
+      id_tahap: z.coerce.number().int(),
       is_locked: z.number().int(),
       is_pembahasan: z.number().int(),
       is_perubahan: z.number().int(),

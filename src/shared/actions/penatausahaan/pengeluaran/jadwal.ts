@@ -3,7 +3,7 @@ import axios from '@custom-axios/peta-fetcher'
 interface JadwalPergeseranDpa {
    tahapan: string
    jadwal_sipd_penatausahaan: string
-   id_tahap_sipd: string
+   id_tahap_sipd: number
    is_locked: number
    id_jadwal: number
    id_jadwal_sipd: number

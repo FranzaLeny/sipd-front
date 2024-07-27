@@ -16,8 +16,8 @@ const Page = async () => {
          <TableServerSide
             tableUiProps={{ isCompact: true }}
             helperColumns={helperColumns}
-            data_key='role_user'
-            endpoint='api/master/role'
+            data_key={['role_user']}
+            endpoint='/api/master/role'
             tableActions={<ActionRoleTable />}
          />
       </>

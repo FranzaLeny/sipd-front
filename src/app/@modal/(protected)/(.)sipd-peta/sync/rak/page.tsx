@@ -1,18 +1,18 @@
 'use client'
 
+import { useCallback, useMemo, useRef, useState } from 'react'
 import {
-   ResponseRakBlSubGiatSipdPeta,
    getRakBlSubGiatSipdPeta,
    getRakSkpdSipdPeta,
+   ResponseRakBlSubGiatSipdPeta,
    syncRakBlSkpd,
    syncRakBlSubGiat,
 } from '@actions/penatausahaan/pengeluaran/rak'
-import { getBlSubGiatByJadwalUnit } from '@actions/perencanaan/rka/bl-sub-giat'
+import { getAllBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
 import { validateSipdPetaSession } from '@actions/perencanaan/token-sipd'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
-import { useSession } from '@shared/hooks/use-session'
 import { processChunks } from '@utils/hof'
 import {
    RakSkpdUncheckedCreateInput,
@@ -20,8 +20,8 @@ import {
    RakUncheckedCreateInput,
    RakUncheckedCreateInputSchema,
 } from '@validations/keuangan/rak'
-import { useCallback, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import { useSession } from '@shared/hooks/use-session'
 
 const ModalSingkron = () => {
    const { data: session } = useSession(['admin', 'super_admin', 'sipd_peta'])
@@ -210,7 +210,7 @@ const _getRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams
    try {
       const data: RakUncheckedCreateInput[] = []
 
-      const subGiats = await getBlSubGiatByJadwalUnit(params)
+      const subGiats = await getAllBlSubGiat(params)
       if (!subGiats?.length) {
          throw new Error('Data Sub Kgiatan untuk jadwal ini tidak ditemukan')
       }

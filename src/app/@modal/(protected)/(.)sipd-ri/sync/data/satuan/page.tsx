@@ -84,7 +84,7 @@ const ModalSingkron = () => {
          toast.success(`Selesai singkron ${data.length} data satuan`)
          return true
       } catch (error: any) {
-         const errMsg = error?.message || 'Gagal singkron data akun'
+         const errMsg = error?.message || 'Gagal singkron data sumber dana'
          if (typeof errMsg === 'string') {
             let message: ToastContent = errMsg
             const messages = errMsg?.split?.('\n')
@@ -120,7 +120,7 @@ const ModalSingkron = () => {
       <DialogConfirm
          action={action}
          disabledSubmit={!isValid && !session}
-         data_key={['data_satuan', 'perencanaan']}
+         data_key={['data_satuan']}
          header='Singkron data Satuan'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-normal'>Saat proses tidak dapat dibatalkan.</span>
@@ -131,7 +131,7 @@ const ModalSingkron = () => {
             onValueChange={setLengthData}
          />
          <p className='text-small'>
-            Data Akun akan diganti dengan data dari SIPD-RI.. Apakah anda yakin?
+            Data satuan akan diganti dengan data dari SIPD-RI.. Apakah anda yakin?
          </p>
       </DialogConfirm>
    )

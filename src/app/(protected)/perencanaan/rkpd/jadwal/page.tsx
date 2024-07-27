@@ -31,14 +31,14 @@ const Page = async () => {
          <TableServerSide
             tableUiProps={{ isCompact: true }}
             helperColumns={helperColumns}
-            data_key='jadwal_rkpd'
+            data_key={['jadwal_rkpd']}
             searchParamsStatic={{
                tahun,
                id_daerah,
                orderBy: '-waktu_selesai',
                is_rinci_bl: 0,
             }}
-            endpoint='api/perencanaan/rka/jadwal'
+            endpoint='/api/perencanaan/rka/jadwal'
             tableActions={<ActionTableJadwalAnggaran />}
          />
       </>

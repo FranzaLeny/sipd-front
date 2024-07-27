@@ -38,7 +38,7 @@ export const getJadwalAnggaranById = async (
    id: string | number,
    params?: { byIdUnik?: boolean; byIdJadwal?: boolean }
 ) => {
-   return await axios.get<ResponseApi<JadwalAnggaran>>(`api/perencanaan/rka/jadwal/${id}`, {
+   return await axios.get<ResponseApi<JadwalAnggaran>>(`/api/perencanaan/rka/jadwal/${id}`, {
       params,
    })
 }
@@ -47,7 +47,7 @@ export const createJadwalAnggaran = async (
    data: Zod.infer<typeof JadwalAnggaranUncheckedCreateInputSchema>
 ) => {
    const valid = JadwalAnggaranUncheckedCreateInputSchema.parse(data)
-   return await axios.post<ResponseApi<JadwalAnggaran>>(`api/perencanaan/rka/jadwal`, valid)
+   return await axios.post<ResponseApi<JadwalAnggaran>>(`/api/perencanaan/rka/jadwal`, valid)
 }
 
 export const updateJadwalAnggaran = async (
@@ -57,7 +57,7 @@ export const updateJadwalAnggaran = async (
 ) => {
    const valid = JadwalAnggaranUncheckedUpdateInputSchema.parse(data)
    return await axios.patch<ResponseApi<JadwalAnggaran>>(
-      `api/perencanaan/rka/jadwal/${id}${isIdUnik ? '/by-id-unik' : ''}`,
+      `/api/perencanaan/rka/jadwal/${id}${isIdUnik ? '/by-id-unik' : ''}`,
       valid
    )
 }
@@ -67,13 +67,13 @@ export const updateJadwalAnggaranPenatausahaan = async (
 ) => {
    const valid = JadwalAnggaranUncheckedUpdateInputSchema.parse(data)
    return await axios.patch<ResponseApi>(
-      `api/perencanaan/rka/jadwal/${id_sipd}/penatausahaan`,
+      `/api/perencanaan/rka/jadwal/${id_sipd}/penatausahaan`,
       valid
    )
 }
 
 export const deleteJadwalAnggaran = async (id: string) => {
-   return await axios.delete<ResponseApi<JadwalAnggaran>>(`api/perencanaan/rka/jadwal/${id}`)
+   return await axios.delete<ResponseApi<JadwalAnggaran>>(`/api/perencanaan/rka/jadwal/${id}`)
 }
 
 export type GetJadwalAnggaranParams = {
@@ -91,7 +91,7 @@ export const getJadwalAnggaran = async (
    }
 ) => {
    return await axios.get<ResponseApi<CursorPaginate<JadwalAnggaran>>>(
-      'api/perencanaan/rka/jadwal',
+      '/api/perencanaan/rka/jadwal',
       {
          params: { orderBy: '-waktu_selesai', ...params },
       }
@@ -127,7 +127,7 @@ export type GetAllJadwalAnggaranParams = {
 export const getAllJadwalAnggaran = async (query: GetAllJadwalAnggaranParams) => {
    const { filter = 'all', ...params } = query
    return await axios
-      .get<ResponseApi<JadwalAnggaran[]>>(`api/perencanaan/rka/jadwal/${filter}`, {
+      .get<ResponseApi<JadwalAnggaran[]>>(`/api/perencanaan/rka/jadwal/${filter}`, {
          params,
          paramsSerializer: {
             indexes: null, // by default: false
@@ -140,7 +140,7 @@ export async function getTotalJadwalAnggaran<T extends GetJadwalAnggaranParams>(
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/rka/jadwal/total`, { params })
+      >(`/api/perencanaan/rka/jadwal/total`, { params })
       .then((res) => res?.data)
 }
 
@@ -156,7 +156,7 @@ type GetJadwalAnggaranAktifParams = {
 }
 
 export const getJadwalAnggaranAktif = async (params: GetJadwalAnggaranAktifParams) => {
-   return await axios.get<ResponseApi<JadwalAnggaran | null>>(`api/perencanaan/rka/jadwal/aktif`, {
+   return await axios.get<ResponseApi<JadwalAnggaran | null>>(`/api/perencanaan/rka/jadwal/aktif`, {
       params: { is_rinci_bl: 1, ...params },
    })
 }
@@ -187,7 +187,7 @@ export const checkJadwalAnggaranAktif = async (
 export async function syncJadwalAnggaranSipd(
    data: Zod.infer<typeof JadwalAnggaranUncheckedCreateInputSchema>[]
 ) {
-   const res = await axios.put<ResponseApi>('api/perencanaan/rka/jadwal', data)
+   const res = await axios.put<ResponseApi>('/api/perencanaan/rka/jadwal', data)
    await revalidate('jadwal_anggaran')
    return res
 }
@@ -196,7 +196,7 @@ export async function syncJadwalAnggaranAktifSipd(
    data: Zod.infer<typeof JadwalAnggaranUncheckedCreateInputSchema>
 ) {
    const res = await axios.put<ResponseApi>(
-      `api/perencanaan/rka/jadwal/${data.id_unik}/by-id-unik`,
+      `/api/perencanaan/rka/jadwal/${data.id_unik}/by-id-unik`,
       data
    )
    await revalidate('jadwal_anggaran')
@@ -211,6 +211,7 @@ export async function syncJadwalAnggaranPenatausahaan(data: { id_daerah: number;
          await updateJadwalAnggaranPenatausahaan(id_jadwal_sipd, {
             jadwal_penatausahaan: jadwal_sipd_penatausahaan,
             id_jadwal_penatausahaan: id_jadwal,
+            id_tahap: jadwal.id_tahap_sipd,
             ...data,
          })
       }

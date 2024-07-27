@@ -1,4 +1,4 @@
-// POST api/master/user/view
+// POST /api/master/user/view
 interface ViewUserSipdPayload {
    id_daerah: number
    id_user: number
@@ -34,7 +34,7 @@ interface UserViewSipd {
    accDisposisi: number
    accMonitor: number
 }
-// GET api/master/user/getuserbytoken
+// GET /api/master/user/getuserbytoken
 interface UserByTokenSipd {
    address: Address
    authToken?: any

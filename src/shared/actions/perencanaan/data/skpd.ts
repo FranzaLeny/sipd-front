@@ -31,7 +31,7 @@ export const viewSkdSipd = async (params: SkpdViewSipdPayload) => {
 }
 export const getSkpd = async (id: string) => {
    return await axios
-      .get<ResponseApi<Skpd>>(`api/perencanaan/master/skpd/${id}`)
+      .get<ResponseApi<Skpd>>(`/api/perencanaan/data/skpd/${id}`)
       .then((res) => res.data)
 }
 
@@ -50,12 +50,12 @@ export type GetSkpdListParams = {
 
 export const getSkpdList = async (params: GetSkpdListParams) => {
    return await axios
-      .get<ResponseApi<CursorPaginate<Skpd>>>('api/perencanaan/master/skpd', { params })
+      .get<ResponseApi<CursorPaginate<Skpd>>>('/api/perencanaan/data/skpd', { params })
       .then((res) => res.data)
 }
 export const getAllSkpd = async (params: SkpdParams) => {
    return await axios
-      .get<ResponseApi<Skpd[]>>('api/perencanaan/master/skpd/all', { params })
+      .get<ResponseApi<Skpd[]>>('/api/perencanaan/data/skpd/all', { params })
       .then((res) => res.data)
 }
 
@@ -63,20 +63,20 @@ export async function getTolalSkpd<T extends Partial<SkpdParams>>(params: T) {
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/master/skpd/total`, { params })
+      >(`/api/perencanaan/data/skpd/total`, { params })
       .then((res) => res?.data)
 }
 
 export const updateSkpd = async (id: string, skpd: Partial<Omit<Skpd, 'id'>>) => {
    const data = SkpdUncheckedCreateInputSchema.partial().parse({ id, ...skpd })
    return await axios.patch(
-      `api/perencanaan/master/skpd/${id}`,
+      `/api/perencanaan/data/skpd/${id}`,
       omit(data, ['id', 'nama_bendahara', 'nip_bendahara'])
    )
 }
 
 export const syncSkpdSipd = async (data: Zod.infer<typeof SkpdUncheckedCreateInputSchema>[]) => {
-   return await axios.put('api/perencanaan/master/skpd', data)
+   return await axios.put('/api/perencanaan/data/skpd', data)
 }
 
 export type ResponseSkpdTapdAnggaranBySkpd = {
@@ -94,6 +94,6 @@ export const getSkpdTapdAnggaranBySkpd = async (params: {
    return await axios
       .get<
          ResponseApi<ResponseSkpdTapdAnggaranBySkpd>
-      >(`api/perencanaan/master/skpd/tapd`, { params })
+      >(`/api/perencanaan/data/skpd/tapd`, { params })
       .then((res) => res.data)
 }

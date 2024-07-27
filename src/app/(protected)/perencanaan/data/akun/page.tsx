@@ -27,8 +27,8 @@ const Page = async () => {
             tableUiProps={{ isCompact: true }}
             helperColumns={helperColumns}
             searchParamsStatic={{ tahun }}
-            data_key='data_akun'
-            endpoint='api/perencanaan/master/akun'
+            data_key={['data_akun']}
+            endpoint='/api/perencanaan/data/akun'
             tableActions={<ActionAkunTable roles={user?.roles} />}
          />
       </>

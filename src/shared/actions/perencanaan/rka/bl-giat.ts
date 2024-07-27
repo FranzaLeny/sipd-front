@@ -149,23 +149,23 @@ export const syncDataGiat = async ({ payload, bl_giat }: SyncDataGiatParams) => 
             id_jadwal: number | null
             jadwal_anggaran_id: string
          }>
-      >('api/perencanaan/rka/giat', data)
+      >('/api/perencanaan/rka/giat', data)
       .then((res) => res.data)
 }
 
 export const syncCapaianBlGiat = async (data: CapaianBlGiatUncheckedCreateInput[]) => {
    const validData = CapaianBlGiatUncheckedCreateInputSchema.array().min(1).parse(data)
-   return await axios.put(`api/perencanaan/rka/giat/capaian`, validData)
+   return await axios.put(`/api/perencanaan/rka/giat/capaian`, validData)
 }
 
 export const syncHasilBlGiat = async (data: HasilBlGiatUncheckedCreateInput[]) => {
    const validData = HasilBlGiatUncheckedCreateInputSchema.array().min(1).parse(data)
-   return await axios.put(`api/perencanaan/rka/giat/hasil`, validData)
+   return await axios.put(`/api/perencanaan/rka/giat/hasil`, validData)
 }
 
 export const syncOutputBlGiat = async (data: OutputBlGiatUncheckedCreateInput[]) => {
    const validData = OutputBlGiatUncheckedCreateInputSchema.array().min(1).parse(data)
-   return await axios.put(`api/perencanaan/rka/giat/output`, validData)
+   return await axios.put(`/api/perencanaan/rka/giat/output`, validData)
 }
 
 export async function getDetailGiatSipd({ payload, ...other }: SyncDetailGiatParams) {
@@ -187,34 +187,34 @@ export async function getDetailGiatSipd({ payload, ...other }: SyncDetailGiatPar
 
 //GET
 export async function getBlGiatById(id: string) {
-   return await axios.get<ResponseApi>(`api/perencanaan/rka/giat/${id}`)
+   return await axios.get<ResponseApi>(`/api/perencanaan/rka/giat/${id}`)
 }
 // Delete Data Kegiatan
 export async function deleteBlGiatByListId(
    payload: Zod.infer<typeof BlGiatDeleteByListIdValidationSchema>
 ) {
    const data = BlGiatDeleteByListIdValidationSchema.parse(payload)
-   await axios.delete(`api/perencanaan/rka/giat`, { data })
+   await axios.delete(`/api/perencanaan/rka/giat`, { data })
 }
 export async function deleteOutputBlGiatByListId(
    payload: Zod.infer<typeof OutputBlGiatDeleteByListIdValidationSchema>
 ) {
    const data = OutputBlGiatDeleteByListIdValidationSchema.parse(payload)
-   await axios.delete(`api/perencanaan/rka/giat/output`, { data })
+   await axios.delete(`/api/perencanaan/rka/giat/output`, { data })
 }
 
 export async function deleteCapaianBlGiatByListId(
    payload: Zod.infer<typeof CapaianBlGiatDeleteByListIdValidationSchema>
 ) {
    const data = CapaianBlGiatDeleteByListIdValidationSchema.parse(payload)
-   await axios.delete(`api/perencanaan/rka/giat/capaian`, { data })
+   await axios.delete(`/api/perencanaan/rka/giat/capaian`, { data })
 }
 
 export async function deleteHasilBlGiatByListId(
    payload: Zod.infer<typeof HasilBlGiatDeleteByListIdValidationSchema>
 ) {
    const data = HasilBlGiatDeleteByListIdValidationSchema.parse(payload)
-   await axios.delete(`api/perencanaan/rka/giat/hasil`, { data })
+   await axios.delete(`/api/perencanaan/rka/giat/hasil`, { data })
 }
 
 //CLONE DATA

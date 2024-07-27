@@ -8,6 +8,7 @@ const CardSyncAkun = dynamic(() => import('./_coponents/card-akun'), { ssr: fals
 const CardSyncSkpd = dynamic(() => import('./_coponents/card-skpd'), { ssr: false })
 const CardSyncTahapan = dynamic(() => import('./_coponents/card-tahapan'), { ssr: false })
 const CardSyncSatuan = dynamic(() => import('./_coponents/card-satuan'), { ssr: false })
+const CardSyncSumberDana = dynamic(() => import('./_coponents/card-sumber-dana'), { ssr: false })
 const CardSyncStandarHarga = dynamic(() => import('./_coponents/card-standar-harga'), {
    ssr: false,
 })
@@ -60,6 +61,13 @@ const Page = async () => {
                               roles: user?.roles,
                               id_unit: user?.id_unit,
                               id_skpd: user?.id_skpd,
+                           }}
+                        />
+                        <CardSyncSumberDana
+                           data={{
+                              id_daerah: user?.id_daerah,
+                              tahun: user?.tahun,
+                              roles: user?.roles,
                            }}
                         />
                         <CardSyncSatuan roles={user?.roles} />

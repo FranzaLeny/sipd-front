@@ -133,7 +133,7 @@ interface StandarHargaByAkunSipd {
    updated_at?: string
    updated_ip?: any
 }
-// api/master/d_komponen/export_excel
+// /api/master/d_komponen/export_excel
 
 interface StandarHargaExportExcelSipdPayload {
    tahun: number

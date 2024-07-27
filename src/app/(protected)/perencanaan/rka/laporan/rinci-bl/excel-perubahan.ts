@@ -6,34 +6,34 @@ import { saveAs } from 'file-saver'
 
 import { LaporanRinciBl } from './rinci-bl'
 
+const styleFont = { name: 'Arial', size: 10 }
+const textStyle: Partial<Excel.Style> = {
+   alignment: {
+      vertical: 'middle',
+      horizontal: 'left',
+      wrapText: true,
+      shrinkToFit: false,
+      indent: 0.1,
+   },
+   font: styleFont,
+   numFmt: '@',
+}
+const numStyle: Partial<Excel.Style> = {
+   alignment: {
+      vertical: 'middle',
+      horizontal: 'right',
+      wrapText: false,
+      shrinkToFit: true,
+      indent: 0.1,
+   },
+   font: styleFont,
+   numFmt: '#,##0;(#,##0)',
+}
+const percentStyle: Partial<Excel.Style> = {
+   ...numStyle,
+   numFmt: '0%',
+}
 function formatDefaultRka(ws: Excel.Worksheet) {
-   const font = { name: 'Arial', size: 10 }
-   const textStyle: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'left',
-         wrapText: true,
-         shrinkToFit: false,
-         indent: 0.1,
-      },
-      font,
-      numFmt: '@',
-   }
-   const numStyle: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'right',
-         wrapText: false,
-         shrinkToFit: true,
-         indent: 0.1,
-      },
-      font,
-      numFmt: '#,##0;(#,##0)',
-   }
-   const percentStyle: Partial<Excel.Style> = {
-      ...numStyle,
-      numFmt: '0%',
-   }
    ws.columns = [
       { key: 'kd_1', width: 2.29, style: textStyle },
       { key: 'kd_2', width: 2.29, style: textStyle },
@@ -101,6 +101,16 @@ function formatDefaultRka(ws: Excel.Worksheet) {
          style: numStyle,
          width: 11.71,
       },
+      {
+         key: 'rak',
+         style: numStyle,
+         width: 11.71,
+      },
+      {
+         key: 'realisasi',
+         style: numStyle,
+         width: 11.71,
+      },
    ]
    ws.views = [{ showGridLines: false }]
 }
@@ -118,8 +128,25 @@ type Data = {
    subGiat: LaporanRinciBl['sub_kegiatan']
 }
 
-const dowloadRkpaRinciBl = async (data: Data) => {
+const dowloadRkpaRinciBl = async (data: Data[]) => {
+   const wb = new Excel.Workbook()
+   let namaFile = 'RKPA'
+   for await (const item of data) {
+      namaFile = await createSheet(item, wb)
+   }
+   wb.creator = 'FXIL'
+   const buf = await wb.xlsx.writeBuffer()
+   saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
+}
+const listJenisBl: Record<string, 'bo' | 'bm' | 'btt' | 'bt'> = {
+   '5.1': 'bo',
+   '5.2': 'bm',
+   '5.3': 'btt',
+   '5.4': 'bt',
+}
+const createSheet = async (data: Data, wb: Excel.Workbook) => {
    const { dokumen, items, skpd, tapd, subGiat } = data
+   const idSubBl = subGiat?.id_sub_bl
    let namaFile =
       dokumen?.kode + '_' + subGiat?.kode_sub_giat + subGiat?.nama_sub_giat.substring(0, 100)
    namaFile = namaFile?.replace(/[^\w.-]/g, ' ')?.replaceAll('.', '_')
@@ -148,7 +175,6 @@ const dowloadRkpaRinciBl = async (data: Data) => {
       return `=SUBTOTAL(9,${col + nextRow}:${col + endRow})`
    }
 
-   const wb = new Excel.Workbook()
    const ws = wb.addWorksheet(sheet_name?.substring(0, 30))
    formatDefaultRka(ws)
    fillDokJudul({ ws, dokumen, tahun: subGiat?.tahun })
@@ -177,6 +203,9 @@ const dowloadRkpaRinciBl = async (data: Data) => {
          pajak_murni,
          total_harga,
          total_harga_murni,
+         nilai_rak,
+         nilai_realisasi,
+         kode,
       } = rinci
       const isTotal = group === 10
       const _uraian =
@@ -204,7 +233,7 @@ const dowloadRkpaRinciBl = async (data: Data) => {
            ? '=SUBTOTAL(9,R' + (starRow + 1) + ':R' + lastRow + ')'
            : generateSubTotal(group, index, nextRow, 'R')
       let item = createExcelData({
-         l: 18,
+         l: 20,
          d: {
             ...rek,
             7: _uraian,
@@ -219,6 +248,8 @@ const dowloadRkpaRinciBl = async (data: Data) => {
             16: isRinci ? { formula: `=${pajak ?? 0}/100` } : undefined,
             17: { formula: total },
             18: { formula: selisih },
+            19: nilai_rak ?? null,
+            20: nilai_realisasi ?? null,
          },
       })
 
@@ -233,7 +264,13 @@ const dowloadRkpaRinciBl = async (data: Data) => {
             bold: true,
             min_height: 15,
          })
+
+         if (isTotal) {
+            ws.getCell(row?.number, 12).name = 'jml_murni_' + idSubBl
+            ws.getCell(row?.number, 17).name = 'jml_' + idSubBl
+         }
       }
+
       ws.addConditionalFormatting({
          ref: row.getCell(12).address,
          rules: [
@@ -242,17 +279,18 @@ const dowloadRkpaRinciBl = async (data: Data) => {
                priority: 1,
                operator: 'lessThan',
                formulae: [total_harga_murni - 0.5],
-               style: { font: { color: { argb: 'FF0F0F' } } },
+               style: { font: { color: { argb: 'B80000' } } },
             },
             {
                type: 'cellIs',
                priority: 2,
                operator: 'greaterThan',
                formulae: [total_harga_murni + 0.5],
-               style: { font: { color: { argb: 'FFFF00' } } },
+               style: { font: { color: { argb: '01670B' } } },
             },
          ],
       })
+
       ws.addConditionalFormatting({
          ref: row.getCell(17).address,
          rules: [
@@ -261,17 +299,18 @@ const dowloadRkpaRinciBl = async (data: Data) => {
                priority: 1,
                operator: 'lessThan',
                formulae: [total_harga - 0.5],
-               style: { font: { color: { argb: 'FF0F0F' } } },
+               style: { font: { color: { argb: 'B80000' } } },
             },
             {
                type: 'cellIs',
                priority: 2,
                operator: 'greaterThan',
                formulae: [total_harga + 0.5],
-               style: { font: { color: { argb: 'FFFF00' } } },
+               style: { font: { color: { argb: '01670B' } } },
             },
          ],
       })
+
       ws.addConditionalFormatting({
          ref: row.getCell(18).address,
          rules: [
@@ -280,19 +319,24 @@ const dowloadRkpaRinciBl = async (data: Data) => {
                priority: 1,
                operator: 'lessThan',
                formulae: [0],
-               style: { font: { color: { argb: 'C00000' } } },
+               style: { font: { color: { argb: '733163' } } },
             },
             {
                type: 'cellIs',
                priority: 2,
                operator: 'greaterThan',
                formulae: [0],
+
                style: { font: { color: { argb: '0000CC' } } },
             },
          ],
       })
-
-      borderAll({ row, ws, bold: !isRinci })
+      if (!!kode && !!listJenisBl[kode]) {
+         const cell = row.number
+         ws.getCell(`Q${cell}`).name = listJenisBl[kode] + '_' + idSubBl
+         ws.getCell(`L${cell}`).name = listJenisBl[kode] + '_murni_' + idSubBl
+      }
+      borderAll({ row, ws, bold: !isRinci, excludeColumns: [19, 20] })
       row.eachCell({ includeEmpty: true }, (cell, col) => {
          if (col <= 6) {
             const cellAddress = cell.address
@@ -311,19 +355,20 @@ const dowloadRkpaRinciBl = async (data: Data) => {
    }
    const row = ws.addRow(undefined)
    row.height = 7
+
+   const alokasiAddr = ws.getCell(1, 30).value?.toString()
+   const paguMuniAddr = ws.getCell(2, 30).value?.toString()
+   const paguAddr = ws.getCell(2, 31).value?.toString()
+   alokasiAddr && (ws.getCell(alokasiAddr).value = { formula: `=jml_${idSubBl}` })
+   paguMuniAddr && (ws.getCell(paguMuniAddr).value = { formula: `=jml_murni_${idSubBl}` })
+   paguAddr && (ws.getCell(paguAddr).value = { formula: `=jml_${idSubBl}` })
+
    fillKepala({ ws, skpd })
    fillKeterangan({ ws })
-   fillTapd({ ws, tapd })
+   const endRow = fillTapd({ ws, tapd })
+   ws.pageSetup.printArea = `A1:R${endRow + 2}`
    ws.headerFooter.oddFooter = `&L&\"Arial\"&9&I${footer}&R&\"Arial\"&9&B- &P -`
-   const password = subGiat.kode_sub_giat.slice(-4)
-   await ws.protect(password, {
-      insertRows: true,
-      formatRows: true,
-      formatColumns: true,
-      formatCells: true,
-   })
-   const buf = await wb.xlsx.writeBuffer()
-   saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
+   return namaFile
 }
 
 export default dowloadRkpaRinciBl
@@ -439,7 +484,7 @@ function fillDataKegiatan({
       }),
    ]
    const rows = ws.addRows(giat)
-   rows.map((row) => {
+   rows.map((row, i) => {
       const value = row.getCell(7).value
       row.height = calcRowHeight({
          value: value,
@@ -466,6 +511,10 @@ function fillDataKegiatan({
       })
       ws.mergeCellsWithoutStyle(row.number, 1, row.number, 6)
       ws.mergeCellsWithoutStyle(row.number, 7, row.number, 18)
+      if (i === 7) {
+         ws.getCell(row.number, 7).name = 'pagu_tahun_' + subGiat?.id_sub_bl
+         ws.getCell(1, 30).value = row.getCell(7).address
+      }
    })
    const row = ws.addRow(undefined)
    row.height = 7
@@ -587,9 +636,9 @@ function fillIndikatorKegiatan({
          d: {
             1: i === 0 ? 'Keluaran Sub Kegiatan' : undefined,
             7: output_bl_sub_giat_murni[i]?.tolak_ukur,
-            11: output_bl_sub_giat_murni[i].target_teks,
+            11: output_bl_sub_giat_murni[i]?.target_teks,
             13: output_bl_sub_giat[i]?.tolak_ukur,
-            18: output_bl_sub_giat[i].target_teks,
+            18: output_bl_sub_giat[i]?.target_teks,
          },
       })
    })
@@ -610,6 +659,7 @@ function fillIndikatorKegiatan({
       ...hasil,
       ...output,
    ]
+
    const rows = ws.addRows(indikator)
    rows.map((row, i) => {
       ws.mergeCellsWithoutStyle(row.number, 1, row.number, 6)
@@ -622,7 +672,7 @@ function fillIndikatorKegiatan({
          if (y === 11 || y === 18) {
             cell.style = {
                ...style,
-               numFmt: i === 2 ? '#,##0;-#,##0' : '@',
+               numFmt: i === capaian?.length ? '#,##0;-#,##0' : '@',
                alignment: {
                   ...style.alignment,
                   horizontal: 'center',
@@ -660,6 +710,12 @@ function fillIndikatorKegiatan({
          min_height: 15,
       })
       row.height = Math.max(heigthMurni, height)
+      if (i === capaian?.length) {
+         ws.getCell(row.number, 11).name = 'pagu_murni_' + subGiat?.id_sub_bl
+         ws.getCell(2, 30).value = row.getCell(11).address
+         ws.getCell(row.number, 18).name = 'pagu_' + subGiat?.id_sub_bl
+         ws.getCell(2, 31).value = row.getCell(18).address
+      }
    })
 
    const row = ws.addRow(undefined)
@@ -767,12 +823,14 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }): number {
       c: false,
       d: {
          0: createExcelData({
-            l: 18,
+            l: 20,
             d: {
                1: 'Kode Rekening',
                7: 'Uraian',
                8: 'Rincian Perhitungan',
                18: 'Bertambah\n(Berkurang)',
+               19: 'RAK\n(Rp)',
+               20: 'Realisasi\n(Rp)',
             },
          }),
          1: createExcelData({
@@ -801,12 +859,14 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }): number {
    })
    const row_th = ws.addRows(data_th)
    row_th.map((row, i) => {
-      borderAll({ row, ws, bold: true, center: true, wrapText: true })
+      borderAll({ row, ws, bold: true, center: true, wrapText: true, excludeColumns: [19, 20] })
       if (i === 0) {
          ws.mergeCellsWithoutStyle(row.number, 1, row.number + 2, 6)
          ws.mergeCellsWithoutStyle(row.number, 7, row.number + 2, 7)
          ws.mergeCellsWithoutStyle(row.number, 8, row.number, 17)
          ws.mergeCellsWithoutStyle(row.number, 18, row.number + 2, 18)
+         ws.mergeCells(row.number, 19, row.number + 2, 19)
+         ws.mergeCells(row.number, 20, row.number + 2, 20)
       } else if (i === 1) {
          ws.mergeCellsWithoutStyle(row.number, 8, row.number, 12)
          ws.mergeCellsWithoutStyle(row.number, 13, row.number, 17)

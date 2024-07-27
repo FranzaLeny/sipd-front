@@ -11,7 +11,7 @@ export type GetUserSipdPerencanaanListParams = {
 
 const getUserSipdPerencanaan = async (params: GetUserSipdPerencanaanListParams) =>
    await axios
-      .get<ResponseApi<CursorPaginate<UserSipdPerencanaan>>>(`api/perencanaan/master/user`, {
+      .get<ResponseApi<CursorPaginate<UserSipdPerencanaan>>>(`/api/perencanaan/data/user`, {
          params,
       })
       .then((res) => res.data)

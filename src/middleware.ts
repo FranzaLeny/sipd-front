@@ -41,5 +41,5 @@ export default withAuth(authorizeRequest, {
 })
 
 export const config = {
-   matcher: ['/((?!api/auth|_next/static|_next/image|images|icon|fonts|logstores|favicon.ico).*)'],
+   matcher: ['/((?!/api/auth|_next/static|_next/image|images|icon|fonts|logstores|favicon.ico).*)'],
 }

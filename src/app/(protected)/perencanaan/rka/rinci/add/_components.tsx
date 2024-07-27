@@ -274,11 +274,6 @@ const ModalAddRincian = ({ data }: { data: BlSubGiat; user?: UserWithoutToken })
       trigger,
    } = form
 
-   const handleClose = useCallback(() => {
-      !isSubmitting && router.push(`/perencanaan/rka/sub-giat/${data.id}/rinci`)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [isSubmitting, data?.id])
-
    const {
       vol1,
       vol2,
@@ -374,6 +369,9 @@ const ModalAddRincian = ({ data }: { data: BlSubGiat; user?: UserWithoutToken })
       }
    }
 
+   const handleClose = useCallback(() => {
+      !isSubmitting && router.replace(`/perencanaan/rka/rinci?id=${data?.id}`)
+   }, [router, isSubmitting, data?.id])
    return (
       <DialogForm
          onClose={handleClose}

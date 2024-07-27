@@ -1,4 +1,4 @@
-//GET api/master/label_kokab/view/678/2024/424
+//GET /api/master/label_kokab/view/678/2024/424
 interface ViewLabelKabKotaSipdResponse {
    status: boolean
    status_code: number
@@ -19,7 +19,7 @@ interface ViewLabelKabKotaSipd {
    updated_at: string
    updated_ip?: any
 }
-//GET api/master/label_prov/view/70/2024/418
+//GET /api/master/label_prov/view/70/2024/418
 interface ViewLabelProvSipdResponse {
    status_code: number
    status: boolean

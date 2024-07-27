@@ -28,8 +28,8 @@ const Page = async () => {
             tableUiProps={{ isCompact: true }}
             searchParamsStatic={{ tahun, id_daerah }}
             helperColumns={helperColumns}
-            data_key='data_tahapan'
-            endpoint='api/perencanaan/master/tahapan'
+            data_key={['data_tahapan']}
+            endpoint='/api/perencanaan/data/tahapan'
             tableActions={<ActionTahapanTable />}
          />
       </>

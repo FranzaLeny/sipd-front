@@ -43,7 +43,7 @@ function CardDataKeterangan({ data }: Props) {
             id_daerah: data?.id_daerah,
          },
          'bl_sub_giat_rinci_ket',
-         'total_ket_rinci_bl_sub_giat',
+         'total',
       ] as [Partial<GetKetRinciListParams>, ...any],
       queryFn: async ({ queryKey: [params] }) => {
          return await getTotalKetRinciBlSubGiat(params)

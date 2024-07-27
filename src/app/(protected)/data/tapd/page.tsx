@@ -16,8 +16,8 @@ const Page = async () => {
          <TableServerSide
             tableUiProps={{ isCompact: true }}
             helperColumns={helperColumns}
-            data_key='tapd_anggaran'
-            endpoint='api/master/tapd'
+            data_key={['data_tapd_anggaran']}
+            endpoint='/api/master/tapd'
             tableActions={<ActionTapdAnggaranTable />}
          />
       </>

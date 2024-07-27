@@ -1,8 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { getBlSubGiatByJadwalUnit } from '@actions/perencanaan/rka/bl-sub-giat'
+import { getAllBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
 import { getLaporanSubGiat } from '@actions/perencanaan/rka/laporan'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import BlSubGiatSelector from '@components/perencanaan/bl-sub-giat'
@@ -12,17 +11,23 @@ import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import Loading from '@components/ui/loading'
 import {
    Button,
+   Checkbox,
    cn,
    Dropdown,
    DropdownItem,
    DropdownMenu,
    DropdownTrigger,
-   Selection,
+   Popover,
+   PopoverContent,
+   PopoverTrigger,
+   Radio,
+   RadioGroup,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { numberToMonth, numberToText } from '@utils'
-import { ArrowLeftCircle, Download, Printer, Settings } from 'lucide-react'
+import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
+import { toast } from 'react-toastify'
 import { LaporanBlSubGiat } from '@/types/api/laporan'
 
 import dowloadRkaRinciBl from './excel-murni'
@@ -38,7 +43,7 @@ const LIST_DOKUMEN = [
       kode: 'RKA',
       header:
          'Rekapitulasi Dokumen Pelaksanaan Belanja Berdasarkan Program, Kegiatan, Kegiatan dan Sub Kegiatan',
-      type: 'murni',
+      category: 'rka',
    },
    {
       key: 'rdpa',
@@ -47,7 +52,7 @@ const LIST_DOKUMEN = [
       kode: 'RDPA',
       header:
          'Rekapitulasi Dokumen Pelaksanaan Belanja Berdasarkan Program, Kegiatan, Kegiatan dan Sub Kegiatan',
-      type: 'murni',
+      category: 'rka',
    },
    {
       key: 'rkpa',
@@ -56,7 +61,7 @@ const LIST_DOKUMEN = [
       kode: 'RKPA',
       header:
          'Rekapitulasi Dokumen Pelaksanaan Belanja Berdasarkan Program, Kegiatan, Kegiatan dan Sub Kegiatan',
-      type: 'perubahan',
+      category: 'dpa',
    },
 
    {
@@ -66,7 +71,7 @@ const LIST_DOKUMEN = [
       kode: 'RDPPA',
       header:
          'Rekapitulasi Dokumen Pelaksanaan Belanja Berdasarkan Program, Kegiatan, Kegiatan dan Sub Kegiatan',
-      type: 'perubahan',
+      category: 'dpa',
    },
 ]
 export type LaporanRinciBl = AsyncReturnType<typeof getLaporanSubGiat>
@@ -84,15 +89,36 @@ export default function RinciBl({
    tahun: number
 }) {
    const [blSubGiatId, setBlSubGiatId] = useState<string | null>(id)
-   const [selectedDok, setSelectedDok] = useState<Selection>(new Set(['rka']))
+   const [keluaranSub, setKeluaranSub] = useState(false)
+   const [selectedDok, setSelectedDok] = useState('rka')
+   const [isPerubahan, setIsPerubahan] = useState(false)
+   const [disableDocKeys, setDisableDocKeys] = useState(['rkpa', 'rdppa'])
+   const [paguPerubahan, setPaguPerubahan] = useState(false)
    const [jadwal, setJadwal] = useState<string>()
-   const router = useRouter()
 
-   const { data, isFetched, isFetching } = useQuery({
-      queryKey: [blSubGiatId, 'detail_sub_giat'],
+   const [isLoading, setIsLoading] = useState(false)
+
+   const {
+      data: defaultData,
+      isFetched,
+      isFetching,
+   } = useQuery({
+      queryKey: [
+         blSubGiatId,
+         'jadwal_anggaran',
+         'bl_sub_giat',
+         'bl_sub_giat_rinci',
+         'getLaporanSubGiat',
+      ],
       queryFn: async ({ queryKey: [id] }) => (id ? await getLaporanSubGiat(id) : undefined),
       enabled: !!blSubGiatId,
    })
+   const data = useMemo(() => {
+      if (!!defaultData && paguPerubahan) {
+         return generatePerubahan(defaultData)
+      }
+      return defaultData
+   }, [defaultData, paguPerubahan])
 
    const [tapd, setTapd] = useState(data?.skpd?.tapd)
 
@@ -100,32 +126,40 @@ export default function RinciBl({
       setJadwal(jadwal)
       setBlSubGiatId('')
    }
+
    const jenisDok = useMemo(() => {
-      const key = Array.from(selectedDok)[0]
-      if (key) {
-         const doc = LIST_DOKUMEN.find((item) => item.key === key)
+      if (selectedDok) {
+         const doc = LIST_DOKUMEN.find((item) => item.key === selectedDok)
          if (!!doc) return doc
       }
       return LIST_DOKUMEN[0]
    }, [selectedDok])
 
-   const typeDok = useMemo(() => {
-      if (data?.jadwal?.is_perubahan) {
-         return 'perubahan'
-      }
-      return 'murni'
-   }, [data?.jadwal])
-
    useEffect(() => {
+      if (!!data?.jadwal?.tahun && data?.jadwal?.tahun !== tahun) {
+         setJadwal('')
+         setBlSubGiatId('')
+      }
       if (data?.jadwal?.id) {
          setJadwal(data?.jadwal?.id)
       }
       if (data?.jadwal?.is_perubahan === 1) {
-         setSelectedDok(new Set(['rkpa']))
+         setIsPerubahan(true)
       } else if (data?.jadwal?.is_perubahan === 0) {
-         setSelectedDok(new Set(['rka']))
+         setIsPerubahan(false)
       }
-   }, [data?.jadwal])
+   }, [data?.jadwal, tahun])
+
+   useEffect(() => {
+      setPaguPerubahan(false)
+      if (isPerubahan) {
+         setSelectedDok('rkpa')
+         setDisableDocKeys(['rka', 'rdpa'])
+      } else {
+         setDisableDocKeys(['rkpa', 'rdppa'])
+         setSelectedDok('rka')
+      }
+   }, [isPerubahan])
 
    const documentTitle = useMemo(() => {
       let text = 'RKA_06_RICIAN_BELANJA'
@@ -145,70 +179,85 @@ export default function RinciBl({
    }, [data, jenisDok])
 
    const handleExportExcel = useCallback(async () => {
-      if (!data) return
-      const params = {
-         dokumen: jenisDok,
-         items: data.rincian,
-         skpd: data?.skpd?.sub_skpd,
-         subGiat: data?.sub_kegiatan,
-         tapd: tapd ?? data?.skpd?.tapd,
+      setIsLoading(true)
+      try {
+         if (!!!data) throw new Error('Data sub kegiatan tidak ditemukan')
+         const params = {
+            dokumen: jenisDok,
+            items: data.rincian,
+            skpd: data?.skpd?.sub_skpd,
+            subGiat: data?.sub_kegiatan,
+            tapd: tapd ?? data?.skpd?.tapd,
+         }
+         if (isPerubahan) {
+            await dowloadRkpaRinciBl([params])
+         } else {
+            await dowloadRkaRinciBl([params])
+         }
+         toast.success('Selesai export excel')
+      } catch (error) {
+         toast.error((error as Error).message)
       }
-      if (jenisDok.type === 'murni') {
-         await dowloadRkaRinciBl([params])
-      } else {
-         await dowloadRkpaRinciBl(params)
-      }
-   }, [jenisDok, data, tapd])
+      setIsLoading(false)
+   }, [isPerubahan, jenisDok, data, tapd])
 
    const handleExporAllSub = useCallback(async () => {
-      if (!jadwal) {
-         return
-      }
-      const listSubGiat = await getBlSubGiatByJadwalUnit({
-         id_unit: unit,
-         jadwal_anggaran_id: jadwal,
-         id_daerah: daerah,
-         tahun: tahun,
-      })
-      if (!data) return
-      const listData: {
-         dokumen: typeof jenisDok
-         items: LaporanBlSubGiat['rincian']
-         skpd: LaporanBlSubGiat['skpd']['sub_skpd']
-         subGiat: LaporanBlSubGiat['sub_kegiatan']
-         tapd: LaporanBlSubGiat['skpd']['tapd']
-      }[] = []
-      for await (const sbl of listSubGiat) {
-         await getLaporanSubGiat(sbl?.id).then((data) => {
-            const item = {
-               dokumen: jenisDok,
-               items: data.rincian,
-               skpd: data?.skpd?.sub_skpd,
-               subGiat: data?.sub_kegiatan,
-               tapd: tapd ?? data?.skpd?.tapd,
-            }
-            listData.push(item)
+      setIsLoading(true)
+      try {
+         if (!jadwal) throw new Error('Data jadwal tidak ditemukan')
+         const listSubGiat = await getAllBlSubGiat({
+            id_unit: unit,
+            jadwal_anggaran_id: jadwal,
+            id_daerah: daerah,
+            tahun: tahun,
          })
+         const listData: {
+            dokumen: typeof jenisDok
+            items: LaporanBlSubGiat['rincian']
+            skpd: LaporanBlSubGiat['skpd']['sub_skpd']
+            subGiat: LaporanBlSubGiat['sub_kegiatan']
+            tapd: LaporanBlSubGiat['skpd']['tapd']
+         }[] = []
+         for await (const sbl of listSubGiat) {
+            await getLaporanSubGiat(sbl?.id).then((res) => {
+               const data = paguPerubahan ? generatePerubahan(res) : res
+               const item = {
+                  dokumen: jenisDok,
+                  items: data.rincian,
+                  skpd: data?.skpd?.sub_skpd,
+                  subGiat: data?.sub_kegiatan,
+                  tapd: tapd ?? data?.skpd?.tapd,
+               }
+               listData.push(item)
+            })
+         }
+         if (!listData.length) throw new Error('Data sub kegiatan tidak ditemukan')
+         if (isPerubahan) {
+            await dowloadRkpaRinciBl(listData)
+         } else {
+            await dowloadRkaRinciBl(listData)
+         }
+         toast.success('Selesai export semua sub kegiatan')
+      } catch (error) {
+         toast.error((error as Error).message)
       }
-      console.log(listData)
+      setIsLoading(false)
+   }, [daerah, jadwal, jenisDok, tahun, tapd, unit, isPerubahan, paguPerubahan])
 
-      if (jenisDok.type === 'murni') {
-         await dowloadRkaRinciBl(listData)
-      } else {
-         // await dowloadRkpaRinciBl(params)
-      }
-   }, [daerah, data, jadwal, jenisDok, tahun, tapd, unit])
-
-   const isPerubahan = jenisDok?.type === 'perubahan'
    const componentRef = useRef(null)
    const handlePrint = useReactToPrint({
       content: () => componentRef.current,
       documentTitle,
    })
 
-   const back = useCallback(() => {
-      router.back()
-   }, [router])
+   const paramsBlSubGiat = useMemo(() => {
+      if (!!id) {
+         if (!data?.jadwal?.id || (!!data?.jadwal?.id && !!id && data?.jadwal?.id === jadwal)) {
+            return { bl_sub_giat_id: id }
+         }
+      }
+      return { id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }
+   }, [id, unit, jadwal, daerah, data?.jadwal?.id])
 
    return (
       <>
@@ -226,16 +275,9 @@ export default function RinciBl({
                         label='Pilih Sub Kegiatan'
                         labelPlacement='inside'
                         selectedKey={blSubGiatId}
-                        params={{ id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }}
+                        params={paramsBlSubGiat}
                         onSelectionChange={setBlSubGiatId}
                      />
-                     <Button
-                        color='primary'
-                        className='sm:rounded-medium min-w-10 rounded-full px-2 backdrop-blur-sm sm:min-w-20'
-                        endContent={<Download className='size-5' />}
-                        onPress={handleExporAllSub}>
-                        <span className='hidden sm:inline-flex'>Download Semua</span>
-                     </Button>
                   </div>
                )}
             </div>
@@ -243,59 +285,114 @@ export default function RinciBl({
          {isFetching && <Loading />}
          {isFetched && !!data && (
             <>
-               <div className='top-navbar  sticky left-1/2 z-10 flex w-fit -translate-x-1/2 gap-4 rounded-b-3xl py-2 backdrop-blur'>
-                  <Button
-                     color='danger'
-                     className='sm:rounded-medium min-w-10 rounded-full px-2 backdrop-blur-sm sm:min-w-20'
-                     onPress={back}>
-                     <ArrowLeftCircle className='size-5' />
-                     <span className='hidden sm:inline-flex'>Kembali</span>
-                  </Button>
+               <div className='top-navbar sticky left-1/2 z-10 flex w-fit -translate-x-1/2 gap-4 rounded-b-3xl py-2 backdrop-blur'>
+                  <Popover
+                     placement='bottom'
+                     showArrow
+                     offset={10}>
+                     <PopoverTrigger>
+                        <Button
+                           isDisabled={isLoading}
+                           variant='shadow'
+                           color='secondary'
+                           endContent={<Settings className='-mr-2 size-5' />}>
+                           Pengaturan
+                        </Button>
+                     </PopoverTrigger>
+                     <PopoverContent>
+                        {(titleProps) => (
+                           <div className='w-full px-1 py-2'>
+                              <p
+                                 className='text-small text-foreground font-bold'
+                                 {...titleProps}>
+                                 Pengaturan Cetak / Unduh
+                              </p>
+                              <div className='flex w-full flex-col gap-3 pt-3'>
+                                 <Checkbox
+                                    size='sm'
+                                    radius='full'
+                                    isSelected={keluaranSub}
+                                    onValueChange={setKeluaranSub}>
+                                    Indikator Sub Kegiatan
+                                 </Checkbox>
+                                 <Checkbox
+                                    size='sm'
+                                    radius='full'
+                                    isSelected={isPerubahan}
+                                    onValueChange={setIsPerubahan}>
+                                    Dokumen Perubahan
+                                 </Checkbox>
+                                 {data?.jadwal?.is_perubahan === 1 && (
+                                    <Checkbox
+                                       size='sm'
+                                       radius='full'
+                                       isDisabled={!isPerubahan}
+                                       isSelected={paguPerubahan}
+                                       onValueChange={setPaguPerubahan}>
+                                       Pagu Perbahahan
+                                    </Checkbox>
+                                 )}
+                                 <RadioGroup
+                                    size='sm'
+                                    value={selectedDok}
+                                    onValueChange={setSelectedDok}
+                                    label='Cetak Sabagai'>
+                                    {LIST_DOKUMEN?.map(({ key, name }) => {
+                                       return (
+                                          <Radio
+                                             isDisabled={disableDocKeys.includes(key)}
+                                             key={key}
+                                             value={key}>
+                                             {name}
+                                          </Radio>
+                                       )
+                                    })}
+                                 </RadioGroup>
+                              </div>
+                           </div>
+                        )}
+                     </PopoverContent>
+                  </Popover>
                   <Dropdown>
                      <DropdownTrigger>
                         <Button
+                           isLoading={isLoading}
                            variant='shadow'
-                           color='secondary'
-                           className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
-                           startContent={<Settings className='size-5' />}>
-                           <span className='hidden sm:inline-flex'>
-                              {jenisDok?.name || 'Pilih Jenis Dokumen'}
-                           </span>
+                           color='primary'
+                           endContent={<Download className='-mr-2 size-5' />}>
+                           Cetak
                         </Button>
                      </DropdownTrigger>
                      <DropdownMenu
                         selectionMode='single'
-                        items={LIST_DOKUMEN}
-                        onSelectionChange={setSelectedDok}
-                        selectedKeys={selectedDok}
-                        disabledKeys={selectedDok}
-                        aria-label='Jenis Dokumen'>
-                        {(item) => (
-                           <DropdownItem key={item.key}>
-                              {item.name} {typeDok !== item?.type && '(FORM)'}
-                           </DropdownItem>
-                        )}
+                        aria-label='Cetak/dowload'>
+                        <DropdownItem
+                           color='primary'
+                           key={'cetak'}
+                           onPress={handlePrint}
+                           endContent={<Printer className='size-5' />}>
+                           Print
+                        </DropdownItem>
+                        <DropdownItem
+                           color='secondary'
+                           key={'export'}
+                           onPress={handleExportExcel}
+                           endContent={<Download className='size-5' />}>
+                           Export Excel
+                        </DropdownItem>
+                        <DropdownItem
+                           color='success'
+                           key={'export-all'}
+                           onPress={handleExporAllSub}
+                           endContent={<Download className='size-5' />}>
+                           Export Semua
+                        </DropdownItem>
                      </DropdownMenu>
                   </Dropdown>
-                  <Button
-                     color='success'
-                     className='sm:rounded-medium min-w-10 rounded-full px-2 backdrop-blur-sm sm:min-w-20'
-                     endContent={<Printer className='size-5' />}
-                     onPress={handlePrint}>
-                     <span className='hidden sm:inline-flex'>Cetak</span>
-                  </Button>
-                  <Button
-                     color='primary'
-                     className='sm:rounded-medium min-w-10 rounded-full px-2 backdrop-blur-sm sm:min-w-20'
-                     endContent={<Download className='size-5' />}
-                     onPress={handleExportExcel}>
-                     <span className='hidden sm:inline-flex'>Excel</span>
-                  </Button>
                </div>
                <div className='content pb-20'>
                   <div
                      ref={componentRef}
-                     id='rka'
                      className={`size-fit min-w-full max-w-max p-2 text-sm shadow sm:p-4 print:bg-white print:p-0 print:text-xs print:text-black`}>
                      <TableKop
                         jenisDok={jenisDok}
@@ -307,6 +404,7 @@ export default function RinciBl({
                      />
                      {isPerubahan ? (
                         <TableIndikatorGiatPerubahan
+                           keluaranSub={keluaranSub}
                            capaian_bl_giat={data?.sub_kegiatan?.capaian_bl_giat}
                            capaian_bl_giat_murni={data?.sub_kegiatan?.capaian_bl_giat_murni}
                            hasil_bl_giat={data?.sub_kegiatan?.hasil_bl_giat}
@@ -320,6 +418,7 @@ export default function RinciBl({
                         />
                      ) : (
                         <TableIndikatorGiat
+                           keluaranSub={keluaranSub}
                            capaian_bl_giat={data?.sub_kegiatan?.capaian_bl_giat}
                            hasil_bl_giat={data?.sub_kegiatan?.hasil_bl_giat}
                            output_bl_sub_giat={data?.sub_kegiatan?.output_bl_sub_giat}
@@ -327,7 +426,10 @@ export default function RinciBl({
                            output_bl_giat={data?.sub_kegiatan?.output_bl_giat}
                         />
                      )}
-                     <TableSubGiat subGiat={data?.sub_kegiatan} />
+                     <TableSubGiat
+                        keluaranSub={keluaranSub}
+                        subGiat={data?.sub_kegiatan}
+                     />
 
                      {isPerubahan ? (
                         <>
@@ -346,7 +448,7 @@ export default function RinciBl({
                         pangkat_kepala={data?.skpd?.sub_skpd?.pangkat_kepala}
                      />
                      <div className='h-2' />
-                     {jenisDok?.key === 'rkpa' && (
+                     {jenisDok?.category === 'rka' && (
                         <>
                            <TableCatatanRka printPreview />
                            <div className='h-2' />
@@ -363,6 +465,35 @@ export default function RinciBl({
          )}
       </>
    )
+}
+
+function generatePerubahan(defaultData: LaporanBlSubGiat) {
+   const subGiat: LaporanRinciBl['sub_kegiatan'] = {
+      ...defaultData?.sub_kegiatan,
+      capaian_bl_giat_murni: defaultData?.sub_kegiatan?.capaian_bl_giat,
+      hasil_bl_giat_murni: defaultData?.sub_kegiatan?.hasil_bl_giat,
+      output_bl_giat_murni: defaultData?.sub_kegiatan?.output_bl_giat,
+      output_bl_sub_giat_murni: defaultData?.sub_kegiatan?.output_bl_sub_giat,
+      pagu_murni: defaultData?.sub_kegiatan?.pagu,
+   }
+   const items: LaporanRinciBl['rincian'] = defaultData?.rincian.map((item) => {
+      return {
+         ...item,
+         volume_murni: item.volume,
+         harga_satuan_murni: item.harga_satuan,
+         koefisien_murni: item.koefisien,
+         selisih: 0,
+         total_harga_murni: item.total_harga,
+         pajak_murni: item.pajak,
+         total_murni: item.total,
+         satuan_murni: item.satuan,
+      }
+   })
+   return {
+      ...defaultData,
+      sub_kegiatan: subGiat,
+      rincian: items,
+   }
 }
 
 function TableKop({ jenisDok, tahun }: { tahun: number; jenisDok?: JenisDokumen }) {
@@ -457,7 +588,13 @@ function TrGiat({
    )
 }
 
-function TableSubGiat({ subGiat = {} as any }: { subGiat: LaporanRinciBl['sub_kegiatan'] }) {
+function TableSubGiat({
+   subGiat = {} as any,
+   keluaranSub = false,
+}: {
+   subGiat: LaporanRinciBl['sub_kegiatan']
+   keluaranSub: boolean
+}) {
    const {
       kode_sub_giat,
       nama_sub_giat,
@@ -499,9 +636,11 @@ function TableSubGiat({ subGiat = {} as any }: { subGiat: LaporanRinciBl['sub_ke
                      </div>
                   ))}
                </TrGiat>
-               <TrGiat label='Keluaran Sub Kegiatan'>
-                  {output_bl_sub_giat?.map((item, i) => <div key={i}>{item.tolak_ukur}</div>)}
-               </TrGiat>
+               {!keluaranSub && (
+                  <TrGiat label='Keluaran Sub Kegiatan'>
+                     {output_bl_sub_giat?.map((item, i) => <div key={i}>{item.tolak_ukur}</div>)}
+                  </TrGiat>
+               )}
                <TrGiat label='Waktu Pelaksanaan'>
                   {numberToMonth(waktu_awal)} s.d {numberToMonth(waktu_akhir)}
                </TrGiat>

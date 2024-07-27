@@ -67,8 +67,8 @@ export const KetRinciSelector = forwardRef(
       })
 
       const { data, isFetching, status, isFetched } = useQuery({
-         queryKey: ['bl_sub_giat_rinci_ket', { ...queryParams }] as [string, GetKetRinciListParams],
-         queryFn: async ({ queryKey: [key, params] }) => {
+         queryKey: [{ ...queryParams }, 'bl_sub_giat_rinci_ket'] as [GetKetRinciListParams, string],
+         queryFn: async ({ queryKey: [params] }) => {
             return await getKetRinciBlSubGiat(params)
          },
          placeholderData: (previousData) => previousData,

@@ -44,11 +44,11 @@ export const SubsRinciSelector = forwardRef(
       })
 
       const { data, isFetching, status } = useQuery({
-         queryKey: ['bl_sub_giat_rinci_subs', { ...queryParams }] as [
-            string,
+         queryKey: [{ ...queryParams }, 'bl_sub_giat_rinci_subs'] as [
             GetSubsRinciListParams,
+            string,
          ],
-         queryFn: async ({ queryKey: [key, params] }) => {
+         queryFn: async ({ queryKey: [params] }) => {
             return await getSubsRinciBlSubGiat(params)
          },
          placeholderData: (previousData) => previousData,

@@ -72,7 +72,7 @@ const ModalSingkronJadwal = () => {
       <DialogConfirm
          action={action}
          disabledSubmit={!isValid}
-         data_key={['jadwal_anggaran', 'rka']}
+         data_key={['jadwal_anggaran']}
          header='Singkron Jadwal Penganggaran'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-semibold'>Proses membutuhkan waktu.</span>
@@ -101,8 +101,15 @@ async function processSync(isValid: boolean, session: Session | null, lengthData
    })
 
    try {
-      const jadwalData = await getJadwalAnggaranFromSipd({ id_daerah, tahun })
-      const processedData = jadwalData.map((jadwal) => {
+      const jadwalData = await getJadwalAnggaranFromSipd({ id_daerah, tahun }).then((d) => {
+         const chekJadwalAktif = d.some((jadwal) => jadwal.id_unik === jadwalActive[0].id_unik)
+         if (!!jadwalActive?.length && !!jadwalActive[0]?.id_unik && !chekJadwalAktif) {
+            return [...d, jadwalActive[0]]
+         }
+         return d
+      })
+
+      let processedData = jadwalData.map((jadwal) => {
          const isActive = jadwalActive.some((active) => active.id_jadwal === jadwal.id_jadwal)
          const murni =
             jadwal.is_perubahan && jadwal.id_jadwal_murni
@@ -114,7 +121,7 @@ async function processSync(isValid: boolean, session: Session | null, lengthData
             is_active: isActive ? 1 : 0,
             id_unik_murni: murni?.id_unik ?? null,
             nama_jadwal_murni: murni?.nama_sub_tahap ?? null,
-            is_lokal: 1,
+            is_lokal: 0,
             waktu_mulai: new Date(jadwal.waktu_mulai.replace(' GMT', '')),
             waktu_selesai: new Date(jadwal.waktu_selesai.replace(' GMT', '')),
          }

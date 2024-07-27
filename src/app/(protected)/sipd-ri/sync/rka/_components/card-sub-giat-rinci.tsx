@@ -47,7 +47,8 @@ function CardDataSubGiatRinci({ data }: Props) {
             jadwal_anggaran_id: data?.jadwal_anggaran_id,
          },
          'bl_sub_giat_rinci',
-         'total_bl_sub_giat_rinci',
+         'total',
+         'jadwal_anggaran',
       ] as [GetRinciListParams, ...any],
       queryFn: async ({ queryKey: [q] }) => {
          return await getTotalRinciBlSubGiat(q)

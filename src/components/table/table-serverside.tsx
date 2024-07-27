@@ -42,8 +42,14 @@ export type Params = {
 const ErrorGetData = dynamic(() => import('./error-get-data'), { ssr: false })
 
 export default function TableServerSide<T extends BaseData>(props: TableServerSideProps<T>) {
-   const { helperColumns, tableUiProps, tableActions, endpoint, data_key, searchParamsStatic } =
-      props
+   const {
+      helperColumns,
+      tableUiProps,
+      tableActions,
+      endpoint,
+      data_key = [],
+      searchParamsStatic,
+   } = props
 
    const { columns, initial_visible_column } = generateColumns(helperColumns)
    const [page, setPage] = useState(0)
@@ -83,7 +89,7 @@ export default function TableServerSide<T extends BaseData>(props: TableServerSi
    }, [searchParamsStatic])
 
    const { data, isFetching, status, error } = useQuery({
-      queryKey: [endpoint, params, data_key] as [string, Params, string],
+      queryKey: [endpoint, params, ...data_key] as [string, Params, ...string[]],
       queryFn: async ({ queryKey: [url, params] }) =>
          await axios
             .get<ResponseApi<CursorPaginate<T>>>(url, { params: { ...params } })

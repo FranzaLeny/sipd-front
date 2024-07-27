@@ -1,8 +1,8 @@
-import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 import manifest from '@constants/tpd.json'
 import { borderAll, calcRowHeight, createExcelData, numberToColumn } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
+import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 
 function formatDefaultRka(ws: Excel.Worksheet) {
    const font = { name: 'Arial', size: 10 }
@@ -144,6 +144,7 @@ const dowloadRekapBlRka = async (data: Data) => {
          pagu_n_depan,
          kode,
          pagu,
+         id_sub_bl,
       } = rinci
       const isTotal = group === 'jumlah'
       const rincian = Object.values(belanja)
@@ -192,8 +193,25 @@ const dowloadRekapBlRka = async (data: Data) => {
                min_height: 15,
             })
          }
+      } else {
+         row.getCell(10).note = {
+            texts: [
+               {
+                  text: `=bo_${id_sub_bl}\n`,
+               },
+               {
+                  text: `=bm_${id_sub_bl}\n`,
+               },
+               {
+                  text: `=btt_${id_sub_bl}\n`,
+               },
+               {
+                  text: `=bt_${id_sub_bl}\n`,
+               },
+            ],
+            editAs: 'oneCells',
+         }
       }
-
       ws.addConditionalFormatting({
          ref: row.getCell(14).address,
          rules: [
@@ -222,13 +240,13 @@ const dowloadRekapBlRka = async (data: Data) => {
    fillKeterangan({ ws })
    fillTapd({ ws, tapd })
    ws.headerFooter.oddFooter = `&L&\"Arial\"&9&I${footer}&R&\"Arial\"&9&B- &P -`
-   const password = skpd?.kode_skpd?.slice(-4)
-   await ws.protect(password, {
-      insertRows: true,
-      formatRows: true,
-      formatColumns: true,
-      formatCells: true,
-   })
+   // const password = skpd?.kode_skpd?.slice(-4)
+   // await ws.protect(password, {
+   //    insertRows: true,
+   //    formatRows: true,
+   //    formatColumns: true,
+   //    formatCells: true,
+   // })
    const buf = await wb.xlsx.writeBuffer()
    saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
 }
@@ -341,6 +359,8 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }) {
          ws.mergeCells(row.number, 4, row.number + 2, 4)
          ws.mergeCells(row.number, 5, row.number + 2, 5)
          ws.mergeCells(row.number, 9, row.number, 15)
+      } else if (i === 1) {
+         ws.mergeCells(row.number, 10, row.number, 14)
       } else if (i === 2) {
          ws.mergeCells(row.number, 6, row.number - 2, 6)
          ws.mergeCells(row.number, 7, row.number - 2, 7)

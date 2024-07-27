@@ -54,13 +54,22 @@ interface TableIndikatorGiatProps {
    output_bl_giat: { target_teks: string; tolok_ukur: string }[]
    output_bl_sub_giat: { target_teks: string; tolak_ukur: string }[]
    hasil_bl_giat: { target_teks: string; tolak_ukur: string }[]
+   keluaranSub: boolean
 }
 
 export function TableIndikatorGiat(props: TableIndikatorGiatProps) {
-   const { capaian_bl_giat: capaian, output_bl_giat: og, hasil_bl_giat: hasil, pagu } = props
+   const {
+      capaian_bl_giat: capaian,
+      output_bl_giat: og,
+      hasil_bl_giat: hasil,
+      pagu,
+      output_bl_sub_giat,
+      keluaranSub = false,
+   } = props
    const capaian_length = capaian?.length || 1
    const hasil_length = hasil?.length || 1
    const og_length = og?.length || 1
+   const osbl_length = output_bl_sub_giat?.length || 1
    return (
       <>
          <table className={`min-w-full`}>
@@ -127,7 +136,7 @@ export function TableIndikatorGiat(props: TableIndikatorGiatProps) {
                      className='print:break-inside-avoid'>
                      {i === 0 && (
                         <td
-                           colSpan={Math.max(hasil_length)}
+                           colSpan={hasil_length}
                            className='cell-print'>
                            Hasil
                         </td>
@@ -136,6 +145,26 @@ export function TableIndikatorGiat(props: TableIndikatorGiatProps) {
                      <td className='cell-print'>{hasil?.length ? hasil[i]?.target_teks : ''}</td>
                   </tr>
                ))}
+               {keluaranSub &&
+                  Array.from({ length: osbl_length }, (_, index) => index + 1)?.map((__, i) => (
+                     <tr
+                        key={i}
+                        className='print:break-inside-avoid'>
+                        {i === 0 && (
+                           <td
+                              colSpan={osbl_length}
+                              className='cell-print'>
+                              Keluaran Sub kegiatan
+                           </td>
+                        )}
+                        <td className='cell-print'>
+                           {output_bl_sub_giat?.length ? output_bl_sub_giat[i]?.tolak_ukur : ''}
+                        </td>
+                        <td className='cell-print'>
+                           {output_bl_sub_giat?.length ? output_bl_sub_giat[i]?.target_teks : ''}
+                        </td>
+                     </tr>
+                  ))}
             </tbody>
          </table>
          <div className='h-2' />

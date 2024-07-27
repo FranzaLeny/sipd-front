@@ -38,7 +38,7 @@ function CardDataJadwal({ data }: Props) {
       queryKey: [
          { id_daerah: data?.id_daerah, tahun: data?.tahun },
          'jadwal_anggaran',
-         'total_skpd',
+         'total',
       ] as [GetJadwalAnggaranParams, ...any],
       queryFn: async ({ queryKey: [q] }) => await getTotalJadwalAnggaran(q),
       refetchOnMount: false,
@@ -56,11 +56,10 @@ function CardDataJadwal({ data }: Props) {
    })
 
    const active = useQuery({
-      queryKey: [
-         { id_daerah: data?.id_daerah, tahun: data?.tahun },
-         'jadwal_anggaran_aktif',
-         'jadwal_anggaran',
-      ] as [JadwalAnggranCekAktifSipdPayload & { is_lokal?: number }, string, string],
+      queryKey: [{ id_daerah: data?.id_daerah, tahun: data?.tahun }, 'jadwal_anggaran'] as [
+         JadwalAnggranCekAktifSipdPayload & { is_lokal?: number },
+         ...any,
+      ],
       queryFn: async ({ queryKey: [q] }) => await checkJadwalAnggaranAktif(q),
       refetchOnMount: false,
       enabled: enabled && access.sync,

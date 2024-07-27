@@ -3,6 +3,8 @@ import optimizeLocales from '@react-aria/optimize-locales-plugin'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
    reactStrictMode: true,
+   distDir:
+      process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_BUILD_FOLDER : undefined,
    // output: 'standalone',
    compiler: {
       styledComponents: true,
@@ -32,10 +34,17 @@ const nextConfig = {
             locales: ['id-ID', 'en-US'],
          })
       )
-      // config.resolve.symlinks = false
       return config
+   },
+   async redirects() {
+      return [
+         {
+            source: '/api/auth/:path*',
+            destination: '/auth/:path*',
+            permanent: true,
+         },
+      ]
    },
 }
 
 export default nextConfig
-

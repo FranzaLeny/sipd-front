@@ -9,6 +9,8 @@ import {
    Button,
    Card,
    CardBody,
+   Image,
+   Input,
    Modal,
    ModalBody,
    ModalContent,
@@ -18,6 +20,7 @@ import {
 import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
 import { decodeJwt } from 'jose'
 import { z } from 'zod'
+import { fromZodError } from 'zod-validation-error'
 import { useSession } from '@shared/hooks/use-session'
 
 const password = createUniqueFieldSchema(z.string({ description: 'Password' }).min(1), 'password')
@@ -71,7 +74,18 @@ const LoginSipdPeta = z
    .strict()
 type SignIn = z.infer<typeof LoginSipdPeta>
 
-const signInSipdPeta = async (credentials: LoginSipdPetaPayload) => {
+interface CredentialsSipdPeta {
+   id_daerah: number
+   id_role: number
+   id_skpd: number
+   id_pegawai: number
+   password: string
+   tahun: number
+   username: string
+   captcha_id: string
+   captcha_solution: string
+}
+const signInSipdPeta = async (credentials: CredentialsSipdPeta) => {
    return await axios
       .post<LoginSipdPetaResponse>(
          'https://service.sipd.kemendagri.go.id/auth/auth/login',
@@ -99,17 +113,30 @@ const preLoginSipdPeta = async (credentials: PreLoginSipdPetaPayload) => {
    )
 }
 
+interface CaptchaSipdPeta {
+   audio: string
+   base64: string
+   id: string
+}
+const getCaptchaSipdPeta = async () => {
+   return await axios.get<CaptchaSipdPeta>('https://service.sipd.kemendagri.go.id/auth/captcha/new')
+}
+
 const LoginPetaSchema = LoginSipdPeta.extend({
    username: z.string().min(6, { message: 'Wajib diisi' }),
    id_daerah: z.coerce.number(),
    id_pegawai: z.coerce.number(),
    id_role: z.coerce.number(),
    id_skpd: z.coerce.number(),
+   captcha_id: z.string().trim().min(1, { message: 'Captcha masih kosong' }),
+   captcha_solution: z.string().length(6, { message: 'Captcha Harus 6 Karakter' }),
 }).strip()
 
 export default function FormLoginPeta() {
    const [loginData, setLoginData] = useState<PreLoginSipdPetaPayload>()
    const [users, setUsers] = useState<PreLoginSipdPetaResponse>([])
+   const [captcha, setCaptcha] = useState<CaptchaSipdPeta>()
+   const [captaSolution, setCaptaSolution] = useState('')
    const [isLoading, setIsLoading] = useState(false)
    const [error, setError] = useState('')
    const { hasAcces, update } = useSession(['sipd_peta'])
@@ -119,12 +146,25 @@ export default function FormLoginPeta() {
          setIsLoading(true)
          try {
             if (!credentials) {
-               throw new Error('tidak ada users')
+               throw new Error('Tidak ada users')
+            }
+            const validCredentials = LoginPetaSchema.safeParse({
+               ...credentials,
+               captcha_solution: captaSolution,
+               captcha_id: captcha?.id,
+            })
+            if (validCredentials.error) {
+               const message = fromZodError(validCredentials.error, {
+                  includePath: false,
+                  prefix: 'Data tidak valid',
+               })
+                  .toString()
+                  ?.replaceAll(' at ', ' pada ')
+               throw new Error(message)
             }
             setLoginData(undefined)
             setUsers([])
-            const validCredentials = LoginPetaSchema.parse(credentials)
-            await signInSipdPeta(validCredentials)
+            await signInSipdPeta(validCredentials.data)
                .then(async (data) => {
                   await update(data)
                })
@@ -136,56 +176,57 @@ export default function FormLoginPeta() {
                })
             router.refresh()
             setIsLoading(false)
-         } catch (e) {
-            setError('Terjadi kesalahan')
+         } catch (e: any) {
+            setError(e?.message ?? 'Terjadi kesalahan')
             setIsLoading(false)
          }
       },
-      [router, update]
+      [router, update, captcha, captaSolution]
    )
 
    const handleClose = useCallback(() => {
       !isLoading && router.back()
    }, [router, isLoading])
 
-   const handleSubmit = useCallback(
-      async (data: SignIn) => {
-         setError('')
-         setIsLoading(true)
-         try {
-            const credentials = {
-               ...data,
-               username: data?.username?.slice(0, -5),
-            }
-            setLoginData(credentials)
-            return await preLoginSipdPeta(credentials)
-               .then(async (users) => {
-                  if (users?.length === 1) {
-                     return await handleLoginSipdPeta({ ...users?.[0], ...credentials })
-                  } else if (users?.length) {
-                     setUsers(users)
-                     setIsLoading(false)
-                  } else {
-                     setError('Gagal Login')
-                     throw new Error('Gagal Login ke sipd-ri')
-                  }
-               })
-               .catch((e: any) => {
-                  if (typeof e?.message === 'string') {
-                     setError(e?.message)
-                  }
-                  throw new Error('Gagal Login ke sipd-ri')
-               })
-         } catch (error) {
-            setIsLoading(false)
+   const handleSubmit = useCallback(async (data: SignIn) => {
+      setError('')
+      setIsLoading(true)
+      try {
+         const credentials = {
+            ...data,
+            username: data?.username?.slice(0, -5),
          }
-      },
-      [handleLoginSipdPeta]
-   )
+         setLoginData(credentials)
+         return await preLoginSipdPeta(credentials)
+            .then(async (users) => {
+               // if (users?.length === 1) {
+               //    return await handleLoginSipdPeta({ ...users?.[0], ...credentials })
+               // } else
+               await getCaptchaSipdPeta().then((captcha) => {
+                  setCaptcha(captcha)
+               })
+               if (users?.length) {
+                  setUsers(users)
+                  setIsLoading(false)
+               } else {
+                  setError('Gagal Login')
+                  throw new Error('Gagal Login ke sipd-ri')
+               }
+            })
+            .catch((e: any) => {
+               if (typeof e?.message === 'string') {
+                  setError(e?.message)
+               }
+               throw new Error('Gagal Login ke sipd-ri')
+            })
+      } catch (error) {
+         setIsLoading(false)
+      }
+   }, [])
    return (
       <>
          <Modal
-            size='md'
+            size='2xl'
             isOpen={!hasAcces}
             onClose={handleClose}>
             <ModalContent>
@@ -195,10 +236,27 @@ export default function FormLoginPeta() {
                   <p className='text-danger'>{error}</p>
                   {users?.length > 0 && !!loginData ? (
                      <>
+                        <div className='light flex flex-col items-center gap-3 bg-white p-3 text-black'>
+                           {/* <div className='relative mx-auto h-24 w-1/3 text-center'> */}
+                           {captcha?.base64 && (
+                              <Image
+                                 height={300}
+                                 alt='captcha'
+                                 src={`data:image/jpeg;base64,${captcha?.base64}`}
+                              />
+                           )}
+                           {/* </div> */}
+                           <Input
+                              variant='bordered'
+                              label='Masukan Captcha di atas'
+                              value={captaSolution ?? ''}
+                              onValueChange={setCaptaSolution}
+                           />
+                        </div>
                         {users?.map((user, i) => {
                            return (
                               <Card
-                                 isPressable={!!loginData}
+                                 isPressable={!!loginData && captaSolution?.length === 6}
                                  onPress={() => handleLoginSipdPeta({ ...loginData, ...user })}
                                  key={user.id_role + '-' + i}>
                                  <CardBody>
@@ -221,12 +279,8 @@ export default function FormLoginPeta() {
                      />
                   )}
                </ModalBody>
-               <ModalFooter>
-                  {!!users?.length ? (
-                     <p className=' p-4 text-center'>
-                        Pilih Jabatan yang ingin dingunakan pada SIPD Penataushaan
-                     </p>
-                  ) : (
+               {!users?.length && (
+                  <ModalFooter>
                      <Button
                         disabled={!!users?.length}
                         color='primary'
@@ -235,8 +289,8 @@ export default function FormLoginPeta() {
                         type='submit'>
                         Masuk
                      </Button>
-                  )}
-               </ModalFooter>
+                  </ModalFooter>
+               )}
             </ModalContent>
          </Modal>
       </>

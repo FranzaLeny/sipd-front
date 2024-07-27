@@ -577,11 +577,11 @@ export const TapdAnggaranSelector = forwardRef(
       })
 
       const { data, isFetching, status } = useQuery({
-         queryKey: ['bl_sub_giat_rinci_subs', { ...queryParams }] as [
-            string,
+         queryKey: [{ ...queryParams }, 'data_tapd_anggaran'] as [
             GetTapdAnggaranListParams,
+            string,
          ],
-         queryFn: async ({ queryKey: [key, params] }) => {
+         queryFn: async ({ queryKey: [params] }) => {
             return await getTapdAnggaranList(params)
          },
          placeholderData: (previousData) => previousData,

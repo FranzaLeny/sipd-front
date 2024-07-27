@@ -43,7 +43,7 @@ function CardDataKelompok({ data }: Props) {
             id_skpd: data.id_unit === data.id_skpd ? undefined : data.id_skpd,
          },
          'bl_sub_giat_rinci_subs',
-         'total_bl_sub_giat_rinci_subs',
+         'total',
       ] as [Partial<GetSubsRinciListParams>, ...any],
       queryFn: async ({ queryKey: [params] }) => {
          return await getTotalSubsRinciBlSubGiat(params)

@@ -27,7 +27,7 @@ const queryClient = new QueryClient({
 
 export function Providers({ children, themeProps, ...uiProviderProps }: ProvidersProps) {
    return (
-      <SessionProvider>
+      <SessionProvider basePath='/auth'>
          <QueryClientProvider client={queryClient}>
             <NextThemesProvider {...themeProps}>
                <SidebarProvider>

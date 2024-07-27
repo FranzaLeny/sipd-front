@@ -221,6 +221,7 @@ export const RealisasiRakInputValidationSchema = RakSchema.pick({
    realisasi_10: true,
    realisasi_11: true,
    realisasi_12: true,
+   nilai_realisasi: true,
 }).strip()
 
 export type RealisasiRakInput = z.infer<typeof RealisasiRakInputValidationSchema>

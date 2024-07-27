@@ -292,6 +292,7 @@ export const SkpdSchema = z.object({
    id_skpd: z.number().int(),
    id_strategi: z.number().int(),
    id_unit: z.number().int(),
+   is_prop: z.number().int(),
    is_dpa_khusus: z.number().int(),
    is_locked: z.number().int(),
    is_pendapatan: z.number().int(),
@@ -308,6 +309,7 @@ export const SkpdSchema = z.object({
       .transform((v) => (v === '' ? null : v))
       .nullish(),
    nama_jabatan_kepala: z.string().nullish(),
+   singkatan_skpd: z.string().nullish(),
    nama_bendahara: z.string().nullish(),
    nama_kepala: z.string(),
    nama_skpd: z.string(),
@@ -375,6 +377,7 @@ export const SkpdUncheckedCreateInputSchema = z
       id_skpd: z.number().int(),
       id_strategi: z.number().int(),
       id_unit: z.number().int(),
+      is_prop: z.number().int(),
       is_dpa_khusus: z.number().int(),
       is_locked: z.number().int(),
       is_pendapatan: z.number().int(),
@@ -405,6 +408,7 @@ export const SkpdUncheckedCreateInputSchema = z
       nama_kepala: z.string(),
       nama_skpd: z.string(),
       nama_jabatan_kepala: z.string().optional().nullable(),
+      singkatan_skpd: z.string().optional().nullable(),
       nip_bendahara: z
          .string()
          .transform((v) => (v === '' ? null : v))
@@ -744,3 +748,138 @@ export const DesaKelSchema = z.object({
 })
 
 export type DesaKel = z.infer<typeof DesaKelSchema>
+
+export const SumberDanaSchema = z.object({
+   id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
+   id_daerah: z.number().int(),
+   id_dana: z.number().int(),
+   id_jns_dana: z
+      .number()
+      .int()
+      .transform((v) => (v === 0 ? null : v))
+      .nullish(),
+   id_type_dana: z
+      .number()
+      .int()
+      .transform((v) => (v === 0 ? null : v))
+      .nullish(),
+   id_unik: z
+      .string()
+      .transform((v) => (v === '' ? null : v))
+      .nullish(),
+   is_locked: z.number().int(),
+   kode_dana: z.string(),
+   kunci_tahun: z.number().int().nullish(),
+   level: z.number().int().nullish(),
+   mulai_tahun: z.number().int().nullish(),
+   nama_dana: z.string(),
+   nama_dana_lama: z
+      .string()
+      .transform((v) => (v === '' ? null : v))
+      .nullish(),
+   set_input: z.number().int(),
+   set_kab_kota: z.number().int(),
+   set_prov: z.number().int(),
+   status_aktif: z.coerce.number().int().max(1),
+   tahun: z.number().int().array(),
+   created_ip: z
+      .string()
+      .transform((v) => (v === '' ? null : v))
+      .nullish(),
+   created_user: z
+      .number()
+      .int()
+      .transform((v) => (v === 0 ? null : v))
+      .nullish(),
+   updated_ip: z
+      .string()
+      .transform((v) => (v === '' ? null : v))
+      .nullish(),
+   updated_user: z
+      .number()
+      .int()
+      .transform((v) => (v === 0 ? null : v))
+      .nullish(),
+   created_by: z
+      .string()
+      .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+      .nullish(),
+   created_at: z.coerce.date(),
+   updated_at: z.coerce.date(),
+   updated_by: z
+      .string()
+      .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+      .nullish(),
+})
+
+export type SumberDana = z.infer<typeof SumberDanaSchema>
+
+export const SumberDanaUncheckedCreateInputSchema = z
+   .object({
+      id: z
+         .string()
+         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+         .optional(),
+      id_daerah: z.number().int(),
+      id_dana: z.number().int(),
+      id_jns_dana: z
+         .number()
+         .int()
+         .transform((v) => (v === 0 ? null : v))
+         .optional()
+         .nullable(),
+      id_type_dana: z
+         .number()
+         .int()
+         .transform((v) => (v === 0 ? null : v))
+         .optional()
+         .nullable(),
+      id_unik: z
+         .string()
+         .transform((v) => (v === '' ? null : v))
+         .optional()
+         .nullable(),
+      is_locked: z.number().int(),
+      kode_dana: z.string(),
+      kunci_tahun: z.number().int().optional().nullable(),
+      level: z.number().int().optional().nullable(),
+      mulai_tahun: z.number().int().optional().nullable(),
+      nama_dana: z.string(),
+      nama_dana_lama: z
+         .string()
+         .transform((v) => (v === '' ? null : v))
+         .optional()
+         .nullable(),
+      set_input: z.number().int(),
+      set_kab_kota: z.number().int(),
+      set_prov: z.number().int(),
+      status_aktif: z.coerce.number().int().max(1).optional(),
+      tahun: z
+         .union([z.number().int(), z.array(z.number().int())])
+         .transform((v) => (Array.isArray(v) ? v : [v])),
+      created_ip: z
+         .string()
+         .transform((v) => (v === '' ? null : v))
+         .optional()
+         .nullable(),
+      created_user: z
+         .number()
+         .int()
+         .transform((v) => (v === 0 ? null : v))
+         .optional()
+         .nullable(),
+      updated_ip: z
+         .string()
+         .transform((v) => (v === '' ? null : v))
+         .optional()
+         .nullable(),
+      updated_user: z
+         .number()
+         .int()
+         .transform((v) => (v === 0 ? null : v))
+         .optional()
+         .nullable(),
+   })
+   .strip()
+
+export type SumberDanaUncheckedCreateInput = z.infer<typeof SumberDanaUncheckedCreateInputSchema>

@@ -12,7 +12,10 @@ interface _UnitLaporan {
    kode_unit: string
    nama_skpd: string
    is_skpd: number
+   id_daerah: number
+   is_prop: number
    nama_kepala: string
+   singkatan_skpd: string | null
    nama_jabatan_kepala: string | null
    nip_kepala: string
    pangkat_kepala: string
@@ -147,6 +150,8 @@ interface _ItemRincianLaporanBlSubGiat {
    selisih?: number
    volume_murni?: number[]
    satuan_murni?: string[]
+   nilai_rak: number
+   nilai_realisasi: number
 }
 
 interface _ItemLaporanRkaSKpd {
@@ -174,6 +179,7 @@ interface _ItemLaporanBelanja {
    pagu: number
    pagu_murni: number
    level: number
+   id_sub_bl: number
 }
 
 interface _BelanjamurniLaporan {
@@ -222,6 +228,13 @@ interface _PendapatanLaporan {
    koefisien?: string
 }
 
+export interface GetLaporanRkaSkpdParams {
+   jadwal_anggaran_id: string
+   id_skpd?: string | number
+   id_unit: string | number
+   tahun: string | number
+}
+
 // Rekapan Belanja masing- masing sub kegiatan
 export interface LaporanBlSubGiat {
    rincian: _ItemRincianLaporanBlSubGiat[]
@@ -249,4 +262,33 @@ export interface LaporanPendapatan {
    list_pendapatan: _ListpendapatanLaporan[]
    jadwal: _JadwalLaporan
    skpd: _SkpdLaporan
+}
+
+// Rrkapan Sumber Dana
+
+export interface RekapanSumberDana {
+   sumber_dana: {
+      group: string
+      level: number
+      uraian: string
+      kode: string
+      no_urut: number
+      total_harga_murni: number
+      total_harga: number
+      pagu: number
+      pagu_murni: number
+      belanja: {
+         total_harga: number
+         total_harga_murni: number
+         id_dana: number
+         nama_dana: string
+         pagu: number
+      }[]
+   }[]
+   skpd: _SkpdLaporan
+   jadwal: {
+      tahun: number
+      is_perubahan: number
+      nama_sub_tahap: string
+   }
 }

@@ -222,13 +222,13 @@ export const getRakSkpdSipdPetaBySkpd = async (idSkpd: number) => {
 // LOKAL
 
 export const syncRakBlSubGiat = async (data: RakUncheckedCreateInput[]) => {
-   return await apiFetcher.put<ResponseApi>(`api/keuangan/rak`, data)
+   return await apiFetcher.put<ResponseApi>(`/api/keuangan/rak`, data)
 }
 export const syncRakBlSkpd = async (data: RakSkpdUncheckedCreateInput[]) => {
-   return await apiFetcher.put<ResponseApi>(`api/keuangan/rak/skpd`, data)
+   return await apiFetcher.put<ResponseApi>(`/api/keuangan/rak/skpd`, data)
 }
 
-interface RakByJadwal {
+export interface RakByJadwal {
    id: string
    bulan_1: number
    bulan_2: number
@@ -242,6 +242,18 @@ interface RakByJadwal {
    bulan_10: number
    bulan_11: number
    bulan_12: number
+   realisasi_1: number
+   realisasi_2: number
+   realisasi_3: number
+   realisasi_4: number
+   realisasi_5: number
+   realisasi_6: number
+   realisasi_7: number
+   realisasi_8: number
+   realisasi_9: number
+   realisasi_10: number
+   realisasi_11: number
+   realisasi_12: number
    nilai: number
    nilai_rak: number
    kode_sub_skpd: string
@@ -249,13 +261,25 @@ interface RakByJadwal {
    kode_giat: string
    kode_sub_giat: string
    kode_akun: string
+   nama_sub_giat: string
+   nama_akun: string
 }
 
-export const getRakBlByJadwal = async (
-   params: Partial<ParamsRakBlSkpdSipdPeta> & { jadwal_anggaran_id: string }
-) => {
+export interface GetRakByJadwal {
+   jadwal_anggaran_id: string
+   id_bidang_urusan?: number
+   id_giat?: number
+   id_program?: number
+   id_skpd?: number
+   id_sub_giat?: number
+   id_sub_skpd?: number
+   id_unit?: number
+   id_urusan?: number
+}
+
+export const getRakBlByJadwal = async (params: GetRakByJadwal) => {
    return await apiFetcher
-      .get<ResponseApi<RakByJadwal[]>>('api/keuangan/rak/get-by-jadwal', {
+      .get<ResponseApi<RakByJadwal[]>>('/api/keuangan/rak/get-by-jadwal', {
          params,
       })
       ?.then((res) => res.data)
@@ -266,13 +290,14 @@ export const getRakSkpdBlBySkpd = async (params: {
    id_skpd: number
 }) => {
    return await apiFetcher
-      .get<ResponseApi<RakSkpd>>('api/keuangan/rak/skpd/get-by-jadwal', {
+      .get<ResponseApi<RakSkpd>>('/api/keuangan/rak/skpd/get-by-jadwal', {
          params,
       })
       ?.then((res) => res.data)
 }
+
 export const syncRelalisasiRak = async (data: RealisasiRakInput[]) => {
-   return await apiFetcher.patch<ResponseApi>('api/keuangan/rak/realisasi', data)
+   return await apiFetcher.patch<ResponseApi>('/api/keuangan/rak/realisasi', data)
 }
 
 // OTHER

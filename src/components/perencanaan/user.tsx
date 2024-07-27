@@ -54,8 +54,11 @@ export const UserSipdPerencanaanSelector = forwardRef(
       })
       const [options, setOptions] = useState<UserSipdPerencanaan[]>([])
       const { data, isFetching, status, isFetched } = useQuery({
-         queryKey: ['data_akun', { ...queryParams }] as [string, GetUserSipdPerencanaanListParams],
-         queryFn: async ({ queryKey: [key, params] }) => {
+         queryKey: [{ ...queryParams }, 'data_user_sipd_perencanaan'] as [
+            GetUserSipdPerencanaanListParams,
+            ...string[],
+         ],
+         queryFn: async ({ queryKey: [params] }) => {
             return await getUserSipdPerencanaan(params)
          },
          placeholderData: (previousData) => previousData,

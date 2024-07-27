@@ -124,7 +124,7 @@ const ModalSingkronJadwal = () => {
          size='xl'
          action={action}
          disabledSubmit={!isValid || !jadwal}
-         data_key={['bl_skpd', 'rka']}
+         data_key={['bl_skpd']}
          header='Singkron Belanja SKPD'>
          <div className='flex flex-col gap-3'>
             <MaxDataInput

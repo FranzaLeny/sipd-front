@@ -75,14 +75,14 @@ const Page = async ({ searchParams: { jadwal_anggaran_id } }: Props) => {
          <TableServerSide
             tableUiProps={{ isCompact: true }}
             helperColumns={isMurni ? helperColumns : helperColumnsPergeseran}
-            data_key='bl_sub_giat_aktif'
+            data_key={['bl_sub_giat_aktif', 'bl_sub_giat', 'bl_sub_giat_rinci', 'jadwal_anggaran']}
             searchParamsStatic={{
                id_unit,
                tahun,
                jadwal_anggaran_id: id,
                limit: 10,
             }}
-            endpoint='api/perencanaan/rka/sub-giat/aktif'
+            endpoint='/api/perencanaan/rka/sub-giat/aktif'
             tableActions={
                <ActionTableSubGiat
                   jadwal={jadwal}

@@ -303,7 +303,7 @@ export type PayloadResponsePostSipd = {
 export const listSipdPost: ListSipdPost = {
    //Master
    listTahapan: {
-      url: 'api/master/tahapan/list',
+      url: '/api/master/tahapan/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -312,7 +312,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listBidangUrusan: {
-      url: 'api/master/bidang_urusan/list',
+      url: '/api/master/bidang_urusan/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -321,7 +321,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    akun: {
-      url: 'api/master/akun/list',
+      url: '/api/master/akun/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -330,7 +330,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listSumberDana: {
-      url: 'api/master/sumber_dana/list',
+      url: '/api/master/sumber_dana/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -339,13 +339,13 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listSatuan: {
-      url: 'api/master/satuan/list',
+      url: '/api/master/satuan/list',
       defaultPayload: {
          length: 1000,
       },
    },
    listStandarHarga: {
-      url: 'api/master/d_komponen/listAll', // 'api/master/d_komponen/listAll
+      url: '/api/master/d_komponen/listAll', // '/api/master/d_komponen/listAll
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -356,14 +356,14 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listAkunStandarHarga: {
-      url: 'api/master/d_komponen/listRekening', // 'api/master/d_komponen/listAll
+      url: '/api/master/d_komponen/listRekening', // '/api/master/d_komponen/listAll
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
       },
    },
    listStandarHargaByTipeAkun: {
-      url: 'api/master/d_komponen/list_komponen_for_akun',
+      url: '/api/master/d_komponen/list_komponen_for_akun',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -371,7 +371,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listStandarHargaByAkun: {
-      url: 'api/master/d_komponen/find_komponen_for_akun',
+      url: '/api/master/d_komponen/find_komponen_for_akun',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -380,7 +380,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    standarHargaExportExcel: {
-      url: 'api/master/d_komponen/export_excel',
+      url: '/api/master/d_komponen/export_excel',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -389,7 +389,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listSkpd: {
-      url: 'api/master/skpd/list',
+      url: '/api/master/skpd/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -398,7 +398,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listNewSkpd: {
-      url: 'api/master/skpd/listNew',
+      url: '/api/master/skpd/listNew',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -407,7 +407,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listAllSkpd: {
-      url: 'api/master/skpd/listAll',
+      url: '/api/master/skpd/listAll',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -415,27 +415,27 @@ export const listSipdPost: ListSipdPost = {
    },
    // LOKASI
    listProvinsi: {
-      url: 'api/master/provinsi/findlistpusat',
+      url: '/api/master/provinsi/findlistpusat',
       defaultPayload: {
          tipe: 'prov',
       },
    },
    listKabKotaByProv: {
-      url: 'api/master/kabkot/findlist',
+      url: '/api/master/kabkot/findlist',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
       },
    },
    listKecamatanByKabKota: {
-      url: 'api/master/kecamatan/list_by_kotkab_and_tahun',
+      url: '/api/master/kecamatan/list_by_kotkab_and_tahun',
       defaultPayload: {
          tahun: TAHUN,
          length: 10000,
       },
    },
    listDesaKelurahanByKecamatan: {
-      url: 'api/master/kelurahan/list_by_kecamatan_and_tahun',
+      url: '/api/master/kelurahan/list_by_kecamatan_and_tahun',
       defaultPayload: {
          tahun: TAHUN,
          length: 10000,
@@ -444,7 +444,7 @@ export const listSipdPost: ListSipdPost = {
 
    //RENJA
    listJadwalRenja: {
-      url: 'api/jadwal/renja_jadwal/list',
+      url: '/api/jadwal/renja_jadwal/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -452,7 +452,7 @@ export const listSipdPost: ListSipdPost = {
    },
 
    jadwalRenjaAktif: {
-      url: 'api/jadwal/renja_jadwal/cek_aktif',
+      url: '/api/jadwal/renja_jadwal/cek_aktif',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -461,7 +461,7 @@ export const listSipdPost: ListSipdPost = {
    },
    // Laporan
    listDataLampiranLaporan: {
-      url: 'api/renja/renja_laporan/listDataLampiranLaporan',
+      url: '/api/renja/renja_laporan/listDataLampiranLaporan',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -470,21 +470,21 @@ export const listSipdPost: ListSipdPost = {
    // RKA
    // Penganggaran
    listSetupUnit: {
-      url: 'api/renja/setup_unit/list',
+      url: '/api/renja/setup_unit/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listJadwalAnggaran: {
-      url: 'api/jadwal/anggaran_jadwal/list',
+      url: '/api/jadwal/anggaran_jadwal/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    jadwalAnggaranAktif: {
-      url: 'api/jadwal/anggaran_jadwal/cek_aktif',
+      url: '/api/jadwal/anggaran_jadwal/cek_aktif',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -492,7 +492,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listBelanjaSkpd: {
-      url: 'api/renja/sub_bl/list_skpd',
+      url: '/api/renja/sub_bl/list_skpd',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -504,7 +504,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listBlSubGiatAktif: {
-      url: 'api/renja/sub_bl/list_belanja_by_tahun_daerah_unit',
+      url: '/api/renja/sub_bl/list_belanja_by_tahun_daerah_unit',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -513,7 +513,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listBlSubGiatBySubSkpd: {
-      url: 'api/renja/sub_bl/list_by_sub_skpd',
+      url: '/api/renja/sub_bl/list_by_sub_skpd',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -522,14 +522,14 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    blGiat: {
-      url: 'api/renja/bl/load_data',
+      url: '/api/renja/bl/load_data',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listBlGiatSkpd: {
-      url: 'api/renja/bl/list',
+      url: '/api/renja/bl/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          id_skpd: ID_UNIT,
@@ -537,14 +537,14 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listCapaianBlGiatByGiat: {
-      url: 'api/renja/capaian_bl/load_data',
+      url: '/api/renja/capaian_bl/load_data',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listCapaianBlGiatDaerah: {
-      url: 'api/renja/capaian_bl/list',
+      url: '/api/renja/capaian_bl/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          id_skpd: ID_UNIT,
@@ -552,14 +552,14 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listOutputBlGiatByGiat: {
-      url: 'api/renja/output_giat/load_data',
+      url: '/api/renja/output_giat/load_data',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listOutputBlGiatDaerah: {
-      url: 'api/renja/output_giat/list',
+      url: '/api/renja/output_giat/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          id_skpd: ID_UNIT,
@@ -567,14 +567,14 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listHasilBlGiatByGiat: {
-      url: 'api/renja/hasil_bl/load_data',
+      url: '/api/renja/hasil_bl/load_data',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listHasilBlGiatDaerah: {
-      url: 'api/renja/hasil_bl/listAll',
+      url: '/api/renja/hasil_bl/listAll',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          id_skpd: ID_UNIT,
@@ -582,7 +582,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listLabelBlGiatDaerah: {
-      url: 'api/master/label_prov/list',
+      url: '/api/master/label_prov/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          start: 0,
@@ -591,7 +591,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    blSubGiat: {
-      url: 'api/renja/sub_bl/view',
+      url: '/api/renja/sub_bl/view',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -599,7 +599,7 @@ export const listSipdPost: ListSipdPost = {
       urlParam: ['id_sub_bl'],
    },
    blSubGiatBySkpd: {
-      url: 'api/renja/sub_bl/list',
+      url: '/api/renja/sub_bl/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -608,35 +608,35 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listDanaBlSubGiat: {
-      url: 'api/renja/dana_sub_bl/get_by_id_sub_bl',
+      url: '/api/renja/dana_sub_bl/get_by_id_sub_bl',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listLabelBlSubGiat: {
-      url: 'api/renja/label_bl/get_by_id_sub_bl',
+      url: '/api/renja/label_bl/get_by_id_sub_bl',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listLokasiBlSubGiat: {
-      url: 'api/renja/detil_lokasi_bl/get_by_id_sub_bl',
+      url: '/api/renja/detil_lokasi_bl/get_by_id_sub_bl',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listOutputBlSubGiat: {
-      url: 'api/renja/output_bl/get_by_id_sub_bl',
+      url: '/api/renja/output_bl/get_by_id_sub_bl',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listTagBlSubGiat: {
-      url: 'api/renja/tag_bl/get_by_id_sub_bl',
+      url: '/api/renja/tag_bl/get_by_id_sub_bl',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -644,7 +644,7 @@ export const listSipdPost: ListSipdPost = {
    },
    // Rinci
    listRinciBlSubGiatBySkpd: {
-      url: 'api/renja/rinci_sub_bl/list_by_id_skpd',
+      url: '/api/renja/rinci_sub_bl/list_by_id_skpd',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -652,21 +652,21 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listRinciBlSubGiat: {
-      url: 'api/renja/rinci_sub_bl/list',
+      url: '/api/renja/rinci_sub_bl/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listRinciBlSubGiatBySbl: {
-      url: 'api/renja/rinci_sub_bl/get_by_id_sub_bl',
+      url: '/api/renja/rinci_sub_bl/get_by_id_sub_bl',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    viewRinciBlSubGiat: {
-      url: 'api/renja/rinci_sub_bl/view',
+      url: '/api/renja/rinci_sub_bl/view',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -675,7 +675,7 @@ export const listSipdPost: ListSipdPost = {
    },
    // subs rinci
    listSubsRinciBlSubGiatByIdSbl: {
-      url: 'api/renja/subs_sub_bl/find_by_id_sub_bl',
+      url: '/api/renja/subs_sub_bl/find_by_id_sub_bl',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -683,21 +683,21 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listSubsRinciBlSubGiat: {
-      url: 'api/renja/subs_sub_bl/list',
+      url: '/api/renja/subs_sub_bl/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    listSubsRinciBlSubGiatByIdList: {
-      url: 'api/renja/subs_sub_bl/find_by_id_list',
+      url: '/api/renja/subs_sub_bl/find_by_id_list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
       },
    },
    subsRinciBlSubGiat: {
-      url: 'api/renja/subs_sub_bl/view',
+      url: '/api/renja/subs_sub_bl/view',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -706,7 +706,7 @@ export const listSipdPost: ListSipdPost = {
    },
    // ket rinci
    listKetRinciBlSubGiatBySbl: {
-      url: 'api/renja/ket_sub_bl/find',
+      url: '/api/renja/ket_sub_bl/find',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -717,7 +717,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listKetRinciBlSubGiatByDaerah: {
-      url: 'api/renja/ket_sub_bl/list',
+      url: '/api/renja/ket_sub_bl/list',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -726,20 +726,20 @@ export const listSipdPost: ListSipdPost = {
    },
 
    listKetRinciBlSubGiatByIdList: {
-      url: 'api/renja/ket_sub_bl/find_by_id_list',
+      url: '/api/renja/ket_sub_bl/find_by_id_list',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
       },
    },
    addKetRinciBlSubGiat: {
-      url: 'api/renja/ket_sub_bl/add',
+      url: '/api/renja/ket_sub_bl/add',
       defaultPayload: {
          id_daerah: ID_DAERAH,
       },
    },
    listPendapatan: {
-      url: 'api/renja/pendapatan/list',
+      url: '/api/renja/pendapatan/list',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          id_unit: ID_UNIT,
@@ -752,7 +752,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listPendapatanByUnit: {
-      url: 'api/renja/pendapatan/listByIdUnit',
+      url: '/api/renja/pendapatan/listByIdUnit',
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
@@ -761,7 +761,7 @@ export const listSipdPost: ListSipdPost = {
    },
    // Laporran
    listDataLampiranRKA: {
-      url: 'api/renja/renja_laporan/listDataLampiranRKA',
+      url: '/api/renja/renja_laporan/listDataLampiranRKA',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -770,7 +770,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listDataRincianBelanjaSubKegiatan: {
-      url: 'api/renja/renja_laporan/listDataRincianBelanjaSubKegiatan',
+      url: '/api/renja/renja_laporan/listDataRincianBelanjaSubKegiatan',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -779,7 +779,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    rkaRekapitulasiBelanjaSkpd: {
-      url: 'api/renja/laporan/rkaRekapitulasiBelanjaSkpd',
+      url: '/api/renja/laporan/rkaRekapitulasiBelanjaSkpd',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -787,7 +787,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    rkaBelanjaSkpd: {
-      url: 'api/renja/laporan/rkaBelanjaSkpd',
+      url: '/api/renja/laporan/rkaBelanjaSkpd',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -795,7 +795,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    rkaPendapatanSkpd: {
-      url: 'api/renja/laporan/rkaPendapatanSkpd',
+      url: '/api/renja/laporan/rkaPendapatanSkpd',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -804,7 +804,7 @@ export const listSipdPost: ListSipdPost = {
    },
    // Laporan Perubahan
    rkaBelanjaSkpdPergeseran: {
-      url: 'api/renja/laporan/rkaBelanjaSkpdPergeseran',
+      url: '/api/renja/laporan/rkaBelanjaSkpdPergeseran',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -812,7 +812,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    rkaPendapatanSkpdPergeseran: {
-      url: 'api/renja/laporan/rkaPendapatanSkpdPergeseran',
+      url: '/api/renja/laporan/rkaPendapatanSkpdPergeseran',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -820,7 +820,7 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    rkaRekapitulasiBelanjaSkpdPergeseran: {
-      url: 'api/renja/laporan/rkaRekapitulasiBelanjaSkpdPergeseran',
+      url: '/api/renja/laporan/rkaRekapitulasiBelanjaSkpdPergeseran',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -828,14 +828,14 @@ export const listSipdPost: ListSipdPost = {
       },
    },
    listDataLampiranRKAPergeseran: {
-      url: 'api/renja/renja_laporan/listDataLampiranRKAPergeseran',
+      url: '/api/renja/renja_laporan/listDataLampiranRKAPergeseran',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
       },
    },
    listDataRincianBelanjaSubKegiatanPergeseran: {
-      url: 'api/renja/renja_laporan/listDataRincianBelanjaSubKegiatanPergeseran',
+      url: '/api/renja/renja_laporan/listDataRincianBelanjaSubKegiatanPergeseran',
       defaultPayload: {
          tahun: TAHUN,
          id_daerah: ID_DAERAH,
@@ -845,8 +845,8 @@ export const listSipdPost: ListSipdPost = {
 
 // API GET FROM SIPD
 
-//TODO URL SIPD-RI GET api/master/label_prov/view/70/TAHUN/418
-//TODO URL SIPD-RI GET api/master/label_kokab/view/678/TAHUN/ID_DAERAH
+//TODO URL SIPD-RI GET /api/master/label_prov/view/70/TAHUN/418
+//TODO URL SIPD-RI GET /api/master/label_kokab/view/678/TAHUN/ID_DAERAH
 
 export type PayloadGet<T extends keyof PayloadResponseGetSipd> =
    PayloadResponseGetSipd[T]['payload']
@@ -883,7 +883,7 @@ export type PayloadResponseGetSipd = {
 export const listSipdGet: ListSipdGet = {
    // https://sipd-ri.kemendagri.go.id/api/master/skpd/view/ID_UNIT/TAHUN/ID_DAERAH
    viewSkpd: {
-      url: 'api/master/skpd/view',
+      url: '/api/master/skpd/view',
       key_for_params: ['id_skpd', 'tahun', 'id_daerah'],
       defaultPayload: {
          id_skpd: ID_UNIT,
@@ -892,11 +892,11 @@ export const listSipdGet: ListSipdGet = {
       },
    },
    listSubRkpd: {
-      url: 'api/master/sub_rkpd/listall',
+      url: '/api/master/sub_rkpd/listall',
       defaultPayload: {},
    },
    listTahapanPlan: {
-      url: 'api/master/tahapan/list/plan',
+      url: '/api/master/tahapan/list/plan',
       defaultPayload: {},
    },
 }

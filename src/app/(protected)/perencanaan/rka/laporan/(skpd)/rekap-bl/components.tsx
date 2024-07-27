@@ -2,7 +2,7 @@
 
 import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 
-export const TheadMurni = ({ tahun }: { tahun: number }) => {
+export const TheadMurni = ({ tahun, showKet = false }: { tahun: number; showKet: boolean }) => {
    return (
       <thead className='font-bold'>
          <tr>
@@ -51,11 +51,13 @@ export const TheadMurni = ({ tahun }: { tahun: number }) => {
                className='cell-print'>
                JUMLAH
             </th>
-            <th
-               rowSpan={3}
-               className='cell-print print:hidden'>
-               KET
-            </th>
+            {showKet && (
+               <th
+                  rowSpan={3}
+                  className='cell-print print:hidden'>
+                  KET
+               </th>
+            )}
          </tr>
          <tr>
             <th
@@ -85,7 +87,13 @@ export const TheadMurni = ({ tahun }: { tahun: number }) => {
    )
 }
 
-export const RenderRincianMurni = ({ item }: { item: LaporanBelanjaSkpd['list_bl'][number] }) => {
+export const RenderRincianMurni = ({
+   item,
+   showKet = false,
+}: {
+   item: LaporanBelanjaSkpd['list_bl'][number]
+   showKet: boolean
+}) => {
    const { belanja } = item
    const total = belanja?.bo + belanja?.btt + belanja?.bt + belanja?.bm
    const chek = total - (item?.pagu || 0)
@@ -123,14 +131,16 @@ export const RenderRincianMurni = ({ item }: { item: LaporanBelanjaSkpd['list_bl
          <td className='cell-print text-right'>{belanja?.bt?.toLocaleString('id')}</td>
          <td className='cell-print text-right'>{belanja?.total_harga?.toLocaleString('id')}</td>
          <td className='cell-print text-right'>{item.pagu_n_depan?.toLocaleString('id')}</td>
-         <td className='cell-print text-center print:hidden'>
-            <div>{chek === 0 ? '✓' : 'Ada Selsish Pagu: ' + chek?.toLocaleString('id')}</div>
-         </td>
+         {showKet && (
+            <td className='cell-print text-center print:hidden'>
+               <div>{chek === 0 ? '✓' : 'Ada Selsish Pagu: ' + chek?.toLocaleString('id')}</div>
+            </td>
+         )}
       </tr>
    )
 }
 
-export const TheadPerubahan = ({ tahun }: { tahun: number }) => {
+export const TheadPerubahan = ({ tahun, showKet = false }: { tahun: number; showKet: boolean }) => {
    return (
       <thead className='font-bold'>
          <tr>
@@ -179,11 +189,13 @@ export const TheadPerubahan = ({ tahun }: { tahun: number }) => {
                className='cell-print'>
                JUMLAH
             </th>
-            <th
-               rowSpan={4}
-               className='cell-print print:hidden'>
-               KET
-            </th>
+            {showKet && (
+               <th
+                  rowSpan={4}
+                  className='cell-print print:hidden'>
+                  KET
+               </th>
+            )}
          </tr>
          <tr>
             <th
@@ -238,8 +250,10 @@ export const TheadPerubahan = ({ tahun }: { tahun: number }) => {
 
 export const RenderRincianPerubahan = ({
    item,
+   showKet = false,
 }: {
    item: LaporanBelanjaSkpd['list_bl'][number]
+   showKet: boolean
 }) => {
    const { belanja_murni, belanja } = item
    const total_murni =
@@ -298,9 +312,11 @@ export const RenderRincianPerubahan = ({
             <td className='cell-print text-right'>{selisih.toLocaleString('id')}</td>
          )}
          <td className='cell-print text-right'>{item.pagu_n_depan?.toLocaleString('id')}</td>
-         <td className='cell-print text-center print:hidden'>
-            <div>{chek === 0 ? '✓' : 'Ada Selsish Pagu: ' + chek?.toLocaleString('id')}</div>
-         </td>
+         {showKet && (
+            <td className='cell-print text-center print:hidden'>
+               <div>{chek === 0 ? '✓' : 'Ada Selsish Pagu: ' + chek?.toLocaleString('id')}</div>
+            </td>
+         )}
       </tr>
    )
 }

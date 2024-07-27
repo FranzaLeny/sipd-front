@@ -130,7 +130,7 @@ const ModalSingkron = () => {
       <DialogConfirm
          action={action}
          disabledSubmit={!isValid}
-         data_key={['data_akun', 'perencanaan']}
+         data_key={['data_akun']}
          header='Singkron data akun'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-normal'>Saat proses tidak dapat dibatalkan.</span>

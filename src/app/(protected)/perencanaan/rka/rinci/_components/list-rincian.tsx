@@ -4,11 +4,14 @@ import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@
 import { compact } from 'lodash-es'
 import { numberToText } from '@shared/utils'
 
-import { DataType, RincianGrouped } from './sub-giat'
+import { SubGiatWithRinci } from './rincian'
+import { RincianGrouped } from './template'
 
-function RiciaActions({ id }: { id: number }) {
+function RiciaActions({ id }: { id: string }) {
    return (
-      <Dropdown size='sm'>
+      <Dropdown
+         size='sm'
+         placement='bottom-end'>
          <DropdownTrigger>
             <Button
                className='print:hidden'
@@ -40,11 +43,12 @@ function RiciaActions({ id }: { id: number }) {
    )
 }
 type PropsTrRinci = {
-   data: DataType['rincian'][number]
+   data: SubGiatWithRinci['rincian'][number]
    isPerubahan: boolean
+   canEdit: boolean
 }
 
-const TrRinci = ({ data, isPerubahan }: PropsTrRinci) => {
+const TrRinci = ({ data, isPerubahan, canEdit = false }: PropsTrRinci) => {
    let koefisien = data.koefisien
    const decimal = koefisien?.match(/\d+\.\d+/g)
    if (decimal) {
@@ -80,13 +84,7 @@ const TrRinci = ({ data, isPerubahan }: PropsTrRinci) => {
    const totalVariationText = isPerubahan ? numberToText(different, 0, true) : null
    return (
       <tr className='print:break-inside-avoid'>
-         <td className='cell-print w-0 text-center'>
-            <Button
-               className='print:hidden'
-               disabled={!!data.nama_dana}>
-               Ubah
-            </Button>
-         </td>
+         <td className='cell-print w-0 text-center'>{canEdit && <RiciaActions id={data?.id} />}</td>
          <td className='cell-print'>
             <div>{data.nama_standar_harga ? data.nama_standar_harga : data.nama_akun}</div>
             {data.nama_standar_harga && (
@@ -213,10 +211,12 @@ const ListRincian = ({
    data,
    isPerubahan,
    printPreview,
+   canEdit = false,
 }: {
    data: RincianGrouped[]
    isPerubahan: boolean
    printPreview: boolean
+   canEdit: boolean
 }) => {
    const renderItems = (dataList: RincianGrouped['list'], isPerubahan: boolean) => {
       return dataList.map((data, index) =>
@@ -234,6 +234,7 @@ const ListRincian = ({
             <TrRinci
                key={data.id_rinci_sub_bl}
                data={data}
+               canEdit={canEdit}
                isPerubahan={isPerubahan}
             />
          )

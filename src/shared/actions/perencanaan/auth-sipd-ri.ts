@@ -14,7 +14,7 @@ const signInToSipdRi = async (params: SingInToSipdParams) => {
          .post<{
             token: string
             refresh_token: string
-         }>('api/auth/auth/login', formData, {
+         }>('/api/auth/auth/login', formData, {
             headers: {
                'User-Agent': userAgent,
                'Content-Type': 'multipart/form-data',
@@ -29,7 +29,7 @@ const signInToSipdRi = async (params: SingInToSipdParams) => {
             return res
          })
    } catch (error: any) {
-      console.log('signInToSipdRi', error?.message)
+      console.error('signInToSipdRi', error?.message)
       throw new Error('Error from fetcher sipd')
    }
 }
@@ -43,10 +43,10 @@ interface GetUserByTokenParam {
    tahun: number
 }
 
-const getUserByTokenFromSipd = async (params: GetUserByTokenParam) => {
+const getUserByTokenFromSipd = async (params: GetUserByTokenParam, retry = 0, maxRetry = 10) => {
    try {
       const { id_daerah, id_user, token, userAgent } = params
-      return await axios.get<UserByTokenSipd>('api/master/user/getuserbytoken', {
+      return await axios.get<UserByTokenSipd>('/api/master/user/getuserbytoken', {
          headers: {
             'User-Agent': userAgent,
             'Content-Type': 'application/json',
@@ -57,18 +57,27 @@ const getUserByTokenFromSipd = async (params: GetUserByTokenParam) => {
          httpsAgent: new https.Agent({
             rejectUnauthorized: false,
          }),
+
          withCredentials: false,
       })
    } catch (error: any) {
+      if (retry <= 10) {
+         console.error('getUserByTokenFromSipd retry', retry)
+         return await getUserByTokenFromSipd(params, retry + 1, maxRetry)
+      }
       console.error('getUserByTokenFromSipd', error?.message)
       throw new Error('Gagal mengambil data user dari sipd', { cause: 'fetcher' })
    }
 }
-const getSkpdUserFromSipd = async (params: GetUserByTokenParam & { id_skpd: number }) => {
+const getSkpdUserFromSipd = async (
+   params: GetUserByTokenParam & { id_skpd: number },
+   retry = 0,
+   maxRetry = 10
+) => {
    try {
       const { id_daerah, id_user, token, userAgent, id_skpd, tahun } = params
       return await axios.get<SkpdViewSipdResponse>(
-         `api/master/skpd/view/${id_skpd}/${tahun}/${id_daerah}`,
+         `/api/master/skpd/view/${id_skpd}/${tahun}/${id_daerah}`,
          {
             headers: {
                'User-Agent': userAgent,
@@ -84,6 +93,10 @@ const getSkpdUserFromSipd = async (params: GetUserByTokenParam & { id_skpd: numb
          }
       )
    } catch (error: any) {
+      if (retry <= 10) {
+         console.error('getSkpdUserFromSipd retry', retry)
+         return await getSkpdUserFromSipd(params, retry + 1, maxRetry)
+      }
       console.error('getSkpdUserFromSipd', error?.message)
       throw new Error('Gagal mengambil data skpd user dari sipd')
    }
@@ -95,12 +108,6 @@ type SingInToSipdParams = {
    password: string
    tahun: number
    userAgent: string
-}
-
-const validateNip = (nip: string) => {
-   const regex =
-      /^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])(19|20)\d{2}(0[1-9]|1[012])\d{1,2}\d{3}$/
-   return regex.test(nip)
 }
 
 const signInUserToSipdRi = async (params: SingInToSipdParams): Promise<Session['user'] | null> => {

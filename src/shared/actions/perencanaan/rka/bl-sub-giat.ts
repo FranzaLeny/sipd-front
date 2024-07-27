@@ -187,7 +187,7 @@ export type GetSubGiatListParams = {
 export const getAllSubBlAktif = async (params: GetSubGiatListParams) => {
    const { data } = await axios.get<
       ResponseApi<(BlSubGiatAktif & { bl_sub_giat: { id: string; bl_giat_id: string | null }[] })[]>
-   >(`api/perencanaan/rka/sub-giat/aktif/all`, { params })
+   >(`/api/perencanaan/rka/sub-giat/aktif/all`, { params })
    return data
 }
 
@@ -195,12 +195,59 @@ export async function getTotalBlSubGiatAktif<T extends Partial<GetSubGiatListPar
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>
-      >(`api/perencanaan/rka/sub-giat/aktif/total`, { params })
+      >(`/api/perencanaan/rka/sub-giat/aktif/total`, { params })
       .then((res) => res?.data)
 }
-export async function getBlSubGiatByJadwalUnit(params: GetSubGiatListParams) {
+
+export async function getAllBlSubGiat(params: GetSubGiatListParams | { bl_sub_giat_id?: string }) {
    return axios
-      .get<ResponseApi<BlSubGiat[]>>(`api/perencanaan/rka/sub-giat/get-by-jadwal-unit`, { params })
+      .get<ResponseApi<BlSubGiat[]>>(`/api/perencanaan/rka/sub-giat/all`, { params })
+      .then((res) => res?.data)
+}
+export interface RealisasiSubGiat {
+   id: string
+   id_skpd: number
+   id_program: number
+   id_giat: number
+   kode_skpd: string
+   kode_program: string
+   kode_giat: string
+   kode_sub_giat: string
+   nama_skpd: string
+   nama_program: string
+   nama_giat: string
+   sasaran: string
+   nama_sub_giat: string
+   pagu: number
+   output: _Output[]
+   output_giat: _Outputgiat[]
+   hasil: _Output[]
+   capaian: _Output[]
+   rak1: number
+   rak2: number
+   rak3: number
+   rak4: number
+   realisasi1: number
+   realisasi2: number
+   realisasi3: number
+   realisasi4: number
+}
+
+interface _Outputgiat {
+   tolok_ukur: string
+   satuan: string
+   target_teks: string
+}
+
+interface _Output {
+   target_teks: string
+   satuan: string
+   tolak_ukur: string
+}
+
+export async function getRealisasiSubGiat(params: GetSubGiatListParams) {
+   return axios
+      .get<ResponseApi<RealisasiSubGiat[]>>(`/api/perencanaan/rka/sub-giat/realisasi`, { params })
       .then((res) => res?.data)
 }
 
@@ -266,7 +313,7 @@ export const syncSubBlAktif = async (
             id: string
             nama_sub_giat: string
          }>
-      >('api/perencanaan/rka/sub-giat/aktif', data)
+      >('/api/perencanaan/rka/sub-giat/aktif', data)
       .then((res) => res.data)
 }
 
@@ -292,7 +339,7 @@ export const syncBlSubGiat = async (
       const res = await axios
          .put<{
             data: { id: string; nama_sub_giat: string; id_sub_bl: string }
-         }>('api/perencanaan/rka/sub-giat', data)
+         }>('/api/perencanaan/rka/sub-giat', data)
          .then((res) => res.data)
       return res
    } catch (error) {
@@ -302,26 +349,26 @@ export const syncBlSubGiat = async (
 
 export const syncDanaBlSubGiat = async (data: DanaBlSubGiatUncheckedCreateInput[]) => {
    const validaData = DanaBlSubGiatUncheckedCreateInputSchema.array().min(1).parse(data)
-   return await axios.put(`api/perencanaan/rka/sub-giat/dana`, validaData)
+   return await axios.put(`/api/perencanaan/rka/sub-giat/dana`, validaData)
 }
 
 export const syncLabelSubGiat = async (data: LabelBlSubGiatUncheckedCreateInput[]) => {
    const validaData = LabelBlSubGiatUncheckedCreateInputSchema.array().min(1).parse(data)
-   return await axios.put(`api/perencanaan/rka/sub-giat/label`, validaData)
+   return await axios.put(`/api/perencanaan/rka/sub-giat/label`, validaData)
 }
 
 export const syncLokasiSubGiat = async (data: LokasiBlSubGiatUncheckedCreateInput[]) => {
    const validaData = LokasiBlSubGiatUncheckedCreateInputSchema.array().min(1).parse(data)
-   return await axios.put(`api/perencanaan/rka/sub-giat/lokasi`, validaData)
+   return await axios.put(`/api/perencanaan/rka/sub-giat/lokasi`, validaData)
 }
 
 export const syncOutputSubGiat = async (data: OutputBlSubGiatUncheckedCreateInput[]) => {
    const validaData = OutputBlSubGiatUncheckedCreateInputSchema.array().min(1).parse(data)
-   return await axios.put(`api/perencanaan/rka/sub-giat/output`, validaData)
+   return await axios.put(`/api/perencanaan/rka/sub-giat/output`, validaData)
 }
 export const syncTagSubGiat = async (data: TagBlSubGiatUncheckedCreateInput[]) => {
    const validaData = TagBlSubGiatUncheckedCreateInputSchema.array().min(1).parse(data)
-   return await axios.put(`api/perencanaan/rka/sub-giat/tag`, validaData)
+   return await axios.put(`/api/perencanaan/rka/sub-giat/tag`, validaData)
 }
 
 export async function getDetailSubGiatSipd(
@@ -355,35 +402,35 @@ export async function deleteBlSubGiatByListId(
    payload: Zod.infer<typeof BlSubGiatDeleteByListIdValidationSchema>
 ) {
    const data = BlSubGiatDeleteByListIdValidationSchema.parse(payload)
-   return await axios.delete(`api/perencanaan/rka/sub-giat`, { data })
+   return await axios.delete(`/api/perencanaan/rka/sub-giat`, { data })
 }
 
 export async function deleteBlSubGiatAktifByListId(
    payload: Zod.infer<typeof BlSubGiatAktifDeleteByListIdValidationSchema>
 ) {
    const data = BlSubGiatAktifDeleteByListIdValidationSchema.parse(payload)
-   return await axios.delete(`api/perencanaan/rka/sub-giat/aktif`, { data })
+   return await axios.delete(`/api/perencanaan/rka/sub-giat/aktif`, { data })
 }
 
 export async function deleteDanaBlSubGiatByListId(
    payload: Zod.infer<typeof DanaBlSubGiatDeleteByListIdValidationSchema>
 ) {
    const data = DanaBlSubGiatDeleteByListIdValidationSchema.parse(payload)
-   return await axios.delete(`api/perencanaan/rka/sub-giat/dana`, { data })
+   return await axios.delete(`/api/perencanaan/rka/sub-giat/dana`, { data })
 }
 
 export async function deleteLabelBlSubGiatByListId(
    payload: Zod.infer<typeof LabelBlSubGiatDeleteByListIdValidationSchema>
 ) {
    const data = LabelBlSubGiatDeleteByListIdValidationSchema.parse(payload)
-   return await axios.delete(`api/perencanaan/rka/sub-giat/label`, { data })
+   return await axios.delete(`/api/perencanaan/rka/sub-giat/label`, { data })
 }
 
 export async function deleteLokasiBlSubGiatByListId(
    payload: Zod.infer<typeof LokasiBlSubGiatDeleteByListIdValidationSchema>
 ) {
    const data = LokasiBlSubGiatDeleteByListIdValidationSchema.parse(payload)
-   return await axios.delete(`api/perencanaan/rka/sub-giat/lokasi`, {
+   return await axios.delete(`/api/perencanaan/rka/sub-giat/lokasi`, {
       data,
    })
 }
@@ -392,7 +439,7 @@ export async function deleteOutputBlSubGiatByListId(
    payload: Zod.infer<typeof OutputBlSubGiatDeleteByListIdValidationSchema>
 ) {
    const data = OutputBlSubGiatDeleteByListIdValidationSchema.parse(payload)
-   return await axios.delete(`api/perencanaan/rka/sub-giat/output`, {
+   return await axios.delete(`/api/perencanaan/rka/sub-giat/output`, {
       data,
    })
 }
@@ -401,7 +448,7 @@ export async function deleteTagBlSubGiatByListId(
    payload: Zod.infer<typeof TagBlSubGiatDeleteByListIdValidationSchema>
 ) {
    const data = TagBlSubGiatDeleteByListIdValidationSchema.parse(payload)
-   return await axios.delete(`api/perencanaan/rka/sub-giat/tag`, {
+   return await axios.delete(`/api/perencanaan/rka/sub-giat/tag`, {
       data,
    })
 }
@@ -413,20 +460,32 @@ export type GetDanaListParams = {
 
 export const getDanaBlSubGiat = async (params: GetDanaListParams) =>
    await axios
-      .get<ResponseApi<CursorPaginate<DanaBlSubGiat>>>(`api/perencanaan/rka/sub-giat/dana`, {
+      .get<ResponseApi<CursorPaginate<DanaBlSubGiat>>>(`/api/perencanaan/rka/sub-giat/dana`, {
          params,
       })
       .then((res) => res.data)
 
 export const getBlSubGiatById = async <U extends true | undefined = undefined>(
    id: string,
-   with_rinci?: U,
-   unik?: { jadwal_anggaran_id: string; id_unit: number }
+   with_rinci?: U
 ) => {
-   const params = !!with_rinci ? { with_rinci } : unik ? { ...unik } : undefined
+   const params = !!with_rinci ? { with_rinci } : undefined
    const { data } = await axios.get<
       ResponseApi<U extends true ? ResponseGetSubGiatWithRinci : BlSubGiat>
-   >(`api/perencanaan/rka/sub-giat/${id}`, {
+   >(`/api/perencanaan/rka/sub-giat/${id}`, {
+      params,
+   })
+   return data
+}
+export const getBlSubGiatByIdUnik = async <U extends true | undefined = undefined>(params: {
+   jadwal_anggaran_id: string
+   id_unik: string
+   id_unit: number
+   with_rinci?: U
+}) => {
+   const { data } = await axios.get<
+      ResponseApi<U extends true ? ResponseGetSubGiatWithRinci : BlSubGiat>
+   >(`/api/perencanaan/rka/sub-giat/get-by-id-unik`, {
       params,
    })
    return data

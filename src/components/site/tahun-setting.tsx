@@ -1,29 +1,27 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import { useSession } from '@shared/hooks/use-session'
-import { revalidateRoot } from '@shared/server-actions/revalidate'
 
 const TAHUNLIST = Array.from({ length: new Date().getFullYear() - 2022 }, (_, i) => 2024 + i)
 const TahunSetting = () => {
    const { data, update } = useSession()
 
    const user = useMemo(() => data?.user, [data?.user])
-   const [isLoading, setIsLoading] = useState(false)
-
+   const router = useRouter()
    const changeTahun = useCallback(
       async (tahun: number) => {
          if (!!user?.tahun && tahun && user.tahun !== tahun && !!update) {
-            setIsLoading(true)
             try {
-               await update({ tahun })
-               await revalidateRoot()
-            } catch (error) {}
-            setIsLoading(false)
+               await update({ tahun }).then(() => {
+                  router.replace('/dashboard', { scroll: false })
+               })
+            } catch (e) {}
          }
       },
-      [update, user?.tahun]
+      [update, user?.tahun, router]
    )
 
    const tahun = useMemo(() => {
@@ -33,7 +31,6 @@ const TahunSetting = () => {
    }, [user?.tahun])
    return (
       <>
-         {isLoading && <div className='h-dvw fixed inset-0 z-[60] w-full cursor-wait' />}
          <Dropdown
             radius='sm'
             className='w-fit min-w-0'

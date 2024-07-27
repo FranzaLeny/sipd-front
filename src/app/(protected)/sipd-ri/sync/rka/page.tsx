@@ -55,6 +55,8 @@ const getData = async () => {
       }
       return { user, jadwal_anggaran_id: '' }
    } catch (e: any) {
+      console.error(e)
+
       let errorCode = 403
       if (e.response?.status) errorCode = e.response?.status
       return { errorCode, message: e?.message }

@@ -43,8 +43,11 @@ export const DanaSelector = forwardRef(
       })
       const { locale } = useLocale()
       const { data, isFetching, status } = useQuery({
-         queryKey: ['bl_sub_giat_dana', { ...queryParams }] as [string, GetDanaListParams],
-         queryFn: async ({ queryKey: [key, params] }) => {
+         queryKey: [{ ...queryParams }, 'bl_sub_giat_dana', 'jadwal_anggaran'] as [
+            GetDanaListParams,
+            ...any,
+         ],
+         queryFn: async ({ queryKey: [params] }) => {
             return await getDanaBlSubGiat(params)
          },
          placeholderData: (previousData) => previousData,

@@ -71,6 +71,16 @@ function formatDefaultRka(ws: Excel.Worksheet) {
          style: numStyle,
          width: 11.71,
       },
+      {
+         key: 'rak',
+         style: numStyle,
+         width: 11.71,
+      },
+      {
+         key: 'realisasi',
+         style: numStyle,
+         width: 11.71,
+      },
    ]
    ws.views = [{ showGridLines: false }]
 }
@@ -97,6 +107,13 @@ const dowloadRkaRinciBl = async (data: Data[]) => {
    wb.creator = 'FXIL'
    const buf = await wb.xlsx.writeBuffer()
    saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
+}
+
+const listJenisBl: Record<string, 'bo' | 'bm' | 'btt' | 'bt'> = {
+   '5.1': 'bo',
+   '5.2': 'bm',
+   '5.3': 'btt',
+   '5.4': 'bt',
 }
 
 const createSheet = async (data: Data, wb: Excel.Workbook) => {
@@ -131,7 +148,7 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
    const ws = wb.addWorksheet(sheet_name?.substring(0, 30), {
       properties: { tabColor: { argb: isEmptyData ? 'FFC0000' : isOdd ? '3FDFFF' : 'B3FFB3' } },
    })
-
+   const idSubBl = subGiat?.id_sub_bl
    formatDefaultRka(ws)
    fillDokJudul({ ws, dokumen, tahun: subGiat?.tahun })
    fillDataKegiatan({ ws, subGiat })
@@ -143,8 +160,20 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
       const nextRow = starRow + index + 2
       const currRow = starRow + index + 1
       const isRinci = rinci.group === 9
-      const { group, pajak, uraian, volume, nama_dana, rekening, spek, satuan, harga_satuan } =
-         rinci
+      const {
+         group,
+         pajak,
+         uraian,
+         volume,
+         nama_dana,
+         rekening,
+         spek,
+         satuan,
+         harga_satuan,
+         kode,
+         nilai_rak,
+         nilai_realisasi,
+      } = rinci
       const isTotal = group === 10
       const _uraian =
          isRinci && !!spek
@@ -161,7 +190,7 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
            ? '=SUBTOTAL(9,L' + (starRow + 1) + ':L' + lastRow + ')'
            : generateSubTotal(group, index, nextRow)
       let item = createExcelData({
-         l: 12,
+         l: 14,
          d: {
             ...rek,
             7: _uraian,
@@ -170,6 +199,8 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
             10: isRinci ? satuan?.join(' ') : undefined,
             11: isRinci ? { formula: `${pajak || 0}/100` } : undefined,
             12: { formula: total },
+            13: nilai_rak ?? null,
+            14: nilai_realisasi ?? null,
          },
       })
 
@@ -184,10 +215,17 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
             min_height: 15,
          })
       }
-      borderAll({ row, ws, bold: !isRinci })
+      if (isTotal) {
+         ws.getCell(row?.number, 12).name = 'jml_' + idSubBl
+      }
+      if (!!kode && !!listJenisBl[kode]) {
+         const cell = row.number
+         ws.getCell(`L${cell}`).name = listJenisBl[kode] + '_' + idSubBl
+      }
+      borderAll({ row, ws, bold: !isRinci, excludeColumns: [13, 14] })
       row.eachCell({ includeEmpty: true }, (cell, col) => {
+         const cellAddress = cell.address
          if (col <= 6) {
-            const cellAddress = cell.address
             const style = ws.getCell(cellAddress).style
             ws.getCell(cellAddress).style = {
                ...style,
@@ -201,20 +239,17 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
          }
       })
    }
+   const alokasiAddr = ws.getCell(1, 30).value?.toString()
+   const paguAddr = ws.getCell(2, 30).value?.toString()
+   alokasiAddr && (ws.getCell(alokasiAddr).value = { formula: `=jml_${idSubBl}` })
+   paguAddr && (ws.getCell(paguAddr).value = { formula: `=jml_${idSubBl}` })
    const row = ws.addRow(undefined)
    row.height = 7
    fillKepala({ ws, skpd })
    fillKeterangan({ ws })
    lastRow = fillTapd({ ws, tapd })
+   ws.pageSetup.printArea = `A1:L${lastRow + 2}`
    ws.headerFooter.oddFooter = `&L&\"Arial\"&9&I${footer}&R&\"Arial\"&9${dokumen?.kode}| &B&P`
-   // const password = subGiat.kode_sub_giat.slice(-4)
-   // await ws.protect(password, {
-   //    insertRows: true,
-   //    formatRows: true,
-   //    formatColumns: true,
-   //    formatCells: true,
-   // })
-
    return namaFile
 }
 
@@ -331,7 +366,7 @@ function fillDataKegiatan({
       }),
    ]
    const rows = ws.addRows(giat)
-   rows.map((row) => {
+   rows.map((row, i) => {
       const value = row.getCell(7).value
       row.height = calcRowHeight({
          value: value,
@@ -358,6 +393,10 @@ function fillDataKegiatan({
       })
       ws.mergeCellsWithoutStyle(row.number, 1, row.number, 6)
       ws.mergeCellsWithoutStyle(row.number, 7, row.number, 12)
+      if (i === 7) {
+         ws.getCell(row.number, 7).name = 'pagu_tahun_' + subGiat?.id_sub_bl
+         ws.getCell(1, 30).value = row.getCell(7).address
+      }
    })
    const row = ws.addRow(undefined)
    row.height = 7
@@ -440,7 +479,7 @@ function fillIndikatorKegiatan({
             const style = cell.style
             cell.style = {
                ...style,
-               numFmt: i === 2 ? '#,##0;-#,##0' : '@',
+               numFmt: i === capaian?.length + 1 ? '#,##0;-#,##0' : '@',
                alignment: {
                   ...style.alignment,
                   horizontal: 'center',
@@ -458,6 +497,10 @@ function fillIndikatorKegiatan({
          bold: true,
          min_height: 15,
       })
+      if (i === capaian?.length + 1) {
+         ws.getCell(row.number, 11).name = 'pagu_' + subGiat?.id_sub_bl
+         ws.getCell(2, 30).value = row.getCell(11).address
+      }
    })
 
    const row = ws.addRow(undefined)
@@ -565,12 +608,14 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }): number {
       c: false,
       d: {
          0: createExcelData({
-            l: 12,
+            l: 14,
             d: {
                1: 'Kode Rekening',
                7: 'Uraian',
                8: 'Rincian Perhitungan',
                12: 'Jumlah\n(Rp)',
+               13: 'RAK\n(Rp)',
+               14: 'Realisasi\n(Rp)',
             },
          }),
          1: createExcelData({
@@ -586,12 +631,14 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }): number {
    })
    const row_th = ws.addRows(data_th)
    row_th.map((row, i) => {
-      borderAll({ row, ws, bold: true, center: true, wrapText: true })
+      borderAll({ row, ws, bold: true, center: true, wrapText: true, excludeColumns: [13, 14] })
       if (i === 0) {
          ws.mergeCellsWithoutStyle(row.number, 1, row.number + 1, 6)
          ws.mergeCellsWithoutStyle(row.number, 7, row.number + 1, 7)
          ws.mergeCellsWithoutStyle(row.number, 8, row.number, 11)
          ws.mergeCellsWithoutStyle(row.number, 12, row.number + 1, 12)
+         ws.mergeCells(row.number, 13, row.number + 1, 13)
+         ws.mergeCells(row.number, 14, row.number + 1, 14)
       }
    })
    ws.pageSetup = {

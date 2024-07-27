@@ -89,7 +89,7 @@ const ModalSingkronJadwal = () => {
    return (
       <DialogConfirm
          action={action}
-         data_key={['bl_sub_giat_rinci_ket', 'bl_sub_giat_rinci_subs', 'bl_sub_giat_rinci', 'rka']}
+         data_key={['bl_sub_giat_rinci_ket', 'bl_sub_giat_rinci_subs', 'bl_sub_giat_rinci']}
          header='Singkron Rincian Sub Kegiatan'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-normal'>Proses tidak dapat dibatalkan.</span>

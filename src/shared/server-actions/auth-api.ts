@@ -20,6 +20,7 @@ type UserDlh = {
    is_prop: number
    jabatan: string
    nama: string
+   nama_daerah: string
    nip: string | null
    roles: RoleUser[]
    image: string | null
@@ -38,12 +39,39 @@ async function signInToApi(data: ApiSignIn) {
    if (!baseURL && !!port) {
       const proto = getHeader.get('x-forwarded-proto') ?? ''
       const host = getHeader.get('X-Forwarded-Host') ?? ''
-      baseURL = `${proto}://${host}:${port}`
+      const hostname = host?.split(':')[0]
+      baseURL = `${proto}://${hostname}:${port}`
    }
 
-   return await axios.post<ResponseApi<UserDlh>>('api/auth/sign-in', data, {
+   return await axios.post<ResponseApi<UserDlh>>('/api/auth/sign-in', data, {
       baseURL,
    })
+}
+export async function getDaerahLogin() {
+   const getHeader = headers()
+   const port = process.env.NEXT_PUBLIC_API_PORT
+   let baseURL = process.env.NEXT_PUBLIC_API_URL
+   if (!baseURL && !!port) {
+      const proto = getHeader.get('x-forwarded-proto') ?? ''
+      const host = getHeader.get('X-Forwarded-Host') ?? ''
+      const hostname = host?.split(':')[0]
+      baseURL = `${proto}://${hostname}:${port}`
+   }
+
+   return await axios
+      .get<
+         ResponseApi<
+            {
+               id_daerah: number
+               id_prop: number
+               id_kab_kota: number
+               nama_daerah: string
+            }[]
+         >
+      >('/api/auth/daerah', {
+         baseURL,
+      })
+      .then((res) => res.data)
 }
 
 const signInUserToApi = async (
@@ -67,6 +95,7 @@ interface UserLokal {
    id: string
    jabatan: string
    nama: string
+   nama_daerah: string
    roles: RoleUser[]
    nip: string | null
    image: string | null
@@ -95,10 +124,11 @@ async function signInToUserApiBySipdRi(data: {
       const getHeader = headers()
       const proto = getHeader.get('x-forwarded-proto') ?? ''
       const host = getHeader.get('X-Forwarded-Host') ?? ''
-      baseURL = `${proto}://${host}:${port}`
+      const hostname = host?.split(':')[0]
+      baseURL = `${proto}://${hostname}:${port}`
    }
    return await axios
-      .post<ResponseApi<UserLokal>>('api/sipd-ri/sign-in', data, {
+      .post<ResponseApi<UserLokal>>('/api/auth/sign-in-by-sipd-ri', data, {
          baseURL,
       })
       .catch((error) => {

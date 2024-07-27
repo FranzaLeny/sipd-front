@@ -27,8 +27,8 @@ const Page = async () => {
             tableUiProps={{ isCompact: true }}
             searchParamsStatic={{ tahun, id_daerah }}
             helperColumns={helperColumns}
-            data_key='user_sipd_perencanaan'
-            endpoint='api/perencanaan/master/user'
+            data_key={['user_sipd_perencanaan']}
+            endpoint='/api/perencanaan/data/user'
             tableActions={<ActionUserSipdPerencanaanTable />}
          />
       </>
