@@ -44,6 +44,7 @@ const ChartRealisasi = ({
          height: 350,
          stacked: true,
          stackType: '100%',
+         stackOnlyBar: true,
       },
       plotOptions: {
          bar: {
@@ -77,20 +78,10 @@ const ChartRealisasi = ({
             },
          },
       },
+
       theme: { palette: 'palette8' },
       fill: {
          opacity: 1,
-         // type: 'gradient',
-         // gradient: {
-         //    shade: 'dark',
-         //    type: 'vertical',
-         //    shadeIntensity: 0.35,
-         //    gradientToColors: undefined,
-         //    inverseColors: false,
-         //    opacityFrom: 0.85,
-         //    opacityTo: 0.85,
-         //    stops: [90, 0, 100],
-         // },
       },
       legend: {
          position: 'top',
@@ -126,26 +117,18 @@ const ChartRealisasi = ({
    }
 
    return (
-      <div className='flex flex-col gap-4'>
-         <div className='flex flex-wrap justify-center'>
-            <Chart
-               options={realiasi}
-               type='pie'
-               series={realiasi.series}
-            />
-            {apbd?.map((data) => (
-               <ChartApbd
-                  key={data?.id_skpd}
-                  data={data}
-               />
-            ))}
-         </div>
+      <div className='flex flex-wrap justify-center p-4'>
          <Chart
-            options={realisasiBl}
-            type='bar'
-            height={250}
-            series={realisasiBl.series}
+            options={realiasi}
+            type='pie'
+            series={realiasi.series}
          />
+         {apbd?.map((data) => (
+            <ChartApbd
+               key={data?.id_skpd}
+               data={data}
+            />
+         ))}
       </div>
    )
 }

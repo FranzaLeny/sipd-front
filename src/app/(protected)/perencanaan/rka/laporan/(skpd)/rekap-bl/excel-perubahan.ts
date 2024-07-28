@@ -167,6 +167,7 @@ const dowloadRekapBlRkpa = async (data: Data) => {
       const isRinci = rinci.group === 'sub_giat'
       const isSkpd = rinci?.group === 'sub_skpd'
       let {
+         id_sub_bl,
          group,
          uraian,
          nama_dana,
@@ -200,6 +201,7 @@ const dowloadRekapBlRkpa = async (data: Data) => {
             { formula: `=SUM(${numberToColumn(15)}${currRow}:${numberToColumn(18)}${currRow})` },
             { formula: `=${numberToColumn(19)}${currRow}-${numberToColumn(14)}${currRow}` },
             pagu_n_depan,
+            id_sub_bl,
          ]
          item.push(...newItem)
       } else {
@@ -291,7 +293,7 @@ const dowloadRekapBlRkpa = async (data: Data) => {
          ],
       })
 
-      borderAll({ row, ws, bold: !isRinci })
+      borderAll({ row, ws, bold: !isRinci, excludeColumns: [22] })
    }
    const row = ws.addRow(undefined)
    row.height = 7

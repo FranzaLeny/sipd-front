@@ -138,15 +138,44 @@ const dowloadRkpaRinciBl = async (data: Data[]) => {
    const buf = await wb.xlsx.writeBuffer()
    saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
 }
-const listJenisBl: Record<string, 'bo' | 'bm' | 'btt' | 'bt'> = {
+
+type KodeAkuns =
+   | 'bo'
+   | 'bo.bp'
+   | 'bo.bbj'
+   | 'bo.bb'
+   | 'bo.bsub'
+   | 'bo.bh'
+   | 'bo.bsos'
+   | 'bm'
+   | 'bm.bt'
+   | 'bm.bpm'
+   | 'bm.bbg'
+   | 'btt'
+   | 'bt'
+   | 'bt.bbh'
+   | 'bt.bbk'
+
+const listJenisBl: Record<string, KodeAkuns> = {
    '5.1': 'bo',
+   '5.1.01': 'bo.bp',
+   '5.1.02': 'bo.bbj',
+   '5.1.03': 'bo.bb',
+   '5.1.04': 'bo.bsub',
+   '5.1.05': 'bo.bh',
+   '5.1.06': 'bo.bsos',
    '5.2': 'bm',
+   '5.2.01': 'bm.bt',
+   '5.2.02': 'bm.bpm',
+   '5.2.03': 'bm.bbg',
    '5.3': 'btt',
    '5.4': 'bt',
+   '5.4.01': 'bt.bbh',
+   '5.4.02': 'bt.bbk',
 }
 const createSheet = async (data: Data, wb: Excel.Workbook) => {
    const { dokumen, items, skpd, tapd, subGiat } = data
-   const idSubBl = subGiat?.id_sub_bl
+   const idUnikSbl = '_' + subGiat?.id_sub_bl + '.'
    let namaFile =
       dokumen?.kode + '_' + subGiat?.kode_sub_giat + subGiat?.nama_sub_giat.substring(0, 100)
    namaFile = namaFile?.replace(/[^\w.-]/g, ' ')?.replaceAll('.', '_')
@@ -178,8 +207,8 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
    const ws = wb.addWorksheet(sheet_name?.substring(0, 30))
    formatDefaultRka(ws)
    fillDokJudul({ ws, dokumen, tahun: subGiat?.tahun })
-   fillDataKegiatan({ ws, subGiat })
-   fillIndikatorKegiatan({ ws, subGiat })
+   fillDataKegiatan({ ws, subGiat, idUnikSbl })
+   fillIndikatorKegiatan({ ws, subGiat, idUnikSbl })
    fillDataSubKegiatan({ ws, subGiat })
    const starRow = fillTableHead({ ws })
    const lastRow = starRow + items.length - 1
@@ -266,8 +295,10 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
          })
 
          if (isTotal) {
-            ws.getCell(row?.number, 12).name = 'jml_murni_' + idSubBl
-            ws.getCell(row?.number, 17).name = 'jml_' + idSubBl
+            ws.getCell(row?.number, 12).name = idUnikSbl + 'jml.murni'
+            ws.getCell(row?.number, 17).name = idUnikSbl + 'jml'
+            ws.getCell(row?.number, 19).name = idUnikSbl + 'rak'
+            ws.getCell(row?.number, 20).name = idUnikSbl + 'real'
          }
       }
 
@@ -333,8 +364,10 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
       })
       if (!!kode && !!listJenisBl[kode]) {
          const cell = row.number
-         ws.getCell(`Q${cell}`).name = listJenisBl[kode] + '_' + idSubBl
-         ws.getCell(`L${cell}`).name = listJenisBl[kode] + '_murni_' + idSubBl
+         ws.getCell(`Q${cell}`).name = idUnikSbl + listJenisBl[kode]
+         ws.getCell(`L${cell}`).name = idUnikSbl + listJenisBl[kode] + '.murni'
+         ws.getCell(cell, 19).name = idUnikSbl + listJenisBl[kode] + '.rak'
+         ws.getCell(cell, 20).name = idUnikSbl + listJenisBl[kode] + '.real'
       }
       borderAll({ row, ws, bold: !isRinci, excludeColumns: [19, 20] })
       row.eachCell({ includeEmpty: true }, (cell, col) => {
@@ -359,9 +392,9 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
    const alokasiAddr = ws.getCell(1, 30).value?.toString()
    const paguMuniAddr = ws.getCell(2, 30).value?.toString()
    const paguAddr = ws.getCell(2, 31).value?.toString()
-   alokasiAddr && (ws.getCell(alokasiAddr).value = { formula: `=jml_${idSubBl}` })
-   paguMuniAddr && (ws.getCell(paguMuniAddr).value = { formula: `=jml_murni_${idSubBl}` })
-   paguAddr && (ws.getCell(paguAddr).value = { formula: `=jml_${idSubBl}` })
+   alokasiAddr && (ws.getCell(alokasiAddr).value = { formula: `=${idUnikSbl}jml` })
+   paguMuniAddr && (ws.getCell(paguMuniAddr).value = { formula: `=${idUnikSbl}jml.murni` })
+   paguAddr && (ws.getCell(paguAddr).value = { formula: `=${idUnikSbl}jml` })
 
    fillKepala({ ws, skpd })
    fillKeterangan({ ws })
@@ -414,9 +447,11 @@ function fillDokJudul({
 function fillDataKegiatan({
    ws,
    subGiat,
+   idUnikSbl,
 }: {
    ws: Excel.Worksheet
    subGiat: Data['subGiat']
+   idUnikSbl: string
 }): number {
    const giat = [
       createExcelData({
@@ -512,7 +547,9 @@ function fillDataKegiatan({
       ws.mergeCellsWithoutStyle(row.number, 1, row.number, 6)
       ws.mergeCellsWithoutStyle(row.number, 7, row.number, 18)
       if (i === 7) {
-         ws.getCell(row.number, 7).name = 'pagu_tahun_' + subGiat?.id_sub_bl
+         ws.getCell(row.number - 1, 7).name = idUnikSbl + 'tahun.' + (subGiat.tahun - 1)
+         ws.getCell(row.number, 7).name = idUnikSbl + 'tahun.' + subGiat.tahun
+         ws.getCell(row.number + 1, 7).name = idUnikSbl + 'tahun.' + (subGiat.tahun + 1)
          ws.getCell(1, 30).value = row.getCell(7).address
       }
    })
@@ -524,9 +561,11 @@ function fillDataKegiatan({
 function fillIndikatorKegiatan({
    ws,
    subGiat,
+   idUnikSbl,
 }: {
    ws: Excel.Worksheet
    subGiat: Data['subGiat']
+   idUnikSbl: string
 }): number {
    const _thead = createExcelData({
       l: 3,
@@ -711,9 +750,9 @@ function fillIndikatorKegiatan({
       })
       row.height = Math.max(heigthMurni, height)
       if (i === capaian?.length) {
-         ws.getCell(row.number, 11).name = 'pagu_murni_' + subGiat?.id_sub_bl
+         ws.getCell(row.number, 11).name = idUnikSbl + 'pagu.murni'
          ws.getCell(2, 30).value = row.getCell(11).address
-         ws.getCell(row.number, 18).name = 'pagu_' + subGiat?.id_sub_bl
+         ws.getCell(row.number, 18).name = idUnikSbl + 'pagu'
          ws.getCell(2, 31).value = row.getCell(18).address
       }
    })

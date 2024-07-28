@@ -1,5 +1,5 @@
-// 'use server'
-
+import http from 'http'
+import https from 'https'
 import {
    GetUrlKey,
    listSipdGet,
@@ -50,7 +50,8 @@ axios.interceptors.request.use(
          console.error(error)
          return Promise.reject({ message: 'Unauthenticated', error: 'Request to SIPD-RI failed' })
       }
-
+      config.httpsAgent = new https.Agent({ keepAlive: true })
+      config.httpAgent = new http.Agent({ keepAlive: true })
       return config
    },
    (error) => Promise.reject(error)

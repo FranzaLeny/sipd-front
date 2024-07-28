@@ -1,3 +1,5 @@
+import http from 'http'
+import https from 'https'
 import Axios, { AxiosError, AxiosInstance } from 'axios'
 import Cookies from 'js-cookie'
 
@@ -49,6 +51,8 @@ axios.interceptors.request.use(
          const token = Cookies.get('next-auth.session-token')
          tokenValue = tokenSeccure || token || ''
       }
+      config.httpsAgent = new https.Agent({ keepAlive: true })
+      config.httpAgent = new http.Agent({ keepAlive: true })
       baseURL && (config.baseURL = baseURL)
       tokenValue && (config.headers['Authorization'] = `Bearer ${tokenValue}`)
       return config

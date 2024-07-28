@@ -7,11 +7,43 @@ import { getSpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
 import { getStatistikBlSkpdSipd } from '@actions/penatausahaan/pengeluaran/statistik'
 import { getSumberDanaAkunRinciSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { getAllBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
+import { JadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
-import { Autocomplete, AutocompleteItem, Button } from '@nextui-org/react'
+import {
+   Autocomplete,
+   AutocompleteItem,
+   Button,
+   cn,
+   Input,
+   Listbox,
+   ListboxItem,
+   Modal,
+   ModalBody,
+   ModalContent,
+   ModalFooter,
+   ModalHeader,
+   Pagination,
+   Popover,
+   PopoverContent,
+   PopoverTrigger,
+   Select,
+   Selection,
+   SelectItem,
+   Spinner,
+   Table,
+   TableBody,
+   TableCell,
+   TableColumn,
+   TableHeader,
+   TableRow,
+   Textarea,
+   useDisclosure,
+} from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import { numberToRupiah } from '@utils'
 import { RealisasiRakInput, RealisasiRakInputValidationSchema } from '@validations/keuangan/rak'
-import { uniqBy } from 'lodash-es'
+import { sortBy, uniqBy } from 'lodash-es'
+import { Settings } from 'lucide-react'
 import { toast } from 'react-toastify'
 
 import dowloadExcelSpjFungsional from './export-excel'
@@ -36,6 +68,8 @@ const months = [
    { key: 12, name: 'Desember' },
 ]
 
+type DataSpj = AsyncReturnType<typeof getSpjFungsional>
+
 export default function Component({
    bulan,
    id_daerah,
@@ -49,9 +83,23 @@ export default function Component({
 }) {
    const [month, setMonth] = useState<string | number | null>(bulan)
    const [isLoading, setIsLoading] = useState(false)
+   const [selectedJadwal, setSelectedJadwal] = useState<JadwalAnggaran>()
    const [jadwal, setJadwal] = useState('')
+   const [rowsPerPage, setRowsPerPage] = useState(10)
+   const [selectedColumns, setSelectedColumns] = useState<Selection>(
+      new Set<keyof DataSpj['pembukuan2'][number]>([
+         'kode_akun',
+         'nama_akun',
+         'alokasi_anggaran',
+         'jumlah_sd_saat_ini',
+         'sisa_pagu_anggaran',
+      ])
+   )
+
+   const { isOpen, onClose, onOpen } = useDisclosure()
 
    const currMonth = new Date().getMonth() + 1
+
    const { data: dataSpj, isFetching } = useQuery({
       queryKey: [{ bulan: month, type: 'SKPD' }, 'spj-fungsional-peta'] as [
          { type: string; bulan: string },
@@ -82,7 +130,8 @@ export default function Component({
       setIsLoading(true)
       try {
          if (!!month && !!rak?.length && !!dataSpj?.pembukuan2?.length) {
-            const currMonth = new Date().getMonth() + 1
+            const canSyncNilaiRealisasi =
+               month?.toString() === currMonth.toString() || month?.toString() === '12'
             const dataRealiasasi = dataSpj?.pembukuan2?.filter((realisasi) => {
                const kode = realisasi?.kode_unik?.split('-')
                const [kode_sub_skpd, kode_program, kode_giat, kode_sub_giat, kode_akun] = kode
@@ -112,7 +161,7 @@ export default function Component({
                if (id) {
                   data.push({
                      id,
-                     nilai_realisasi: jumlah_sd_saat_ini,
+                     nilai_realisasi: canSyncNilaiRealisasi ? jumlah_sd_saat_ini : undefined,
                      [key]:
                         realisasi_gaji_bulan_ini +
                         realisasi_ls_selain_gaji_bulan_ini +
@@ -141,7 +190,7 @@ export default function Component({
          )
       }
       setIsLoading(false)
-   }, [month, rak, dataSpj?.pembukuan2])
+   }, [month, rak, dataSpj?.pembukuan2, currMonth])
 
    const exportExcel = useCallback(async () => {
       try {
@@ -235,71 +284,421 @@ export default function Component({
       }
    }, [dataSpj, namaBulan, rak, month, jadwal, id_skpd, id_daerah])
 
+   const disabledMonts = useMemo(() => {
+      return months.filter((d) => d.key > currMonth)?.map((d) => d.key?.toString())
+   }, [currMonth])
    return (
-      <div className='content relative z-0 space-y-3'>
-         <div className='bg-content1 flex items-center gap-4 rounded p-4'>
-            <div className='flex w-full flex-1 flex-col gap-2 sm:flex-row'>
-               <Autocomplete
-                  listboxProps={{ emptyContent: 'Tidak ada data bulan' }}
-                  selectedKey={month?.toString() ?? ''}
-                  onSelectionChange={setMonth}
-                  fullWidth
-                  defaultItems={months}
-                  label='Pilih Bulan'
-                  placeholder='Cari bulan'>
-                  {(item) => (
-                     <AutocompleteItem
-                        isDisabled={item.key > currMonth}
-                        key={item.key}>
-                        {item.name}
-                     </AutocompleteItem>
-                  )}
-               </Autocomplete>
-               <JadwalInput
-                  selectedKey={jadwal}
-                  onListJadwalChange={(d) => setJadwal(d[0]?.id)}
-                  onSelectionChange={setJadwal}
-                  params={{
-                     id_daerah,
-                     id_skpd,
-                     tahun,
-                     filter: 'has-bl-sub-giat',
-                     jadwal_penatausahaan: 'true',
-                  }}
+      <>
+         {!!selectedJadwal && !!dataSpj && (
+            <ModalRealisasi
+               action={updateRealiasasi}
+               handleClose={onClose}
+               isLoading={isLoading}
+               isOpen={isOpen}
+               tahun={tahun}
+               jadwal={selectedJadwal?.nama_sub_tahap}
+               bulan={namaBulan}
+               namaSkpd={dataSpj?.nama_skpd}
+            />
+         )}
+         <div className='content sticky left-0'>
+            <JadwalInput
+               selectedKey={jadwal}
+               isDisabled={isFetching || isFetchingRak || isFetchingApbd || isLoading}
+               onListJadwalChange={(d) => setJadwal(d[0]?.id)}
+               onSelectionChange={setJadwal}
+               onChange={setSelectedJadwal}
+               params={{
+                  id_daerah,
+                  id_skpd,
+                  tahun,
+                  filter: 'has-bl-sub-giat',
+                  jadwal_penatausahaan: 'true',
+               }}
+            />
+         </div>
+         {!!dataSpj?.pembukuan1?.length && (
+            <ChartRealisasi
+               apbd={apbd}
+               bulan={namaBulan}
+               tahun={dataSpj?.tahun}
+               items={dataSpj?.pembukuan1}
+               skpd={dataSpj?.nama_skpd}
+            />
+         )}
+         <TableSpj
+            rowsPerPage={rowsPerPage}
+            selectedColumns={selectedColumns}
+            isFetching={isFetching}
+            data={dataSpj?.pembukuan2 || []}
+         />
+         <div className='rounded-t-medium sticky bottom-0 z-10 mx-auto  flex w-fit items-center justify-center gap-2 p-2 backdrop-blur sm:gap-4'>
+            <Autocomplete
+               labelPlacement='outside-left'
+               isLoading={isFetching || isFetchingRak || isFetchingApbd || isLoading}
+               isDisabled={isFetching || isFetchingRak || isFetchingApbd || isLoading}
+               listboxProps={{ emptyContent: 'Tidak ada data bulan' }}
+               selectedKey={month?.toString() ?? ''}
+               onSelectionChange={setMonth}
+               disabledKeys={disabledMonts}
+               defaultItems={months}
+               aria-label='Bulan'
+               placeholder='Cari bulan'>
+               {(item) => (
+                  <AutocompleteItem
+                     textValue={`Bulan ${item.name}`}
+                     key={item.key}>
+                     {item.name}
+                  </AutocompleteItem>
+               )}
+            </Autocomplete>
+            <div className='flex gap-2'>
+               <Button
+                  color='primary'
+                  isDisabled={isFetching || isFetchingRak || isFetchingApbd}
+                  isLoading={isLoading}
+                  onPress={exportExcel}>
+                  Download
+               </Button>
+               <Button
+                  color='secondary'
+                  isDisabled={isFetching || isFetchingRak || isFetchingApbd || isLoading}
+                  onPress={onOpen}>
+                  Singkron
+               </Button>
+               <TableSetings
+                  dataLength={dataSpj?.pembukuan2?.length ?? 0}
+                  rowsPerPage={rowsPerPage}
+                  selectedColumns={selectedColumns}
+                  setRowsPerPage={setRowsPerPage}
+                  setSelectedColumns={setSelectedColumns}
                />
-               <div>
-                  <Button
-                     color='primary'
-                     isLoading={isFetching || isFetchingRak || isFetchingApbd || isLoading}
-                     onPress={exportExcel}>
-                     Download Excel
-                  </Button>
-                  <Button
-                     color='secondary'
-                     isLoading={isFetching || isFetchingRak || isFetchingApbd || isLoading}
-                     onPress={updateRealiasasi}>
-                     Back Up
-                  </Button>
-               </div>
             </div>
          </div>
-         <div className='bg-content1 flex flex-col rounded p-4'>
-            {!!dataSpj?.pembukuan1?.length ? (
+      </>
+   )
+}
+const ModalRealisasi: React.FC<{
+   isOpen: boolean
+   isLoading: boolean
+   handleClose: () => void
+   action: () => void
+   jadwal: string
+   namaSkpd: string
+   bulan: string
+   tahun: number
+}> = ({ handleClose, isOpen, action, isLoading, bulan, jadwal, namaSkpd, tahun }) => {
+   return (
+      <Modal
+         isOpen={isOpen}
+         onClose={handleClose}>
+         <ModalContent>
+            {(onClose) => (
                <>
-                  <div>
-                     <ChartRealisasi
-                        apbd={apbd}
-                        bulan={namaBulan}
-                        tahun={dataSpj?.tahun}
-                        items={dataSpj?.pembukuan1}
-                        skpd={dataSpj?.nama_skpd}
+                  <ModalHeader>
+                     <div>Singkron Realisiasi {tahun}</div>
+                  </ModalHeader>
+                  <ModalBody>
+                     <Input
+                        variant='underlined'
+                        label='Bulan'
+                        value={bulan}
+                        isReadOnly
+                     />
+                     <Textarea
+                        minRows={1}
+                        variant='underlined'
+                        label='Jadwal'
+                        value={jadwal}
+                        isReadOnly
+                     />
+                     <Textarea
+                        variant='underlined'
+                        label='SKPD'
+                        minRows={1}
+                        value={namaSkpd}
+                        isReadOnly
+                     />
+                  </ModalBody>
+                  <ModalFooter>
+                     <Button
+                        disabled={isLoading}
+                        color='danger'
+                        onPress={onClose}>
+                        Batal
+                     </Button>
+                     <Button
+                        color='primary'
+                        onPress={action}>
+                        Simpan
+                     </Button>
+                  </ModalFooter>
+               </>
+            )}
+         </ModalContent>
+      </Modal>
+   )
+}
+
+const COLUMNS: {
+   key: keyof DataSpj['pembukuan2'][number]
+   label: string
+   align?: 'start' | 'end'
+}[] = [
+   {
+      key: 'kode_akun',
+      label: 'KODE',
+   },
+   {
+      key: 'nama_akun',
+      label: 'Uraian',
+   },
+   {
+      key: 'alokasi_anggaran',
+      label: 'Anggaran',
+      align: 'end',
+   },
+   {
+      key: 'realisasi_gaji_bulan_sebelumnya',
+      label: 'Realisasi Gaji Bulan Sebelumnya',
+      align: 'end',
+   },
+   {
+      key: 'realisasi_ls_selain_gaji_bulan_sebelumnya',
+      label: 'Realisasi LS Bulan Sebelumnya',
+      align: 'end',
+   },
+   {
+      key: 'realisasi_up_gu_tu_bulan_sebelumnya',
+      label: 'Realisasi UP/GU/TU Bulan Sebelumnya',
+      align: 'end',
+   },
+   {
+      key: 'realisasi_gaji_bulan_ini',
+      label: 'Realisasi Gaji Bulan Ini',
+      align: 'end',
+   },
+   {
+      key: 'realisasi_ls_selain_gaji_bulan_ini',
+      label: 'Realisasi LS Bulan Ini',
+      align: 'end',
+   },
+   {
+      key: 'realisasi_up_gu_tu_bulan_ini',
+      label: 'Realisasi UP/GU/TU Bulan Ini',
+      align: 'end',
+   },
+   {
+      key: 'realisasi_gaji_sd_saat_ini',
+      label: 'Realisasi Gaji',
+      align: 'end',
+   },
+   {
+      key: 'realisasi_ls_selain_gaji_sd_saat_ini',
+      label: 'Realisasi LS',
+      align: 'end',
+   },
+   {
+      key: 'realisasi_up_gu_tu_sd_saat_ini',
+      label: 'Realisasi UP/GU/TU',
+      align: 'end',
+   },
+   {
+      key: 'jumlah_sd_saat_ini',
+      label: 'Total Realisasi',
+      align: 'end',
+   },
+   {
+      key: 'sisa_pagu_anggaran',
+      label: 'Sisa Anggaran',
+      align: 'end',
+   },
+]
+
+function TableSpj({
+   data,
+   isFetching,
+   rowsPerPage,
+   selectedColumns,
+}: {
+   data: DataSpj['pembukuan2']
+   isFetching: boolean
+
+   rowsPerPage: number
+   selectedColumns: Selection
+}) {
+   const [page, setPage] = useState(1)
+
+   const alldata = sortBy(data, 'kode_unik')
+   const pages = Math.ceil(alldata.length / rowsPerPage)
+
+   const rows = useMemo(() => {
+      const start = (page - 1) * rowsPerPage
+      const end = start + rowsPerPage
+      return alldata.slice(start, end)
+   }, [page, alldata, rowsPerPage])
+
+   const renderCell = useCallback((data: DataSpj['pembukuan2'][number], columnKey: React.Key) => {
+      const cellValue = data[columnKey as keyof DataSpj['pembukuan2'][number]]
+      const currencyKeys: (keyof DataSpj['pembukuan2'][number])[] = [
+         'alokasi_anggaran',
+         'jumlah_sd_saat_ini',
+         'realisasi_gaji_bulan_sebelumnya',
+         'realisasi_gaji_bulan_ini',
+         'realisasi_gaji_sd_saat_ini',
+         'realisasi_ls_selain_gaji_bulan_sebelumnya',
+         'realisasi_ls_selain_gaji_bulan_ini',
+         'realisasi_ls_selain_gaji_sd_saat_ini',
+         'realisasi_up_gu_tu_bulan_sebelumnya',
+         'realisasi_up_gu_tu_bulan_ini',
+         'realisasi_up_gu_tu_sd_saat_ini',
+         'sisa_pagu_anggaran',
+      ]
+      if (currencyKeys.includes(columnKey as keyof DataSpj['pembukuan2'][number])) {
+         return numberToRupiah(cellValue ?? 0)
+      }
+      return cellValue
+   }, [])
+
+   const columns = useMemo(() => {
+      const selected = Array.from(selectedColumns)
+      return COLUMNS.filter((x) => selected.includes(x.key))
+   }, [selectedColumns])
+
+   return (
+      <>
+         <Table
+            isHeaderSticky
+            isCompact
+            isStriped
+            selectionMode='single'
+            classNames={{
+               thead: 'top-navbar z-[1]',
+               // base: ' bg-content1 shadow-small rounded-small static overflow-visible p-5 shadow-sm',
+               wrapper: 'content z-0 size-fit min-w-full  overflow-visible p-5',
+            }}
+            // removeWrapper
+            aria-label='tabel pembukuan 2'
+            bottomContent={
+               !!alldata?.length ? (
+                  <div className='flex w-full justify-center'>
+                     <Pagination
+                        isCompact
+                        showControls
+                        showShadow
+                        color='secondary'
+                        page={page}
+                        total={pages}
+                        onChange={setPage}
                      />
                   </div>
-               </>
-            ) : (
-               <p>Data pembukuan1 tidak ditemukan</p>
+               ) : undefined
+            }>
+            <TableHeader columns={columns}>
+               {(column) => (
+                  <TableColumn
+                     align={column.align}
+                     key={column.key}>
+                     {column.label}
+                  </TableColumn>
+               )}
+            </TableHeader>
+            <TableBody
+               isLoading={isFetching}
+               loadingState={isFetching ? 'loading' : 'idle'}
+               loadingContent={<Spinner label='Loading...' />}
+               items={rows}>
+               {(item) => {
+                  const isSubTotal = item?.kode_unik?.length < 79
+                  return (
+                     <TableRow key={item.kode_unik}>
+                        {(columnKey) => (
+                           <TableCell
+                              className={cn(
+                                 isSubTotal && columnKey === 'kode_akun' && 'font-semibold'
+                              )}>
+                              {renderCell(item, columnKey)}
+                           </TableCell>
+                        )}
+                     </TableRow>
+                  )
+               }}
+            </TableBody>
+         </Table>
+      </>
+   )
+}
+function TableSetings({
+   rowsPerPage,
+   dataLength,
+   selectedColumns,
+   setRowsPerPage,
+   setSelectedColumns,
+}: {
+   rowsPerPage: number
+   dataLength: number
+   selectedColumns: Selection
+   setRowsPerPage: (val: number) => void
+   setSelectedColumns: (val: Selection) => void
+}) {
+   return (
+      <Popover
+         radius='sm'
+         placement='bottom-end'>
+         <PopoverTrigger>
+            <Button
+               aria-labelledby='table-settings'
+               radius='full'
+               isIconOnly>
+               <Settings />
+            </Button>
+         </PopoverTrigger>
+         <PopoverContent className='p-0'>
+            {(titleProps) => (
+               <div className='py-2'>
+                  <h3
+                     className='text-small px-4 font-bold'
+                     {...titleProps}>
+                     Popover Content
+                  </h3>
+                  <div>
+                     <Select
+                        size='sm'
+                        label='Per Page'
+                        variant='bordered'
+                        selectedKeys={[rowsPerPage?.toString()]}
+                        className='min-h-max rounded border px-2 py-1'
+                        aria-labelledby='rowsPerPage'
+                        onChange={(e) => setRowsPerPage(Number(e.target.value))}>
+                        {[10, 15, 20, 25, 50, 100, dataLength].map((y) => (
+                           <SelectItem
+                              key={y?.toString()}
+                              textValue={y.toString()}>
+                              {y === dataLength ? 'Semua' : y}
+                           </SelectItem>
+                        ))}
+                     </Select>
+                  </div>
+                  <div className='max-h-36 overflow-auto pt-2'>
+                     <Listbox
+                        items={COLUMNS}
+                        selectionMode='multiple'
+                        aria-label='Actions'
+                        selectedKeys={selectedColumns}
+                        onSelectionChange={setSelectedColumns}
+                        disallowEmptySelection>
+                        {(x) => (
+                           <ListboxItem
+                              textValue={x.key}
+                              key={x.key}>
+                              {x.label}
+                           </ListboxItem>
+                        )}
+                     </Listbox>
+                  </div>
+               </div>
             )}
-         </div>
-      </div>
+         </PopoverContent>
+      </Popover>
    )
 }

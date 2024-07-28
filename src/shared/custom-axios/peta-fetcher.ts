@@ -1,3 +1,5 @@
+import http from 'http'
+import https from 'https'
 import Axios, { AxiosError, AxiosInstance } from 'axios'
 
 const axios: AxiosInstance = Axios.create({
@@ -38,7 +40,8 @@ axios.interceptors.request.use(
          console.error(error)
          return Promise.reject({ message: 'Unauthenticated', error: 'Request to SIPD-KEU failed' })
       }
-
+      config.httpsAgent = new https.Agent({ keepAlive: true })
+      config.httpAgent = new http.Agent({ keepAlive: true })
       return config
    },
    (error) => Promise.reject(error)
