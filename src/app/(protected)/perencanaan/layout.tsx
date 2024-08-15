@@ -11,6 +11,7 @@ export const metadata = {
 interface PerencanaanLayoutProps {
    children: React.ReactNode
 }
+export const revalidate = 0
 export default async function PerencanaanLayout({ children }: PerencanaanLayoutProps) {
    const { hasAccess } = await getServerSession([
       'super_admin',

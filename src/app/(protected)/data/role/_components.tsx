@@ -43,30 +43,18 @@ export default function rowActions(id: string) {
             // disabledKeys={!canSync ? ['sinkron-standar-harga'] : undefined}
             aria-label='Static Actions'>
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`role/${id}`}
                key='view'>
                Lihat
             </DropdownItem>
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`role/${id}/edit`}
                key='edit'>
                Ubah
             </DropdownItem>
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`role/${id}/delete`}
-               key='edit'>
+               key='delete'>
                Hapus
             </DropdownItem>
          </DropdownMenu>

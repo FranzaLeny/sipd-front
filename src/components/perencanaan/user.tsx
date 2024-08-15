@@ -131,6 +131,10 @@ export const UserSipdPerencanaanSelector = forwardRef(
                bottomContent: data?.hasNextPage ? bottomContent : undefined,
                emptyContent: 'Tidak ada data',
             }}
+            scrollShadowProps={{
+               ...props.scrollShadowProps,
+               hideScrollBar: false,
+            }}
             ref={ref}
             selectedKey={selected}
             onInputChange={handleInputChange}

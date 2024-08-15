@@ -3,10 +3,11 @@
 import { useMemo, useRef } from 'react'
 import Image from 'next/image'
 import { getDaerah } from '@actions/data/lokasi'
+import { ExcelIcon } from '@components/icons/excel'
 import { Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
-import { ArrowLeftCircle, Download, Printer } from 'lucide-react'
+import { ArrowLeftCircle, Printer } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { RekapanSumberDana } from '@/types/api/laporan'
 
@@ -71,7 +72,7 @@ export default function RekapDana({ sumberDana, tahun, skpd, jadwal }: Props) {
                <Button
                   color='primary'
                   className='sm:rounded-medium min-w-10 rounded-full px-2 backdrop-blur-sm sm:min-w-20'
-                  endContent={<Download className='size-5' />}
+                  endContent={<ExcelIcon className='size-5' />}
                   onPress={handleExportExcel}>
                   <span className='hidden sm:inline-flex'>Excel</span>
                </Button>
@@ -136,6 +137,16 @@ export default function RekapDana({ sumberDana, tahun, skpd, jadwal }: Props) {
                            rowSpan={2}>
                            Keterangan
                         </th>
+                        <th
+                           className='cell-print print:hidden'
+                           rowSpan={2}>
+                           RAK
+                        </th>
+                        <th
+                           className='cell-print print:hidden'
+                           rowSpan={2}>
+                           REALISASI
+                        </th>
                      </tr>
                      <tr>
                         {sumberDana[0]?.belanja.map((item) => {
@@ -193,6 +204,13 @@ export default function RekapDana({ sumberDana, tahun, skpd, jadwal }: Props) {
                                        Selisih {numberToRupiah(item?.total_harga - item?.pagu)}
                                     </div>
                                  )}
+                              </td>
+                              <td
+                                 className={`${!!!item?.nilai_rak && 'bg-danger'} cell-print text-center print:hidden`}>
+                                 {item?.nilai_rak ? numberToRupiah(item?.nilai_rak) : ''}
+                              </td>
+                              <td className='cell-print text-center print:hidden'>
+                                 {numberToRupiah(item?.nilai_realisasi)}
                               </td>
                            </tr>
                         )

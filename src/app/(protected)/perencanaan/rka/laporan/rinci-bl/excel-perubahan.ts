@@ -1,38 +1,18 @@
 import manifest from '@constants/tpd.json'
 import { numberToMonth } from '@utils'
-import { borderAll, calcRowHeight, createExcelData } from '@utils/excel'
+import {
+   borderAll,
+   calcRowHeight,
+   createExcelData,
+   numStyle,
+   percentStyle,
+   textStyle,
+} from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 
 import { LaporanRinciBl } from './rinci-bl'
 
-const styleFont = { name: 'Arial', size: 10 }
-const textStyle: Partial<Excel.Style> = {
-   alignment: {
-      vertical: 'middle',
-      horizontal: 'left',
-      wrapText: true,
-      shrinkToFit: false,
-      indent: 0.1,
-   },
-   font: styleFont,
-   numFmt: '@',
-}
-const numStyle: Partial<Excel.Style> = {
-   alignment: {
-      vertical: 'middle',
-      horizontal: 'right',
-      wrapText: false,
-      shrinkToFit: true,
-      indent: 0.1,
-   },
-   font: styleFont,
-   numFmt: '#,##0;(#,##0)',
-}
-const percentStyle: Partial<Excel.Style> = {
-   ...numStyle,
-   numFmt: '0%',
-}
 function formatDefaultRka(ws: Excel.Worksheet) {
    ws.columns = [
       { key: 'kd_1', width: 2.29, style: textStyle },
@@ -41,76 +21,20 @@ function formatDefaultRka(ws: Excel.Worksheet) {
       { key: 'kd_4', width: 3.29, style: textStyle },
       { key: 'kd_5', width: 3.29, style: textStyle },
       { key: 'kd_6', width: 5.29, style: textStyle },
-      {
-         key: 'uraian',
-         width: 30.71,
-         style: textStyle,
-      },
-      {
-         key: 'volume_m',
-         width: 9.71,
-         style: numStyle,
-      },
-      {
-         key: 'harga_m',
-         width: 11.71,
-         style: numStyle,
-      },
-      {
-         key: 'satuan_m',
-         width: 10.71,
-         style: textStyle,
-      },
-      {
-         key: 'pajak_m',
-         style: percentStyle,
-         width: 5.71,
-      },
-      {
-         key: 'jumlah_m',
-         style: numStyle,
-         width: 11.71,
-      },
-      {
-         key: 'volume',
-         width: 9.71,
-         style: numStyle,
-      },
-      {
-         key: 'harga',
-         width: 11.71,
-         style: numStyle,
-      },
-      {
-         key: 'satuan',
-         width: 10.71,
-         style: textStyle,
-      },
-      {
-         key: 'pajak',
-         style: percentStyle,
-         width: 5.71,
-      },
-      {
-         key: 'jumlah',
-         style: numStyle,
-         width: 11.71,
-      },
-      {
-         key: 'selisih',
-         style: numStyle,
-         width: 11.71,
-      },
-      {
-         key: 'rak',
-         style: numStyle,
-         width: 11.71,
-      },
-      {
-         key: 'realisasi',
-         style: numStyle,
-         width: 11.71,
-      },
+      { key: 'uraian', width: 30.71, style: textStyle },
+      { key: 'volume_m', width: 9.71, style: numStyle },
+      { key: 'harga_m', width: 11.71, style: numStyle },
+      { key: 'satuan_m', width: 10.71, style: textStyle },
+      { key: 'pajak_m', style: percentStyle, width: 5.71 },
+      { key: 'jumlah_m', style: numStyle, width: 11.71 },
+      { key: 'volume', width: 9.71, style: numStyle },
+      { key: 'harga', width: 11.71, style: numStyle },
+      { key: 'satuan', width: 10.71, style: textStyle },
+      { key: 'pajak', style: percentStyle, width: 5.71 },
+      { key: 'jumlah', style: numStyle, width: 11.71 },
+      { key: 'selisih', style: numStyle, width: 11.71 },
+      { key: 'rak', style: numStyle, width: 11.71 },
+      { key: 'realisasi', style: numStyle, width: 11.71 },
    ]
    ws.views = [{ showGridLines: false }]
 }
@@ -176,6 +100,7 @@ const listJenisBl: Record<string, KodeAkuns> = {
 const createSheet = async (data: Data, wb: Excel.Workbook) => {
    const { dokumen, items, skpd, tapd, subGiat } = data
    const idUnikSbl = '_' + subGiat?.id_sub_bl + '.'
+   const kodeGiat = subGiat?.kode_giat?.split('.').map((x) => +x.trim())
    let namaFile =
       dokumen?.kode + '_' + subGiat?.kode_sub_giat + subGiat?.nama_sub_giat.substring(0, 100)
    namaFile = namaFile?.replace(/[^\w.-]/g, ' ')?.replaceAll('.', '_')
@@ -203,8 +128,13 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
       const endRow = lastIndex === -1 ? lastRow : starRow + lastIndex
       return `=SUBTOTAL(9,${col + nextRow}:${col + endRow})`
    }
-
-   const ws = wb.addWorksheet(sheet_name?.substring(0, 30))
+   const lastKodeGiat = kodeGiat[kodeGiat.length - 1] || 1
+   // chek kode giat ganjil atau genap
+   const isOdd = lastKodeGiat % 2 === 1
+   const isEmptyData = items?.length === 1
+   const ws = wb.addWorksheet(sheet_name?.substring(0, 30), {
+      properties: { tabColor: { argb: isEmptyData ? '000000' : isOdd ? '3FDFFF' : 'B3FFB3' } },
+   })
    formatDefaultRka(ws)
    fillDokJudul({ ws, dokumen, tahun: subGiat?.tahun })
    fillDataKegiatan({ ws, subGiat, idUnikSbl })
@@ -212,6 +142,7 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
    fillDataSubKegiatan({ ws, subGiat })
    const starRow = fillTableHead({ ws })
    const lastRow = starRow + items.length - 1
+   const hasRici = items.length > 1
    for (let [index, rinci] of items.entries()) {
       const nextRow = starRow + index + 2
       const currRow = starRow + index + 1
@@ -247,19 +178,25 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
                 : uraian
       const rek = rekening?.reduce((a, b, i) => ({ ...a, [i + 1]: i === 5 ? b : b + '.' }), {})
       const total_murni = isRinci
-         ? `=H${currRow}*I${currRow}+H${currRow}*I${currRow}*K${currRow}`
+         ? `=ROUND(H${currRow}*I${currRow}+H${currRow}*I${currRow}*K${currRow},0)`
          : isTotal
-           ? '=SUBTOTAL(9,L' + (starRow + 1) + ':L' + lastRow + ')'
+           ? hasRici
+              ? '=SUBTOTAL(9,L' + (starRow + 1) + ':L' + lastRow + ')'
+              : '=0'
            : generateSubTotal(group, index, nextRow, 'L')
       const total = isRinci
-         ? `=M${currRow}*N${currRow}+M${currRow}*N${currRow}*P${currRow}`
+         ? `=ROUND(M${currRow}*N${currRow}+M${currRow}*N${currRow}*P${currRow},0)`
          : isTotal
-           ? '=SUBTOTAL(9,Q' + (starRow + 1) + ':Q' + lastRow + ')'
+           ? hasRici
+              ? '=SUBTOTAL(9,Q' + (starRow + 1) + ':Q' + lastRow + ')'
+              : '=0'
            : generateSubTotal(group, index, nextRow, 'Q')
       const selisih = isRinci
          ? `=Q${currRow}-L${currRow}`
          : isTotal
-           ? '=SUBTOTAL(9,R' + (starRow + 1) + ':R' + lastRow + ')'
+           ? hasRici
+              ? '=SUBTOTAL(9,R' + (starRow + 1) + ':R' + lastRow + ')'
+              : '=0'
            : generateSubTotal(group, index, nextRow, 'R')
       let item = createExcelData({
          l: 20,
@@ -309,14 +246,14 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
                type: 'cellIs',
                priority: 1,
                operator: 'lessThan',
-               formulae: [total_harga_murni - 0.5],
+               formulae: [total_harga_murni],
                style: { font: { color: { argb: 'B80000' } } },
             },
             {
                type: 'cellIs',
                priority: 2,
                operator: 'greaterThan',
-               formulae: [total_harga_murni + 0.5],
+               formulae: [total_harga_murni],
                style: { font: { color: { argb: '01670B' } } },
             },
          ],
@@ -329,14 +266,14 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
                type: 'cellIs',
                priority: 1,
                operator: 'lessThan',
-               formulae: [total_harga - 0.5],
+               formulae: [total_harga],
                style: { font: { color: { argb: 'B80000' } } },
             },
             {
                type: 'cellIs',
                priority: 2,
                operator: 'greaterThan',
-               formulae: [total_harga + 0.5],
+               formulae: [total_harga],
                style: { font: { color: { argb: '01670B' } } },
             },
          ],

@@ -5,7 +5,7 @@ import Breadcrumb from '@components/ui/Breadcrumbs'
 import ErrorPage from '@components/ui/error'
 import { getServerSession } from '@shared/server-actions/auth'
 
-import { ActionTableSubGiat, helperColumns, helperColumnsPergeseran } from './_components'
+import { ActionTableSubGiat, helperColumns, helperColumnsPergeseran, PaguSkpd } from './_components'
 
 export const metadata = {
    title: 'Sub Kegiatan',
@@ -33,7 +33,7 @@ const Page = async ({ searchParams: { jadwal_anggaran_id } }: Props) => {
       'sipd_ri',
    ])
    if (!hasAccess) return <ErrorPage code={401} />
-   const { id_unit, tahun, id_daerah } = user
+   const { id_unit, tahun, id_daerah, id_skpd } = user
    const jadwal = await getAllJadwalAnggaran({
       id_daerah: id_daerah,
       tahun: tahun,
@@ -72,6 +72,10 @@ const Page = async ({ searchParams: { jadwal_anggaran_id } }: Props) => {
                waktuSelesai={waktu_selesai}
             />
          </div>
+         <PaguSkpd
+            jadwal_anggaran_id={id}
+            id_skpd={id_skpd ?? id_unit}
+         />
          <TableServerSide
             tableUiProps={{ isCompact: true }}
             helperColumns={isMurni ? helperColumns : helperColumnsPergeseran}

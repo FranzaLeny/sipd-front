@@ -19,7 +19,7 @@ export default function Error({
 
    return (
       <div className='mx-auto size-full p-8'>
-         <Card className='size-full'>
+         <Card className='size-full min-h-full'>
             <CardBody className='size-full grow items-center justify-center space-y-7 p-8'>
                <h1 className='text-center text-4xl font-bold'>{error?.name}</h1>
                {process.env.NODE_ENV === 'production' ? (

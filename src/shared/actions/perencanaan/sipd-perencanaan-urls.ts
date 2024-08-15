@@ -100,6 +100,10 @@ export type PayloadResponsePostSipd = {
       payload: ListJadwalAnggranSipdPayload
       response: ListJadwalAnggranSipdResponse
    }
+   validateAllRenja: {
+      payload: { id_daerah: number; id_unit: number; id_user: number; tahun: number }
+      response: unknown
+   }
    jadwalRenjaAktif: {
       payload: JadwalAnggranCekAktifSipdPayload & { is_anggaran?: 0 }
       response: JadwalAnggranCekAktifSipdResponse
@@ -448,6 +452,14 @@ export const listSipdPost: ListSipdPost = {
       defaultPayload: {
          id_daerah: ID_DAERAH,
          tahun: TAHUN,
+      },
+   },
+   validateAllRenja: {
+      url: '/api/renja/sub_bl/validasi_semua_pagu',
+      defaultPayload: {
+         id_daerah: 424,
+         id_unit: 1871,
+         id_user: 36663,
       },
    },
 

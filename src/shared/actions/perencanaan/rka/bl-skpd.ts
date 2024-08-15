@@ -69,6 +69,14 @@ export const getBlSkpd = async (id: string) => {
       .get<ResponseApi<BlSkpd>>(`/api/perencanaan/rka/skpd/${id}`)
       .then((res) => res.data)
 }
+export const getBlSkpdByIdSkpd = async (params: {
+   id_skpd: number
+   jadwal_anggaran_id: string
+}) => {
+   return await axios
+      .get<ResponseApi<BlSkpd>>(`/api/perencanaan/rka/skpd/by-id-skpd`, { params })
+      .then((res) => res.data)
+}
 
 export async function getTotalBlSkpd<T extends ListBlSkpdParams>(params?: T) {
    return axios

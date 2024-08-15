@@ -9,7 +9,6 @@ type GenerateKeysSipdParams = {
    id_user: number
    userAgent: string
 }
-
 export function generateKeysSipd(params: GenerateKeysSipdParams) {
    const { id_daerah, id_level, id_user, userAgent } = params
    const user_agent = userAgent ?? navigator.userAgent

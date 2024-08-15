@@ -86,7 +86,7 @@ export default function Rincian({
    const [jadwal, setJadwal] = useState<string>()
    const [printPreview, setPrintPreview] = useState(false)
    const [selectedDok, setSelectedDok] = useState('rka')
-   const [dataTapd, setDataTapd] = useState<SubGiatWithRinci['skpd']['tapd']>()
+   // const [dataTapd, setDataTapd] = useState<SubGiatWithRinci['skpd']['tapd']>()
    const { data, isFetching } = useQuery({
       queryKey: [blSubGiatId, 'jadwal_anggaran', 'bl_sub_giat', 'bl_sub_giat_rinci'],
       queryFn: async ({ queryKey: [id] }) => (id ? await getBlSubGiatById(id, true) : undefined),
@@ -110,19 +110,19 @@ export default function Rincian({
       }
       return LIST_DOKUMEN[0]
    }, [selectedDok])
+
    const paramsBlSubGiat = useMemo(() => {
       if (!!id) {
          if (
             !!!data?.jadwal?.id ||
             (!!data?.jadwal?.id && data?.jadwal?.id === jadwal && data?.jadwal?.tahun === tahun)
          ) {
-            console.log(data?.jadwal?.id)
-
             return { bl_sub_giat_id: id }
          }
       }
       return { id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }
    }, [id, unit, jadwal, daerah, data?.jadwal?.id, data?.jadwal?.tahun, tahun])
+
    const handleJadwalChange = (jadwal?: string) => {
       setJadwal(jadwal)
       setBlSubGiatId('')
@@ -167,7 +167,7 @@ export default function Rincian({
             items: data.rincian,
             skpd: data?.skpd?.sub_skpd,
             subGiat: data?.sub_kegiatan,
-            tapd: dataTapd ?? data?.skpd?.tapd,
+            tapd: data?.skpd?.tapd,
          }
          if (jenisDok.type === 'murni') {
             await dowloadRkaRinciBl([params])

@@ -81,7 +81,7 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
    const handleSelect = useCallback(
       (select: React.Key | null) => {
          onSelectionChange && onSelectionChange(select?.toString() ?? '')
-         if (data?.length && !!select) {
+         if (!!data?.length && !!select) {
             const jadwal = data?.find((d) => (keyByIdUnik ? d.id_unik === select : d.id === select))
             const jadwal_murni = data?.find((d) => d.id_unik === jadwal?.id_unik_murni)
             !!onChange && onChange(jadwal)
@@ -91,7 +91,7 @@ export const JadwalInput = forwardRef((jadwalProps: Props, ref?: React.Ref<HTMLI
             !!onChange && onChange(undefined)
          }
       },
-      [onChange, data, keyByIdUnik, onJadwalMurniChange, onSelectionChange]
+      [onSelectionChange, data, keyByIdUnik, onChange, onJadwalMurniChange]
    )
 
    return (

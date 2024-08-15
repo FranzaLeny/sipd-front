@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getAllBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
 import { getLaporanSubGiat } from '@actions/perencanaan/rka/laporan'
+import { ExcelIcon, XlsxIcon } from '@components/icons/excel'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import BlSubGiatSelector from '@components/perencanaan/bl-sub-giat'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
@@ -95,6 +96,8 @@ export default function RinciBl({
    const [disableDocKeys, setDisableDocKeys] = useState(['rkpa', 'rdppa'])
    const [paguPerubahan, setPaguPerubahan] = useState(false)
    const [jadwal, setJadwal] = useState<string>()
+
+   const [printDeleted, setPrintDeleted] = useState(true)
 
    const [isLoading, setIsLoading] = useState(false)
 
@@ -220,13 +223,13 @@ export default function RinciBl({
          }[] = []
          for await (const sbl of listSubGiat) {
             await getLaporanSubGiat(sbl?.id).then((res) => {
-               const data = paguPerubahan ? generatePerubahan(res) : res
+               const currData = paguPerubahan ? generatePerubahan(res) : res
                const item = {
                   dokumen: jenisDok,
-                  items: data.rincian,
-                  skpd: data?.skpd?.sub_skpd,
-                  subGiat: data?.sub_kegiatan,
-                  tapd: tapd ?? data?.skpd?.tapd,
+                  items: currData.rincian,
+                  skpd: currData?.skpd?.sub_skpd,
+                  subGiat: currData?.sub_kegiatan,
+                  tapd: tapd ?? currData?.skpd?.tapd,
                }
                listData.push(item)
             })
@@ -311,6 +314,13 @@ export default function RinciBl({
                                  <Checkbox
                                     size='sm'
                                     radius='full'
+                                    isSelected={printDeleted}
+                                    onValueChange={setPrintDeleted}>
+                                    Cetak yang terhapus
+                                 </Checkbox>
+                                 <Checkbox
+                                    size='sm'
+                                    radius='full'
                                     isSelected={keluaranSub}
                                     onValueChange={setKeluaranSub}>
                                     Indikator Sub Kegiatan
@@ -377,14 +387,14 @@ export default function RinciBl({
                            color='secondary'
                            key={'export'}
                            onPress={handleExportExcel}
-                           endContent={<Download className='size-5' />}>
+                           endContent={<XlsxIcon className='size-5' />}>
                            Export Excel
                         </DropdownItem>
                         <DropdownItem
                            color='success'
                            key={'export-all'}
                            onPress={handleExporAllSub}
-                           endContent={<Download className='size-5' />}>
+                           endContent={<ExcelIcon className='size-5' />}>
                            Export Semua
                         </DropdownItem>
                      </DropdownMenu>
@@ -433,11 +443,17 @@ export default function RinciBl({
 
                      {isPerubahan ? (
                         <>
-                           <RkpaRinciBl rincian={data?.rincian} />
+                           <RkpaRinciBl
+                              printDeleted={printDeleted}
+                              rincian={data?.rincian}
+                           />
                         </>
                      ) : (
                         <>
-                           <RkaRinciBl rincian={data?.rincian} />
+                           <RkaRinciBl
+                              printDeleted={printDeleted}
+                              rincian={data?.rincian}
+                           />
                         </>
                      )}
                      <TableKepalaSkpd

@@ -150,3 +150,34 @@ export function numberToColumn(number: number) {
    }
    return column
 }
+
+export const fontStyle = { name: 'Arial', size: 10 }
+
+export const numStyle: Partial<Excel.Style> = {
+   alignment: {
+      vertical: 'middle',
+      horizontal: 'right',
+      wrapText: false,
+      shrinkToFit: true,
+      indent: 0.1,
+   },
+   font: fontStyle,
+   numFmt: '#,##0;[Red](#,##0);"-";@',
+}
+
+export const textStyle: Partial<Excel.Style> = {
+   alignment: {
+      vertical: 'middle',
+      horizontal: 'left',
+      wrapText: true,
+      shrinkToFit: false,
+      indent: 0.1,
+   },
+   font: fontStyle,
+   numFmt: '@',
+}
+
+export const percentStyle: Partial<Excel.Style> = {
+   ...numStyle,
+   numFmt: '0%;-0%;"-";@',
+}

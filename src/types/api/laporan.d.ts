@@ -152,6 +152,7 @@ interface _ItemRincianLaporanBlSubGiat {
    satuan_murni?: string[]
    nilai_rak: number
    nilai_realisasi: number
+   is_deleted: boolean
 }
 
 interface _ItemLaporanRkaSKpd {
@@ -277,9 +278,13 @@ export interface RekapanSumberDana {
       total_harga: number
       pagu: number
       pagu_murni: number
+      nilai_rak: number
+      nilai_realisasi: number
       belanja: {
          total_harga: number
          total_harga_murni: number
+         nilai_rak: number
+         nilai_realisasi: number
          id_dana: number
          nama_dana: string
          pagu: number

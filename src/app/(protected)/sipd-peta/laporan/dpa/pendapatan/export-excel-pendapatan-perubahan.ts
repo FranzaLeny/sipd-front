@@ -1,5 +1,12 @@
 import manifest from '@constants/tpd.json'
-import { borderAll, calcRowHeight, capitalizeFirstLetter, createExcelData } from '@utils/excel'
+import {
+   borderAll,
+   calcRowHeight,
+   capitalizeFirstLetter,
+   createExcelData,
+   numStyle,
+   textStyle,
+} from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 
@@ -47,103 +54,24 @@ interface RincianPergeseran {
 }
 
 function formatDefaultRka(ws: Excel.Worksheet) {
-   const style: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'left',
-         wrapText: false,
-         shrinkToFit: true,
-         indent: 0.1,
-      },
-      font: { name: 'Arial', size: 10 },
-      numFmt: '#,##0;[Red]-#,##0',
-   }
    ws.columns = [
-      { key: 'kd_1', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_2', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_3', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_4', width: 5, style: { ...style, numFmt: '@' } },
-      { key: 'kd_5', width: 5, style: { ...style, numFmt: '@' } },
-      { key: 'kd_6', width: 5, style: { ...style, numFmt: '@' } },
-      {
-         key: 'uraian',
-         width: 30.71,
-         style: {
-            ...style,
-            numFmt: '@',
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-         },
-      },
-      {
-         key: 'vol',
-         width: 7.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'sat',
-         width: 7.71,
-         style: {
-            ...style,
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-            numFmt: '@',
-         },
-      },
-      {
-         key: 'koef',
-         width: 7.71,
-         style: {
-            ...style,
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-            numFmt: '@',
-         },
-      },
-      {
-         key: 'jumlah',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'uraian_p',
-         width: 30.71,
-         style: {
-            ...style,
-            numFmt: '@',
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-         },
-      },
-      {
-         key: 'vol_p',
-         width: 7.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'sat_p',
-         width: 7.71,
-         style: {
-            ...style,
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-            numFmt: '@',
-         },
-      },
-      {
-         key: 'koef_p',
-         width: 7.71,
-         style: {
-            ...style,
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-            numFmt: '@',
-         },
-      },
-      {
-         key: 'jumlah_p',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'selisih',
-         width: 11.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
+      { key: 'kd_1', width: 4, style: textStyle },
+      { key: 'kd_2', width: 4, style: textStyle },
+      { key: 'kd_3', width: 4, style: textStyle },
+      { key: 'kd_4', width: 5, style: textStyle },
+      { key: 'kd_5', width: 5, style: textStyle },
+      { key: 'kd_6', width: 5, style: textStyle },
+      { key: 'uraian', width: 30.71, style: numStyle },
+      { key: 'vol', width: 7.71, style: numStyle },
+      { key: 'sat', width: 7.71, style: textStyle },
+      { key: 'koef', width: 7.71, style: textStyle },
+      { key: 'jumlah', width: 11, style: numStyle },
+      { key: 'uraian_p', width: 30.71, style: numStyle },
+      { key: 'vol_p', width: 7.71, style: numStyle },
+      { key: 'sat_p', width: 7.71, style: textStyle },
+      { key: 'koef_p', width: 7.71, style: textStyle },
+      { key: 'jumlah_p', width: 11, style: numStyle },
+      { key: 'selisih', width: 11.71, style: numStyle },
    ]
    ws.views = [{ showGridLines: false }]
 }
@@ -547,7 +475,7 @@ function fillRak({
                ...style,
                font: { ...style.font, bold: i === 13 },
                alignment: { vertical: 'middle', horizontal: 'right' },
-               numFmt: '#,##0;[Red]-#,##0',
+               numFmt: '#,##0;[Red]-#,##0;"-";@',
             })
          i === 13 &&
             col === 1 &&

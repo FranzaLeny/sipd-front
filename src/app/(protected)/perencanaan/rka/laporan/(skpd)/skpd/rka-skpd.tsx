@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ExcelIcon } from '@components/icons/excel'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import {
@@ -181,7 +182,7 @@ export default function RkaSkpd({
                      color='secondary'
                      key={'export'}
                      onPress={handleExport}
-                     endContent={<Download className='size-5' />}>
+                     endContent={<ExcelIcon className='size-5' />}>
                      Export Excel
                   </DropdownItem>
                </DropdownMenu>

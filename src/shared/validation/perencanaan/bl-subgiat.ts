@@ -63,6 +63,7 @@ export const BlSubGiatSchema = z.object({
       .string()
       .transform((v) => (v === '' ? null : v))
       .nullish(),
+   kode_sbl: z.string(),
    kode_giat: z.string(),
    kode_program: z.string(),
    kode_skpd: z.string(),
@@ -262,6 +263,7 @@ export const BlSubGiatUncheckedCreateInputSchema = z
          .optional()
          .nullable()
          .transform((v) => (v === '' ? null : v)),
+      kode_sbl: z.string(),
       kode_giat: z.string(),
       kode_program: z.string(),
       kode_skpd: z.string(),
@@ -379,7 +381,10 @@ export const BlSubGiatUncheckedCreateInputSchema = z
       rkpd_murni: z.number(),
       rkpd_pak: z.number(),
       set_pagu_at: z
-         .string()
+         .union([
+            z.number().transform((v) => (v === 0 ? null : new Date(v).toUTCString())),
+            z.string(),
+         ])
          .optional()
          .nullable()
          .transform((v) => (v === '' ? null : v)),
@@ -554,7 +559,11 @@ export const BlSubGiatAktifUncheckedCreateInputSchema = z
       pagu_giat: z.number(),
       pagu_indikatif: z.number(),
       set_pagu_at: z
-         .string()
+         .union([
+            z.number().transform((v) => (v === 0 ? null : new Date(v).toUTCString())),
+            z.string(),
+         ])
+         .nullish()
          .optional()
          .nullable()
          .transform((v) => (v === '' ? null : v)),
@@ -1956,6 +1965,7 @@ export const SubGiatPayloadSchema = z
          })
          .strip(),
       id_bl: z.coerce.number(),
+      kode_sbl: z.coerce.string(),
       id_sub_giat: z.coerce.number().optional(),
       id_unit: z.coerce.number().optional(),
       id_giat: z.coerce.number().optional(),

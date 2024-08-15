@@ -1,36 +1,10 @@
 import { RealisasiSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
+import { numStyle, percentStyle, textStyle } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 import { groupBy, sumBy } from 'lodash-es'
 
 function formatDefaultRka(ws: Excel.Worksheet) {
-   const font = { name: 'Arial', size: 10 }
-   const textStyle: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'left',
-         wrapText: true,
-         shrinkToFit: false,
-         indent: 0.1,
-      },
-      font,
-      numFmt: '@',
-   }
-   const numStyle: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'right',
-         wrapText: false,
-         shrinkToFit: true,
-         indent: 0.1,
-      },
-      font,
-      numFmt: '#,##0;[Red]-#,##0',
-   }
-   const percentStyle: Partial<Excel.Style> = {
-      ...numStyle,
-      numFmt: '0%',
-   }
    ws.columns = [
       { key: 'kd_1', width: 2.29, style: textStyle },
       { key: 'kd_2', width: 2.29, style: textStyle },
@@ -38,46 +12,15 @@ function formatDefaultRka(ws: Excel.Worksheet) {
       { key: 'kd_4', width: 3.29, style: textStyle },
       { key: 'kd_5', width: 3.29, style: textStyle },
       { key: 'kd_6', width: 5.29, style: textStyle },
-      {
-         key: 'uraian',
-         width: 30.71,
-         style: textStyle,
-      },
-      {
-         key: 'volume',
-         width: 9.71,
-         style: numStyle,
-      },
-      {
-         key: 'harga',
-         width: 11.71,
-         style: numStyle,
-      },
-      {
-         key: 'satuan',
-         width: 10.71,
-         style: textStyle,
-      },
-      {
-         key: 'pajak',
-         style: percentStyle,
-         width: 5.71,
-      },
-      {
-         key: 'jumlah',
-         style: numStyle,
-         width: 11.71,
-      },
+      { key: 'uraian', width: 30.71, style: textStyle },
+      { key: 'volume', width: 9.71, style: numStyle },
+      { key: 'harga', width: 11.71, style: numStyle },
+      { key: 'satuan', width: 10.71, style: textStyle },
+      { key: 'pajak', style: percentStyle, width: 5.71 },
+      { key: 'jumlah', style: numStyle, width: 11.71 },
    ]
    ws.views = [{ showGridLines: false }]
 }
-
-// const groupData = (data: RealisasiSubGiat[]) => {
-//    const groupProgram = groupBy(data, 'id_program')
-//    const groupGiat = Object.values(groupProgram)?.map((program) =>
-//       Object.values(groupBy(program, 'id_kegiatan'))
-//    )
-// }
 
 const dowloadExcel = async (data: RealisasiSubGiat[]) => {
    const wb = new Excel.Workbook()

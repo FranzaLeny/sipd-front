@@ -63,6 +63,12 @@
    .border-print {
       @apply border-collapse border border-divider print:border-black;
    }
+   .pagu-skpd th {
+      @apply rounded-t-small border px-3 pb-0.5 font-normal pt-2 border-success even:border-warning;
+   }
+   .pagu-skpd td {
+      @apply rounded-b-small border-x border-b px-3 pb-2 pt-0.5 text-center border-success even:border-warning;
+   }
 }
 
 @media print {

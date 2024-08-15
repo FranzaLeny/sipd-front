@@ -34,3 +34,18 @@ export const getDaerah = async <T extends boolean = false>({
       .get<ResponseApi<T extends false ? KabKota : Provinsi>>(url)
       .then((res) => res.data)
 }
+
+export const getAuthDaerah = async () => {
+   return await axios
+      .get<
+         ResponseApi<
+            {
+               id_daerah: number
+               id_prop: number
+               id_kab_kota: number
+               nama_daerah: string
+            }[]
+         >
+      >('/api/auth/daerah')
+      .then((res) => res.data)
+}

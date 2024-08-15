@@ -1,11 +1,14 @@
 'use client'
 
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import Link from 'next/link'
+import { getBlSkpdByIdSkpd } from '@actions/perencanaan/rka/bl-skpd'
 import { JadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import { JadwalAnggaranSearchParams } from '@components/perencanaan/jadwal-anggaran'
 import { HelperColumns } from '@components/table'
 import {
+   Accordion,
+   AccordionItem,
    Button,
    Dropdown,
    DropdownItem,
@@ -14,6 +17,7 @@ import {
    DropdownTrigger,
    Snippet,
 } from '@nextui-org/react'
+import { useQuery } from '@tanstack/react-query'
 import hasAccess from '@utils/chek-roles'
 import { sumBy } from 'lodash-es'
 import { MoreVertical, Printer } from 'lucide-react'
@@ -28,6 +32,8 @@ interface Data {
    id_unit: number
    bl_sub_giat: Blsubgiat[]
    nama_giat: string
+   kode_program: string
+   kode_giat: string
    kode_sub_giat: string
    nama_program: string
    nama_sub_giat: string
@@ -41,6 +47,7 @@ interface Blsubgiat {
    id: string
    dana_bl_sub_giat: Danablsubgiat[]
    rinci_bl_sub_giat: Rinciblsubgiat[]
+   bl_sub_giat_murni: { pagu: number }
 }
 
 interface Rinciblsubgiat {
@@ -52,8 +59,8 @@ interface Danablsubgiat {
    pagu_dana: number
 }
 
-const getNamaSub = (data: Data) => {
-   return `${data.kode_sub_giat} ${data.nama_sub_giat}`
+const generateName = (data: Data, key1: keyof Data, key2: keyof Data) => {
+   return `${data[key1]} ${data.nama_sub_giat}`
 }
 
 function generateRupiah(nilai?: number | null) {
@@ -63,17 +70,23 @@ function generateRupiah(nilai?: number | null) {
    })
 
    return (
-      <Snippet
-         classNames={{ pre: 'font-sans flex justify-between w-full whitespace-nowrap' }}
-         radius='none'
-         variant='flat'
-         className='w-full bg-transparent  p-0'
-         symbol='Rp'
-         tooltipProps={{ content: 'Salin' }}
-         hideCopyButton={typeof nilai !== 'number'}
-         codeString={nilai ? String(nilai) : '0'}>
-         <span className='text-right'>{nilaiFormatted}</span>
-      </Snippet>
+      <>
+         <Snippet
+            classNames={{
+               pre: 'font-sans text-right flex justify-end w-full whitespace-nowrap',
+               content: 'text-right',
+               copyButton: 'min-w-6 h-7 w-6',
+            }}
+            radius='none'
+            variant='flat'
+            className='w-full gap-0 bg-transparent p-0'
+            hideSymbol
+            tooltipProps={{ content: 'Salin' }}
+            hideCopyButton={typeof nilai !== 'number'}
+            codeString={nilai ? String(nilai) : '0'}>
+            <span className='text-right'>{nilaiFormatted}</span>
+         </Snippet>
+      </>
    )
 }
 
@@ -98,29 +111,17 @@ export default function rowActions(data: Data) {
             disabledKeys={disabledKeys}>
             <DropdownSection title='Sub Kegiatan'>
                <DropdownItem
-                  as={Link}
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`sub-giat/${id}`}
                   key='detail'>
                   Lihat Detail
                </DropdownItem>
                <DropdownItem
                   key='edit'
-                  as={Link}
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`sub-giat/${id}/edit`}>
                   Ubah
                </DropdownItem>
                <DropdownItem
                   key='delete'
-                  as={Link}
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`sub-giat/${id}/delete`}
                   className='text-danger'
                   color='danger'>
@@ -129,29 +130,17 @@ export default function rowActions(data: Data) {
             </DropdownSection>
             <DropdownSection title='Rincian Sub Kegiatan'>
                <DropdownItem
-                  as={Link}
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`rinci?id=${id}`}
                   key='rinci'>
                   Rincian RKA
                </DropdownItem>
                <DropdownItem
-                  as={Link}
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`laporan/rinci-bl?id=${id}`}
                   key='laporan'>
                   Laporan
                </DropdownItem>
                <DropdownItem
                   key='sync'
-                  as={Link}
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`/sipd-ri/sync/rka/sub-giat/rinci?subGiat=${id}`}
                   className='text-danger'
                   color='danger'>
@@ -159,10 +148,6 @@ export default function rowActions(data: Data) {
                </DropdownItem>
                <DropdownItem
                   key='copy'
-                  as={Link}
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`sub-giat/${id}/copy/rinci`}
                   className='text-danger'
                   color='danger'>
@@ -174,24 +159,30 @@ export default function rowActions(data: Data) {
    )
 }
 
-export const helperColumnsPergeseran: HelperColumns<Data> = {
-   nama: {
+const helperColumns1: HelperColumns<Data> = {
+   kode_program: {
+      key: 'kode_program',
+      renderCell: (data) => generateName(data, 'kode_program', 'nama_program'),
+      name: 'Program',
+      sortable: true,
+      hide: true,
+   },
+   kode_giat: {
+      key: 'kode_giat',
+      renderCell: (data) => generateName(data, 'kode_giat', 'nama_giat'),
+      name: 'Kegiatan',
+      sortable: true,
+      hide: true,
+   },
+   kode_sub_giat: {
       key: 'kode_sub_giat',
-      renderCell: getNamaSub,
-      name: 'Nama Sub Kegiatan',
-      cellProps: { className: 'w-1/2' },
+      renderCell: (data) => generateName(data, 'kode_sub_giat', 'nama_sub_giat'),
+      name: 'Sub Kegiatan',
       sortable: true,
    },
-   pagu_murni: {
-      key: 'pagu_murni',
-      name: 'Sebelum Perubahan',
-      headerProps: {
-         align: 'end',
-         className: 'text-center',
-      },
-      cell: generateRupiah,
-      sortable: true,
-   },
+}
+
+const helperColumns2: HelperColumns<Data> = {
    pagu: {
       key: 'pagu',
       name: 'Pagu',
@@ -242,50 +233,34 @@ export const helperColumnsPergeseran: HelperColumns<Data> = {
       renderCell: rowActions,
    },
 }
+
+export const helperColumnsPergeseran: HelperColumns<Data> = {
+   ...helperColumns1,
+   pagu_sebelum: {
+      key: 'pagu_murni',
+      name: 'Murni',
+      headerProps: {
+         align: 'end',
+         className: 'text-center',
+      },
+      renderCell: (data) => generateRupiah(data?.bl_sub_giat[0]?.bl_sub_giat_murni?.pagu ?? 0),
+      sortable: true,
+   },
+   pagu_murni: {
+      key: 'pagu_murni',
+      name: 'Sebelum Perubahan',
+      headerProps: {
+         align: 'end',
+         className: 'text-center',
+      },
+      cell: generateRupiah,
+      sortable: true,
+   },
+   ...helperColumns2,
+}
 export const helperColumns: HelperColumns<Data> = {
-   nama: {
-      key: 'kode_sub_giat',
-      renderCell: getNamaSub,
-      name: 'Nama Sub Kegiatan',
-      sortable: true,
-   },
-   pagu: {
-      key: 'pagu',
-      name: 'Pagu',
-      cellProps: { className: 'p-0' },
-      cell: generateRupiah,
-      sortable: true,
-   },
-   dana: {
-      key: 'id',
-      name: 'Sumber Dana',
-      cellProps: { className: 'p-0' },
-      hide: true,
-      renderCell: (d) =>
-         d.bl_sub_giat[0]?.dana_bl_sub_giat
-            ?.map((d) => d.nama_dana + ' ' + d.pagu_dana?.toLocaleString())
-            ?.join(','),
-      sortable: false,
-   },
-   pagu_indikatif: {
-      key: 'pagu_indikatif',
-      name: 'Pagu Validasi',
-      cellProps: { className: 'p-0' },
-      cell: generateRupiah,
-      sortable: true,
-   },
-   pagu_rinci: {
-      key: 'bl_sub_giat',
-      name: 'Pagu Rincian',
-      cellProps: { className: 'p-0' },
-      renderCell: (d) => generateRupiah(sumBy(d.bl_sub_giat[0]?.rinci_bl_sub_giat, 'total_harga')),
-   },
-   aksi: {
-      key: 'id_sub_giat',
-      name: 'Aksi',
-      cellProps: { className: 'p-0' },
-      renderCell: rowActions,
-   },
+   ...helperColumns1,
+   ...helperColumns2,
 }
 
 export const ActionTableSubGiat: React.FC<{
@@ -335,17 +310,10 @@ export const ActionTableSubGiat: React.FC<{
                aria-label='Static Actions'>
                <DropdownItem
                   key='cetak_rekapan'
-                  as={Link}
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`laporan/rekap-bl?${paramsFromObject.toString()}`}>
                   Cetak Rekapan Belanja
                </DropdownItem>
                <DropdownItem
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`laporan/pendapatan?${paramsFromObject.toString()}`}
                   color='secondary'
                   key='cetak_pendapatan'>
@@ -353,9 +321,6 @@ export const ActionTableSubGiat: React.FC<{
                </DropdownItem>
                <DropdownItem
                   color='primary'
-                  // @ts-expect-error
-                  prefetch={false}
-                  scroll={false}
                   href={`laporan/skpd?${paramsFromObject.toString()}`}
                   key='cetak_ringkasan'>
                   Cetak Ringkasan SKPD
@@ -368,5 +333,53 @@ export const ActionTableSubGiat: React.FC<{
             </DropdownMenu>
          </Dropdown>
       </>
+   )
+}
+export function PaguSkpd(params: { id_skpd: number; jadwal_anggaran_id: string }) {
+   const { data, isFetching } = useQuery({
+      queryKey: [params, 'bl_skpd', 'bl_sub_giat', 'bl_sub_giat_rinci'] as [
+         typeof params,
+         ...string[],
+      ],
+      queryFn: ({ queryKey: [query] }) => getBlSkpdByIdSkpd(query),
+   })
+
+   return (
+      <div className='content sticky inset-x-0 pb-3'>
+         <Accordion
+            itemClasses={{ trigger: 'py-2' }}
+            defaultExpandedKeys={['skpd']}
+            isCompact
+            variant='shadow'>
+            <AccordionItem
+               classNames={{
+                  trigger: 'py-2',
+                  title: 'truncate font-semibold',
+                  content: 'max-w-full overflow-auto pb-3 flex items-center justify-center',
+               }}
+               key='skpd'
+               aria-label='Pagu SKPD'
+               title={data?.nama_skpd ?? 'SKPD'}>
+               <table className='pagu-skpd border-separate border-spacing-x-2'>
+                  <thead>
+                     <tr>
+                        <th>Batasan Pagu</th>
+                        <th>Pagu Validasai</th>
+                        <th>Pagu Rincian</th>
+                        <th>Realisasi</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>{isFetching ? '...' : generateRupiah(data?.set_pagu_skpd)}</td>
+                        <td>{isFetching ? '...' : generateRupiah(data?.set_pagu_giat)}</td>
+                        <td>{isFetching ? '...' : generateRupiah(data?.rinci_giat)}</td>
+                        <td>{isFetching ? '...' : generateRupiah(data?.realisasi)}</td>
+                     </tr>
+                  </tbody>
+               </table>
+            </AccordionItem>
+         </Accordion>
+      </div>
    )
 }

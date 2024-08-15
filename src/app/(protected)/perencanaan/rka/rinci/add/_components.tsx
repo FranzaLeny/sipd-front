@@ -253,12 +253,17 @@ function watchValue(watch: UseFormWatch<Schema>) {
 }
 
 const ModalAddRincian = ({ data }: { data: BlSubGiat; user?: UserWithoutToken }) => {
-   const { isOpen, onOpenChange, onOpen } = useDisclosure()
+   const {
+      isOpen: keIsOpen,
+      onOpenChange: ketOpenChange,
+      onOpen: openKet,
+   } = useDisclosure({ defaultOpen: false, id: 'keterangan' })
    const [objBelanja, setObjBelanja] = useState<ObjectBl>()
    const [akun, setAkun] = useState<Akun>()
    const [tipeKomponen, setTipeKomponen] = useState<KelompokStandarHarga>()
    const [standarHarga, setStandarHarga] = useState<StandarHarga>()
    const [volumes, setVolumes] = useState<(string | number | null)[][]>()
+
    const router = useRouter()
    const form = useForm<Schema>({
       resetOptions: { keepDirty: false, keepDefaultValues: false },
@@ -370,17 +375,19 @@ const ModalAddRincian = ({ data }: { data: BlSubGiat; user?: UserWithoutToken })
    }
 
    const handleClose = useCallback(() => {
-      !isSubmitting && router.replace(`/perencanaan/rka/rinci?id=${data?.id}`)
-   }, [router, isSubmitting, data?.id])
+      // onClose()
+      !isSubmitting && router.back()
+   }, [router, isSubmitting])
    return (
       <DialogForm
          onClose={handleClose}
+         modalTitle='Tambah Rincian Belanja'
          submitButtonProps={{ isLoading: isSubmitting, form: 'form_add_rincian' }}
          size='2xl'>
          <>
             <ModalCreateKetRincian
-               isOpen={isOpen}
-               onOpenChange={onOpenChange}
+               isOpen={keIsOpen}
+               onOpenChange={ketOpenChange}
                defaultValue={data}
             />
             <TsForm
@@ -543,7 +550,7 @@ const ModalAddRincian = ({ data }: { data: BlSubGiat; user?: UserWithoutToken })
                                           variant='light'
                                           title='Tambah keterangan'
                                           endContent={<PlusCircle className='size-8' />}
-                                          onPress={onOpen}
+                                          onPress={openKet}
                                        />
                                     }
                                  />

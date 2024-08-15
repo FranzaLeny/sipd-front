@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo } from 'react'
 import Image from 'next/legacy/image'
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { NumberInput, PasswordInput, TextInput } from '@components/form/text-input'
 import { Card } from '@components/ui/card'
@@ -174,16 +173,14 @@ const FormLogin: React.FC<{
       <div className='pt-navbar flex w-full items-center justify-center pb-6'>
          <div className='w-11/12 space-y-2 md:w-1/2 lg:w-2/5'>
             <div className='relative mx-auto h-24 w-1/3 text-center'>
-               <Link href={'/'}>
-                  <Image
-                     objectFit='contain'
-                     src='/images/logo_kab_lembata.png'
-                     alt='logo'
-                     layout='fill'
-                     priority={false}
-                     loading='eager'
-                  />
-               </Link>
+               <Image
+                  objectFit='contain'
+                  src='/images/logo_kab_lembata.png'
+                  alt='logo'
+                  layout='fill'
+                  priority={false}
+                  loading='eager'
+               />
             </div>
 
             <Card className='p-4 sm:p-6'>

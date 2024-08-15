@@ -1,39 +1,19 @@
 import manifest from '@constants/tpd.json'
 import { numberToMonth } from '@utils'
-import { borderAll, calcRowHeight, createExcelData } from '@utils/excel'
+import {
+   borderAll,
+   calcRowHeight,
+   createExcelData,
+   numStyle,
+   percentStyle,
+   textStyle,
+} from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 
 import { LaporanRinciBl } from './rinci-bl'
 
 function formatDefaultRka(ws: Excel.Worksheet) {
-   const font = { name: 'Arial', size: 10 }
-   const textStyle: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'left',
-         wrapText: true,
-         shrinkToFit: false,
-         indent: 0.1,
-      },
-      font,
-      numFmt: '@',
-   }
-   const numStyle: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'right',
-         wrapText: false,
-         shrinkToFit: true,
-         indent: 0.1,
-      },
-      font,
-      numFmt: '#,##0;[Red]-#,##0',
-   }
-   const percentStyle: Partial<Excel.Style> = {
-      ...numStyle,
-      numFmt: '0%',
-   }
    ws.columns = [
       { key: 'kd_1', width: 2.29, style: textStyle },
       { key: 'kd_2', width: 2.29, style: textStyle },
@@ -41,46 +21,14 @@ function formatDefaultRka(ws: Excel.Worksheet) {
       { key: 'kd_4', width: 3.29, style: textStyle },
       { key: 'kd_5', width: 3.29, style: textStyle },
       { key: 'kd_6', width: 5.29, style: textStyle },
-      {
-         key: 'uraian',
-         width: 30.71,
-         style: textStyle,
-      },
-      {
-         key: 'volume',
-         width: 9.71,
-         style: numStyle,
-      },
-      {
-         key: 'harga',
-         width: 11.71,
-         style: numStyle,
-      },
-      {
-         key: 'satuan',
-         width: 10.71,
-         style: textStyle,
-      },
-      {
-         key: 'pajak',
-         style: percentStyle,
-         width: 5.71,
-      },
-      {
-         key: 'jumlah',
-         style: numStyle,
-         width: 11.71,
-      },
-      {
-         key: 'rak',
-         style: numStyle,
-         width: 11.71,
-      },
-      {
-         key: 'realisasi',
-         style: numStyle,
-         width: 11.71,
-      },
+      { key: 'uraian', width: 30.71, style: textStyle },
+      { key: 'volume', width: 9.71, style: numStyle },
+      { key: 'harga', width: 11.71, style: numStyle },
+      { key: 'satuan', width: 10.71, style: textStyle },
+      { key: 'pajak', style: percentStyle, width: 5.71 },
+      { key: 'jumlah', style: numStyle, width: 11.71 },
+      { key: 'rak', style: numStyle, width: 11.71 },
+      { key: 'realisasi', style: numStyle, width: 11.71 },
    ]
    ws.views = [{ showGridLines: false }]
 }
@@ -174,7 +122,7 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
    const isOdd = lastKodeGiat % 2 === 1
    const isEmptyData = items?.length === 1
    const ws = wb.addWorksheet(sheet_name?.substring(0, 30), {
-      properties: { tabColor: { argb: isEmptyData ? 'FFC0000' : isOdd ? '3FDFFF' : 'B3FFB3' } },
+      properties: { tabColor: { argb: isEmptyData ? '000000' : isOdd ? '3FDFFF' : 'B3FFB3' } },
    })
    const idUnikSbl = '_' + subGiat?.id_sub_bl + '.'
    formatDefaultRka(ws)
@@ -213,7 +161,7 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
                 : uraian
       const rek = rekening?.reduce((a, b, i) => ({ ...a, [i + 1]: i === 5 ? b : b + '.' }), {})
       const total = isRinci
-         ? `=H${currRow}*I${currRow}+H${currRow}*I${currRow}*K${currRow}`
+         ? `=ROUND(H${currRow}*I${currRow}+H${currRow}*I${currRow}*K${currRow},0)`
          : isTotal
            ? '=SUBTOTAL(9,L' + (starRow + 1) + ':L' + lastRow + ')'
            : generateSubTotal(group, index, nextRow)
@@ -517,7 +465,7 @@ function fillIndikatorKegiatan({
             const style = cell.style
             cell.style = {
                ...style,
-               numFmt: i === capaian?.length + 1 ? '#,##0;-#,##0' : '@',
+               numFmt: i === capaian?.length + 1 ? numStyle?.numFmt : textStyle?.numFmt,
                alignment: {
                   ...style.alignment,
                   horizontal: 'center',

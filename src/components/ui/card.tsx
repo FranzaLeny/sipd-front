@@ -23,7 +23,7 @@ Card.displayName = 'Card'
 const CardHeader = forwardRef<HTMLDivElement, HTMLNextUIProps>(({ className, ...props }, ref) => (
    <CardHeaderUi
       ref={ref}
-      className={cn('flex flex-col gap-1.5 p-3 md:p-6 ', className)}
+      className={cn('flex flex-col gap-1.5 p-3 md:px-6', className)}
       {...props}
    />
 ))

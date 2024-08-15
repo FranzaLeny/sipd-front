@@ -1,4 +1,4 @@
-import dynamic from 'next/dynamic'
+import dinamis from 'next/dynamic'
 import { getJadwalAnggaranAktif } from '@actions/perencanaan/rka/jadwal-anggaran'
 import { validateSipdSession } from '@actions/perencanaan/token-sipd'
 import Breadcrumb from '@components/ui/Breadcrumbs'
@@ -9,16 +9,16 @@ import { getServerSession } from '@shared/server-actions/auth'
 export const metadata = {
    title: 'Data RKA',
 }
-
-const CardDataKeterangan = dynamic(() => import('./_components/card-keterangan'), { ssr: false })
-const CardDataKelompok = dynamic(() => import('./_components/card-kelompok'), { ssr: false })
-const CardDataJadwal = dynamic(() => import('./_components/card-jadwal'), { ssr: false })
-const CardDataSkpd = dynamic(() => import('./_components/card-skpd'), { ssr: false })
-const CardDataPendapatan = dynamic(() => import('./_components/card-pendapatan'), { ssr: false })
-const CardDataSubGiatAktif = dynamic(() => import('./_components/card-sub-giat-aktif'), {
+export const dynamic = 'force-dynamic'
+const CardDataKeterangan = dinamis(() => import('./_components/card-keterangan'), { ssr: false })
+const CardDataKelompok = dinamis(() => import('./_components/card-kelompok'), { ssr: false })
+const CardDataJadwal = dinamis(() => import('./_components/card-jadwal'), { ssr: false })
+const CardDataSkpd = dinamis(() => import('./_components/card-skpd'), { ssr: false })
+const CardDataPendapatan = dinamis(() => import('./_components/card-pendapatan'), { ssr: false })
+const CardDataSubGiatAktif = dinamis(() => import('./_components/card-sub-giat-aktif'), {
    ssr: false,
 })
-const CardDataSubGiatRinci = dynamic(() => import('./_components/card-sub-giat-rinci'), {
+const CardDataSubGiatRinci = dinamis(() => import('./_components/card-sub-giat-rinci'), {
    ssr: false,
 })
 

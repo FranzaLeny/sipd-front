@@ -28,6 +28,7 @@ export default async function Page() {
    if (!skpd) {
       return <ErrorPage code={404} />
    }
+
    return (
       <div className='content z-10 pb-3'>
          <Template skpd={skpd} />

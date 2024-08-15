@@ -82,38 +82,22 @@ export default function rowActions(data: StandarHarga) {
             disabledKeys={disabledKeys}
             aria-label='Static Actions'>
             <DropdownItem
-               as={Link}
                href={`/sipd-ri/sync/data/standar-harga/${data.id}`}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='Singkron'>
                Maping Akun
             </DropdownItem>
             <DropdownItem
-               as={Link}
                href={`standar-harga/${data.id}`}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='view'>
                Lihat
             </DropdownItem>
             <DropdownItem
-               as={Link}
                href={`standar-harga/${data.id}/edit`}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='edit'>
                Ubah
             </DropdownItem>
             <DropdownItem
-               as={Link}
                href={`standar-harga/${data.id}/delete`}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='delete'>
                Hapus
             </DropdownItem>

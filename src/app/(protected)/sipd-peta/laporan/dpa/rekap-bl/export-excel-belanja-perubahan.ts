@@ -1,5 +1,12 @@
 import manifest from '@constants/tpd.json'
-import { borderAll, calcRowHeight, capitalizeFirstLetter, createExcelData } from '@utils/excel'
+import {
+   borderAll,
+   calcRowHeight,
+   capitalizeFirstLetter,
+   createExcelData,
+   numStyle,
+   textStyle,
+} from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 
@@ -53,115 +60,28 @@ interface RincianPergeseran {
 }
 
 function formatDefaultRka(ws: Excel.Worksheet) {
-   const style: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'left',
-         wrapText: false,
-         shrinkToFit: true,
-         indent: 0.1,
-      },
-      font: { name: 'Arial', size: 10 },
-      numFmt: '#,##0;[Red]-#,##0',
-   }
    ws.columns = [
-      { key: 'kd_u', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_bu', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_p', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_g', width: 5, style: { ...style, numFmt: '@' } },
-      { key: 'kd_sg', width: 5, style: { ...style, numFmt: '@' } },
-      {
-         key: 'uraian',
-         width: 30.71,
-         style: {
-            ...style,
-            numFmt: '@',
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-         },
-      },
-      {
-         key: 'dana',
-         width: 20.71,
-         style: {
-            ...style,
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-            numFmt: '@',
-         },
-      },
-      {
-         key: 'lokasi',
-         width: 20.71,
-         style: {
-            ...style,
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-            numFmt: '@',
-         },
-      },
-      {
-         key: '1_n',
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-         width: 11,
-      },
-      {
-         key: 'bo',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'bm',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'btt',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'bt',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'jumlah',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: '_bo',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: '_bm',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: '_btt',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: '_bt',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: '_jumlah',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'selisih',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'n_1',
-         width: 11,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
+      { key: 'kd_u', width: 4, style: textStyle },
+      { key: 'kd_bu', width: 4, style: textStyle },
+      { key: 'kd_p', width: 4, style: textStyle },
+      { key: 'kd_g', width: 5, style: textStyle },
+      { key: 'kd_sg', width: 5, style: textStyle },
+      { key: 'uraian', width: 30.71, style: textStyle },
+      { key: 'dana', width: 20.71, style: textStyle },
+      { key: 'lokasi', width: 20.71, style: textStyle },
+      { key: '1_n', style: numStyle, width: 11 },
+      { key: 'bo', width: 11, style: numStyle },
+      { key: 'bm', width: 11, style: numStyle },
+      { key: 'btt', width: 11, style: numStyle },
+      { key: 'bt', width: 11, style: numStyle },
+      { key: 'jumlah', width: 11, style: numStyle },
+      { key: '_bo', width: 11, style: numStyle },
+      { key: '_bm', width: 11, style: numStyle },
+      { key: '_btt', width: 11, style: numStyle },
+      { key: '_bt', width: 11, style: numStyle },
+      { key: '_jumlah', width: 11, style: numStyle },
+      { key: 'selisih', width: 11, style: numStyle },
+      { key: 'n_1', width: 11, style: numStyle },
    ]
    ws.views = [{ showGridLines: false }]
 }
@@ -554,7 +474,7 @@ function fillRak({
                ...style,
                font: { ...style.font, bold: i === 13 },
                alignment: { vertical: 'middle', horizontal: 'right' },
-               numFmt: '#,##0;[Red]-#,##0',
+               numFmt: '#,##0;[Red]-#,##0;"-";@',
             })
          i === 13 &&
             col === 1 &&

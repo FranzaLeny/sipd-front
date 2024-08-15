@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ExcelIcon } from '@components/icons/excel'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import TableCatatanRka from '@components/perencanaan/table-catatan-rka'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
@@ -209,7 +210,7 @@ export default function RkaRekapBl({
                      color='secondary'
                      key={'export'}
                      onPress={handleExport}
-                     endContent={<Download className='size-5' />}>
+                     endContent={<ExcelIcon className='size-5' />}>
                      Export Excel
                   </DropdownItem>
                </DropdownMenu>

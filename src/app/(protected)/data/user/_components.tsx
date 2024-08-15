@@ -70,28 +70,16 @@ export default function rowActions(id: string, user?: { id: string; roles: RoleU
             // disabledKeys={disabledKeys}
          >
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`user/${id}`}
                key='view'>
                Lihat
             </DropdownItem>
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`user/${id}/edit`}
                key='edit'>
                Ubah
             </DropdownItem>
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`user/${id}/delete`}
                key='delete'>
                Hapus

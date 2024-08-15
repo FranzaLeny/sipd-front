@@ -8,12 +8,14 @@ import { toast } from 'react-toastify'
 const ModalAddAccount = ({ params: { id } }: { params: { id: string } }) => {
    const action = useCallback(async () => {
       try {
-         await addUserByAkunSipdRi({ id_user_sipd: id }).then((res) => {
+         await addUserByAkunSipdRi(id).then((res) => {
             toast(res.message, { type: res?.success ? 'success' : 'error' })
          })
 
          return true
       } catch (error: any) {
+         console.log({ error })
+
          toast.error(error?.message || 'Gagal singkron data akun')
          toast.done('singkron_data')
          return false

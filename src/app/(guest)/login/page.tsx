@@ -1,18 +1,10 @@
-import { getDaerahLogin } from '@shared/server-actions/auth-api'
+import { getAuthDaerah } from '@actions/data/lokasi'
 
 import FormLogin from './form'
 
-interface PageProps {
-   searchParams: SearchParams
-}
-
-interface SearchParams {
-   callbackUrl?: string
-   error?: string
-}
-
-const Page = async (props: PageProps) => {
-   const listDaerah = await getDaerahLogin().catch((e) => {
+export const dynamic = 'force-dynamic'
+const Page = async () => {
+   const listDaerah = await getAuthDaerah().catch((e) => {
       console.log(e)
 
       return []

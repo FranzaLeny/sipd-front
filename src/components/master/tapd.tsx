@@ -224,27 +224,36 @@ const ModalUser = ({
 }) => {
    return (
       <Modal
-         className={cn(['my-1 sm:my-1', 'mx-1 sm:mx-1'])}
+         className={cn(['bg-transparent'])}
+         classNames={{ base: 'shadow-none' }}
          hideCloseButton
-         shadow='sm'
-         isOpen={isOpen}
          radius='lg'
-         placement={'center'}
+         isOpen={isOpen}
+         placement={'top'}
          onOpenChange={onOpenChange}>
          <ModalContent>
-            <ModalBody className={cn(['px-1', 'py-1 transition-all'])}>
-               {isOpen && (
-                  <UserSipdPerencanaanSelector
-                     label='Pilih User SIPD'
-                     placeholder='Cari ...'
-                     params={{ id_daerah: idDaerah }}
-                     autoFocus
-                     size='lg'
-                     onClose={onClose}
-                     radius='lg'
-                     onChange={onUserSelect}
-                  />
-               )}
+            <ModalBody className={cn(['bg-content1 max-w-full overflow-x-hidden p-1'])}>
+               <UserSipdPerencanaanSelector
+                  label='Pilih User SIPD'
+                  placeholder='Cari ...'
+                  allowsEmptyCollection={false}
+                  menuTrigger='input'
+                  disableAnimation={true}
+                  scrollShadowProps={{
+                     isEnabled: false,
+                     hideScrollBar: false,
+                  }}
+                  popoverProps={{
+                     defaultOpen: false,
+                     disableAnimation: true,
+                  }}
+                  params={{ id_daerah: idDaerah }}
+                  autoFocus
+                  size='lg'
+                  onClose={onClose}
+                  radius='lg'
+                  onChange={onUserSelect}
+               />
             </ModalBody>
          </ModalContent>
       </Modal>
@@ -529,8 +538,7 @@ export const FormAnggotaTapd = ({
                )}
             </CardFooter>
          </Card>
-
-         {!!isReadOnly && (
+         {!isReadOnly && (
             <ModalUser
                idDaerah={session?.user?.id_daerah}
                onClose={onClose}

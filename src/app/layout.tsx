@@ -43,11 +43,11 @@ const RootLayout = async ({ children, modal }: RootLayoutProps) => {
                <Providers
                   className='bg-background text-foreground group/layout relative mx-auto flex h-dvh min-h-dvh justify-center overflow-hidden antialiased transition-all duration-200 2xl:data-[sidebar-open=false]:max-w-[1600px] 2xl:data-[sidebar-open=true]:max-w-[calc(1536px+var(--sidebar-width))]'
                   themeProps={{ attribute: 'class', defaultTheme: 'system' }}>
-                  {modal}
                   <Sidebar />
                   <div className='relative z-0 mx-auto flex max-h-full w-full max-w-[1600] flex-1 flex-col overflow-auto'>
                      <Navbar />
                      {children}
+                     {modal}
                   </div>
                </Providers>
             </body>

@@ -53,9 +53,6 @@ export default function ParamSelector({
       },
       [defaultJadwal, defaultSkpd, defaultTahun, defaultUnit, pathname, router]
    )
-   const handleListJadwalChange = useCallback(() => {
-      router.replace(pathname, { scroll: false })
-   }, [pathname, router])
 
    return (
       <div className='content sticky left-0 '>
@@ -73,7 +70,6 @@ export default function ParamSelector({
             <JadwalInput
                selectedKey={defaultJadwal}
                onSelectionChange={(jadwal_anggara_id) => handleParamsChange({ jadwal_anggara_id })}
-               onListJadwalChange={handleListJadwalChange}
                label={`Pilih Jadwal ${isPendapatan ? 'Pendapatan' : 'Rincian Belanja'}`}
                isInvalid={!defaultJadwal}
                params={{

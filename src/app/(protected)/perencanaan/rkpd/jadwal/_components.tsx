@@ -118,10 +118,6 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
             className='w-fit min-w-0'
             aria-label='Static Actions'>
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='copy'
                color='success'
                endContent={<Copy className='size-4' />}
@@ -130,10 +126,6 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
             </DropdownItem>
             <DropdownItem
                key='edit'
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`/perencanaan/rka/jadwal/${id}/edit`}
                color='warning'
                endContent={<Edit className='size-4' />}>
@@ -142,10 +134,6 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
             <DropdownItem
                key='delete'
                className='text-danger'
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`/perencanaan/rka/jadwal/${id}/delete`}
                endContent={<Trash className='size-4' />}
                color='danger'>

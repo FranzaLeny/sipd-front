@@ -18,10 +18,12 @@ import {
 
 type DialogFormProps = Omit<Omit<ModalProps, 'isOpen'>, 'onCflose'> & {
    headerProps?: ModalHeaderProps
+   isOpen?: boolean
    children?: React.ReactNode
    contentProps?: Omit<ModalBodyProps, 'children'>
    submitButtonProps?: ButtonProps
    cancelButtonProps?: ButtonProps
+   modalTitle?: string
 }
 export default function DialogForm({
    children,
@@ -29,6 +31,7 @@ export default function DialogForm({
    headerProps,
    submitButtonProps,
    cancelButtonProps,
+   modalTitle,
    ...props
 }: DialogFormProps) {
    const [isOpen, setIsOpen] = useState(false)
@@ -41,18 +44,18 @@ export default function DialogForm({
    }, [])
 
    const sumbitChildren = submitButtonProps?.children ?? 'Simpan'
-   const cancleChildren = cancelButtonProps?.children ?? 'Kembali'
-   const headerChildren = headerProps?.children ?? 'Judul'
+   const cancleChildren = cancelButtonProps?.children ?? 'Batal'
+   const headerChildren = headerProps?.children ?? modalTitle ?? 'Judul'
    return (
       <Modal
+         isOpen={isOpen}
          {...props}
          scrollBehavior={'inside'}
          placement={'center'}
          classNames={{
             wrapper: 'p-2',
             base: cn('max-h-full', 'my-0 sm:my-0', 'mx-0 sm:mx-0'),
-         }}
-         isOpen={isOpen}>
+         }}>
          <ModalContent>
             {(onClose) => (
                <>
@@ -70,11 +73,13 @@ export default function DialogForm({
                         color='danger'
                         isDisabled={submitButtonProps?.isLoading}
                         onPress={onClose}
+                        title='Batal'
                         {...cancelButtonProps}>
                         {cancleChildren}
                      </Button>
                      <Button
                         type='submit'
+                        title='Simpan'
                         {...submitButtonProps}
                         color='primary'>
                         {sumbitChildren}

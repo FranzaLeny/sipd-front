@@ -58,29 +58,17 @@ export default function rowActions(id: string) {
          </DropdownTrigger>
          <DropdownMenu aria-label='Actions'>
             <DropdownItem
-               as={Link}
                href={`tahapan/${id}`}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='view'>
                Lihat
             </DropdownItem>
             <DropdownItem
-               as={Link}
                href={`tahapan/${id}/edit`}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='edit'>
                Ubah
             </DropdownItem>
             <DropdownItem
-               as={Link}
                href={`tahapan/${id}/delete`}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='delete'>
                Hapus
             </DropdownItem>

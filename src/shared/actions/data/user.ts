@@ -11,8 +11,8 @@ async function getUser(id: string) {
    return await axios.get<ResponseApi<IUser>>(`/api/master/user/${id}`)
 }
 
-async function addUserByAkunSipdRi(params: { id_user_sipd: string }) {
-   return await axios.post<ResponseApi<IUser>>(`/api/master/user`, {}, { params })
+async function addUserByAkunSipdRi(idUserSipd: string) {
+   return await axios.post<ResponseApi<IUser>>(`/api/master/user/${idUserSipd}`, {})
 }
 async function deleteUser(id: string) {
    return await axios.delete<ResponseApi<IUser>>(`/api/master/user/${id}`)

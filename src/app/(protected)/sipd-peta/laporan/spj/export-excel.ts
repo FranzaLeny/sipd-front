@@ -1,6 +1,6 @@
 import { SpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
 import { SumberDanaAkunRinciSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
-import { borderAll, createExcelData } from '@utils/excel'
+import { borderAll, createExcelData, numStyle, textStyle } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 import { sortBy } from 'lodash-es'
@@ -91,192 +91,37 @@ const dowloadExcelSpjFungsional = async (dpaRician: Params) => {
 export default dowloadExcelSpjFungsional
 
 function formatDefaultRka(ws: Excel.Worksheet) {
-   const style: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'right',
-         wrapText: false,
-         shrinkToFit: true,
-         indent: 0.1,
-      },
-      font: { name: 'Arial', size: 10 },
-      numFmt: '#,##0;[Red]-#,##0',
-   }
    ws.columns = [
-      {
-         style: { ...style, numFmt: '@', alignment: { ...style.alignment, horizontal: 'left' } },
-         key: '1_1',
-         width: 2.57,
-         outlineLevel: 1,
-      },
-      {
-         style: { ...style, numFmt: '@', alignment: { ...style.alignment, horizontal: 'left' } },
-         key: '1_2',
-         width: 3.57,
-         outlineLevel: 1,
-      },
-      {
-         style: { ...style, numFmt: '@', alignment: { ...style.alignment, horizontal: 'left' } },
-         key: '1_3',
-         width: 3.57,
-         outlineLevel: 1,
-      },
-      {
-         style: { ...style, numFmt: '@', alignment: { ...style.alignment, horizontal: 'left' } },
-         key: '1_4',
-         width: 3.57,
-         outlineLevel: 1,
-      },
-      {
-         style: { ...style, numFmt: '@', alignment: { ...style.alignment, horizontal: 'left' } },
-         key: '1_5',
-         width: 3.57,
-         outlineLevel: 1,
-      },
-      {
-         style: { ...style, numFmt: '@', alignment: { ...style.alignment, horizontal: 'left' } },
-         key: '1_6',
-         width: 5.57,
-         outlineLevel: 1,
-      },
-      {
-         style: {
-            ...style,
-            numFmt: '@',
-            alignment: {
-               ...style.alignment,
-               horizontal: 'left',
-               wrapText: true,
-               shrinkToFit: false,
-            },
-         },
-         key: '2',
-         width: 40.71,
-      },
-      {
-         key: '3',
-         width: 11.71,
-         style,
-      },
-      {
-         key: '4',
-         width: 11.71,
-         style,
-         outlineLevel: 2,
-      },
-      {
-         key: '5',
-         width: 11.71,
-         style,
-         outlineLevel: 2,
-      },
-      {
-         key: '6',
-         width: 11.71,
-         style,
-         outlineLevel: 1,
-      },
-      {
-         key: '7',
-         width: 11.71,
-         style,
-         outlineLevel: 2,
-      },
-      {
-         key: '8',
-         width: 11.71,
-         style,
-         outlineLevel: 2,
-      },
-      {
-         key: '9',
-         width: 11.71,
-         style,
-         outlineLevel: 1,
-      },
-      {
-         key: '10',
-         width: 11.71,
-         style,
-         outlineLevel: 2,
-      },
-      {
-         key: '11',
-         width: 11.71,
-         style,
-         outlineLevel: 2,
-      },
-      {
-         key: '12',
-         width: 11.71,
-         style,
-         outlineLevel: 1,
-      },
-      {
-         key: '13',
-         width: 11.71,
-         style,
-      },
-      {
-         key: '14',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'dana',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'rak_bulan',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'sisa_rak_bulan',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'rak_bulan_ini',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'sisa_rak_bulan_ini',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'rak_sm_1',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'sisa_rak_sm_1',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'total',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'sisa',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'sm_2',
-         width: 11.71,
-         style,
-      },
-      {
-         key: 'total',
-         width: 11.71,
-         style,
-      },
+      { style: textStyle, key: '1_1', width: 2.57, outlineLevel: 1 },
+      { style: textStyle, key: '1_2', width: 3.57, outlineLevel: 1 },
+      { style: textStyle, key: '1_3', width: 3.57, outlineLevel: 1 },
+      { style: textStyle, key: '1_4', width: 3.57, outlineLevel: 1 },
+      { style: textStyle, key: '1_5', width: 3.57, outlineLevel: 1 },
+      { style: textStyle, key: '1_6', width: 5.57, outlineLevel: 1 },
+      { style: textStyle, key: '2', width: 40.71 },
+      { key: '3', width: 11.71, style: numStyle },
+      { key: '4', width: 11.71, style: numStyle, outlineLevel: 2 },
+      { key: '5', width: 11.71, style: numStyle, outlineLevel: 2 },
+      { key: '6', width: 11.71, style: numStyle, outlineLevel: 1 },
+      { key: '7', width: 11.71, style: numStyle, outlineLevel: 2 },
+      { key: '8', width: 11.71, style: numStyle, outlineLevel: 2 },
+      { key: '9', width: 11.71, style: numStyle, outlineLevel: 1 },
+      { key: '10', width: 11.71, style: numStyle, outlineLevel: 2 },
+      { key: '11', width: 11.71, style: numStyle, outlineLevel: 2 },
+      { key: '12', width: 11.71, style: numStyle, outlineLevel: 1 },
+      { key: '13', width: 11.71, style: numStyle },
+      { key: '14', width: 11.71, style: numStyle },
+      { key: 'dana', width: 11.71, style: numStyle },
+      { key: 'rak_bulan', width: 11.71, style: numStyle },
+      { key: 'sisa_rak_bulan', width: 11.71, style: numStyle },
+      { key: 'rak_bulan_ini', width: 11.71, style: numStyle },
+      { key: 'sisa_rak_bulan_ini', width: 11.71, style: numStyle },
+      { key: 'rak_sm_1', width: 11.71, style: numStyle },
+      { key: 'sisa_rak_sm_1', width: 11.71, style: numStyle },
+      { key: 'total', width: 11.71, style: numStyle },
+      { key: 'sisa', width: 11.71, style: numStyle },
+      { key: 'sm_2', width: 11.71, style: numStyle },
+      { key: 'total', width: 11.71, style: numStyle },
    ]
    ws.views = [
       {

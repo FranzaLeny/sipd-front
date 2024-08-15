@@ -87,40 +87,24 @@ export function RowActions(data: User) {
             aria-label='Static Actions'>
             <DropdownItem
                color='success'
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`user/${data.id}/add-account`}
                key='add-account'>
                Buat Akun DLH
             </DropdownItem>
             <DropdownItem
                color='primary'
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`user/${data.id}`}
                key='view'>
                Lihat
             </DropdownItem>
             <DropdownItem
                color='secondary'
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`user/${data.id}/edit`}
                key='edit'>
                Ubah
             </DropdownItem>
             <DropdownItem
                color='danger'
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`user/${data.id}/delete`}
                key='delete'>
                Hapus

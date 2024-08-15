@@ -1,16 +1,476 @@
-# NODE_OPTIONS=--max_old_space_size=8096 pnpm build
-# NODE_OPTIONS=--max_old_space_size=3000 pnpm dev --turbo
-# pnpm prettier --write src/* 
-pnpm dev -H 192.168.144.16 -p 3000 --experimental-https
-New-Item -ItemType SymbolicLink -Path "F:\sipd-lokal\sipd-ri-frontend\node_modules" -Target "F:\_node_\sipd-ri-frontend\node_modules"
-Remove-Item "F:\sipd-lokal\sipd-ri-frontend\node_modules"
-
-      "sharp": "0.32.6",
+Berikut adalah penjelasan singkat untuk setiap route dalam bahasa Indonesia:
 
 
 
-TODO Tambah singkron laporan pergeseran
-TODO Buat dan ubah RKA
-
-
-git add . && git commit -m "perbaiki pajak " && git push
+[
+  {
+    "category": "guest",
+    "routes": [
+      {
+        "group": "Home",
+        "title": "/",
+        "description": "Halaman utama"
+      },
+      {
+        "group": "Authentication",
+        "title": "/auth/[...nextauth]",
+        "description": "Route untuk proses otentikasi pengguna"
+      },
+      {
+        "group": "Login",
+        "title": "/login",
+        "description": "Halaman untuk masuk (login) ke dalam sistem"
+      },
+      {
+        "group": "Test",
+        "title": "/test",
+        "description": "Halaman untuk pengujian"
+      }
+    ]
+  },
+  {
+    "category": "protected",
+    "routes": [
+      {
+        "group": "Dashboard",
+        "title": "/dashboard",
+        "description": "Halaman utama setelah login yang berisi ringkasan informasi penting"
+      },
+      {
+        "group": "Profile",
+        "title": "/profile",
+        "description": "Halaman profil pengguna"
+      },
+      {
+        "group": "Profile",
+        "title": "/profile/upload",
+        "description": "Halaman untuk mengunggah foto profil"
+      },
+      {
+        "group": "Kepegawaian",
+        "title": "/kepegawaian",
+        "description": "Halaman untuk manajemen data kepegawaian"
+      },
+      {
+        "group": "Keuangan",
+        "title": "/keuangan",
+        "description": "Halaman untuk manajemen data keuangan"
+      },
+      {
+        "group": "Keuangan",
+        "title": "/keuangan/realisasi",
+        "description": "Halaman untuk melihat realisasi keuangan"
+      },
+      {
+        "group": "Data TAPD",
+        "title": "/data/tapd",
+        "description": "Halaman untuk melihat daftar data TAPD"
+      },
+      {
+        "group": "Data TAPD",
+        "title": "/data/tapd/add",
+        "description": "Halaman untuk menambah data TAPD baru"
+      },
+      {
+        "group": "Data TAPD",
+        "title": "/data/tapd/[id]",
+        "description": "Halaman untuk melihat detail TAPD"
+      },
+      {
+        "group": "Data TAPD",
+        "title": "/data/tapd/[id]/edit",
+        "description": "Halaman untuk mengedit detail TAPD"
+      },
+      {
+        "group": "Data Role",
+        "title": "/data/role",
+        "description": "Halaman untuk melihat daftar data peran (role)"
+      },
+      {
+        "group": "Data Role",
+        "title": "/data/role/add",
+        "description": "Halaman untuk menambah peran baru"
+      },
+      {
+        "group": "Data Role",
+        "title": "/data/role/[id]",
+        "description": "Halaman untuk melihat detail peran"
+      },
+      {
+        "group": "Data Role",
+        "title": "/data/role/[id]/edit",
+        "description": "Halaman untuk mengedit detail peran"
+      },
+      {
+        "group": "Data Role",
+        "title": "/data/role/[id]/delete",
+        "description": "Halaman untuk menghapus peran"
+      },
+      {
+        "group": "Data User",
+        "title": "/data/user",
+        "description": "Halaman untuk melihat daftar data pengguna"
+      },
+      {
+        "group": "Data User",
+        "title": "/data/user/add",
+        "description": "Halaman untuk menambah pengguna baru"
+      },
+      {
+        "group": "Data User",
+        "title": "/data/user/[id]",
+        "description": "Halaman untuk melihat detail pengguna"
+      },
+      {
+        "group": "Data User",
+        "title": "/data/user/[id]/edit",
+        "description": "Halaman untuk mengedit detail pengguna"
+      },
+      {
+        "group": "Data User",
+        "title": "/data/user/[id]/delete",
+        "description": "Halaman untuk menghapus pengguna"
+      },
+      {
+        "group": "Data User",
+        "title": "/data/user/[id]/add-account",
+        "description": "Halaman untuk menambah akun pada pengguna"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/skpd",
+        "description": "Halaman untuk melihat daftar data SKPD"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/skpd/add",
+        "description": "Halaman untuk menambah SKPD baru"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/skpd/[id]",
+        "description": "Halaman untuk melihat detail SKPD"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/skpd/[id]/edit",
+        "description": "Halaman untuk mengedit detail SKPD"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/skpd/[id]/delete",
+        "description": "Halaman untuk menghapus SKPD"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/akun",
+        "description": "Halaman untuk melihat daftar data akun"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/akun/add",
+        "description": "Halaman untuk menambah akun baru"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/akun/[id]",
+        "description": "Halaman untuk melihat detail akun"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/akun/[id]/edit",
+        "description": "Halaman untuk mengedit detail akun"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/akun/[id]/delete",
+        "description": "Halaman untuk menghapus akun"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/satuan",
+        "description": "Halaman untuk melihat daftar data satuan"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/satuan/add",
+        "description": "Halaman untuk menambah satuan baru"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/satuan/[id]",
+        "description": "Halaman untuk melihat detail satuan"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/satuan/[id]/edit",
+        "description": "Halaman untuk mengedit detail satuan"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/satuan/[id]/delete",
+        "description": "Halaman untuk menghapus satuan"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/standar-harga",
+        "description": "Halaman untuk melihat daftar data standar harga"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/standar-harga/add",
+        "description": "Halaman untuk menambah standar harga baru"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/standar-harga/[id]",
+        "description": "Halaman untuk melihat detail standar harga"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/standar-harga/[id]/edit",
+        "description": "Halaman untuk mengedit detail standar harga"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/standar-harga/[id]/delete",
+        "description": "Halaman untuk menghapus standar harga"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/sumber-dana",
+        "description": "Halaman untuk melihat daftar data sumber dana"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/tahapan",
+        "description": "Halaman untuk melihat daftar data tahapan"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/tahapan/add",
+        "description": "Halaman untuk menambah tahapan baru"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/tahapan/[id]",
+        "description": "Halaman untuk melihat detail tahapan"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/tahapan/[id]/edit",
+        "description": "Halaman untuk mengedit detail tahapan"
+      },
+      {
+        "group": "Data Perencanaan",
+        "title": "/perencanaan/data/tahapan/[id]/delete",
+        "description": "Halaman untuk menghapus tahapan"
+      },
+      {
+        "group": "RKPD",
+        "title": "/perencanaan/rkpd/jadwal",
+        "description": "Halaman untuk melihat jadwal RKPD"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/jadwal",
+        "description": "Halaman untuk melihat jadwal RKA"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/giat",
+        "description": "Halaman untuk melihat kegiatan RKA"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/giat/[id]",
+        "description": "Halaman untuk melihat detail kegiatan RKA"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/sub-giat",
+        "description": "Halaman untuk melihat sub-kegiatan RKA"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/sub-giat/[id]",
+        "description": "Halaman untuk melihat detail sub-kegiatan RKA"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/sub-giat/[id]/copy-rinci",
+        "description": "Halaman untuk menyalin rincian sub-giat"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/skpd",
+        "description": "Halaman untuk melihat RKA SKPD"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/skpd/[id]/edit",
+        "description": "Halaman untuk mengedit detail RKA SKPD"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/pendapatan",
+        "description": "Halaman untuk melihat pendapatan RKA"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/laporan/cover",
+        "description": "Halaman untuk melihat laporan cover RKA"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/laporan/rinci-bl",
+        "description": "Halaman untuk melihat laporan rincian belanja langsung"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/laporan/sumber-dana",
+        "description": "Halaman untuk melihat laporan sumber dana"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/laporan/rekap-bl",
+        "description": "Halaman untuk melihat laporan rekap belanja langsung"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/laporan/pendapatan",
+        "description": "Halaman untuk melihat laporan pendapatan"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/laporan/skpd",
+        "description": "Halaman untuk melihat laporan SKPD"
+      },
+      {
+        "group": "RKA",
+        "title": "/perencanaan/rka/evaluasi-renja",
+        "description": "Halaman untuk evaluasi rencana kerja anggaran"
+      },
+      {
+        "group": "SIPD Peta",
+        "title": "/sipd-peta",
+        "description": "Halaman utama SIPD Peta"
+      },
+      {
+        "group": "SIPD Peta",
+        "title": "/sipd-peta/laporan/dpa/rinci-bl",
+        "description": "Halaman untuk melihat laporan DPA rincian belanja langsung"
+      },
+      {
+        "group": "SIPD Peta",
+        "title": "/sipd-peta/laporan/rak",
+        "description": "Halaman untuk melihat laporan RAK"
+      },
+      {
+        "group": "SIPD Peta",
+        "title": "/sipd-peta/laporan/dpa/pendapatan",
+        "description": "Halaman untuk melihat laporan DPA pendapatan"
+      },
+      {
+        "group": "SIPD Peta",
+        "title": "/sipd-peta/laporan/dpa/rekap-bl",
+        "description": "Halaman untuk melihat laporan DPA rekap belanja langsung"
+      },
+      {
+        "group": "SIPD Peta",
+        "title": "/sipd-peta/laporan/dpa/skpd",
+        "description": "Halaman untuk melihat laporan DPA SKPD"
+      },
+      {
+        "group": "SIPD Peta",
+        "title": "/sipd-peta/sync",
+        "description": "Halaman untuk sinkronisasi data SIPD Peta"
+      },
+      {
+        "group": "SIPD Peta",
+        "title": "/sipd-peta/laporan/spj",
+        "description": "Halaman untuk melihat laporan surat pertanggungjawaban"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/data/akun",
+        "description": "Halaman untuk sinkronisasi data akun"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/data/standar-harga",
+        "description": "Halaman untuk sinkronisasi data standar harga"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/data/standar-harga/[id]",
+        "description": "Halaman untuk sinkronisasi detail standar harga"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/data/skpd",
+        "description": "Halaman untuk sinkronisasi data SKPD"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/data/satuan",
+        "description": "Halaman untuk sinkronisasi data satuan"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/data/sumber-dana",
+        "description": "Halaman untuk sinkronisasi data sumber dana"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/rka/jadwal",
+        "description": "Halaman untuk sinkronisasi jadwal RKA"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/rka/skpd",
+        "description": "Halaman untuk sinkronisasi SKPD RKA"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/data/tahapan",
+        "description": "Halaman untuk sinkronisasi data tahapan"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/rka/pendapatan",
+        "description": "Halaman untuk sinkronisasi pendapatan RKA"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/rka/sub-giat",
+        "description": "Halaman untuk sinkronisasi sub-giat RKA"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/rka/sub-giat/rinci",
+        "description": "Halaman untuk sinkronisasi rincian sub-giat RKA"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/rka/sub-giat/rinci/ket",
+        "description": "Halaman untuk sinkronisasi keterangan rincian sub-giat RKA"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/rka/sub-giat/rinci/subs",
+        "description": "Halaman untuk sinkronisasi rincian subs sub-giat RKA"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/sync/rkpd/jadwal",
+        "description": "Halaman untuk sinkronisasi jadwal RKPD"
+      },
+      {
+        "group": "SIPD RI",
+        "title": "/sipd-ri/laporan/rka",
+        "description": "Halaman untuk melihat laporan RKA"
+      }
+    ]
+  }
+]

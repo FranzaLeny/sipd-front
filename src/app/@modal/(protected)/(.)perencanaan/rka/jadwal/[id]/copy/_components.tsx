@@ -139,10 +139,6 @@ const ModalCopy = ({ data }: { data: JadwalAnggaran; user: UserWithoutToken }) =
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [isSubmitting])
 
-   useEffect(() => {
-      console.log(errors)
-   }, [errors])
-
    const onSubmit = async (value: Schema) => {
       try {
          const valida_data = {

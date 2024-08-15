@@ -1,5 +1,13 @@
 import manifest from '@constants/tpd.json'
-import { borderAll, calcRowHeight, capitalizeFirstLetter, createExcelData } from '@utils/excel'
+import {
+   borderAll,
+   calcRowHeight,
+   capitalizeFirstLetter,
+   createExcelData,
+   numStyle,
+   percentStyle,
+   textStyle,
+} from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 
@@ -84,96 +92,25 @@ const dowloadExcelRincianBelanja = async (dpaRician: Params) => {
 export default dowloadExcelRincianBelanja
 
 function formatDefaultRka(ws: Excel.Worksheet) {
-   const style: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'left',
-         wrapText: false,
-         shrinkToFit: true,
-         indent: 0.1,
-      },
-      font: { name: 'Arial', size: 10 },
-      numFmt: '#,##0;[Red]-#,##0',
-   }
    ws.columns = [
-      { key: 'kd_1', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_2', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_3', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_4', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_5', width: 4, style: { ...style, numFmt: '@' } },
-      { key: 'kd_6', width: 5, style: { ...style, numFmt: '@' } },
-      {
-         key: 'uraian',
-         width: 30.71,
-         style: {
-            ...style,
-            numFmt: '@',
-            alignment: { ...style.alignment, wrapText: true, shrinkToFit: false },
-         },
-      },
-      {
-         key: 'volume',
-         width: 11.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'satuan',
-         width: 11.71,
-         style: {
-            ...style,
-            numFmt: '@',
-            alignment: { wrapText: true, ...style.alignment, shrinkToFit: false },
-         },
-      },
-      {
-         key: 'harga',
-         width: 11.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'pajak',
-         width: 11.71,
-         style: { ...style, numFmt: '0%', alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'jumlah',
-         width: 11.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: '_volume',
-         width: 11.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: '_satuan',
-         width: 11.71,
-         style: {
-            ...style,
-            numFmt: '@',
-            alignment: { wrapText: true, ...style.alignment, shrinkToFit: false },
-         },
-      },
-      {
-         key: '_harga',
-         width: 11.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: '_pajak',
-         width: 11.71,
-         style: { ...style, numFmt: '0%', alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: '_jumlah',
-         width: 11.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
-      {
-         key: 'selisih',
-         width: 11.71,
-         style: { ...style, alignment: { ...style.alignment, horizontal: 'right' } },
-      },
+      { key: 'kd_1', width: 4, style: textStyle },
+      { key: 'kd_2', width: 4, style: textStyle },
+      { key: 'kd_3', width: 4, style: textStyle },
+      { key: 'kd_4', width: 4, style: textStyle },
+      { key: 'kd_5', width: 4, style: textStyle },
+      { key: 'kd_6', width: 5, style: textStyle },
+      { key: 'uraian', width: 30.71, style: textStyle },
+      { key: 'volume', width: 11.71, style: numStyle },
+      { key: 'satuan', width: 11.71, style: textStyle },
+      { key: 'harga', width: 11.71, style: numStyle },
+      { key: 'pajak', width: 11.71, style: percentStyle },
+      { key: 'jumlah', width: 11.71, style: numStyle },
+      { key: '_volume', width: 11.71, style: numStyle },
+      { key: '_satuan', width: 11.71, style: textStyle },
+      { key: '_harga', width: 11.71, style: numStyle },
+      { key: '_pajak', width: 11.71, style: percentStyle },
+      { key: '_jumlah', width: 11.71, style: numStyle },
+      { key: 'selisih', width: 11.71, style: numStyle },
    ]
    ws.views = [
       {
@@ -317,7 +254,7 @@ function fillDokJudul({
          const cell = row.getCell(7)
          cell.style = {
             ...cell.style,
-            numFmt: '#,##0;[Red]-#,##0',
+            numFmt: '#,##0;[Red]-#,##0;"-";@',
          }
       }
    })
@@ -848,7 +785,7 @@ function fillRak({
                ...style,
                font: { ...style.font, bold: i === 13 },
                alignment: { vertical: 'middle', horizontal: 'right' },
-               numFmt: '#,##0;[Red]-#,##0',
+               numFmt: '#,##0;[Red]-#,##0;"-";@',
             })
          i === 13 &&
             col === 1 &&

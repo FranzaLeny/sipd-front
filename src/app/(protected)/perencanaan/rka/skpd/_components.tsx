@@ -51,19 +51,11 @@ export default function rowActions(id: string) {
          </DropdownTrigger>
          <DropdownMenu aria-label='Static Actions'>
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`skpd/${id}`}
                key='Lihat'>
                Lihat
             </DropdownItem>
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                href={`skpd/${id}/edit`}
                key='edit'
                color='warning'>

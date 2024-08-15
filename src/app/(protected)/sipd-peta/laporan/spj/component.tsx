@@ -205,6 +205,7 @@ export default function Component({
                jadwal_anggaran_id: jadwal,
             })
             const dana = uniqBy(listDana, 'id_dana')
+
             const pembukuan2 = dataSpj?.pembukuan2?.map((d) => {
                const kode = d?.kode_unik?.split('-')
                if (kode?.length === 5) {
@@ -287,6 +288,7 @@ export default function Component({
    const disabledMonts = useMemo(() => {
       return months.filter((d) => d.key > currMonth)?.map((d) => d.key?.toString())
    }, [currMonth])
+
    return (
       <>
          {!!selectedJadwal && !!dataSpj && (
@@ -313,7 +315,7 @@ export default function Component({
                   id_skpd,
                   tahun,
                   filter: 'has-bl-sub-giat',
-                  jadwal_penatausahaan: 'true',
+                  // jadwal_penatausahaan: 'true',
                }}
             />
          </div>
@@ -362,7 +364,13 @@ export default function Component({
                </Button>
                <Button
                   color='secondary'
-                  isDisabled={isFetching || isFetchingRak || isFetchingApbd || isLoading}
+                  isDisabled={
+                     isFetching ||
+                     isFetchingRak ||
+                     isFetchingApbd ||
+                     isLoading ||
+                     !(!!selectedJadwal && !!dataSpj)
+                  }
                   onPress={onOpen}>
                   Singkron
                </Button>

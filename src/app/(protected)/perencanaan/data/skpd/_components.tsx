@@ -40,30 +40,18 @@ export default function rowActions(id: string) {
          </DropdownTrigger>
          <DropdownMenu aria-label='Static Actions'>
             <DropdownItem
-               as={Link}
                href={`skpd/${id}`}
-               // @ts-expect-error
-               scroll={false}
-               prefetch={false}
                key='view'>
                Lihat
             </DropdownItem>
             <DropdownItem
-               as={Link}
                href={`skpd/${id}/edit`}
-               // @ts-expect-error
-               scroll={false}
-               prefetch={false}
                color='warning'
                key='edit'>
                Ubah
             </DropdownItem>
             <DropdownItem
-               as={Link}
                href={`skpd/${id}/delete`}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='delete'>
                Hapus
             </DropdownItem>

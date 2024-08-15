@@ -1,8 +1,6 @@
 'use client'
 
 import { Fragment } from 'react'
-import { cn } from '@nextui-org/react'
-import { numberToText } from '@utils'
 
 import { LaporanRinciBl } from './rinci-bl'
 
@@ -11,6 +9,7 @@ import { LaporanRinciBl } from './rinci-bl'
 
 export type Props = {
    rincian: LaporanRinciBl['rincian']
+   printDeleted: boolean
 }
 
 function THeadRincian() {
@@ -64,24 +63,6 @@ function THeadRincian() {
             <th className='cell-print w-0'>Jumlah</th>
          </tr>
       </thead>
-   )
-}
-
-function TrGiat({
-   label,
-   children,
-   className,
-}: {
-   label: string
-   children: React.ReactNode
-   className?: string
-}) {
-   return (
-      <tr className={cn('border-print align-top print:break-inside-avoid', className)}>
-         <td className='whitespace-nowrap px-1.5 py-0.5'>{label}</td>
-         <td className='w-5  text-center'>:</td>
-         <td className='pr-1.5'>{children}</td>
-      </tr>
    )
 }
 
@@ -277,9 +258,39 @@ export function TableIndikatorGiatPerubahan(props: TableIndikatorGiatProps) {
       </>
    )
 }
-
-const TrSubTotal = ({ rinci }: { rinci: any }) => {
-   const { group, nama_dana, total_harga, total_harga_murni, uraian, kode, selisih } = rinci || {}
+const numberToText = (v?: number | null, minimumFractionDigits = 0, useBracket = false) => {
+   if (v || v === 0) {
+      const value = v.toFixed(minimumFractionDigits)
+      const result = Number(value)
+         .toLocaleString('id-ID', {
+            style: 'decimal',
+            // minimumFractionDigits: minimumFractionDigits,
+         })
+         .toString()
+      if (useBracket && v < 0) {
+         return '(' + result.replace('-', '') + ')'
+      }
+      return result
+   }
+   return '-'
+}
+const TrSubTotal = ({
+   rinci,
+   printDeleted,
+}: {
+   rinci: Props['rincian'][number]
+   printDeleted: boolean
+}) => {
+   const {
+      group,
+      nama_dana,
+      total_harga,
+      total_harga_murni,
+      uraian,
+      kode,
+      selisih = 0,
+      is_deleted,
+   } = rinci || {}
    const totalText = numberToText(total_harga)
    const totalMurniText = numberToText(total_harga_murni)
    // const different = selisih ? total_harga - total_harga_murni : 0
@@ -287,11 +298,11 @@ const TrSubTotal = ({ rinci }: { rinci: any }) => {
 
    return (
       <tr
-         className={`group font-semibold ${!total_harga_murni && !total_harga ? 'text-danger print:hidden' : ''} print:break-inside-avoid`}>
+         className={`group font-semibold print:break-inside-avoid print:no-underline ${is_deleted && 'line-through print:no-underline'} ${!printDeleted && is_deleted && 'print:hidden'}`}>
          <td className='cell-print max-w-fit'>{kode}</td>
          <td
             colSpan={5}
-            className='cell-print'>
+            className={`cell-print`}>
             {group === 7 ? (
                <div className='flex'>
                   <div className='flex w-5 flex-none items-start justify-between'>
@@ -331,11 +342,17 @@ const TrSubTotal = ({ rinci }: { rinci: any }) => {
    )
 }
 
-const TrRinci = ({ rinci }: { rinci: any }) => {
-   const selisih = rinci?.selisih || 0
+const TrRinci = ({
+   rinci,
+   printDeleted,
+}: {
+   rinci: Props['rincian'][number]
+   printDeleted: boolean
+}) => {
+   const { is_deleted, selisih = 0 } = rinci
    return (
       <tr
-         className={`${!rinci.koefisien && !rinci.koefisien_murni ? 'text-danger print:hidden' : ''} print:break-inside-avoid`}>
+         className={`${is_deleted && 'line-through print:no-underline'} ${!printDeleted && is_deleted && 'print:hidden'} print:break-inside-avoid`}>
          <td className='cell-print w-0 text-center'></td>
          <td className='cell-print'>
             <div>{rinci.uraian}</div>
@@ -346,14 +363,16 @@ const TrRinci = ({ rinci }: { rinci: any }) => {
             {numberToText(rinci.harga_satuan_murni)}
          </td>
          <td className='cell-print'>{rinci.satuan_murni?.join(' ')}</td>
-         <td className={`cell-print max-w-fit text-right`}>{numberToText(rinci.pajak_murni)} %</td>
+         <td className={`cell-print max-w-fit text-right`}>
+            {numberToText(rinci.pajak_murni) + '%'}
+         </td>
          <td className='cell-print max-w-fit text-right'>
             {numberToText(rinci.total_harga_murni)}
          </td>
          <td className='cell-print text-right'>{rinci.volume?.join(' x ')}</td>
          <td className={`cell-print max-w-fit text-right`}>{numberToText(rinci.harga_satuan)}</td>
          <td className='cell-print max-w-fit'>{rinci.satuan?.join(' ')}</td>
-         <td className={`cell-print max-w-fit text-right`}>{numberToText(rinci.pajak)}%</td>
+         <td className={`cell-print max-w-fit text-right`}>{numberToText(rinci.pajak) + '%'}</td>
          <td className={`cell-print max-w-fit text-right`}>{numberToText(rinci.total_harga)}</td>
          <td
             className={`cell-print max-w-fit text-right print:bg-transparent ${selisih < 0 ? 'bg-yellow-500/10' : 'bg-green-500/10'}`}>
@@ -363,7 +382,7 @@ const TrRinci = ({ rinci }: { rinci: any }) => {
    )
 }
 
-const RkpaRinciBl: React.FC<Props> = ({ rincian }) => {
+const RkpaRinciBl: React.FC<Props> = ({ rincian, printDeleted }) => {
    return (
       <>
          <table className='min-w-full'>
@@ -373,7 +392,17 @@ const RkpaRinciBl: React.FC<Props> = ({ rincian }) => {
                   const isRincian = item.group === 9
                   return (
                      <Fragment key={index + '-' + item.no_urut}>
-                        {isRincian ? <TrRinci rinci={item} /> : <TrSubTotal rinci={item} />}
+                        {isRincian ? (
+                           <TrRinci
+                              printDeleted={printDeleted}
+                              rinci={item}
+                           />
+                        ) : (
+                           <TrSubTotal
+                              printDeleted={printDeleted}
+                              rinci={item}
+                           />
+                        )}
                      </Fragment>
                   )
                })}

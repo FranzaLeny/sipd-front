@@ -6,7 +6,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
    const { user } = await getServerSession()
    return (
       <>
-         {user && (
+         {!!user && (
             <ParamSelector
                tahun={user?.tahun || 2024}
                id_unit={user?.id_unit}

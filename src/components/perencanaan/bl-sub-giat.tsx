@@ -77,21 +77,25 @@ const BlSubGiatSelector = forwardRef(
             ref={ref}
             isDisabled={props?.isDisabled || !options}
             isLoading={props?.isLoading || isFetching || status === 'pending'}>
-            {({ id, nama_sub_giat, nama_sub_skpd, pagu = 0 }) => (
-               <AutocompleteItem
-                  className='data-[selected=true]:text-primary'
-                  classNames={{ title: 'whitespace-normal' }}
-                  value={id}
-                  textValue={nama_sub_giat}
-                  key={id}>
-                  <div>
-                     <p>
-                        {nama_sub_giat ?? ''} {numberToRupiah(pagu)}
-                     </p>
-                     <p className='text-xs italic'>{nama_sub_skpd}</p>
-                  </div>
-               </AutocompleteItem>
-            )}
+            {({ id, nama_sub_giat, nama_sub_skpd, nama_giat, nama_program, pagu = 0 }) => {
+               return (
+                  <AutocompleteItem
+                     className='data-[selected=true]:text-primary'
+                     classNames={{ title: 'whitespace-normal' }}
+                     value={id}
+                     textValue={nama_sub_giat}
+                     key={id}>
+                     <div>
+                        <p>
+                           {nama_sub_giat ?? ''} {numberToRupiah(pagu)}
+                        </p>
+                        <p className='text-xs italic text-opacity-75'>
+                           Kegiatan {nama_giat}, {nama_program}, {nama_sub_skpd}
+                        </p>
+                     </div>
+                  </AutocompleteItem>
+               )
+            }}
          </Autocomplete>
       )
    }

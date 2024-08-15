@@ -139,6 +139,7 @@ export const syncDataGiat = async ({ payload, bl_giat }: SyncDataGiatParams) => 
    const data_sipd = await getBlGiatSipd(payload).catch(() => {
       throw new Error('Gagal mengambil kegiatan dari sipd')
    })
+
    const data = BlGiatUncheckedCreateInputSchema.parse({ ...bl_giat, ...data_sipd })
    return await axios
       .put<

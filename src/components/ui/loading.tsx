@@ -12,7 +12,7 @@ const Loading: React.FC<LoadingProps> = (props) => {
       <div
          {...other}
          className={cn([
-            'flex size-full cursor-wait items-center justify-center gap-2',
+            'inset-0 flex size-full cursor-wait items-center justify-center gap-2',
             className,
          ])}>
          <Spinner color={color} />

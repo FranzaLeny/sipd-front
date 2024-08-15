@@ -10,7 +10,7 @@ export const metadata = {
 interface Props {
    searchParams: SearchParams
 }
-
+export const revalidate = 0
 interface SearchParams {
    jadwal_anggaran_id: string
    id_skpd: string

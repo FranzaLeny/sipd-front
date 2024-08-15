@@ -62,8 +62,8 @@ const Page = async () => {
                         radius='full'
                         variant='shadow'
                         as={Link}
-                        prefetch={false}
                         scroll={false}
+                        title='Masuk Sebagai Pegawai'
                         className='bg-gradient-to-r from-green-600 to-teal-600 text-white '
                         href='/login'>
                         Masuk Sebagai Pegawai

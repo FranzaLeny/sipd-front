@@ -10,6 +10,7 @@ import type { LaporanRinciBl } from './rinci-bl'
 
 export type Props = {
    rincian: LaporanRinciBl['rincian']
+   printDeleted: boolean
 }
 
 function THeadRincian() {
@@ -172,13 +173,19 @@ export function TableIndikatorGiat(props: TableIndikatorGiatProps) {
    )
 }
 
-const TrSubTotal = ({ rinci }: { rinci: any }) => {
-   const { group, nama_dana, total_harga, uraian, kode } = rinci || {}
+const TrSubTotal = ({
+   rinci,
+   printDeleted,
+}: {
+   rinci: Props['rincian'][number]
+   printDeleted: boolean
+}) => {
+   const { group, nama_dana, total_harga, uraian, kode, is_deleted } = rinci || {}
    const totalText = numberToText(total_harga)
 
    return (
       <tr
-         className={`group font-semibold ${!total_harga ? 'text-danger print:hidden' : ''} print:break-inside-avoid`}>
+         className={`group font-semibold print:break-inside-avoid ${is_deleted && 'line-through print:no-underline'}  ${!printDeleted && is_deleted && 'print:hidden'}`}>
          <td className='cell-print max-w-fit'>{kode}</td>
          <td
             colSpan={5}
@@ -214,10 +221,16 @@ const TrSubTotal = ({ rinci }: { rinci: any }) => {
    )
 }
 
-const TrRinci = ({ rinci }: { rinci: any }) => {
+const TrRinci = ({
+   rinci,
+   printDeleted,
+}: {
+   rinci: Props['rincian'][number]
+   printDeleted: boolean
+}) => {
    return (
       <tr
-         className={`${!rinci.koefisien && !rinci.koefisien_murni ? 'text-danger print:hidden' : ''} print:break-inside-avoid`}>
+         className={`${!rinci.is_deleted && 'ine-through print:no-underline'}  ${!printDeleted && rinci.is_deleted && 'print:hidden'} print:break-inside-avoid`}>
          <td className='cell-print w-0 text-center'></td>
          <td className='cell-print'>
             <div>{rinci.uraian}</div>
@@ -232,7 +245,7 @@ const TrRinci = ({ rinci }: { rinci: any }) => {
    )
 }
 
-const RkaRinciBl: React.FC<Props> = ({ rincian }) => {
+const RkaRinciBl: React.FC<Props> = ({ rincian, printDeleted }) => {
    return (
       <>
          <table className='min-w-full'>
@@ -242,7 +255,17 @@ const RkaRinciBl: React.FC<Props> = ({ rincian }) => {
                   const isRincian = item.group === 9
                   return (
                      <Fragment key={index + '-' + item.no_urut}>
-                        {isRincian ? <TrRinci rinci={item} /> : <TrSubTotal rinci={item} />}
+                        {isRincian ? (
+                           <TrRinci
+                              printDeleted={printDeleted}
+                              rinci={item}
+                           />
+                        ) : (
+                           <TrSubTotal
+                              printDeleted={printDeleted}
+                              rinci={item}
+                           />
+                        )}
                      </Fragment>
                   )
                })}

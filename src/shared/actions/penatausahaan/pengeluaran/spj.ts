@@ -100,6 +100,16 @@ interface Pembukuan1 {
    kode_unik: string
 }
 
-export const getSpjFungsional = async (params: { type: string; bulan: string }) => {
-   return await axios.get<SpjFungsional>(`pengeluaran/strict/lpj/adm-fungs/0`, { params })
+export const getSpjFungsional = async ({
+   id_pegawai = 0,
+   bulan,
+   type,
+}: {
+   type: string
+   bulan: string
+   id_pegawai?: number
+}) => {
+   return await axios.get<SpjFungsional>(`pengeluaran/strict/lpj/adm-fungs/0`, {
+      params: { id_pegawai, bulan, type },
+   })
 }

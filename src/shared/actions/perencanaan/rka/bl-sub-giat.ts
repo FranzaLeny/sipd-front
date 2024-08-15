@@ -306,6 +306,8 @@ export async function groupBlSubGiatAktifByGiat(
 export const syncSubBlAktif = async (
    subBlAktif: Zod.infer<typeof BlSubGiatAktifUncheckedCreateInputSchema>
 ) => {
+   console.log({ subBlAktif })
+
    const data = BlSubGiatAktifUncheckedCreateInputSchema.parse(subBlAktif)
    return await axios
       .put<
@@ -330,12 +332,15 @@ export const syncBlSubGiat = async (
 ) => {
    try {
       const { payload, subGiat = {}, staticData, ...other } = params
+      console.log({ subGiat, staticData, other })
 
       const data = BlSubGiatUncheckedCreateInputSchema.parse({
          ...subGiat,
          ...other,
          ...staticData,
       })
+      console.log({ data })
+
       const res = await axios
          .put<{
             data: { id: string; nama_sub_giat: string; id_sub_bl: string }
@@ -343,6 +348,8 @@ export const syncBlSubGiat = async (
          .then((res) => res.data)
       return res
    } catch (error) {
+      console.log({ error })
+
       throw new Error('Gagal singkron data sub kegiatan')
    }
 }

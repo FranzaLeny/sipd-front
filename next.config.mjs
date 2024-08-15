@@ -10,6 +10,7 @@ const nextConfig = {
       styledComponents: true,
       // removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,
    },
+
    experimental: {
       webVitalsAttribution: ['CLS', 'LCP'],
       staleTimes: {

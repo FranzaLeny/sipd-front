@@ -1,5 +1,4 @@
 import { Fragment } from 'react'
-import Link from 'next/link'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import { compact } from 'lodash-es'
 import { numberToText } from '@shared/utils'
@@ -22,10 +21,6 @@ function RiciaActions({ id }: { id: string }) {
          </DropdownTrigger>
          <DropdownMenu aria-label='Static Actions'>
             <DropdownItem
-               as={Link}
-               // @ts-expect-error
-               prefetch={false}
-               scroll={false}
                key='new'
                href={`rinci/${id}`}>
                Lihat

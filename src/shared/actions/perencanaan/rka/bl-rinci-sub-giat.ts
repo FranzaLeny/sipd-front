@@ -269,6 +269,11 @@ export const getRinciSubGiatByBlSubgiatId = async (bl_sub_giat_id: string) =>
 export interface SumberDanaAkunRinciSubGiat {
    bl_sub_giat_id: string
    nama_dana: string
+   kode_skpd: string
+   kode_sub_skpd: string
+   kode_program: string
+   kode_giat: string
+   kode_sub_giat: string
    kode_akun: string
    id_dana: number
    total_harga: number

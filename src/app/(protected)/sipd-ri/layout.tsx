@@ -10,6 +10,7 @@ export const metadata = {
 interface SipdRiLayoutProps {
    children: React.ReactNode
 }
+export const revalidate = 0
 export default async function SipdRiLayout({ children }: SipdRiLayoutProps) {
    const { hasAccess } = await getServerSession([
       'super_admin',

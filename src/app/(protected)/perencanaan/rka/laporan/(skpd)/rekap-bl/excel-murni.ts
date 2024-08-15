@@ -1,90 +1,33 @@
 import manifest from '@constants/tpd.json'
-import { borderAll, calcRowHeight, createExcelData, numberToColumn } from '@utils/excel'
+import {
+   borderAll,
+   calcRowHeight,
+   createExcelData,
+   numberToColumn,
+   numStyle,
+   textStyle,
+} from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 
 function formatDefaultRka(ws: Excel.Worksheet) {
-   const font = { name: 'Arial', size: 10 }
-   const textStyle: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'left',
-         wrapText: true,
-         shrinkToFit: false,
-         indent: 0.1,
-      },
-      font,
-      numFmt: '@',
-   }
-   const numStyle: Partial<Excel.Style> = {
-      alignment: {
-         vertical: 'middle',
-         horizontal: 'right',
-         wrapText: false,
-         shrinkToFit: true,
-         indent: 0.1,
-      },
-      font,
-      numFmt: '#,##0;(#,##0)',
-   }
-
    ws.columns = [
       { key: 'kd_1', width: 2.71, style: textStyle },
       { key: 'kd_2', width: 4.71, style: textStyle },
       { key: 'kd_3', width: 2.71, style: textStyle },
       { key: 'kd_4', width: 4.71, style: textStyle },
       { key: 'kd_5', width: 4.71, style: textStyle },
-      {
-         key: 'uraian',
-         width: 30.71,
-         style: textStyle,
-      },
-      {
-         key: 'dana',
-         width: 15.71,
-         style: textStyle,
-      },
-      {
-         key: 'lokasi',
-         width: 8.71,
-         style: textStyle,
-      },
-      {
-         key: '1_n',
-         width: 3.71,
-         style: numStyle,
-      },
-      {
-         key: 'bo',
-         style: numStyle,
-         width: 11.71,
-      },
-      {
-         key: 'bm',
-         style: numStyle,
-         width: 11.71,
-      },
-      {
-         key: 'btt',
-         style: numStyle,
-         width: 8.71,
-      },
-      {
-         key: 'bt',
-         style: numStyle,
-         width: 8.71,
-      },
-      {
-         key: 'jumlah',
-         style: numStyle,
-         width: 11.71,
-      },
-      {
-         key: 'n_1',
-         style: numStyle,
-         width: 11.71,
-      },
+      { key: 'uraian', width: 30.71, style: textStyle },
+      { key: 'dana', width: 15.71, style: textStyle },
+      { key: 'lokasi', width: 8.71, style: textStyle },
+      { key: '1_n', width: 3.71, style: numStyle },
+      { key: 'bo', style: numStyle, width: 11.71 },
+      { key: 'bm', style: numStyle, width: 11.71 },
+      { key: 'btt', style: numStyle, width: 8.71 },
+      { key: 'bt', style: numStyle, width: 8.71 },
+      { key: 'jumlah', style: numStyle, width: 11.71 },
+      { key: 'n_1', style: numStyle, width: 11.71 },
    ]
    ws.views = [{ showGridLines: false }]
 }
