@@ -13,7 +13,6 @@ import {
 } from '@nextui-org/react'
 import { titleCase } from '@utils'
 import hasAccess from '@utils/chek-roles'
-import { IUser } from '@validations/user'
 import { MoreVertical } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
 

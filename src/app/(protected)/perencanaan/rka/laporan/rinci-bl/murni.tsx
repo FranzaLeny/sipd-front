@@ -3,13 +3,11 @@
 import { Fragment } from 'react'
 import { numberToText } from '@utils'
 
-import type { LaporanRinciBl } from './rinci-bl'
-
 //
 //
 
 export type Props = {
-   rincian: LaporanRinciBl['rincian']
+   rincian: ItemRincianLaporanSbl[]
    printDeleted: boolean
 }
 
@@ -177,7 +175,7 @@ const TrSubTotal = ({
    rinci,
    printDeleted,
 }: {
-   rinci: Props['rincian'][number]
+   rinci: ItemRincianLaporanSbl
    printDeleted: boolean
 }) => {
    const { group, nama_dana, total_harga, uraian, kode, is_deleted } = rinci || {}
@@ -225,7 +223,7 @@ const TrRinci = ({
    rinci,
    printDeleted,
 }: {
-   rinci: Props['rincian'][number]
+   rinci: ItemRincianLaporanSbl
    printDeleted: boolean
 }) => {
    return (

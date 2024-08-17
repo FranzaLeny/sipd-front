@@ -1,19 +1,8 @@
 import axios from '@custom-axios/api-fetcher'
-import { UserSipdPerencanaan } from '@zod'
 
-export type GetUserSipdPerencanaanListParams = {
-   page?: number
-   limit?: number
-   search?: string
-   after?: string
-   id_daerah: number
-} & Partial<UserSipdPerencanaan>
-
-const getUserSipdPerencanaan = async (params: GetUserSipdPerencanaanListParams) =>
+export const getUserSipdPerencanaan = async (params: GetListUserSipdPerencanaanParams) =>
    await axios
       .get<ResponseApi<CursorPaginate<UserSipdPerencanaan>>>(`/api/perencanaan/data/user`, {
          params,
       })
       .then((res) => res.data)
-
-export { getUserSipdPerencanaan }

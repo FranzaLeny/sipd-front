@@ -1,7 +1,5 @@
 'use client'
 
-import { SpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
-import { StatistikBelanjaSkpdSipd } from '@actions/penatausahaan/pengeluaran/statistik'
 import { sortBy } from 'lodash-es'
 import Chart, { Props } from 'react-apexcharts'
 
@@ -12,11 +10,11 @@ const ChartRealisasi = ({
    apbd,
    skpd,
 }: {
-   items?: SpjFungsional['pembukuan1']
+   items?: Pembukuan1SpjFungsionalSipdPeta[]
    tahun: number
    bulan: string
    skpd: string
-   apbd?: StatistikBelanjaSkpdSipd[]
+   apbd?: StatistikBelanjaSkpdSipdPeta[]
 }) => {
    const data = sortBy(items, 'kode_unik')
    const belanja = data[0]
@@ -132,7 +130,7 @@ const ChartRealisasi = ({
       </div>
    )
 }
-const ChartApbd = ({ data }: { data: StatistikBelanjaSkpdSipd }) => {
+const ChartApbd = ({ data }: { data: StatistikBelanjaSkpdSipdPeta }) => {
    const date = new Date()
 
    const realiasi: Props['options'] = {

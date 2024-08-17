@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { ResponseSkpdTapdAnggaranBySkpd } from '@actions/perencanaan/data/skpd'
 import { getRkaPendapatanPergeseranSkpdSipd } from '@actions/perencanaan/rka/laporan'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
@@ -14,7 +13,7 @@ import { useReactToPrint } from 'react-to-print'
 export default function RingkasanPerubahanPendapatanSkpd({
    skpd: { skpd, sub_skpd, tapd: dataTapd },
 }: {
-   skpd: ResponseSkpdTapdAnggaranBySkpd
+   skpd: SkpdTapdAnggaranBySkpd
 }) {
    const [tapd, setTapd] = useState(dataTapd ?? undefined)
    const { data: laporan } = useQuery({

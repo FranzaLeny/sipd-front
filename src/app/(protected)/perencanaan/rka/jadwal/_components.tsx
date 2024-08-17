@@ -12,10 +12,8 @@ import {
    DropdownTrigger,
 } from '@nextui-org/react'
 import { useDateFormatter } from '@react-aria/i18n'
-import { Copy, Edit, MoreVertical, Trash } from 'lucide-react'
+import { Copy, Edit, MoreVertical } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
-
-import { JadwalAnggaranWithTahapan } from './page'
 
 export const ActionTableJadwalAnggaran = () => {
    const { hasAcces } = useSession(['super_admin', 'admin', 'admin_perencanaan'])
@@ -43,10 +41,14 @@ const chekStatus = (data: JadwalAnggaranWithTahapan) => {
    let isActive = !!data.is_active
    const end = new Date(data.waktu_selesai)
    const now = new Date()
-   const locked = data.is_locked === 1
+   const locked = data.is_locked !== 0
    const selisihMilidetik: number = now.getTime() - end.getTime()
    if (selisihMilidetik > 0) {
-      locked ? (status = 'Selesai dan Dikunci') : (status = 'Selesai')
+      data.is_locked === 1
+         ? (status = 'Selesai dan Dikunci')
+         : data.is_locked === 3
+           ? (status = 'Selesai dan dihapus')
+           : (status = 'Selesai')
    } else if (locked) {
       status = 'Dikunci'
    } else {
@@ -76,14 +78,9 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
       if (!(isSuperAdmin || isAdmin)) {
          keys.push('edit')
          keys.push('aktif')
-         keys.push('delete')
          keys.push('copy')
       }
-      if (is_lokal === 0) {
-         // keys.push('edit')
-         keys.push('aktif')
-         keys.push('delete')
-      } else if (is_lokal === 1) {
+      if (is_lokal === 1) {
          keys.push('copy')
       }
 
@@ -120,14 +117,6 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
                endContent={<Edit className='size-4' />}>
                Ubah
             </DropdownItem>
-            <DropdownItem
-               key='delete'
-               className='text-danger'
-               href={`jadwal/${id}/delete`}
-               endContent={<Trash className='size-4' />}
-               color='danger'>
-               Hapus
-            </DropdownItem>
          </DropdownMenu>
       </Dropdown>
    )
@@ -152,7 +141,7 @@ const dateTime = (value: any) => {
 
    return date ? <DateTime date={date} /> : null
 }
-export const helperColumns: HelperColumns<JadwalAnggaranWithTahapan> = {
+export const helperColumns: HelperColumns<JadwalAnggaran> = {
    id_jadwal: { key: 'id_jadwal', name: 'ID', hide: true, sortable: true },
    nama_sub_tahap: { key: 'nama_sub_tahap', name: 'Jadwal Anggaran', sortable: true },
    jadwal_penatausahaan: {

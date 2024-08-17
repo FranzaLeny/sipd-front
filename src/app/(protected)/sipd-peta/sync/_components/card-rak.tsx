@@ -28,7 +28,6 @@ function CardDataRak({ data }: Props) {
       return { sipd_peta, lokal, sync }
    }, [data])
    const [enabled, setEnabled] = useState(false)
-   console.log({ data })
 
    const lokal = useQuery({
       queryKey: [

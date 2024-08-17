@@ -1,7 +1,5 @@
 import { numberToMonth, numberToText } from '@shared/utils'
 
-import { SubGiatWithRinci } from './rincian'
-
 function TrGiat({ label, children }: { label: string; children: React.ReactNode }) {
    return (
       <tr className='border-print align-top print:break-inside-avoid'>

@@ -1,4 +1,3 @@
-import { SumberDana, SumberDanaUncheckedCreateInput } from '@zod'
 import axios from '@shared/custom-axios/api-fetcher'
 import { postToSipd } from '@shared/custom-axios/sipd-fetcher'
 
@@ -14,17 +13,15 @@ export const getAllSumberDanaSipd = async (params: ListSumberDanaSipdPayload) =>
    })
 }
 
-export type GetSumberDanaListParams = { tahun?: number; set_prov?: number; set_kab_kota?: number }
-
 export async function getListSumberDana(
-   params: GetSumberDanaListParams & { limit?: number; search?: string; after?: string }
+   params: GetListSumberDanaParams & { limit?: number; search?: string; after?: string }
 ) {
    return await axios
       .get<ResponseApi<CursorPaginate<SumberDana>>>(`/api/perencanaan/data/sumber-dana`, { params })
       .then((res) => res?.data)
 }
 
-export async function getTotalSumberDana<T extends GetSumberDanaListParams>(params?: T) {
+export async function getTotalSumberDana<T extends GetListSumberDanaParams>(params?: T) {
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>

@@ -1,14 +1,12 @@
 'use client'
 
 import { forwardRef, useEffect, useMemo, useState } from 'react'
-import { GetSatuanListParams } from '@actions/perencanaan/data/satuan'
 import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/react'
 import { useFilter } from '@react-aria/i18n'
-import { Satuan } from '@zod'
 import { sortBy } from 'lodash-es'
 import { useInfiniteScroll } from '@shared/hooks/use-infinite-scroll'
 
-import { useSatuanList } from './use-satuan-list'
+import { useSatuanList, UseSatuanListProps } from './use-satuan-list'
 
 type FieldState = {
    selectedKey: React.Key | null
@@ -25,7 +23,7 @@ export interface SatuanSelectorProps
    > {
    onChange?: (value: Satuan | undefined) => void
    onValueChange?: (value: string | undefined) => void
-   params?: GetSatuanListParams
+   params?: UseSatuanListProps['params']
    delayFetch?: number
 }
 

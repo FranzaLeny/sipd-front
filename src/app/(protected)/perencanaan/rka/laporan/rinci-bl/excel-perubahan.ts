@@ -11,8 +11,6 @@ import {
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 
-import { LaporanRinciBl } from './rinci-bl'
-
 function formatDefaultRka(ws: Excel.Worksheet) {
    ws.columns = [
       { key: 'kd_1', width: 2.29, style: textStyle },
@@ -46,10 +44,10 @@ type Data = {
       kode: string
       header: string
    }
-   skpd: LaporanRinciBl['skpd']['sub_skpd']
-   tapd: LaporanRinciBl['skpd']['tapd'] | undefined
-   items: LaporanRinciBl['rincian']
-   subGiat: LaporanRinciBl['sub_kegiatan']
+   skpd: UnitLaporan
+   tapd?: TapdLaporan[]
+   items: ItemRincianLaporanSbl[]
+   subGiat: SubGiatLaporanSbl
 }
 
 const dowloadRkpaRinciBl = async (data: Data[]) => {
@@ -387,7 +385,7 @@ function fillDataKegiatan({
    idUnikSbl,
 }: {
    ws: Excel.Worksheet
-   subGiat: Data['subGiat']
+   subGiat: SubGiatLaporanSbl
    idUnikSbl: string
 }): number {
    const giat = [
@@ -501,7 +499,7 @@ function fillIndikatorKegiatan({
    idUnikSbl,
 }: {
    ws: Excel.Worksheet
-   subGiat: Data['subGiat']
+   subGiat: SubGiatLaporanSbl
    idUnikSbl: string
 }): number {
    const _thead = createExcelData({
@@ -704,7 +702,7 @@ function fillDataSubKegiatan({
    subGiat,
 }: {
    ws: Excel.Worksheet
-   subGiat: Data['subGiat']
+   subGiat: SubGiatLaporanSbl
 }): number {
    const giat = [
       createExcelData({
@@ -862,7 +860,7 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }): number {
    return row_th[row_th.length - 1].number
 }
 
-function fillKepala({ ws, skpd }: { ws: Excel.Worksheet; skpd: Data['skpd'] }) {
+function fillKepala({ ws, skpd }: { ws: Excel.Worksheet; skpd: UnitLaporan }) {
    const data = createExcelData({
       l: !skpd?.pangkat_kepala ? 5 : 6,
       d: {
@@ -969,18 +967,11 @@ function fillKeterangan({ ws }: { ws: Excel.Worksheet }) {
    return row.number
 }
 
-export type Tapd = {
-   nama: string
-   jabatan: string
-   nip: string
-   id: string
-}
-
 function fillTapd({
    tapd = manifest?.data_tapd,
    ws,
 }: {
-   tapd?: Tapd[] | null
+   tapd?: TapdLaporan[] | null
    ws: Excel.Worksheet
 }): number {
    if (!tapd) return 0

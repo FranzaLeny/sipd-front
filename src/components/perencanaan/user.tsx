@@ -1,13 +1,9 @@
 'use client'
 
 import { forwardRef, useEffect, useState } from 'react'
-import {
-   getUserSipdPerencanaan,
-   GetUserSipdPerencanaanListParams,
-} from '@actions/perencanaan/data/user'
+import { getUserSipdPerencanaan } from '@actions/perencanaan/data/user'
 import { Autocomplete, AutocompleteItem, AutocompleteProps, Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { UserSipdPerencanaan } from '@zod'
 import { debounce } from 'lodash-es'
 import { ArrowDown } from 'lucide-react'
 
@@ -28,7 +24,7 @@ interface Props
    onValueChange?: (nama: string | null) => void
    onSelectionChange?: (id: string | null) => void
    onChange?: (user?: UserSipdPerencanaan) => void
-   params?: GetUserSipdPerencanaanListParams
+   params?: GetListUserSipdPerencanaanParams
    delayFetch?: number
 }
 
@@ -55,7 +51,7 @@ export const UserSipdPerencanaanSelector = forwardRef(
       const [options, setOptions] = useState<UserSipdPerencanaan[]>([])
       const { data, isFetching, status, isFetched } = useQuery({
          queryKey: [{ ...queryParams }, 'data_user_sipd_perencanaan'] as [
-            GetUserSipdPerencanaanListParams,
+            GetListUserSipdPerencanaanParams,
             ...string[],
          ],
          queryFn: async ({ queryKey: [params] }) => {

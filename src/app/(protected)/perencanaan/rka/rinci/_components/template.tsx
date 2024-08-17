@@ -2,13 +2,11 @@
 
 import { forwardRef, useEffect, useState } from 'react'
 import { TableAnggotaTapd } from '@components/master/tapd'
-import { AnggotaTapd } from '@zod'
 import { groupBy, sumBy } from 'lodash-es'
 import { numberToText } from '@shared/utils'
 
 import DetailGiat from './detail-giat'
 import ListRincian from './list-rincian'
-import { SubGiatWithRinci } from './rincian'
 import TableCatatan from './table-catatan'
 import TableGiat from './table-giat'
 import TableIndikatorGiat, { TableIndikatorGiatPerubahan } from './table-indikator'

@@ -1,7 +1,7 @@
 import axios from '@custom-axios/api-fetcher'
 import { postToSipd } from '@custom-axios/sipd-fetcher'
 import { decryptBase64String } from '@utils/index'
-import { BlSkpd, BlSkpdUncheckedCreateInputSchema } from '@zod'
+import { BlSkpdUncheckedCreateInputSchema } from '@zod'
 
 export const getListBlSetupUnitSipd = async (payload: ListSetupUnitSipdPayload) => {
    return await postToSipd('listSetupUnit', {
@@ -38,28 +38,12 @@ export const getListBlSkpdSipd = async (payload: ListBelanjaSkpdSipdPayload) => 
       })
 }
 
-export const syncBlListSkpd = async (
-   data: Zod.infer<typeof BlSkpdUncheckedCreateInputSchema>[]
-) => {
+export const syncBlListSkpd = async (data: BlSkpdUncheckedCreateInput[]) => {
    const valid = BlSkpdUncheckedCreateInputSchema.array().min(1).parse(data)
    return await axios.put('/api/perencanaan/rka/skpd', valid)
 }
 
-export type ListBlSkpdParams = {
-   id_daerah?: number
-   tahun?: number
-   id_skpd?: number
-   id_unit?: number
-   jadwal_anggaran_id?: string
-}
-
-export type GetBlSkpdListParams = {
-   limit?: number
-   search?: string
-   after?: string
-} & ListBlSkpdParams
-
-export const getBlSkpdList = async (params: GetBlSkpdListParams) => {
+export const getListBlSkpd = async (params: GetListBlSkpdParams) => {
    return await axios
       .get<ResponseApi<CursorPaginate<BlSkpd>>>('/api/perencanaan/rka/skpd', { params })
       .then((res) => res.data)
@@ -78,7 +62,7 @@ export const getBlSkpdByIdSkpd = async (params: {
       .then((res) => res.data)
 }
 
-export async function getTotalBlSkpd<T extends ListBlSkpdParams>(params?: T) {
+export async function getTotalBlSkpd<T extends GetBlSkpdParams>(params?: T) {
    return axios
       .get<
          ResponseApi<{ totalCount: number; query: T }>

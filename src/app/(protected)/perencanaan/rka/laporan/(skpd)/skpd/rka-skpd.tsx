@@ -20,7 +20,6 @@ import {
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
-import { LaporanSkpd } from '@/types/api/laporan'
 
 import { TbodyMurni, TbodyPerubahan, TheadMurni, TheadPerubahan } from './components'
 
@@ -68,11 +67,11 @@ export default function RkaSkpd({
    unit,
 }: {
    tahun: number
-   listRekapan: LaporanSkpd['list_rekapan']
-   skpd: LaporanSkpd['skpd']['sub_skpd']
-   unit: LaporanSkpd['skpd']['sub_skpd']
+   listRekapan: ItemLaporanRkaSKpd[]
+   skpd: UnitLaporan
+   unit: UnitLaporan
    jadwalTipe: 'perubahan' | 'murni'
-   anggotaTapd: LaporanSkpd['skpd']['tapd']
+   anggotaTapd: TapdLaporan[]
 }) {
    const [selectedDok, setSelectedDok] = useState('rka')
    const [tapd, setTapd] = useState(anggotaTapd)
@@ -163,7 +162,7 @@ export default function RkaSkpd({
                   <Button
                      variant='shadow'
                      color='primary'
-                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20 sm:px-3'
                      startContent={<Download className='size-5' />}>
                      <span className='hidden sm:inline-flex'>Cetak</span>
                   </Button>

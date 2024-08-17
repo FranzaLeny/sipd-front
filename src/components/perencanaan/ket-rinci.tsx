@@ -4,7 +4,6 @@ import { forwardRef, useState } from 'react'
 import {
    addKetRinciBlSubGiat,
    getKetRinciBlSubGiat,
-   GetKetRinciListParams,
 } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { TextInput } from '@components/form/text-input'
 import {
@@ -22,13 +21,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { createTsForm } from '@ts-react/form'
 import { generateUniqueId } from '@utils/uniq-id'
-import {
-   BlSubGiat,
-   KetRinciBlSubGiat,
-   KetRinciBlSubGiatUncheckedCreateInput,
-   KetRinciBlSubGiatUncheckedCreateInputSchema,
-   z,
-} from '@zod'
+import { KetRinciBlSubGiatUncheckedCreateInputSchema, z } from '@zod'
 import { toast } from 'react-toastify'
 import { useRefetchQueries } from '@shared/hooks/use-refetch-queries'
 
@@ -43,7 +36,7 @@ export interface KetSelectorProps
    onChange?: (ketRinciBlSubGiat: KetRinciBlSubGiat | undefined) => void
    onValueChange?: (ket_bl_teks: string | null) => void
    onSelectionChange?: (id_ket_sub_bl: number | null) => void
-   params?: GetKetRinciListParams
+   params?: GetListKetRinciParams
    delayFetch?: number
 }
 
@@ -67,7 +60,7 @@ export const KetRinciSelector = forwardRef(
       })
 
       const { data, isFetching, status, isFetched } = useQuery({
-         queryKey: [{ ...queryParams }, 'bl_sub_giat_rinci_ket'] as [GetKetRinciListParams, string],
+         queryKey: [{ ...queryParams }, 'bl_sub_giat_rinci_ket'] as [GetListKetRinciParams, string],
          queryFn: async ({ queryKey: [params] }) => {
             return await getKetRinciBlSubGiat(params)
          },

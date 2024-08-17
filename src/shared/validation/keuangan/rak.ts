@@ -81,8 +81,6 @@ export const RakSchema = z.object({
    updated_at: z.coerce.date(),
 })
 
-export type Rak = z.infer<typeof RakSchema>
-
 export const RakUncheckedCreateInputSchema = z
    .object({
       id_akun: z.number().int(),
@@ -152,8 +150,6 @@ export const RakUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type RakUncheckedCreateInput = z.infer<typeof RakUncheckedCreateInputSchema>
-
 /////////////////////////////////////////
 // RAK SKPD SCHEMA
 /////////////////////////////////////////
@@ -185,8 +181,6 @@ export const RakSkpdSchema = z.object({
    updated_at: z.coerce.date(),
 })
 
-export type RakSkpd = z.infer<typeof RakSkpdSchema>
-
 export const RakSkpdUncheckedCreateInputSchema = z
    .object({
       id_daerah: z.number().int(),
@@ -205,7 +199,6 @@ export const RakSkpdUncheckedCreateInputSchema = z
       jadwal_anggaran_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
    })
    .strip()
-export type RakSkpdUncheckedCreateInput = z.infer<typeof RakSkpdUncheckedCreateInputSchema>
 
 export const RealisasiRakInputValidationSchema = RakSchema.pick({
    id: true,
@@ -224,4 +217,10 @@ export const RealisasiRakInputValidationSchema = RakSchema.pick({
    nilai_realisasi: true,
 }).strip()
 
-export type RealisasiRakInput = z.infer<typeof RealisasiRakInputValidationSchema>
+declare global {
+   type Rak = z.infer<typeof RakSchema>
+   type RakUncheckedCreateInput = z.infer<typeof RakUncheckedCreateInputSchema>
+   type RakSkpd = z.infer<typeof RakSkpdSchema>
+   type RakSkpdUncheckedCreateInput = z.infer<typeof RakSkpdUncheckedCreateInputSchema>
+   type RealisasiRakInput = z.infer<typeof RealisasiRakInputValidationSchema>
+}

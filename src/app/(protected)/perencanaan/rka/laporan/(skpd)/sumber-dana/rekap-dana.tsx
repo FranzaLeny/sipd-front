@@ -9,13 +9,12 @@ import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
 import { ArrowLeftCircle, Printer } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
-import { RekapanSumberDana } from '@/types/api/laporan'
 
 import dowloadDanaExcel from './excel-murni'
 
 interface Props {
-   sumberDana: RekapanSumberDana['sumber_dana']
-   skpd: RekapanSumberDana['skpd']['unit']
+   sumberDana: SumberDanaLaporanRekapanSumberDana[]
+   skpd: UnitLaporan
    tahun: number
    jadwal: string
 }

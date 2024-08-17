@@ -37,8 +37,6 @@ export const PendapatanSchema = z.object({
    updated_at: z.coerce.date(),
 })
 
-export type Pendapatan = z.infer<typeof PendapatanSchema>
-
 export const PendapatanUncheckedCreateInputSchema = z
    .object({
       id: z.string().optional(),
@@ -68,4 +66,7 @@ export const PendapatanUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type PendapatanUncheckedCreateInput = z.infer<typeof PendapatanUncheckedCreateInputSchema>
+declare global {
+   type Pendapatan = z.infer<typeof PendapatanSchema>
+   type PendapatanUncheckedCreateInput = z.infer<typeof PendapatanUncheckedCreateInputSchema>
+}

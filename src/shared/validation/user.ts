@@ -33,8 +33,6 @@ export const UserSchema = z.object({
    created_at: z.coerce.date(),
 })
 
-export type IUser = z.infer<typeof UserSchema>
-
 /////////////////////////////////////////
 // ROLE SCHEMA
 /////////////////////////////////////////
@@ -50,11 +48,15 @@ export const RoleSchema = z.object({
    updated_by: z.string().nullish(),
 })
 
-export type Role = z.infer<typeof RoleSchema>
-
 export const RoleUncheckedCreateInputSchema = z.object({
    id: z.string().optional(),
    name: z.string(),
    description: z.string().optional().nullable(),
    level: z.number().int(),
 })
+
+declare global {
+   type IUser = z.infer<typeof UserSchema>
+   type Role = z.infer<typeof RoleSchema>
+   type RoleUncheckedCreateInput = z.infer<typeof RoleUncheckedCreateInputSchema>
+}

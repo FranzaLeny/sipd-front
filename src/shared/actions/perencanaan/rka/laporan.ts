@@ -1,13 +1,5 @@
 import axios from '@custom-axios/api-fetcher'
 import { postToSipd } from '@custom-axios/sipd-fetcher'
-import {
-   GetLaporanRkaSkpdParams,
-   LaporanBelanjaSkpd,
-   LaporanBlSubGiat,
-   LaporanPendapatan,
-   LaporanSkpd,
-   RekapanSumberDana,
-} from '@/types/api/laporan'
 
 export const getRkaRekapBlSipd = async (payload: RkaBlSkpdSipdPayload) => {
    return await postToSipd('rkaRekapitulasiBelanjaSkpd', {
@@ -105,22 +97,22 @@ export const getRkaBlSubGiatPergeseranSipd = async (payload: RkaSubGiatPergesera
       })
 }
 
-export const getLaporanSkpd = async (params: GetLaporanRkaSkpdParams) => {
+export const getLaporanSkpd = async (params: GetLaporanSkpdParams) => {
    const { data } = await axios.get<ResponseApi<LaporanSkpd>>('/api/perencanaan/rka/skpd/laporan', {
       params,
    })
    return data
 }
 
-export const getLaporanBelanjaSkpd = async (params: GetLaporanRkaSkpdParams) => {
+export const getLaporanBelanjaSkpd = async (params: GetLaporanSkpdParams) => {
    return await axios
-      .get<ResponseApi<LaporanBelanjaSkpd>>('/api/perencanaan/rka/skpd/laporan/belanja', {
+      .get<ResponseApi<LaporanBlSkpd>>('/api/perencanaan/rka/skpd/laporan/belanja', {
          params,
       })
       .then((res) => res.data)
 }
 
-export const getLaporanPendapatanSkpd = async (params: GetLaporanRkaSkpdParams) => {
+export const getLaporanPendapatanSkpd = async (params: GetLaporanSkpdParams) => {
    return await axios
       .get<
          ResponseApi<LaporanPendapatan>
@@ -134,9 +126,9 @@ export const getLaporanSubGiat = async (id: string) => {
       .then((res) => res.data)
 }
 
-export const getLaporanSumberDana = async (params: GetLaporanRkaSkpdParams) => {
+export const getLaporanSumberDana = async (params: GetLaporanSkpdParams) => {
    return await axios
-      .get<ResponseApi<RekapanSumberDana>>('/api/perencanaan/rka/skpd/laporan/sumber-dana', {
+      .get<ResponseApi<LaporanRekapanSumberDana>>('/api/perencanaan/rka/skpd/laporan/sumber-dana', {
          params,
       })
       .then((res) => res.data)

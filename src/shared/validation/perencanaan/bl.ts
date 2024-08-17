@@ -53,8 +53,6 @@ export const JadwalAnggaranSchema = z.object({
    updated_at: z.coerce.date(),
 })
 
-export type JadwalAnggaran = z.infer<typeof JadwalAnggaranSchema>
-
 export const JadwalAnggaranUncheckedCreateInputSchema = z
    .object({
       id: z.string().optional(),
@@ -208,8 +206,6 @@ export const BlSkpdSchema = z.object({
    jadwal_anggaran_murni_id: z.string().nullish(),
 })
 
-export type BlSkpd = z.infer<typeof BlSkpdSchema>
-
 export const BlSkpdUncheckedCreateInputSchema = z
    .object({
       id: z.string().optional(),
@@ -249,4 +245,17 @@ export const LaporanBlSkpdParamsSchema = z
       jadwal_anggaran_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
    })
    .strict()
-export type LaporanBlSkpdParams = z.infer<typeof LaporanBlSkpdParamsSchema>
+
+declare global {
+   type JadwalAnggaranZod = z.infer<typeof JadwalAnggaranSchema>
+   type JadwalAnggaranUncheckedCreateInput = z.infer<
+      typeof JadwalAnggaranUncheckedCreateInputSchema
+   >
+   type JadwalAnggaranUncheckedUpdateInput = z.infer<
+      typeof JadwalAnggaranUncheckedUpdateInputSchema
+   >
+   type BlSkpd = z.infer<typeof BlSkpdSchema>
+   type BlSkpdUncheckedCreateInput = z.infer<typeof BlSkpdUncheckedCreateInputSchema>
+   type BlSkpdDeleteByListIdValidation = z.infer<typeof BlSkpdDeleteByListIdValidationSchema>
+   type LaporanBlSkpdParams = z.infer<typeof LaporanBlSkpdParamsSchema>
+}

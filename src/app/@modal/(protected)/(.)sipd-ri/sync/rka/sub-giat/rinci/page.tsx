@@ -21,7 +21,6 @@ import { Checkbox } from '@nextui-org/react'
 import { processChunks } from '@utils/hof'
 import {
    KetRinciBlSubGiatUncheckedCreateInputSchema,
-   RinciBlSubGiatUncheckedCreateInput,
    RinciBlSubGiatUncheckedCreateInputSchema,
    SubsRinciBlSubGiatUncheckedCreateInputSchema,
 } from '@zod'
@@ -372,10 +371,7 @@ async function singkronData(params: {
    return true
 }
 
-async function singkronKeterangan(
-   ket: Zod.infer<typeof KetRinciBlSubGiatUncheckedCreateInputSchema>[],
-   n: number
-) {
+async function singkronKeterangan(ket: KetRinciBlSubGiatUncheckedCreateInput[], n: number) {
    toast.update('singkron_data', {
       render: `Sedang Update data keterangan rincian rka ke-${n}`,
    })
@@ -388,10 +384,7 @@ async function singkronKeterangan(
    })
 }
 
-async function singkronKelompok(
-   kelompok: Zod.infer<typeof SubsRinciBlSubGiatUncheckedCreateInputSchema>[],
-   n: number
-) {
+async function singkronKelompok(kelompok: SubsRinciBlSubGiatUncheckedCreateInput[], n: number) {
    toast.update('singkron_data', {
       render: `Sedang Update data kelompok rincian ke-${n}`,
    })

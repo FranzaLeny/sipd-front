@@ -29,7 +29,6 @@ import { numberToMonth, numberToText } from '@utils'
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
-import { LaporanBlSubGiat } from '@/types/api/laporan'
 
 import dowloadRkaRinciBl from './excel-murni'
 import dowloadRkpaRinciBl from './excel-perubahan'
@@ -75,7 +74,7 @@ const LIST_DOKUMEN = [
       category: 'dpa',
    },
 ]
-export type LaporanRinciBl = AsyncReturnType<typeof getLaporanSubGiat>
+
 export type JenisDokumen = (typeof LIST_DOKUMEN)[number]
 
 export default function RinciBl({
@@ -216,10 +215,10 @@ export default function RinciBl({
          })
          const listData: {
             dokumen: typeof jenisDok
-            items: LaporanBlSubGiat['rincian']
-            skpd: LaporanBlSubGiat['skpd']['sub_skpd']
-            subGiat: LaporanBlSubGiat['sub_kegiatan']
-            tapd: LaporanBlSubGiat['skpd']['tapd']
+            items: ItemRincianLaporanSbl[]
+            skpd: UnitLaporan
+            subGiat: SubGiatLaporanSbl
+            tapd: TapdLaporan[]
          }[] = []
          for await (const sbl of listSubGiat) {
             await getLaporanSubGiat(sbl?.id).then((res) => {
@@ -253,15 +252,6 @@ export default function RinciBl({
       documentTitle,
    })
 
-   const paramsBlSubGiat = useMemo(() => {
-      if (!!id) {
-         if (!data?.jadwal?.id || (!!data?.jadwal?.id && !!id && data?.jadwal?.id === jadwal)) {
-            return { bl_sub_giat_id: id }
-         }
-      }
-      return { id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }
-   }, [id, unit, jadwal, daerah, data?.jadwal?.id])
-
    return (
       <>
          <div className='content sticky left-0 space-y-3 '>
@@ -278,7 +268,7 @@ export default function RinciBl({
                         label='Pilih Sub Kegiatan'
                         labelPlacement='inside'
                         selectedKey={blSubGiatId}
-                        params={paramsBlSubGiat}
+                        params={{ id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }}
                         onSelectionChange={setBlSubGiatId}
                      />
                   </div>
@@ -298,8 +288,10 @@ export default function RinciBl({
                            isDisabled={isLoading}
                            variant='shadow'
                            color='secondary'
-                           endContent={<Settings className='-mr-2 size-5' />}>
-                           Pengaturan
+                           title='Pengaturan'
+                           className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20 sm:px-3'
+                           endContent={<Settings className='size-5' />}>
+                           <span className='hidden sm:inline-flex'>Pengaturan</span>
                         </Button>
                      </PopoverTrigger>
                      <PopoverContent>
@@ -368,9 +360,11 @@ export default function RinciBl({
                         <Button
                            isLoading={isLoading}
                            variant='shadow'
+                           title='Cetak / Unduh'
                            color='primary'
-                           endContent={<Download className='-mr-2 size-5' />}>
-                           Cetak
+                           className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20 sm:px-3'
+                           endContent={<Download className='size-5' />}>
+                           <span className='hidden sm:inline-flex'>Cetak</span>
                         </Button>
                      </DropdownTrigger>
                      <DropdownMenu
@@ -484,7 +478,7 @@ export default function RinciBl({
 }
 
 function generatePerubahan(defaultData: LaporanBlSubGiat) {
-   const subGiat: LaporanRinciBl['sub_kegiatan'] = {
+   const subGiat: SubGiatLaporanSbl = {
       ...defaultData?.sub_kegiatan,
       capaian_bl_giat_murni: defaultData?.sub_kegiatan?.capaian_bl_giat,
       hasil_bl_giat_murni: defaultData?.sub_kegiatan?.hasil_bl_giat,
@@ -492,7 +486,7 @@ function generatePerubahan(defaultData: LaporanBlSubGiat) {
       output_bl_sub_giat_murni: defaultData?.sub_kegiatan?.output_bl_sub_giat,
       pagu_murni: defaultData?.sub_kegiatan?.pagu,
    }
-   const items: LaporanRinciBl['rincian'] = defaultData?.rincian.map((item) => {
+   const items: ItemRincianLaporanSbl[] = defaultData?.rincian.map((item) => {
       return {
          ...item,
          volume_murni: item.volume,
@@ -538,13 +532,7 @@ function TableKop({ jenisDok, tahun }: { tahun: number; jenisDok?: JenisDokumen 
    )
 }
 
-function TableGiat({
-   jenisDok,
-   subGiat,
-}: {
-   jenisDok: JenisDokumen
-   subGiat: LaporanRinciBl['sub_kegiatan']
-}) {
+function TableGiat({ jenisDok, subGiat }: { jenisDok: JenisDokumen; subGiat: SubGiatLaporanSbl }) {
    return (
       <>
          <table className='min-w-full'>
@@ -608,7 +596,7 @@ function TableSubGiat({
    subGiat = {} as any,
    keluaranSub = false,
 }: {
-   subGiat: LaporanRinciBl['sub_kegiatan']
+   subGiat: SubGiatLaporanSbl
    keluaranSub: boolean
 }) {
    const {

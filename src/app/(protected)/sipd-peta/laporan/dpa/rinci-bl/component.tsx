@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ResponseSkpdTapdAnggaranBySkpd } from '@actions/perencanaan/data/skpd'
 import TanggalInput from '@components/form/tanggal-input'
 import { TableAnggotaTapd, Tapd } from '@components/master/tapd'
 import TableCatatanRka from '@components/perencanaan/table-catatan-rka'
@@ -558,7 +557,7 @@ function TableRincianPergeseran({
 }
 
 type Props = {
-   dataSkpd: ResponseSkpdTapdAnggaranBySkpd
+   dataSkpd: SkpdTapdAnggaranBySkpd
    tahun: number
    id_skpd: number
    id_daerah: number
@@ -961,10 +960,10 @@ export default function DpaRincianBelanja({
                                     <td className='cell-print'>{capaian[0]}</td>
                                     <td className='cell-print'>
                                        {target_apaian
-                                          ? target_apaian[0]
+                                          ? (target_apaian[0]
                                                ?.split(',')
                                                ?.map((e) => e?.trim())
-                                               .join(', ') ?? '-'
+                                               .join(', ') ?? '-')
                                           : '-'}
                                     </td>
                                  </>
@@ -972,10 +971,10 @@ export default function DpaRincianBelanja({
                               <td className='cell-print'>{capaian[0]}</td>
                               <td className='cell-print'>
                                  {target_apaian
-                                    ? target_apaian[0]
+                                    ? (target_apaian[0]
                                          ?.split(',')
                                          ?.map((e) => e?.trim())
-                                         .join(', ') ?? '-'
+                                         .join(', ') ?? '-')
                                     : '-'}
                               </td>
                            </tr>
@@ -987,10 +986,10 @@ export default function DpaRincianBelanja({
                                           <td className='cell-print'>{item}</td>
                                           <td className='cell-print'>
                                              {target_apaian
-                                                ? target_apaian[i]
+                                                ? (target_apaian[i]
                                                      ?.split(',')
                                                      ?.map((e) => e?.trim())
-                                                     .join(', ') ?? '-'
+                                                     .join(', ') ?? '-')
                                                 : '-'}
                                           </td>
                                        </>
@@ -998,10 +997,10 @@ export default function DpaRincianBelanja({
                                     <td className='cell-print'>{item}</td>
                                     <td className='cell-print'>
                                        {target_apaian
-                                          ? target_apaian[i]
+                                          ? (target_apaian[i]
                                                ?.split(',')
                                                ?.map((e) => e?.trim())
-                                               .join(', ') ?? '-'
+                                               .join(', ') ?? '-')
                                           : '-'}
                                     </td>
                                  </tr>

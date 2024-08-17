@@ -14,9 +14,9 @@ interface RkaSkpdSipdResponse {
 }
 
 interface RkaSkpdSipd {
-   pendapatan: Pendapatan[]
+   pendapatan: _Pendapatan[]
    jumlah_pendapatan: number
-   rincian: Pendapatan[]
+   rincian: _Pendapatan[]
    jumlah_belanja: number
    defisit: number
    pembiayaan: Pembiayaan
@@ -28,7 +28,7 @@ interface Pembiayaan {
    pengeluaran: number
 }
 
-interface Pendapatan {
+interface _Pendapatan {
    kode_1: string
    kode_2: string
    kode_3: string

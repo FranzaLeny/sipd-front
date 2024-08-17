@@ -1,4 +1,3 @@
-import { StandarHarga, StandarHargaQuery, StandarHargaUncheckedCreateInputSchema } from '@zod'
 import axios from '@shared/custom-axios/api-fetcher'
 import { postToSipd } from '@shared/custom-axios/sipd-fetcher'
 import { tipeToKelompok } from '@shared/utils/standar-harga'
@@ -94,14 +93,7 @@ export const getStandarHargaById = async (
       .then((res) => res.data)
 }
 
-export type GetStandarHargaListParams = {
-   tahun: number
-   limit?: number
-   search?: string
-   after?: string
-} & StandarHargaQuery
-
-export async function getListStandarHarga(params: GetStandarHargaListParams) {
+export async function getListStandarHarga(params: GetListStandarHargaParams) {
    return axios
       .get<
          ResponseApi<CursorPaginate<StandarHarga>>
@@ -116,15 +108,6 @@ export async function getTolalStandarHarga<T extends StandarHargaQuery>(params?:
       >(`/api/perencanaan/data/standar-harga/total`, { params })
       .then((res) => res?.data)
 }
-
-export type StandarHargaById = {
-   akun: {
-      kode_akun: string
-      nama_akun: string
-   }[]
-   creator?: Creator
-   modifier?: Creator
-} & StandarHarga
 
 export const getAllStandarHargaByAkunFromSipd = async (
    params: Omit<ListStandarHargaByTipeAkunSipdPayload, 'tipe'>
@@ -146,8 +129,6 @@ export const getAllStandarHargaByAkunFromSipd = async (
 }
 
 // APi
-export async function syncStandarHaga(
-   data: Zod.infer<typeof StandarHargaUncheckedCreateInputSchema>[]
-) {
+export async function syncStandarHaga(data: StandarHargaUncheckedCreateInput[]) {
    return await axios.put('/api/perencanaan/data/standar-harga', data)
 }

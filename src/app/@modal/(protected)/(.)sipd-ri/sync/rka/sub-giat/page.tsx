@@ -36,18 +36,7 @@ import DialogConfirm from '@components/modal/dialog-confirm'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Checkbox } from '@nextui-org/react'
 import { processChunks } from '@utils/hof'
-import {
-   BlGiatPayloadSchema,
-   CapaianBlGiatUncheckedCreateInput,
-   DanaBlSubGiatUncheckedCreateInput,
-   HasilBlGiatUncheckedCreateInput,
-   LabelBlSubGiatUncheckedCreateInput,
-   LokasiBlSubGiatUncheckedCreateInput,
-   OutputBlGiatUncheckedCreateInput,
-   OutputBlSubGiatUncheckedCreateInput,
-   SubGiatPayloadSchema,
-   TagBlSubGiatUncheckedCreateInput,
-} from '@zod'
+import { BlGiatPayloadSchema, SubGiatPayloadSchema } from '@zod'
 import { toast } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
 

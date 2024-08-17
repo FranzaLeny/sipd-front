@@ -37,3 +37,5 @@ interface Paginate<T = any> {
 }
 type Colors = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | undefined
 type FC<T> = (props: T) => JSX.Element | null
+
+type NonUndefined<T> = T extends undefined ? never : T

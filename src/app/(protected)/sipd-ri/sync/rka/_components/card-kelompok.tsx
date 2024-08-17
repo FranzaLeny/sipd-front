@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react'
 import {
    getSubsRinciBlSubGiatBySkpdSipd,
-   GetSubsRinciListParams,
    getTotalSubsRinciBlSubGiat,
 } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { Card, CardBody } from '@nextui-org/react'
@@ -44,7 +43,7 @@ function CardDataKelompok({ data }: Props) {
          },
          'bl_sub_giat_rinci_subs',
          'total',
-      ] as [Partial<GetSubsRinciListParams>, ...any],
+      ] as [Partial<GetSubsRinciBlSubGiatParams>, ...any],
       queryFn: async ({ queryKey: [params] }) => {
          return await getTotalSubsRinciBlSubGiat(params)
       },

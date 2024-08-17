@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ResponseSkpdTapdAnggaranBySkpd } from '@actions/perencanaan/data/skpd'
 import TanggalInput from '@components/form/tanggal-input'
 import { TableAnggotaTapd, Tapd } from '@components/master/tapd'
 import TableCatatanRka from '@components/perencanaan/table-catatan-rka'
@@ -109,7 +108,7 @@ type Props = {
    id_daerah: number
    id_unit: number
    token: string
-   dataSkpd: ResponseSkpdTapdAnggaranBySkpd
+   dataSkpd: SkpdTapdAnggaranBySkpd
 }
 
 const JENIS_DOKUMEN = {

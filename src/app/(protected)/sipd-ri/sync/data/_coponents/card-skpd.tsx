@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { getListNewSkpdSipd, getTolalSkpd, SkpdParams } from '@actions/perencanaan/data/skpd'
+import { getListNewSkpdSipd, getTolalSkpd } from '@actions/perencanaan/data/skpd'
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import hasAccess from '@utils/chek-roles'
@@ -26,7 +26,7 @@ function CardDataSkpd({ data }: Props) {
 
    const lokal = useQuery({
       queryKey: [{ id_daerah: data.id_daerah, tahun: data.tahun }, 'data_skpd', 'total_skpd'] as [
-         SkpdParams,
+         Partial<GetSkpdParams>,
          ...any,
       ],
       queryFn: async ({ queryKey: [q] }) => {

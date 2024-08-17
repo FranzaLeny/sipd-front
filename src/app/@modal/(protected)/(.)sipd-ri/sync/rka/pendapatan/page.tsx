@@ -12,7 +12,7 @@ import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
 import { Checkbox } from '@nextui-org/react'
 import { processChunks } from '@utils/hof'
-import { PendapatanUncheckedCreateInput, PendapatanUncheckedCreateInputSchema } from '@zod'
+import { PendapatanUncheckedCreateInputSchema } from '@zod'
 import { toast } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
 

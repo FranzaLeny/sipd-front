@@ -3,7 +3,8 @@ import ErrorPage from '@components/ui/error'
 import { omit } from 'lodash-es'
 import { getServerSession } from '@shared/server-actions/auth'
 
-import ModalEdit from './_components'
+import ModalEdit from './form-edit'
+import ModalEditSipd from './form-edit-jadwal-sipd'
 
 interface Props {
    params: Params
@@ -31,8 +32,14 @@ const Page = async ({ params: { id } }: Props) => {
          />
       )
    }
-   return (
+
+   return data.is_lokal ? (
       <ModalEdit
+         data={data}
+         user={omit(user, 'token')}
+      />
+   ) : (
+      <ModalEditSipd
          data={data}
          user={omit(user, 'token')}
       />

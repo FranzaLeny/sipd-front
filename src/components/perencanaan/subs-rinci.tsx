@@ -1,13 +1,9 @@
 'use client'
 
 import { forwardRef, useState } from 'react'
-import {
-   getSubsRinciBlSubGiat,
-   GetSubsRinciListParams,
-} from '@actions/perencanaan/rka/bl-rinci-sub-giat'
+import { getSubsRinciBlSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { SubsRinciBlSubGiat } from '@zod'
 
 export interface SubsRinciSelectorProps
    extends Pick<
@@ -20,7 +16,7 @@ export interface SubsRinciSelectorProps
    onChange?: (subs_bl: SubsRinciBlSubGiat | undefined) => void
    onValueChange?: (subs_bl_teks: string | null) => void
    onSelectionChange?: (id_subs_sub_bl: number | null) => void
-   params?: GetSubsRinciListParams
+   params?: GetListSubsRinciBlSubGiatParams
    delayFetch?: number
 }
 
@@ -45,7 +41,7 @@ export const SubsRinciSelector = forwardRef(
 
       const { data, isFetching, status } = useQuery({
          queryKey: [{ ...queryParams }, 'bl_sub_giat_rinci_subs'] as [
-            GetSubsRinciListParams,
+            GetListSubsRinciBlSubGiatParams,
             string,
          ],
          queryFn: async ({ queryKey: [params] }) => {

@@ -112,10 +112,6 @@ export const CapaianBlGiatUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type CapaianBlGiatUncheckedCreateInput = z.infer<
-   typeof CapaianBlGiatUncheckedCreateInputSchema
->
-
 export const HasilBlGiatSchema = z.object({
    id: z.string(),
    created_user: z
@@ -170,8 +166,6 @@ export const HasilBlGiatSchema = z.object({
    bl_giat_id: z.string().nullish(),
    jadwal_anggaran_id: z.string(),
 })
-
-export type HasilBlGiat = z.infer<typeof HasilBlGiatSchema>
 
 export const HasilBlGiatUncheckedCreateInputSchema = z
    .object({
@@ -233,8 +227,6 @@ export const HasilBlGiatUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type HasilBlGiatUncheckedCreateInput = z.infer<typeof HasilBlGiatUncheckedCreateInputSchema>
-
 export const OutputBlGiatSchema = z.object({
    id: z.string(),
    id_daerah: z.number().int(),
@@ -261,8 +253,6 @@ export const OutputBlGiatSchema = z.object({
    jadwal_anggaran_id: z.string(),
 })
 
-export type OutputBlGiat = z.infer<typeof OutputBlGiatSchema>
-
 export const OutputBlGiatUncheckedCreateInputSchema = z
    .object({
       id: z.string().optional(),
@@ -286,10 +276,6 @@ export const OutputBlGiatUncheckedCreateInputSchema = z
       jadwal_anggaran_id: z.string(),
    })
    .strip()
-
-export type OutputBlGiatUncheckedCreateInput = z.infer<
-   typeof OutputBlGiatUncheckedCreateInputSchema
->
 
 export const CapaianBlGiatDeleteByListIdValidationSchema = z
    .object({
@@ -354,3 +340,23 @@ export const BlGiatPayloadSchema = z
       id_sub_skpd: z.coerce.number(),
    })
    .strip()
+
+declare global {
+   type BlGiat = z.infer<typeof BlGiatSchema>
+   type BlGiatUncheckedCreateInput = z.infer<typeof BlGiatUncheckedCreateInputSchema>
+   type CapaianBlGiat = z.infer<typeof CapaianBlGiatSchema>
+   type CapaianBlGiatUncheckedCreateInput = z.infer<typeof CapaianBlGiatUncheckedCreateInputSchema>
+   type HasilBlGiat = z.infer<typeof HasilBlGiatSchema>
+   type HasilBlGiatUncheckedCreateInput = z.infer<typeof HasilBlGiatUncheckedCreateInputSchema>
+   type OutputBlGiat = z.infer<typeof OutputBlGiatSchema>
+   type OutputBlGiatUncheckedCreateInput = z.infer<typeof OutputBlGiatUncheckedCreateInputSchema>
+   type BlGiatDeleteByListIdParams = z.infer<typeof BlGiatDeleteByListIdValidationSchema>
+   type HasilBlGiatDeleteByListIdParams = z.infer<typeof HasilBlGiatDeleteByListIdValidationSchema>
+   type CapaianBlGiatDeleteByListIdParams = z.infer<
+      typeof CapaianBlGiatDeleteByListIdValidationSchema
+   >
+   type OutputBlGiatDeleteByListIdParams = z.infer<
+      typeof OutputBlGiatDeleteByListIdValidationSchema
+   >
+   type BlGiatPayload = z.infer<typeof BlGiatPayloadSchema>
+}

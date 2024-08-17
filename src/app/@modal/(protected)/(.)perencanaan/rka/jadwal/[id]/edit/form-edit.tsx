@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { JadwalAnggaran, updateJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
+import { updateJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import DateInput from '@components/form/date-time-input'
 import RadioGroupInput from '@components/form/radio-input'
 import { NumberInput, TextInput } from '@components/form/text-input'
@@ -147,6 +147,8 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
          const valida_data = {
             ...value,
             is_locked: value.is_locked,
+            waktu_mulai: value.is_locked ? undefined : value.waktu_mulai,
+            waktu_selesai: value.is_locked ? undefined : value.waktu_selesai,
             is_perubahan: value.is_perubahan,
          }
          await updateJadwalAnggaran(data.id, valida_data).then((res) => {
@@ -178,11 +180,11 @@ const ModalEdit: React.FC<Props> = ({ data }) => {
 
    const idUnikMurni = watch('id_unik_murni')
    const onJadwalChange = useCallback(
-      (data?: JadwalAnggaran) => {
-         if (data) {
-            handleValueChange('id_jadwal_murni', data.id_jadwal)
-            handleValueChange('id_unik_murni', data.id_unik)
-            handleValueChange('nama_jadwal_murni', data.nama_jadwal_murni)
+      (jadwal?: JadwalAnggaran) => {
+         if (jadwal) {
+            handleValueChange('id_jadwal_murni', jadwal.id_jadwal)
+            handleValueChange('id_unik_murni', jadwal.id_unik)
+            handleValueChange('nama_jadwal_murni', jadwal.nama_sub_tahap)
             handleValueChange('is_perubahan', 1)
          } else {
             handleValueChange('is_perubahan', 0)

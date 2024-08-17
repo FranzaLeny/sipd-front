@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { GetAkunListParams, getListAkunSipd, getTolalAkun } from '@actions/perencanaan/data/akun'
+import { getListAkunSipd, getTolalAkun } from '@actions/perencanaan/data/akun'
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import hasAccess from '@utils/chek-roles'
@@ -23,7 +23,10 @@ function CardSyncAkun({ data }: Props) {
    }, [data?.roles])
 
    const lokal = useQuery({
-      queryKey: [{ tahun: data.tahun }, 'total_akun', 'data_akun'] as [GetAkunListParams, ...any],
+      queryKey: [{ tahun: data.tahun }, 'total_akun', 'data_akun'] as [
+         Partial<GetAkunParams>,
+         ...any,
+      ],
       queryFn: async ({ queryKey: [params] }) => {
          return await getTolalAkun(params)
       },

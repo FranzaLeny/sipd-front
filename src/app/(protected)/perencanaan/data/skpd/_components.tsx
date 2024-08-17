@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { HelperColumns } from '@components/table'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import hasAccess from '@utils/chek-roles'
-import { Skpd } from '@zod'
 import { MoreVertical } from 'lucide-react'
 
 export const ActionSkpdTable = ({ roles }: { roles?: RoleUser[] }) => {

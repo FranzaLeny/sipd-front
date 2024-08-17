@@ -1,11 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import {
-   getListSumberDanaSipd,
-   GetSumberDanaListParams,
-   getTotalSumberDana,
-} from '@actions/perencanaan/data/sumber-dana'
+import { getListSumberDanaSipd, getTotalSumberDana } from '@actions/perencanaan/data/sumber-dana'
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import hasAccess from '@utils/chek-roles'
@@ -27,7 +23,7 @@ function CardSatuan({ data: { roles, tahun, id_daerah } }: Props) {
 
    const lokal = useQuery({
       queryKey: [{ tahun }, 'data_sumber_dana', 'total_sumber_dana'] as [
-         GetSumberDanaListParams,
+         GetListSumberDanaParams,
          ...any,
       ],
       queryFn: async ({ queryKey: [q] }) => {

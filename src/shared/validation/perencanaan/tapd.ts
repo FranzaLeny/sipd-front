@@ -1,4 +1,4 @@
-import { Skpd, SkpdSchema, z } from '@zod'
+import { SkpdSchema, z } from '@zod'
 
 export const TapdAnggaranSchema = z.object({
    id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
@@ -15,23 +15,12 @@ export const TapdAnggaranSchema = z.object({
    updated_at: z.coerce.date(),
 })
 
-export type TapdAnggaran = z.infer<typeof TapdAnggaranSchema>
-
 export const AnggotaTapdSchema = z.object({
    id: z.string().trim().min(1, { message: 'Wajib diisi' }),
    nip: z.string().trim().min(1, { message: 'Wajib diisi' }),
    nama: z.string().trim().min(1, { message: 'Wajib diisi' }),
    jabatan: z.string().trim().min(1, { message: 'Wajib diisi' }),
 })
-
-export type AnggotaTapd = z.infer<typeof AnggotaTapdSchema>
-
-export type TapdAnggaranRelations = {
-   anggota_tapd: AnggotaTapd[]
-   skpd: Skpd[]
-}
-
-export type TapdAnggaranWithRelations = z.infer<typeof TapdAnggaranSchema> & TapdAnggaranRelations
 
 export const TapdAnggaranWithRelationsSchema: z.ZodType<TapdAnggaranWithRelations> =
    TapdAnggaranSchema.merge(
@@ -62,6 +51,14 @@ export const TapdAnggaranUncheckedCreateInputSchema = z
          .optional(),
    })
    .strip()
-export type TapdAnggaranUncheckedCreateInput = z.infer<
-   typeof TapdAnggaranUncheckedCreateInputSchema
->
+
+declare global {
+   type TapdAnggaran = z.infer<typeof TapdAnggaranSchema>
+   type AnggotaTapd = z.infer<typeof AnggotaTapdSchema>
+   type TapdAnggaranRelations = {
+      anggota_tapd: AnggotaTapd[]
+      skpd: Skpd[]
+   }
+   type TapdAnggaranWithRelations = z.infer<typeof TapdAnggaranSchema> & TapdAnggaranRelations
+   type TapdAnggaranUncheckedCreateInput = z.infer<typeof TapdAnggaranUncheckedCreateInputSchema>
+}

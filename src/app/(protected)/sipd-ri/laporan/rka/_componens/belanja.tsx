@@ -1,7 +1,6 @@
 'use client'
 
 import { Fragment, useRef, useState } from 'react'
-import type { ResponseSkpdTapdAnggaranBySkpd } from '@actions/perencanaan/data/skpd'
 import { getRkaBlPergeseranSubGiatSipd } from '@actions/perencanaan/rka/laporan'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
@@ -15,7 +14,7 @@ import { useReactToPrint } from 'react-to-print'
 export default function RkaPergeseranBelanjaSkpd({
    skpd: { skpd, sub_skpd, tapd: dataTapd },
 }: {
-   skpd: ResponseSkpdTapdAnggaranBySkpd
+   skpd: SkpdTapdAnggaranBySkpd
 }) {
    const [tapd, setTapd] = useState(dataTapd ?? undefined)
    const printRef = useRef(null)

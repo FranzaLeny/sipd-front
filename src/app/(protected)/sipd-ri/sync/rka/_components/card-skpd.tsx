@@ -1,13 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import {
-   getBlSkpdList,
-   GetBlSkpdListParams,
-   getListBlSkpdSipd,
-   getTotalBlSkpd,
-   ListBlSkpdParams,
-} from '@actions/perencanaan/rka/bl-skpd'
+import { getListBlSkpd, getListBlSkpdSipd, getTotalBlSkpd } from '@actions/perencanaan/rka/bl-skpd'
 import { Card, CardBody } from '@nextui-org/react'
 import { useLocale } from '@react-aria/i18n'
 import { useQuery } from '@tanstack/react-query'
@@ -67,8 +61,8 @@ function CardSkpd({ data }: Props) {
             jadwal_anggaran_id: data?.jadwal_anggaran_id,
          },
          'bl_skpd',
-      ] as [GetBlSkpdListParams, ...any],
-      queryFn: async ({ queryKey: [params] }) => await getBlSkpdList(params),
+      ] as [GetListBlSkpdParams, ...any],
+      queryFn: async ({ queryKey: [params] }) => await getListBlSkpd(params),
       refetchOnMount: false,
       enabled: enabled && access.lokal,
    })
@@ -80,7 +74,7 @@ function CardSkpd({ data }: Props) {
          'bl_skpd',
          'total',
          'jadwal_anggaran',
-      ] as [ListBlSkpdParams, ...any],
+      ] as [GetBlSkpdParams, ...any],
       queryFn: async ({ queryKey: [params] }) => await getTotalBlSkpd(params),
       refetchOnMount: false,
       enabled: enabled && access.lokal,

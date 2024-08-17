@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import {
    getListPendapatanByUnitSipd,
    getTotalPendapatan,
-   ListPendapatanParams,
 } from '@actions/perencanaan/rka/pendapatan'
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
@@ -59,7 +58,7 @@ function CardDataPendapatan({ data }: Props) {
          'bl_pendapatan',
          'total',
          'jadwal_anggaran',
-      ] as [ListPendapatanParams, ...any],
+      ] as [GetPendapatanParams, ...any],
       queryFn: async ({ queryKey: [q] }) => await getTotalPendapatan(q),
       refetchOnMount: false,
       enabled: access.sipd_ri && enabled,

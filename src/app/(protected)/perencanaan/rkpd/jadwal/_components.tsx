@@ -15,8 +15,6 @@ import { useDateFormatter } from '@react-aria/i18n'
 import { Copy, Edit, MoreVertical, Trash } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
 
-import { JadwalAnggaranWithTahapan } from './page'
-
 export const ActionTableJadwalAnggaran = () => {
    const { hasAcces } = useSession(['super_admin', 'admin', 'admin_perencanaan'])
 
@@ -74,7 +72,7 @@ const chekStatus = (data: JadwalAnggaranWithTahapan) => {
    )
 }
 
-export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAnggaranWithTahapan) {
+export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAnggaran) {
    const { data: session, getAccess } = useSession()
    const isSuperAdmin = getAccess(['admin_perencanaan'])
    const isAdmin =
@@ -163,7 +161,7 @@ const dateTime = (value: any) => {
 
    return date ? <DateTime date={date} /> : null
 }
-export const helperColumns: HelperColumns<JadwalAnggaranWithTahapan> = {
+export const helperColumns: HelperColumns<JadwalAnggaran> = {
    id_jadwal: { key: 'id_jadwal', name: 'ID', hide: true, sortable: true },
    nama_sub_tahap: { key: 'nama_sub_tahap', name: 'Jadwal Anggaran', sortable: true },
    jadwal_penatausahaan: {

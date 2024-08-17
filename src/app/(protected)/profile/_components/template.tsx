@@ -1,7 +1,6 @@
 'use client'
 
 import { Tab, Tabs } from '@nextui-org/react'
-import { IUser } from '@zod'
 
 import CardSecuriy from './form-password'
 import CardProfile from './form-profile'

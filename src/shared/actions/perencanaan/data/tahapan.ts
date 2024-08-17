@@ -1,8 +1,5 @@
 import axios from '@custom-axios/api-fetcher'
-import { TahapanSchema, TahapanUncheckedCreateInputSchema } from '@zod'
 import { postToSipd } from '@shared/custom-axios/sipd-fetcher'
-
-export type Tahapan = Zod.infer<typeof TahapanSchema>
 
 export const getListTahapanSipd = async (payload: ListTahapanSipdPayload) => {
    return await postToSipd('listTahapan', {
@@ -11,9 +8,7 @@ export const getListTahapanSipd = async (payload: ListTahapanSipdPayload) => {
    }).then((res) => res?.data)
 }
 
-export const syncTahapanSipd = async (
-   data: Zod.infer<typeof TahapanUncheckedCreateInputSchema>[]
-) => {
+export const syncTahapanSipd = async (data: TahapanUncheckedCreateInput[]) => {
    return await axios.put<ResponseApi>('/api/perencanaan/data/tahapan', data)
 }
 

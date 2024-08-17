@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { ResponseSkpdTapdAnggaranBySkpd } from '@actions/perencanaan/data/skpd'
 import { getBlSubGiatAktifSipd } from '@actions/perencanaan/rka/bl-sub-giat'
 import {
    getListSubGiatRkaPergeseranSipd,
@@ -31,7 +30,7 @@ function TrSubGiat({ label, value }: { label: string; value: string | number }) 
 export default function RingkasanPerubahanRincianBelanjaSubGiat({
    skpd: { skpd, sub_skpd, tapd: dataTapd },
 }: {
-   skpd: ResponseSkpdTapdAnggaranBySkpd
+   skpd: SkpdTapdAnggaranBySkpd
 }) {
    const [tapd, setTapd] = useState(dataTapd ?? undefined)
    const [selctedSbl, setSelctedSbl] = useState<BlSubGiatAktifSipd>()

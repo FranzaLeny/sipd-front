@@ -2,13 +2,11 @@
 
 import { useMemo } from 'react'
 import Link from 'next/link'
-import { JadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import { JadwalAnggaranSearchParams } from '@components/perencanaan/jadwal-anggaran'
 import { HelperColumns } from '@components/table'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import hasAccess from '@utils/chek-roles'
-import { Pendapatan } from '@zod'
 import { MoreVertical } from 'lucide-react'
 
 export const ActionTablePendapatan: React.FC<{

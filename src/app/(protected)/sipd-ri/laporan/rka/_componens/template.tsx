@@ -1,6 +1,5 @@
 'use client'
 
-import { ResponseSkpdTapdAnggaranBySkpd } from '@actions/perencanaan/data/skpd'
 import { Accordion, AccordionItem, cn } from '@nextui-org/react'
 
 import RkaPergeseranBelanjaSkpd from './belanja'
@@ -8,11 +7,7 @@ import RingkasanPerubahanPendapatanSkpd from './pendapatan'
 import RingkasanPerubahanRincianBelanjaSubGiat from './rincian-belanja'
 import RingkasanPerubahanSkpd from './ringkasan'
 
-export default function Template({
-   skpd,
-}: {
-   skpd: ResponseSkpdTapdAnggaranBySkpd
-}) {
+export default function Template({ skpd }: { skpd: SkpdTapdAnggaranBySkpd }) {
    return (
       <Accordion
          motionProps={{
@@ -30,7 +25,7 @@ export default function Template({
             key='rekapitulasi'
             aria-label='Rekapitulasi'
             title='Rekapitulasi SKPD'>
-            <RingkasanPerubahanSkpd  skpd={skpd} />
+            <RingkasanPerubahanSkpd skpd={skpd} />
          </AccordionItem>
          <AccordionItem
             key='pendapatan'

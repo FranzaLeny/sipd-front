@@ -1,7 +1,6 @@
 import TableServerSide from '@components/table'
 import Breadcrumb from '@components/ui/Breadcrumbs'
 import ErrorPage from '@components/ui/error'
-import { JadwalAnggaranSchema, TahapanSchema } from '@zod'
 import { getServerSession } from '@shared/server-actions/auth'
 
 import { ActionTableJadwalAnggaran, helperColumns } from './_components'
@@ -10,11 +9,8 @@ export const metadata = {
    title: 'Jadwal',
 }
 
-export type JadwalAnggaranWithTahapan = Zod.infer<typeof JadwalAnggaranSchema> & {
-   tahapan: Zod.infer<typeof TahapanSchema>
-}
-
 const PATHS = [{ title: 'Perencanaan' }, { title: 'RKA' }, { title: 'Jadwal Anggaran' }]
+
 const Page = async () => {
    const { hasAccess, user } = await getServerSession([
       'super_admin',

@@ -5,8 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
    getLaporanRakBlSubGiatSipdPeta,
    getRakSubGiatSipdPeta,
-   ParamsRakBlSkpdSipdPeta,
-   ResponseLaporanRakBlSubGiatSipdPeta,
 } from '@actions/penatausahaan/pengeluaran/rak'
 import { getSkpdPenatausahaanFromSipd } from '@actions/penatausahaan/pengeluaran/skpd'
 import { validateSipdPetaSession } from '@actions/perencanaan/token-sipd'
@@ -34,7 +32,7 @@ export default function Page() {
    }, [session])
 
    const [skpd, setSkpd] = useState<number | string>('')
-   const [subGiat, setSubGiat] = useState<ParamsRakBlSkpdSipdPeta & { kode_unik: string }>()
+   const [subGiat, setSubGiat] = useState<GetRakBlSubGiatSipdPetaParams & { kode_unik: string }>()
 
    useEffect(() => {
       user?.id_skpd && setSkpd(user?.id_skpd?.toString() ?? '')
@@ -63,7 +61,7 @@ export default function Page() {
 
    const { data: rak, isFetching: loadingRak } = useQuery({
       queryKey: [subGiat, 'rak_penatausahaan'] as [
-         ParamsRakBlSkpdSipdPeta & { kode_unik: string },
+         GetRakBlSubGiatSipdPetaParams & { kode_unik: string },
          ...any,
       ],
       queryFn: ({ queryKey: [{ kode_unik, ...q }] }) => getLaporanRakBlSubGiatSipdPeta(q),
@@ -247,7 +245,7 @@ export default function Page() {
    )
 }
 
-const RakTable = ({ rak: { items } }: { rak: ResponseLaporanRakBlSubGiatSipdPeta }) => {
+const RakTable = ({ rak: { items } }: { rak: LaporanRakBlSubGiatSipdPeta }) => {
    const rincian = items?.filter(
       (d) =>
          d?.kode_rekening?.startsWith('5') &&

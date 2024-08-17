@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react'
 import {
    getKetRinciBlSubGiatBySkpdSipd,
-   GetKetRinciListParams,
    getTotalKetRinciBlSubGiat,
 } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { Card, CardBody } from '@nextui-org/react'
@@ -44,7 +43,7 @@ function CardDataKeterangan({ data }: Props) {
          },
          'bl_sub_giat_rinci_ket',
          'total',
-      ] as [Partial<GetKetRinciListParams>, ...any],
+      ] as [Partial<GetKetRinciParams>, ...any],
       queryFn: async ({ queryKey: [params] }) => {
          return await getTotalKetRinciBlSubGiat(params)
       },

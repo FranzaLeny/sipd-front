@@ -93,7 +93,7 @@ const ModalSingkronJadwal = () => {
 export default ModalSingkronJadwal
 
 async function syncKeteranganRinciSbl(
-   keterangan: Zod.infer<typeof KetRinciBlSubGiatUncheckedCreateInputSchema>[],
+   keterangan: KetRinciBlSubGiatUncheckedCreateInput[],
    n: number,
    p: number,
    l: number

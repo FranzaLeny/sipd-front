@@ -11,7 +11,7 @@ import { BlSkpdUncheckedCreateInputSchema } from '@zod'
 import { toast } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
 
-async function singkronData(data: Zod.infer<typeof BlSkpdUncheckedCreateInputSchema>[], n: number) {
+async function singkronData(data: BlSkpdUncheckedCreateInput[], n: number) {
    toast.update('singkron_data', {
       render: `Sedang Update data belanja skpd ke-${n}`,
    })

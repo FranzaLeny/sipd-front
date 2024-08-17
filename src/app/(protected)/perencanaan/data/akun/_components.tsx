@@ -6,7 +6,6 @@ import { HelperColumns } from '@components/table'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import hasAccess from '@utils/chek-roles'
-import { Akun } from '@zod'
 import { MoreVertical } from 'lucide-react'
 
 const diffForHumans = (value?: string | number | Date | null) => {

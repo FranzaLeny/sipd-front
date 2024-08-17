@@ -1,4 +1,3 @@
-import { RakByJadwal } from '@actions/penatausahaan/pengeluaran/rak'
 import { titleCase } from '@utils'
 import { borderAll, numStyle, textStyle } from '@utils/excel'
 import Excel from 'exceljs'
@@ -41,7 +40,7 @@ function columnToNumber(column: string) {
    return number
 }
 
-const downloadRak = async (rak: RakByJadwal[]) => {
+const downloadRak = async (rak: RakBlByJadwal[]) => {
    let namaFile = 'RAK'
    namaFile = namaFile?.replace(/[^\w.-]/g, ' ')?.replaceAll('.', '_')
    const sheet_name = 'RAK'

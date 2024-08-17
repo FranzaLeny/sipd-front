@@ -4,7 +4,6 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import {
    getRakBlSubGiatSipdPeta,
    getRakSkpdSipdPeta,
-   ResponseRakBlSubGiatSipdPeta,
    syncRakBlSkpd,
    syncRakBlSubGiat,
 } from '@actions/penatausahaan/pengeluaran/rak'
@@ -15,13 +14,13 @@ import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
 import { processChunks } from '@utils/hof'
 import {
-   RakSkpdUncheckedCreateInput,
    RakSkpdUncheckedCreateInputSchema,
-   RakUncheckedCreateInput,
    RakUncheckedCreateInputSchema,
 } from '@validations/keuangan/rak'
 import { toast } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
+
+type RakBlSubGiatSipdPeta = AsyncReturnType<typeof getRakBlSubGiatSipdPeta>[number]
 
 const ModalSingkron = () => {
    const { data: session } = useSession(['admin', 'super_admin', 'sipd_peta'])
@@ -254,9 +253,9 @@ const _getRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams
             res?.map((d) => {
                const temp = Object.keys(d)?.reduce((acc: any, curr) => {
                   if (isNaN(Number(curr))) {
-                     acc[curr] = d[curr as keyof ResponseRakBlSubGiatSipdPeta]
+                     acc[curr] = d[curr as keyof RakBlSubGiatSipdPeta]
                   } else {
-                     acc[`bulan_${curr}`] = d[curr as keyof ResponseRakBlSubGiatSipdPeta]
+                     acc[`bulan_${curr}`] = d[curr as keyof RakBlSubGiatSipdPeta]
                   }
                   return acc
                }, {})

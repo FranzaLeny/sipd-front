@@ -73,8 +73,6 @@ export const AkunSchema = z.object({
       .nullish(),
 })
 
-export type Akun = z.infer<typeof AkunSchema>
-
 export const AkunUncheckedCreateInputSchema = z
    .object({
       id_akun: z.number().int(),
@@ -278,8 +276,6 @@ export const AkunUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type AkunUncheckedCreateInput = z.infer<typeof AkunUncheckedCreateInputSchema>
-
 export const SkpdSchema = z.object({
    id: z.string(),
    id_unik: z.string(),
@@ -361,7 +357,6 @@ export const SkpdSchema = z.object({
    updated_by: z.string().nullish(),
    updated_at: z.coerce.date(),
 })
-export type Skpd = z.infer<typeof SkpdSchema>
 
 export const SkpdUncheckedCreateInputSchema = z
    .object({
@@ -467,8 +462,6 @@ export const SkpdUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type SkpdUncheckedCreateInput = Zod.infer<typeof SkpdUncheckedCreateInputSchema>
-
 export const StandarHargaSchema = z.object({
    id: z.string(),
    harga: z.number(),
@@ -495,7 +488,6 @@ export const StandarHargaSchema = z.object({
    updated_by: z.string().nullish(),
    updated_at: z.coerce.date(),
 })
-export type StandarHarga = z.infer<typeof StandarHargaSchema>
 
 export const StandarHargaQuerySchema = z.object({
    id_akun: z
@@ -508,8 +500,6 @@ export const StandarHargaQuerySchema = z.object({
    is_sipd: z.coerce.number().optional(),
    id_kel_standar_harga: z.coerce.number().optional(),
 })
-
-export type StandarHargaQuery = z.infer<typeof StandarHargaQuerySchema>
 
 export const StandarHargaUncheckedCreateInputSchema = z
    .object({
@@ -558,7 +548,6 @@ export const TahapanSchema = z.object({
    updated_by: z.string().nullish(),
    updated_at: z.coerce.date(),
 })
-export type Tahapan = z.infer<typeof TahapanSchema>
 
 export const TahapanUncheckedCreateInputSchema = z
    .object({
@@ -630,7 +619,6 @@ export const UserSipdPerencanaanSchema = z.object({
    user_id: z.string().nullish(),
 })
 
-export type UserSipdPerencanaan = z.infer<typeof UserSipdPerencanaanSchema>
 export const IdsAkunStandarHargaSchema = z
    .object({
       id_standar_harga: z.number(),
@@ -668,8 +656,6 @@ export const SatuanUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type Satuan = z.infer<typeof SatuanSchema>
-
 export const KabKotaSchema = z.object({
    id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
    id_daerah: z.number().int(),
@@ -690,8 +676,6 @@ export const KabKotaSchema = z.object({
       .nullish(),
    updated_at: z.coerce.date(),
 })
-
-export type KabKota = z.infer<typeof KabKotaSchema>
 
 export const KecamatanSchema = z.object({
    id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
@@ -715,8 +699,6 @@ export const KecamatanSchema = z.object({
       .nullish(),
    updated_at: z.coerce.date(),
 })
-
-export type Kecamatan = z.infer<typeof KecamatanSchema>
 
 export const DesaKelSchema = z.object({
    id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
@@ -746,8 +728,6 @@ export const DesaKelSchema = z.object({
       .nullish(),
    updated_at: z.coerce.date(),
 })
-
-export type DesaKel = z.infer<typeof DesaKelSchema>
 
 export const SumberDanaSchema = z.object({
    id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
@@ -811,8 +791,6 @@ export const SumberDanaSchema = z.object({
       .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
       .nullish(),
 })
-
-export type SumberDana = z.infer<typeof SumberDanaSchema>
 
 export const SumberDanaUncheckedCreateInputSchema = z
    .object({
@@ -882,4 +860,23 @@ export const SumberDanaUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type SumberDanaUncheckedCreateInput = z.infer<typeof SumberDanaUncheckedCreateInputSchema>
+declare global {
+   type Akun = z.infer<typeof AkunSchema>
+   type AkunUncheckedCreateInput = z.infer<typeof AkunUncheckedCreateInputSchema>
+   type Skpd = z.infer<typeof SkpdSchema>
+   type SkpdUncheckedCreateInput = z.infer<typeof SkpdUncheckedCreateInputSchema>
+   type StandarHarga = z.infer<typeof StandarHargaSchema>
+   type StandarHargaQuery = z.infer<typeof StandarHargaQuerySchema>
+   type StandarHargaUncheckedCreateInput = z.infer<typeof StandarHargaUncheckedCreateInputSchema>
+   type Tahapan = z.infer<typeof TahapanSchema>
+   type TahapanUncheckedCreateInput = z.infer<typeof TahapanUncheckedCreateInputSchema>
+   type UserSipdPerencanaan = z.infer<typeof UserSipdPerencanaanSchema>
+   type IdsAkunStandarHarga = z.infer<typeof IdsAkunStandarHargaSchema>
+   type Satuan = z.infer<typeof SatuanSchema>
+   type SatuanUncheckedCreateInput = z.infer<typeof SatuanUncheckedCreateInputSchema>
+   type KabKota = z.infer<typeof KabKotaSchema>
+   type Kecamatan = z.infer<typeof KecamatanSchema>
+   type DesaKel = z.infer<typeof DesaKelSchema>
+   type SumberDana = z.infer<typeof SumberDanaSchema>
+   type SumberDanaUncheckedCreateInput = z.infer<typeof SumberDanaUncheckedCreateInputSchema>
+}

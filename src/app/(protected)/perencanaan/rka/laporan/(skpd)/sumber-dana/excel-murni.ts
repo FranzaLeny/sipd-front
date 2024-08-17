@@ -8,7 +8,6 @@ import {
 } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
-import { RekapanSumberDana } from '@/types/api/laporan'
 
 function formatDokumen(ws: Excel.Worksheet, lengthBl: number) {
    const columnsBl =
@@ -36,8 +35,8 @@ function formatDokumen(ws: Excel.Worksheet, lengthBl: number) {
 }
 
 interface Props {
-   sumberDana: RekapanSumberDana['sumber_dana']
-   skpd: RekapanSumberDana['skpd']['unit']
+   sumberDana: SumberDanaLaporanRekapanSumberDana[]
+   skpd: UnitLaporan
    tahun: number
    documentTitle: string
 }

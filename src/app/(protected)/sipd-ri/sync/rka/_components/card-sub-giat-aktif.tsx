@@ -1,17 +1,16 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import {
-   getBlSubGiatAktifSipd,
-   GetSubGiatListParams,
-   getTotalBlSubGiatAktif,
-} from '@actions/perencanaan/rka/bl-sub-giat'
+import { getBlSubGiatAktifSipd, getTotalBlSubGiatAktif } from '@actions/perencanaan/rka/bl-sub-giat'
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import hasAccess from '@utils/chek-roles'
 
 import CardData from './card-data'
 
+type ParamsGetTotalBlSubGiatAktif = NonUndefined<
+   Partial<Parameters<typeof getTotalBlSubGiatAktif>[0]>
+>
 type Props = {
    data: {
       id_daerah: number
@@ -50,7 +49,7 @@ function CardDataSubGiatAktif({ data }: Props) {
          'bl_sub_giat_aktif',
          'total',
          'jadwal_anggaran',
-      ] as [Partial<GetSubGiatListParams>, ...any],
+      ] as [ParamsGetTotalBlSubGiatAktif, ...any],
       queryFn: async ({ queryKey: [q] }) => {
          const { id_daerah, tahun, id_unit, id_skpd, jadwal_anggaran_id } = q
          return getTotalBlSubGiatAktif({

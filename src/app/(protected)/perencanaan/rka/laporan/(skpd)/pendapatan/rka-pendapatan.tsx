@@ -20,7 +20,6 @@ import {
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
-import type { LaporanPendapatan } from '@/types/api/laporan'
 
 import { RowMurni, RowPerubahan, TheadMurni, TheadPerubahan } from './components'
 
@@ -68,10 +67,10 @@ export default function RkaPendapatan({
    skpd,
 }: {
    jadwalTipe: 'perubahan' | 'murni'
-   skpd: LaporanPendapatan['skpd']['sub_skpd']
-   unit: LaporanPendapatan['skpd']['unit']
-   anggotaTapd: LaporanPendapatan['skpd']['tapd']
-   listPendapatan: LaporanPendapatan['list_pendapatan']
+   skpd: UnitLaporan
+   unit: UnitLaporan
+   anggotaTapd: TapdLaporan[]
+   listPendapatan: ItemLaporanPendapatan[]
    tahun: number
 }) {
    const [selectedDok, setSelectedDok] = useState('rka')
@@ -120,7 +119,7 @@ export default function RkaPendapatan({
                   <Button
                      variant='shadow'
                      color='secondary'
-                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20 sm:px-3'
                      startContent={<Settings className='size-5' />}>
                      <span className='hidden sm:inline-flex'>Pengaturan</span>
                   </Button>
@@ -159,7 +158,7 @@ export default function RkaPendapatan({
                   <Button
                      variant='shadow'
                      color='primary'
-                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20 sm:px-3'
                      startContent={<Download className='size-5' />}>
                      <span className='hidden sm:inline-flex'>Cetak</span>
                   </Button>

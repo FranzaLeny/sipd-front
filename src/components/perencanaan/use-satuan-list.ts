@@ -1,14 +1,16 @@
-import { getListSatuan, GetSatuanListParams } from '@actions/perencanaan/data/satuan'
+import { getListSatuan } from '@actions/perencanaan/data/satuan'
 import { useQuery } from '@tanstack/react-query'
 
+type GetListSatuanParams = Parameters<typeof getListSatuan>[0]
+
 export type UseSatuanListProps = {
-   params?: GetSatuanListParams
+   params?: GetListSatuanParams
 }
 
 export function useSatuanList({ params = {} }: UseSatuanListProps = {}) {
    const satuan = useQuery({
       queryKey: [{ search: '', limit: 1000, ...params }, 'data_satuan'] as [
-         GetSatuanListParams,
+         GetListSatuanParams,
          ...string[],
       ],
       queryFn: async ({ queryKey: [params] }) => {

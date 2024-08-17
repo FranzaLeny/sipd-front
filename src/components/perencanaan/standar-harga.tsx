@@ -1,10 +1,7 @@
 'use client'
 
 import { forwardRef, useEffect, useMemo, useState } from 'react'
-import {
-   getListStandarHarga,
-   GetStandarHargaListParams,
-} from '@actions/perencanaan/data/standar-harga'
+import { getListStandarHarga } from '@actions/perencanaan/data/standar-harga'
 import {
    Autocomplete,
    AutocompleteItem,
@@ -16,7 +13,6 @@ import {
    SelectProps,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { StandarHarga } from '@zod'
 import { compact, debounce } from 'lodash-es'
 import { ArrowDown } from 'lucide-react'
 
@@ -30,7 +26,7 @@ interface StandarHargaSelectorProps
    > {
    onChange?: (value: number | null) => void
    onValueChange?: (standarHarga?: StandarHarga) => void
-   params?: GetStandarHargaListParams
+   params?: GetListStandarHargaParams
    delayFetch?: number
    warningEmpties?: boolean
 }
@@ -65,7 +61,7 @@ export const StandarHargaSelector = forwardRef(
       const [options, setOptions] = useState<StandarHarga[]>([])
       const { data, isFetching, status, isFetched } = useQuery({
          queryKey: [{ ...queryParams }, 'data_standar_harga'] as [
-            GetStandarHargaListParams,
+            GetListStandarHargaParams,
             string,
          ],
          queryFn: async ({ queryKey: [params] }) => {

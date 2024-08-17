@@ -11,7 +11,6 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
-import { Tahapan } from '@zod'
 import { MoreVertical } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
 import { titleCase } from '@shared/utils'

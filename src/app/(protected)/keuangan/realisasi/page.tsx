@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { getRakBlByJadwal, GetRakByJadwal } from '@actions/penatausahaan/pengeluaran/rak'
+import { getRakBlByJadwal } from '@actions/penatausahaan/pengeluaran/rak'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
@@ -21,7 +21,7 @@ export default function Page() {
    }, [data?.user])
    const { data: rak, isFetching: loadingRak } = useQuery({
       queryKey: [{ jadwal_anggaran_id: jadwal, id_skpd }, 'data_rak', 'jadwal_anggaran'] as [
-         GetRakByJadwal,
+         GetRakByJadwalParams,
          ...any,
       ],
       queryFn: ({ queryKey: [q] }) => getRakBlByJadwal(q),

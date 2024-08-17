@@ -3,11 +3,10 @@
 import { useCallback, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { getRakBlByJadwal, syncRelalisasiRak } from '@actions/penatausahaan/pengeluaran/rak'
-import { getSpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
+import { getSpjFungsionalSipdPeta } from '@actions/penatausahaan/pengeluaran/spj'
 import { getStatistikBlSkpdSipd } from '@actions/penatausahaan/pengeluaran/statistik'
 import { getSumberDanaAkunRinciSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { getAllBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
-import { JadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import {
    Autocomplete,
@@ -41,7 +40,7 @@ import {
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
-import { RealisasiRakInput, RealisasiRakInputValidationSchema } from '@validations/keuangan/rak'
+import { RealisasiRakInputValidationSchema } from '@validations/keuangan/rak'
 import { sortBy, uniqBy } from 'lodash-es'
 import { Settings } from 'lucide-react'
 import { toast } from 'react-toastify'
@@ -68,8 +67,6 @@ const months = [
    { key: 12, name: 'Desember' },
 ]
 
-type DataSpj = AsyncReturnType<typeof getSpjFungsional>
-
 export default function Component({
    bulan,
    id_daerah,
@@ -87,7 +84,7 @@ export default function Component({
    const [jadwal, setJadwal] = useState('')
    const [rowsPerPage, setRowsPerPage] = useState(10)
    const [selectedColumns, setSelectedColumns] = useState<Selection>(
-      new Set<keyof DataSpj['pembukuan2'][number]>([
+      new Set<keyof Pembukuan1SpjFungsionalSipdPeta>([
          'kode_akun',
          'nama_akun',
          'alokasi_anggaran',
@@ -105,7 +102,7 @@ export default function Component({
          { type: string; bulan: string },
          ...any,
       ],
-      queryFn: async ({ queryKey: [params] }) => await getSpjFungsional(params),
+      queryFn: async ({ queryKey: [params] }) => await getSpjFungsionalSipdPeta(params),
    })
 
    const { data: apbd, isFetching: isFetchingApbd } = useQuery({
@@ -449,7 +446,7 @@ const ModalRealisasi: React.FC<{
 }
 
 const COLUMNS: {
-   key: keyof DataSpj['pembukuan2'][number]
+   key: keyof Pembukuan1SpjFungsionalSipdPeta
    label: string
    align?: 'start' | 'end'
 }[] = [
@@ -529,7 +526,7 @@ function TableSpj({
    rowsPerPage,
    selectedColumns,
 }: {
-   data: DataSpj['pembukuan2']
+   data: Pembukuan1SpjFungsionalSipdPeta[]
    isFetching: boolean
 
    rowsPerPage: number
@@ -546,9 +543,9 @@ function TableSpj({
       return alldata.slice(start, end)
    }, [page, alldata, rowsPerPage])
 
-   const renderCell = useCallback((data: DataSpj['pembukuan2'][number], columnKey: React.Key) => {
-      const cellValue = data[columnKey as keyof DataSpj['pembukuan2'][number]]
-      const currencyKeys: (keyof DataSpj['pembukuan2'][number])[] = [
+   const renderCell = useCallback((data: Pembukuan1SpjFungsionalSipdPeta, columnKey: React.Key) => {
+      const cellValue = data[columnKey as keyof Pembukuan1SpjFungsionalSipdPeta]
+      const currencyKeys: (keyof Pembukuan1SpjFungsionalSipdPeta)[] = [
          'alokasi_anggaran',
          'jumlah_sd_saat_ini',
          'realisasi_gaji_bulan_sebelumnya',
@@ -562,7 +559,7 @@ function TableSpj({
          'realisasi_up_gu_tu_sd_saat_ini',
          'sisa_pagu_anggaran',
       ]
-      if (currencyKeys.includes(columnKey as keyof DataSpj['pembukuan2'][number])) {
+      if (currencyKeys.includes(columnKey as keyof Pembukuan1SpjFungsionalSipdPeta)) {
          return numberToRupiah(cellValue ?? 0)
       }
       return cellValue

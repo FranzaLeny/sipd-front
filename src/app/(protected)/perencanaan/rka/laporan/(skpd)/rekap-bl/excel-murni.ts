@@ -9,7 +9,6 @@ import {
 } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
-import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 
 function formatDefaultRka(ws: Excel.Worksheet) {
    ws.columns = [
@@ -39,9 +38,9 @@ type Data = {
       kode: string
       header: string
    }
-   skpd: LaporanBelanjaSkpd['skpd']['sub_skpd']
-   tapd: LaporanBelanjaSkpd['skpd']['tapd'] | undefined
-   items: LaporanBelanjaSkpd['list_bl']
+   skpd: UnitLaporan
+   tapd?: TapdLaporan[]
+   items: ItemLaporanBlSkpd[]
    tahun: number
 }
 

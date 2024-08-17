@@ -21,7 +21,6 @@ import {
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
-import { LaporanBelanjaSkpd } from '@/types/api/laporan'
 
 import {
    RenderRincianMurni,
@@ -78,11 +77,11 @@ export default function RkaRekapBl({
    unit,
 }: {
    tahun: number
-   listBl: LaporanBelanjaSkpd['list_bl']
-   skpd: LaporanBelanjaSkpd['skpd']['sub_skpd']
-   unit: LaporanBelanjaSkpd['skpd']['sub_skpd']
+   listBl: ItemLaporanBlSkpd[]
+   skpd: UnitLaporan
+   unit: UnitLaporan
    jadwalTipe: 'perubahan' | 'murni'
-   anggotaTapd: LaporanBelanjaSkpd['skpd']['tapd']
+   anggotaTapd: TapdLaporan[]
 }) {
    const [selectedDok, setSelectedDok] = useState('rka')
    const [tapd, setTapd] = useState(anggotaTapd)
@@ -144,7 +143,7 @@ export default function RkaRekapBl({
                   <Button
                      variant='shadow'
                      color='secondary'
-                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20 sm:px-3'
                      startContent={<Settings className='size-5' />}>
                      <span className='hidden sm:inline-flex'>Pengaturan</span>
                   </Button>
@@ -191,7 +190,7 @@ export default function RkaRekapBl({
                   <Button
                      variant='shadow'
                      color='primary'
-                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                     className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20 sm:px-3'
                      startContent={<Download className='size-5' />}>
                      <span className='hidden sm:inline-flex'>Cetak</span>
                   </Button>

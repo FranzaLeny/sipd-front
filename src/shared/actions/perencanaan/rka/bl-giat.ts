@@ -3,33 +3,15 @@ import {
    BlGiatDeleteByListIdValidationSchema,
    BlGiatUncheckedCreateInputSchema,
    CapaianBlGiatDeleteByListIdValidationSchema,
-   CapaianBlGiatUncheckedCreateInput,
    CapaianBlGiatUncheckedCreateInputSchema,
    HasilBlGiatDeleteByListIdValidationSchema,
-   HasilBlGiatUncheckedCreateInput,
    HasilBlGiatUncheckedCreateInputSchema,
    OutputBlGiatDeleteByListIdValidationSchema,
-   OutputBlGiatUncheckedCreateInput,
    OutputBlGiatUncheckedCreateInputSchema,
 } from '@zod'
 import axios from '@shared/custom-axios/api-fetcher'
 
 // Ambil data kegiatan dari sipd
-export interface SyncDetailGiatParams {
-   payload: BlGiatSipdPayload
-   id_bl: number
-   id_jadwal: number
-   jadwal_anggaran_id: string
-   bl_giat_id: string
-}
-
-interface SyncDataGiatParams {
-   payload: BlGiatSipdPayload
-   bl_giat: Pick<
-      Zod.infer<typeof BlGiatUncheckedCreateInputSchema>,
-      Exclude<keyof Zod.infer<typeof BlGiatUncheckedCreateInputSchema>, keyof BlGiatSipd>
-   >
-}
 
 export const getBlGiatSipd = async (payload: BlGiatSipdPayload) => {
    return await postToSipd('blGiat', {
@@ -191,29 +173,21 @@ export async function getBlGiatById(id: string) {
    return await axios.get<ResponseApi>(`/api/perencanaan/rka/giat/${id}`)
 }
 // Delete Data Kegiatan
-export async function deleteBlGiatByListId(
-   payload: Zod.infer<typeof BlGiatDeleteByListIdValidationSchema>
-) {
+export async function deleteBlGiatByListId(payload: BlGiatDeleteByListIdParams) {
    const data = BlGiatDeleteByListIdValidationSchema.parse(payload)
    await axios.delete(`/api/perencanaan/rka/giat`, { data })
 }
-export async function deleteOutputBlGiatByListId(
-   payload: Zod.infer<typeof OutputBlGiatDeleteByListIdValidationSchema>
-) {
+export async function deleteOutputBlGiatByListId(payload: OutputBlGiatDeleteByListIdParams) {
    const data = OutputBlGiatDeleteByListIdValidationSchema.parse(payload)
    await axios.delete(`/api/perencanaan/rka/giat/output`, { data })
 }
 
-export async function deleteCapaianBlGiatByListId(
-   payload: Zod.infer<typeof CapaianBlGiatDeleteByListIdValidationSchema>
-) {
+export async function deleteCapaianBlGiatByListId(payload: CapaianBlGiatDeleteByListIdParams) {
    const data = CapaianBlGiatDeleteByListIdValidationSchema.parse(payload)
    await axios.delete(`/api/perencanaan/rka/giat/capaian`, { data })
 }
 
-export async function deleteHasilBlGiatByListId(
-   payload: Zod.infer<typeof HasilBlGiatDeleteByListIdValidationSchema>
-) {
+export async function deleteHasilBlGiatByListId(payload: HasilBlGiatDeleteByListIdParams) {
    const data = HasilBlGiatDeleteByListIdValidationSchema.parse(payload)
    await axios.delete(`/api/perencanaan/rka/giat/hasil`, { data })
 }

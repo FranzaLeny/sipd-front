@@ -1,6 +1,5 @@
 import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/pengeluaran/jadwal'
 import {
-   JadwalAnggaranSchema,
    JadwalAnggaranUncheckedCreateInputSchema,
    JadwalAnggaranUncheckedUpdateInputSchema,
 } from '@zod'
@@ -8,16 +7,6 @@ import axios from '@shared/custom-axios/api-fetcher'
 import { postToSipd } from '@shared/custom-axios/sipd-fetcher'
 import { revalidate } from '@shared/server-actions/revalidate'
 
-import { Tahapan } from '../data/tahapan'
-
-export type JadwalAnggaran = Zod.infer<typeof JadwalAnggaranSchema> & {
-   tahapan: Tahapan
-   jadwal_murni: {
-      id: string
-      id_jadwal: number
-      nama_sub_tahap: string
-   } | null
-}
 // SIPD
 export const getJadwalAnggaranFromSipd = async (payload: ListJadwalAnggranSipdPayload) => {
    return await postToSipd('listJadwalAnggaran', {
@@ -43,16 +32,14 @@ export const getJadwalAnggaranById = async (
    })
 }
 
-export const createJadwalAnggaran = async (
-   data: Zod.infer<typeof JadwalAnggaranUncheckedCreateInputSchema>
-) => {
+export const createJadwalAnggaran = async (data: JadwalAnggaranUncheckedCreateInput) => {
    const valid = JadwalAnggaranUncheckedCreateInputSchema.parse(data)
    return await axios.post<ResponseApi<JadwalAnggaran>>(`/api/perencanaan/rka/jadwal`, valid)
 }
 
 export const updateJadwalAnggaran = async (
    id: string,
-   data: Zod.infer<typeof JadwalAnggaranUncheckedUpdateInputSchema>,
+   data: JadwalAnggaranUncheckedUpdateInput,
    isIdUnik = false
 ) => {
    const valid = JadwalAnggaranUncheckedUpdateInputSchema.parse(data)
@@ -63,7 +50,7 @@ export const updateJadwalAnggaran = async (
 }
 export const updateJadwalAnggaranPenatausahaan = async (
    id_sipd: number,
-   data: Zod.infer<typeof JadwalAnggaranUncheckedUpdateInputSchema>
+   data: JadwalAnggaranUncheckedUpdateInput
 ) => {
    const valid = JadwalAnggaranUncheckedUpdateInputSchema.parse(data)
    return await axios.patch<ResponseApi>(
@@ -76,14 +63,7 @@ export const deleteJadwalAnggaran = async (id: string) => {
    return await axios.delete<ResponseApi<JadwalAnggaran>>(`/api/perencanaan/rka/jadwal/${id}`)
 }
 
-export type GetJadwalAnggaranParams = {
-   id?: string | undefined
-   id_daerah?: number | undefined
-   id_jadwal?: number | undefined
-   tahun?: number | undefined
-}
-
-export const getJadwalAnggaran = async (
+export const getListJadwalAnggaran = async (
    params: GetJadwalAnggaranParams & {
       limit: number
       search?: string
@@ -98,37 +78,11 @@ export const getJadwalAnggaran = async (
    )
 }
 
-export type GetAllJadwalAnggaranParams = {
-   id_daerah: number
-   tahun: number
-   is_rinci_bl?: number
-   is_lokal?: number
-   id_jadwal?: number
-   id_unit?: number
-   id_sub_skpd?: number
-   id_bidang_urusan?: number
-   id_giat?: number
-   id_program?: number
-   id_skpd?: number
-   id_sub_giat?: number
-   id_urusan?: number
-   is_perubahan?: number
-   jadwal_penatausahaan?: 'true'
-   filter?:
-      | 'has-pendapatan'
-      | 'has-bl-sub-giat'
-      | 'has-rincian'
-      | 'has-rak'
-      | 'penatausahaan'
-      | 'has-bl-skpd'
-      | 'all'
-}
-
 export const getAllJadwalAnggaran = async (query: GetAllJadwalAnggaranParams) => {
-   const { filter = 'all', ...params } = query
+   const { filter = 'all', is_rinci_bl = 1, ...params } = query
    return await axios
       .get<ResponseApi<JadwalAnggaran[]>>(`/api/perencanaan/rka/jadwal/${filter}`, {
-         params,
+         params: { is_rinci_bl, ...params },
          paramsSerializer: {
             indexes: null, // by default: false
          },
@@ -144,26 +98,13 @@ export async function getTotalJadwalAnggaran<T extends GetJadwalAnggaranParams>(
       .then((res) => res?.data)
 }
 
-type GetJadwalAnggaranAktifParams = {
-   id_daerah: number
-   tahun: number
-   id_jadwal?: number
-   is_locked?: number
-   is_rinci_bl?: number
-   jadwal_penatausahaan?: number
-   is_perubahan?: number
-   is_lokal?: number
-}
-
 export const getJadwalAnggaranAktif = async (params: GetJadwalAnggaranAktifParams) => {
    return await axios.get<ResponseApi<JadwalAnggaran | null>>(`/api/perencanaan/rka/jadwal/aktif`, {
       params: { is_rinci_bl: 1, ...params },
    })
 }
 
-export const checkJadwalAnggaranAktif = async (
-   params: JadwalAnggranCekAktifSipdPayload & { is_lokal?: number }
-) => {
+export const checkJadwalAnggaranAktif = async (params: CheckJadwalAnggaranAktifParams) => {
    if (!!params.is_lokal) {
       return await getJadwalAnggaranAktif(params).then((res) => res.data)
    }
@@ -184,17 +125,13 @@ export const checkJadwalAnggaranAktif = async (
 
 // OTHER
 
-export async function syncJadwalAnggaranSipd(
-   data: Zod.infer<typeof JadwalAnggaranUncheckedCreateInputSchema>[]
-) {
+export async function syncJadwalAnggaranSipd(data: JadwalAnggaranUncheckedCreateInput[]) {
    const res = await axios.put<ResponseApi>('/api/perencanaan/rka/jadwal', data)
    await revalidate('jadwal_anggaran')
    return res
 }
 
-export async function syncJadwalAnggaranAktifSipd(
-   data: Zod.infer<typeof JadwalAnggaranUncheckedCreateInputSchema>
-) {
+export async function syncJadwalAnggaranAktifSipd(data: JadwalAnggaranUncheckedCreateInput) {
    const res = await axios.put<ResponseApi>(
       `/api/perencanaan/rka/jadwal/${data.id_unik}/by-id-unik`,
       data

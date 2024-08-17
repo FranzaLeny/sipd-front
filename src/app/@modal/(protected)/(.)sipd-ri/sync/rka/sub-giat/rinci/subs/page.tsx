@@ -86,7 +86,7 @@ const ModalSingkronKelompokRinciSbl = () => {
 export default ModalSingkronKelompokRinciSbl
 
 async function syncKelompokRinciSbl(
-   kelompok: Zod.infer<typeof SubsRinciBlSubGiatUncheckedCreateInputSchema>[],
+   kelompok: SubsRinciBlSubGiatUncheckedCreateInput[],
    n: number,
    p: number,
    l: number

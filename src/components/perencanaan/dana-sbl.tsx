@@ -6,7 +6,6 @@ import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/r
 import { useLocale } from '@react-aria/i18n'
 import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
-import { DanaBlSubGiat } from '@zod'
 
 export interface DanaSelectorProps
    extends Pick<

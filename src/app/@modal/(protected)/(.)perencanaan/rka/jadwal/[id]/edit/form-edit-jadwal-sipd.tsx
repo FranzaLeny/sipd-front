@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
+import { updateJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import DateInput from '@components/form/date-time-input'
 import RadioGroupInput from '@components/form/radio-input'
 import { NumberInput, TextInput } from '@components/form/text-input'
@@ -16,44 +16,29 @@ import { toast } from 'react-toastify'
 
 const numberSelect = createUniqueFieldSchema(z.number().int(), 'numberSelect')
 
-export const JadwalAnggaranCopyInputSchema = z
+export const JadwalAnggaranEditInputSchema = z
    .object({
-      id_unik: z.string({ description: 'Nama Unik // Buat nama unik' }),
-      id_unik_murni: z.string().optional().nullable(),
       id_jadwal_murni: z.coerce.number().int(),
+      id_unik_murni: z.string().optional().nullable(),
       nama_jadwal_murni: z.string({ description: 'Nama Jadwal Murni' }).nullable(),
-      nama_sub_tahap: z.string({ description: 'Nama Jadwal' }),
-      waktu_selesai: z.date({ description: 'Waktu Selesai' }),
-      waktu_mulai: z.date({ description: 'Waktu Mulai' }),
+      nama_sub_tahap: z.string({ description: 'Nama Sub Tahap' }),
    })
    .extend({
       is_locked: numberSelect,
-      is_rinci_bl: numberSelect,
       is_active: numberSelect,
       is_perubahan: numberSelect,
+      is_rinci_bl: numberSelect,
    })
    .strip()
    .superRefine((data, ctx) => {
-      if (data.waktu_selesai < data.waktu_mulai) {
-         ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Waktu Selesai tidak boleh kurang dari Waktu Mulai',
-            path: ['waktu_selesai'],
-         })
-         ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Waktu Mulai tidak boleh besar dari Waktu Selesai',
-            path: ['waktu_mulai'],
-         })
-      }
-      if (!!data?.is_perubahan && (!data.id_jadwal_murni || !data.id_unik_murni)) {
+      if (data?.is_perubahan && !data?.id_jadwal_murni) {
          ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Jadwal Anggaran Murni tidak boleh kosong',
             path: ['id_jadwal_murni'],
          })
       }
-      if ((!!data.id_jadwal_murni || !!data.id_unik_murni) && !data?.is_perubahan) {
+      if (data?.id_jadwal_murni && !data?.is_perubahan) {
          ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Perubahan harus dicentang jika Jadwal Anggaran Murni diisi',
@@ -76,39 +61,42 @@ export const JadwalAnggaranCopyInputSchema = z
 
 const mapping = [
    [z.string(), TextInput] as const,
-   [z.number(), NumberInput] as const,
    [z.date(), DateInput] as const,
+   [z.number(), NumberInput] as const,
    [numberSelect, RadioGroupInput] as const,
 ] as const
 
 export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
-type Schema = z.infer<typeof JadwalAnggaranCopyInputSchema>
+type Schema = z.infer<typeof JadwalAnggaranEditInputSchema>
 
 const FormComponent = (props: FormProps) => <form {...props} />
 
 const TsForm = createTsForm(mapping, { FormComponent })
 
-const ModalCopy = ({ data }: { data: JadwalAnggaranZod; user: UserWithoutToken }) => {
+interface Props {
+   data: JadwalAnggaran
+   user: UserWithoutToken
+}
+
+const ModalEditSipd: React.FC<Props> = ({ data }) => {
    const [isOpen, setIsOpen] = useState(false)
    const router = useRouter()
    const queryClient = useQueryClient()
-   let currentDate = new Date()
-   currentDate.setDate(currentDate.getDate() + 1)
+   const defaultValues = {
+      id_jadwal_murni: data?.id_jadwal_murni,
+      id_unik_murni: data?.id_unik_murni,
+      is_active: data.is_active,
+      is_locked: data.is_locked,
+      is_rinci_bl: data.is_rinci_bl,
+      is_perubahan: data.is_perubahan,
+      nama_sub_tahap: data?.nama_sub_tahap,
+      waktu_mulai: new Date(data?.waktu_mulai),
+      waktu_selesai: new Date(data?.waktu_selesai),
+      nama_jadwal_murni: data?.nama_jadwal_murni,
+   }
    const form = useForm<Schema>({
-      defaultValues: {
-         id_jadwal_murni: data?.id_jadwal,
-         nama_jadwal_murni: data?.nama_sub_tahap,
-         id_unik: 'DLH Lembata',
-         id_unik_murni: data?.id_unik,
-         is_rinci_bl: 1,
-         is_active: 1,
-         is_locked: data?.is_locked,
-         is_perubahan: !!data.id_jadwal_murni ? 1 : 0,
-         nama_sub_tahap: data?.nama_sub_tahap + '(DLH Lembata)',
-         waktu_mulai: new Date(),
-         waktu_selesai: currentDate,
-      },
+      defaultValues,
    })
 
    const {
@@ -141,21 +129,17 @@ const ModalCopy = ({ data }: { data: JadwalAnggaranZod; user: UserWithoutToken }
 
    const onSubmit = async (value: Schema) => {
       try {
-         const valida_data = {
-            ...data,
-            id: undefined,
+         const { nama_sub_tahap, ...valida_data } = {
             ...value,
-            is_lokal: 1,
-            id_unik: data?.id_unik + ' || ' + value.id_unik,
+            is_locked: value.is_locked,
+            is_perubahan: value.is_perubahan,
          }
-
-         await createJadwalAnggaran(valida_data).then((res) => {
+         await updateJadwalAnggaran(data.id, valida_data).then((res) => {
             if (res?.success) {
-               toast.success(
-                  `${res?.message ?? 'Berhasil simpan data jadwal anggran'} ${valida_data?.nama_sub_tahap}`
-               )
-               queryClient.refetchQueries({
+               toast.success(`${res?.message ?? 'Berhasil ubah data'} ${nama_sub_tahap}`)
+               queryClient.invalidateQueries({
                   type: 'all',
+                  refetchType: 'active',
                   exact: false,
                   predicate: ({ queryKey }: any) => {
                      return queryKey.includes('jadwal_anggaran')
@@ -164,18 +148,18 @@ const ModalCopy = ({ data }: { data: JadwalAnggaranZod; user: UserWithoutToken }
 
                handleClose()
             } else {
-               toast.error(
-                  `${res?.message ?? 'Gagal simpan data jadwal anggran'} ${valida_data?.nama_sub_tahap}`,
-                  { autoClose: 5000 }
-               )
+               toast.error(`${res?.message ?? 'Gagal ubah data'} ${nama_sub_tahap}`, {
+                  autoClose: 5000,
+               })
             }
          })
       } catch (error: any) {
-         toast.error(error?.message ?? 'Gagal simpan data jadwal anggran', { autoClose: 5000 })
+         toast.error(error?.message ?? 'Gagal Ubah data', { autoClose: 5000 })
       }
    }
-   const idUnikJadwalMurni = watch('id_unik_murni')
    const isPerubahan = watch('is_perubahan')
+
+   const idUnikMurni = watch('id_unik_murni')
    const onJadwalChange = useCallback(
       (data?: JadwalAnggaran) => {
          if (data) {
@@ -190,16 +174,14 @@ const ModalCopy = ({ data }: { data: JadwalAnggaranZod; user: UserWithoutToken }
             handleValueChange('nama_jadwal_murni', null)
          }
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [handleValueChange]
    )
-
    useEffect(() => {
-      if (isPerubahan === 0) {
+      if (!!!isPerubahan) {
          handleValueChange('id_jadwal_murni', 0)
          handleValueChange('id_unik_murni', null)
          handleValueChange('nama_jadwal_murni', null)
-      } else if (isPerubahan === 1) {
-         handleValueChange('is_rinci_bl', 1)
       }
    }, [isPerubahan, handleValueChange])
 
@@ -208,13 +190,15 @@ const ModalCopy = ({ data }: { data: JadwalAnggaranZod; user: UserWithoutToken }
          isOpen={isOpen}
          onClose={handleClose}
          scrollBehavior='outside'
-         size='xl'>
+         size='3xl'>
          <ModalContent>
             {(onClose) => (
                <TsForm
                   form={form}
-                  schema={JadwalAnggaranCopyInputSchema}
+                  schema={JadwalAnggaranEditInputSchema}
                   props={{
+                     // waktu_mulai: { labelPlacement: 'outside' },
+                     // waktu_selesai: { labelPlacement: 'outside' },
                      is_locked: {
                         label: 'Status Jadwal',
                         typeValue: 'number',
@@ -254,35 +238,29 @@ const ModalCopy = ({ data }: { data: JadwalAnggaranZod; user: UserWithoutToken }
                      },
                   }}
                   onSubmit={onSubmit}>
-                  {({
-                     is_active,
-                     is_locked,
-                     is_perubahan,
-                     nama_sub_tahap,
-                     waktu_mulai,
-                     waktu_selesai,
-                     id_unik,
-                     is_rinci_bl,
-                  }) => (
+                  {({ is_active, is_locked, is_perubahan, nama_sub_tahap }) => (
                      <>
-                        <ModalHeader>Form Salin Jadwal</ModalHeader>
+                        <ModalHeader>Form Tambah Jadwal</ModalHeader>
                         <ModalBody className='gap-3 transition-all duration-75'>
-                           {is_rinci_bl}
-                           {id_unik}
                            {nama_sub_tahap}
-                           {waktu_mulai}
-                           {waktu_selesai}
                            {is_perubahan}
                            <JadwalInput
+                              params={{
+                                 tahun: data?.tahun,
+                                 id_daerah: data?.id_daerah,
+                                 is_rinci_bl: 1,
+                              }}
+                              isDisabled={isPerubahan === 0}
+                              label='Jadwal Murni'
                               placeholder='Pilih Jadwal Murni'
                               keyByIdUnik
-                              params={{ is_perubahan: 1 }}
-                              defaultSelectedKey={data?.id_unik_murni ?? data?.id_unik ?? undefined}
+                              defaultSelectedKey={data?.id_unik_murni ?? undefined}
+                              disabledKeys={[data?.id_unik]}
                               isRequired={!!isPerubahan}
-                              onChange={onJadwalChange}
-                              selectedKey={idUnikJadwalMurni}
+                              selectedKey={idUnikMurni}
                               isInvalid={!!errors?.id_jadwal_murni?.message}
-                              errorMessage={errors?.id_jadwal_murni?.message}
+                              errorMessage={!!errors?.id_jadwal_murni?.message}
+                              onChange={onJadwalChange}
                            />
                            {is_locked}
                            {is_active}
@@ -310,4 +288,4 @@ const ModalCopy = ({ data }: { data: JadwalAnggaranZod; user: UserWithoutToken }
    )
 }
 
-export default ModalCopy
+export default ModalEditSipd

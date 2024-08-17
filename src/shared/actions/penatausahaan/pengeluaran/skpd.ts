@@ -1,10 +1,5 @@
 import axios from '@custom-axios/peta-fetcher'
 
-interface SkpdPeta {
-   id_skpd: number
-   kode_skpd: string
-   nama_skpd: string
-}
 export const getSkpdPenatausahaanFromSipd = async ({
    id_daerah,
    tahun,

@@ -8,7 +8,6 @@ import {
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import hasAccess from '@utils/chek-roles'
-import { StandarHargaQuery } from '@zod'
 
 import CardData from './card-data'
 

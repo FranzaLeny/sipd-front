@@ -1,7 +1,6 @@
 // API
 
 import axios from '@custom-axios/api-fetcher'
-import { IUser } from '@zod'
 
 async function getProfile() {
    return await axios.get<ResponseApi<IUser>>(`/api/auth/me`)

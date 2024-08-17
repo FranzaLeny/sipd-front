@@ -3,7 +3,6 @@
 import React, { useMemo } from 'react'
 import Link from 'next/link'
 import { getBlSkpdByIdSkpd } from '@actions/perencanaan/rka/bl-skpd'
-import { JadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import { JadwalAnggaranSearchParams } from '@components/perencanaan/jadwal-anggaran'
 import { HelperColumns } from '@components/table'
 import {

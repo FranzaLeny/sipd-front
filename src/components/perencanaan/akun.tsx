@@ -1,12 +1,13 @@
 'use client'
 
 import { forwardRef, useEffect, useState } from 'react'
-import { AkunParams, GetAkunListParams, getListAkun } from '@actions/perencanaan/data/akun'
+import { getListAkun } from '@actions/perencanaan/data/akun'
 import { Autocomplete, AutocompleteItem, AutocompleteProps, Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { Akun } from '@zod'
 import { debounce } from 'lodash-es'
 import { ArrowDown } from 'lucide-react'
+
+type GetListAkunParams = Parameters<typeof getListAkun>[0]
 
 interface Props
    extends Pick<
@@ -25,7 +26,7 @@ interface Props
    onValueChange?: (nama_akun: string | null) => void
    onSelectionChange?: (id_akun: number | null) => void
    onChange?: (akun?: Akun) => void
-   params?: GetAkunListParams
+   params?: GetListAkunParams
    delayFetch?: number
 }
 
@@ -52,7 +53,7 @@ export const AkunSelector = forwardRef(
       })
       const [options, setOptions] = useState<Akun[]>([])
       const { data, isFetching, status, isFetched } = useQuery({
-         queryKey: [{ ...queryParams }, 'data_akun'] as [GetAkunListParams, string],
+         queryKey: [{ ...queryParams }, 'data_akun'] as [GetListAkunParams, string],
          queryFn: async ({ queryKey: [params] }) => {
             return await getListAkun(params)
          },
@@ -156,7 +157,7 @@ export default AkunSelector
 export interface ObjectBl {
    akun: Partial<
       Pick<
-         AkunParams,
+         GetListAkunParams,
          | 'is_gaji_asn'
          | 'is_barjas'
          | 'is_bunga'

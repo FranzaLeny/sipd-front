@@ -12,7 +12,7 @@ import { MaxDataInput } from '@components/perencanaan/sync-input'
 import { Checkbox } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { processChunks } from '@utils/hof'
-import { BlSubGiat, RinciBlSubGiat, RinciBlSubGiatUncheckedCreateInputSchema } from '@zod'
+import { RinciBlSubGiatUncheckedCreateInputSchema } from '@zod'
 import { toast } from 'react-toastify'
 
 interface Props {

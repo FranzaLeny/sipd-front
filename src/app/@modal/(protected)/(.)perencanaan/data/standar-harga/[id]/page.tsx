@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
-import { getStandarHargaById, StandarHargaById } from '@actions/perencanaan/data/standar-harga'
+import { getStandarHargaById } from '@actions/perencanaan/data/standar-harga'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import { cn } from '@nextui-org/react'
 import { numberToText, titleCase } from '@shared/utils'

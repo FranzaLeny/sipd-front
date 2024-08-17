@@ -1,9 +1,8 @@
 'use client'
 
 import { numberToRupiah } from '@utils'
-import { LaporanPendapatan } from '@/types/api/laporan'
 
-export const RowPerubahan = ({ item }: { item: LaporanPendapatan['list_pendapatan'][number] }) => {
+export const RowPerubahan = ({ item }: { item: ItemLaporanPendapatan }) => {
    const {
       nomor_urut,
       is_rinci,
@@ -152,7 +151,7 @@ export const TheadMurni = () => {
    )
 }
 
-export const RowMurni = ({ item }: { item: LaporanPendapatan['list_pendapatan'][number] }) => {
+export const RowMurni = ({ item }: { item: ItemLaporanPendapatan }) => {
    const { nomor_urut, is_rinci, is_skpd, is_jumlah, uraian, pendapatan, kode } = item
    return (
       <tr

@@ -1,11 +1,6 @@
 'use client'
 
-import {
-   addTapdAnggaran,
-   getTapdAnggaranList,
-   GetTapdAnggaranListParams,
-   updateTapdAnggaran,
-} from '@actions/data/tapd'
+import { addTapdAnggaran, getTapdAnggaranList, updateTapdAnggaran } from '@actions/data/tapd'
 import { TextInput } from '@components/form/text-input'
 import UserSipdPerencanaanSelector from '@components/perencanaan/user'
 import {
@@ -37,11 +32,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { createTsForm } from '@ts-react/form'
 import { generateUniqueId } from '@utils/uniq-id'
-import {
-   TapdAnggaran,
-   TapdAnggaranUncheckedCreateInputSchema,
-   TapdAnggaranWithRelations,
-} from '@validations/perencanaan/tapd'
+import { TapdAnggaranUncheckedCreateInputSchema } from '@validations/perencanaan/tapd'
 import { z } from '@zod'
 import { Reorder, useDragControls, useMotionValue } from 'framer-motion'
 import { ArrowBigLeft, Pencil, Save, Search, X } from 'lucide-react'
@@ -61,6 +52,8 @@ type SkpdSelectByJadwalProps = {
    tahun?: number
    isReadonly?: boolean
 }
+
+type GetTapdAnggaranListParams = Parameters<typeof getTapdAnggaranList>[0]
 
 export const SkpdSelectByJadwal = ({
    idsSkpd,

@@ -1,7 +1,6 @@
 'use client'
 
 import { numberToRupiah } from '@utils'
-import { LaporanSkpd } from '@/types/api/laporan'
 
 export const TheadMurni = () => (
    <thead>
@@ -25,7 +24,7 @@ export const TheadMurni = () => (
    </thead>
 )
 
-export const TbodyMurni = ({ items = [] }: { items: LaporanSkpd['list_rekapan'] }) => {
+export const TbodyMurni = ({ items = [] }: { items: ItemLaporanRkaSKpd[] }) => {
    const totalBelanja = items?.find((item) => item?.kode_akun === '5')?.total_harga || 0
    const totalPendapatan = items?.find((item) => item?.kode_akun === '4')?.total_harga || 0
    const totalPenerimaanPembiayaan =
@@ -126,7 +125,7 @@ export const TheadPerubahan = () => (
    </thead>
 )
 
-export const TbodyPerubahan = ({ items = [] }: { items: LaporanSkpd['list_rekapan'] }) => {
+export const TbodyPerubahan = ({ items = [] }: { items: ItemLaporanRkaSKpd[] }) => {
    return (
       <tbody>
          {items?.map((d) => {

@@ -1,7 +1,5 @@
 'use client'
 
-import { LaporanBelanjaSkpd } from '@/types/api/laporan'
-
 export const TheadMurni = ({ tahun, showKet = false }: { tahun: number; showKet: boolean }) => {
    return (
       <thead className='font-bold'>
@@ -91,7 +89,7 @@ export const RenderRincianMurni = ({
    item,
    showKet = false,
 }: {
-   item: LaporanBelanjaSkpd['list_bl'][number]
+   item: ItemLaporanBlSkpd
    showKet: boolean
 }) => {
    const { belanja } = item
@@ -252,7 +250,7 @@ export const RenderRincianPerubahan = ({
    item,
    showKet = false,
 }: {
-   item: LaporanBelanjaSkpd['list_bl'][number]
+   item: ItemLaporanBlSkpd
    showKet: boolean
 }) => {
    const { belanja_murni, belanja } = item

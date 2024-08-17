@@ -6,6 +6,7 @@ import DppaSkpd from './components'
 export const metadata = {
    title: 'Pendapatan SKPD',
 }
+
 export default async function Page() {
    const session = await getServerSession(['sipd_peta'])
    const token = session?.user?.tokens?.find((d) => d.name === 'sipd_peta')?.token

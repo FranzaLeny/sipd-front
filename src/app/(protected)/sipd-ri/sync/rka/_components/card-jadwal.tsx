@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import {
    checkJadwalAnggaranAktif,
    getJadwalAnggaranFromSipd,
-   GetJadwalAnggaranParams,
    getTotalJadwalAnggaran,
 } from '@actions/perencanaan/rka/jadwal-anggaran'
 import { Card, CardBody } from '@nextui-org/react'
@@ -36,7 +35,7 @@ function CardDataJadwal({ data }: Props) {
 
    const lokal = useQuery({
       queryKey: [
-         { id_daerah: data?.id_daerah, tahun: data?.tahun },
+         { id_daerah: data?.id_daerah, tahun: data?.tahun, is_rinci_bl: 1, is_lokal: 0 },
          'jadwal_anggaran',
          'total',
       ] as [GetJadwalAnggaranParams, ...any],
@@ -56,10 +55,16 @@ function CardDataJadwal({ data }: Props) {
    })
 
    const active = useQuery({
-      queryKey: [{ id_daerah: data?.id_daerah, tahun: data?.tahun }, 'jadwal_anggaran'] as [
-         JadwalAnggranCekAktifSipdPayload & { is_lokal?: number },
-         ...any,
-      ],
+      queryKey: [
+         {
+            id_daerah: data?.id_daerah,
+            tahun: data?.tahun,
+            is_lokal: 0,
+            is_anggaran: 1,
+            is_rinci_bl: 1,
+         },
+         'jadwal_anggaran',
+      ] as [JadwalAnggranCekAktifSipdPayload & { is_lokal?: number; is_rinci_bl?: number }, ...any],
       queryFn: async ({ queryKey: [q] }) => await checkJadwalAnggaranAktif(q),
       refetchOnMount: false,
       enabled: enabled && access.sync,

@@ -69,7 +69,6 @@ const LIST_DOKUMEN = [
    },
 ]
 export type JenisDokumen = (typeof LIST_DOKUMEN)[number]
-export type SubGiatWithRinci = AsyncReturnType<typeof getBlSubGiatById<true>>
 
 export default function Rincian({
    id,
@@ -110,18 +109,6 @@ export default function Rincian({
       }
       return LIST_DOKUMEN[0]
    }, [selectedDok])
-
-   const paramsBlSubGiat = useMemo(() => {
-      if (!!id) {
-         if (
-            !!!data?.jadwal?.id ||
-            (!!data?.jadwal?.id && data?.jadwal?.id === jadwal && data?.jadwal?.tahun === tahun)
-         ) {
-            return { bl_sub_giat_id: id }
-         }
-      }
-      return { id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }
-   }, [id, unit, jadwal, daerah, data?.jadwal?.id, data?.jadwal?.tahun, tahun])
 
    const handleJadwalChange = (jadwal?: string) => {
       setJadwal(jadwal)
@@ -184,6 +171,7 @@ export default function Rincian({
                <JadwalInput
                   selectedKey={jadwal}
                   params={{ tahun, id_daerah: daerah, filter: 'has-rincian' }}
+                  isDisabled={isFetching || isFetchingLaporan}
                   onSelectionChange={handleJadwalChange}
                   label='Pilih Jadwal Rincian Belanja'
                   isInvalid={!!!jadwal}
@@ -192,10 +180,12 @@ export default function Rincian({
                {jadwal && (
                   <div>
                      <BlSubGiatSelector
+                        isDisabled={isFetching || isFetchingLaporan}
                         label='Pilih Sub Kegiatan'
                         labelPlacement='inside'
                         selectedKey={blSubGiatId}
-                        params={paramsBlSubGiat}
+                        isLoading={isFetching}
+                        params={{ id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }}
                         onSelectionChange={setBlSubGiatId}
                         isInvalid={!blSubGiatId}
                         errorMessage={'Harus pilih sub kegiatan'}
@@ -206,7 +196,7 @@ export default function Rincian({
          </div>
          {(isFetching || isFetchingLaporan) && <Loading className='absolute z-10' />}
          {data?.jadwal?.tahun === tahun && (
-            <div className='content to-content1 relative bg-gradient-to-b px-4 pb-14'>
+            <>
                <div className='top-navbar sticky left-1/2 z-10 flex w-fit -translate-x-1/2 gap-4 rounded-b-3xl py-2 backdrop-blur'>
                   <Popover
                      placement='bottom'
@@ -216,7 +206,8 @@ export default function Rincian({
                         <Button
                            variant='shadow'
                            color='secondary'
-                           className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                           title='Pengaturan'
+                           className='sm:rounded-medium sm:px3 min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
                            startContent={<Settings className='size-5' />}>
                            <span className='hidden sm:inline-flex'>Pengaturan</span>
                         </Button>
@@ -262,7 +253,8 @@ export default function Rincian({
                         <Button
                            variant='shadow'
                            color='primary'
-                           className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20'
+                           title='Cetak/dowload'
+                           className='sm:rounded-medium min-w-10 rounded-full px-2 capitalize backdrop-blur-sm sm:min-w-20 sm:px-3'
                            startContent={<Download className='size-5' />}>
                            <span className='hidden sm:inline-flex'>Cetak</span>
                         </Button>
@@ -298,13 +290,14 @@ export default function Rincian({
                      <span className='hidden sm:inline-flex'>Tambah</span>
                   </Button>
                </div>
-
-               <Template
-                  ref={componentRef}
-                  defaultData={data}
-                  printPreview={printPreview}
-               />
-            </div>
+               <div className='content relative'>
+                  <Template
+                     ref={componentRef}
+                     defaultData={data}
+                     printPreview={printPreview}
+                  />
+               </div>
+            </>
          )}
       </>
    )

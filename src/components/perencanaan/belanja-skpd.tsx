@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, useEffect, useMemo, useState } from 'react'
-import { getBlSkpdList, GetBlSkpdListParams } from '@actions/perencanaan/rka/bl-skpd'
+import { getListBlSkpd } from '@actions/perencanaan/rka/bl-skpd'
 import {
    Autocomplete,
    AutocompleteItem,
@@ -14,7 +14,6 @@ import {
    SelectProps,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { BlSkpd } from '@zod'
 
 export interface BlSkpdSelectorProps
    extends Pick<
@@ -27,7 +26,7 @@ export interface BlSkpdSelectorProps
    onChange?: (skpd: BlSkpd | undefined) => void
    onValueChange?: (nama_skpd?: string | null) => void
    onSelectionChange?: (id_skpd?: string | null) => void
-   params?: GetBlSkpdListParams
+   params?: GetListBlSkpdParams
    delayFetch?: number
 }
 
@@ -52,11 +51,11 @@ export const BlSkpdSelector = forwardRef(
 
       const { data, isFetching, status } = useQuery({
          queryKey: [{ ...queryParams }, 'bl_skpd', 'jadwal_anggaran'] as [
-            GetBlSkpdListParams,
+            GetListBlSkpdParams,
             ...any,
          ],
          queryFn: async ({ queryKey: [params] }) => {
-            return await getBlSkpdList(params)
+            return await getListBlSkpd(params)
          },
          placeholderData: (previousData) => previousData,
       })
@@ -118,7 +117,7 @@ export interface BlSkpdSelectorMultipleProps
    onChange?: (skpd: BlSkpd[]) => void
    onSelectionChange?: (listIdSkpd: string[]) => void
    isClearable?: boolean
-   params?: GetBlSkpdListParams
+   params?: GetListBlSkpdParams
    delayFetch?: number
 }
 
@@ -143,11 +142,11 @@ export const BlSkpdSelectorMultiple = forwardRef(
       const [search, setSearch] = useState('')
       const { data, isFetching, status } = useQuery({
          queryKey: [{ limit: 1000, ...params }, 'bl_skpd', 'jadwal_anggaran'] as [
-            GetBlSkpdListParams,
+            GetListBlSkpdParams,
             ...any,
          ],
          queryFn: async ({ queryKey: [params] }) => {
-            return await getBlSkpdList(params)
+            return await getListBlSkpd(params)
          },
          placeholderData: (previousData) => previousData,
          enabled: !props?.isDisabled,

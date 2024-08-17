@@ -1,7 +1,6 @@
 import axios from '@custom-axios/api-fetcher'
-import { TapdAnggaran, TapdAnggaranUncheckedCreateInput, TapdAnggaranWithRelations } from '@zod'
 
-export type GetTapdAnggaranListParams = {
+type GetTapdAnggaranListParams = {
    limit?: number
    search?: string
    after?: string

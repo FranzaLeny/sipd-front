@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, useEffect, useMemo, useState } from 'react'
-import { getAllSkpd, SkpdParams } from '@actions/perencanaan/data/skpd'
+import { getAllSkpd } from '@actions/perencanaan/data/skpd'
 import {
    Autocomplete,
    AutocompleteItem,
@@ -14,7 +14,8 @@ import {
    SelectProps,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { Skpd } from '@zod'
+
+type GetAllSkpdParams = Parameters<typeof getAllSkpd>
 
 export interface SkpdMultipleSelectProps
    extends Pick<
@@ -27,7 +28,7 @@ export interface SkpdMultipleSelectProps
    onChange?: (skpd: Skpd[]) => void
    onSelectionChange?: (listIdSkpd: string[]) => void
    isClearable?: boolean
-   params?: SkpdParams
+   params?: GetAllSkpdParams[0]
    delayFetch?: number
 }
 
@@ -46,7 +47,7 @@ export const SkpdMultipleSelect = forwardRef(
       const [list, setList] = useState<(Skpd & { hidden: boolean })[]>([])
       const [search, setSearch] = useState('')
       const { data, isFetching } = useQuery({
-         queryKey: [params, 'data_skpd', 'all_skpd'] as [SkpdParams, ...any],
+         queryKey: [params, 'data_skpd', 'all_skpd'] as [GetAllSkpdParams[0], ...any],
          queryFn: async ({ queryKey: [params] }) => {
             return await getAllSkpd(params)
          },
@@ -169,7 +170,7 @@ interface SkpdSelectProps
       >
    > {
    onChange?: (skpd?: Skpd) => void
-   params?: SkpdParams
+   params?: GetAllSkpdParams[0]
    selectionKey?: 'id' | 'id_skpd'
    onSelectionChange?: (id?: string) => void
 }
@@ -189,7 +190,7 @@ export const SkpdSelect = forwardRef(
       const [list, setList] = useState<(Skpd & { hidden: boolean })[]>([])
 
       const { data, isFetching } = useQuery({
-         queryKey: [params, 'data_skpd', 'all_skpd'] as [SkpdParams, ...any],
+         queryKey: [params, 'data_skpd', 'all_skpd'] as [GetAllSkpdParams[0], ...any],
          queryFn: async ({ queryKey: [params] }) => {
             return await getAllSkpd(params)
          },

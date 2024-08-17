@@ -192,8 +192,6 @@ export const BlSubGiatSchema = z.object({
    updated_at: z.coerce.date(),
 })
 
-export type BlSubGiat = z.infer<typeof BlSubGiatSchema>
-
 export const BlSubGiatUncheckedCreateInputSchema = z
    .object({
       id: z.string().optional(),
@@ -411,7 +409,6 @@ export const BlSubGiatUncheckedCreateInputSchema = z
       bl_sub_giat_aktif_id: z.string().optional().nullable(),
    })
    .strip()
-export type BlSubGiatUncheckedCreateInput = z.infer<typeof BlSubGiatUncheckedCreateInputSchema>
 
 /////////////////////////////////////////
 // BL SUB GIAT AKTIF SCHEMA
@@ -505,8 +502,6 @@ export const BlSubGiatAktifSchema = z.object({
    jadwal_anggaran_murni_id: z.string().nullish(),
    bl_giat_id: z.string().nullish(),
 })
-
-export type BlSubGiatAktif = z.infer<typeof BlSubGiatAktifSchema>
 
 export const BlSubGiatAktifUncheckedCreateInputSchema = z
    .object({
@@ -645,8 +640,6 @@ export const DanaBlSubGiatSchema = z.object({
    jadwal_anggaran_id: z.string(),
 })
 
-export type DanaBlSubGiat = z.infer<typeof DanaBlSubGiatSchema>
-
 export const DanaBlSubGiatUncheckedCreateInputSchema = z
    .object({
       id: z.string().optional(),
@@ -678,10 +671,6 @@ export const DanaBlSubGiatUncheckedCreateInputSchema = z
       jadwal_anggaran_id: z.string(),
    })
    .strip()
-
-export type DanaBlSubGiatUncheckedCreateInput = z.infer<
-   typeof DanaBlSubGiatUncheckedCreateInputSchema
->
 
 /////////////////////////////////////////
 // LABEL BL SUB GIAT SCHEMA
@@ -767,8 +756,6 @@ export const LabelBlSubGiatSchema = z.object({
    bl_sub_giat_id: z.string().nullish(),
    jadwal_anggaran_id: z.string(),
 })
-
-export type LabelBlSubGiat = z.infer<typeof LabelBlSubGiatSchema>
 
 export const LabelBlSubGiatUncheckedCreateInputSchema = z
    .object({
@@ -860,10 +847,6 @@ export const LabelBlSubGiatUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type LabelBlSubGiatUncheckedCreateInput = z.infer<
-   typeof LabelBlSubGiatUncheckedCreateInputSchema
->
-
 /////////////////////////////////////////
 // LOKASI BL SUB GIAT SCHEMA
 /////////////////////////////////////////
@@ -950,8 +933,6 @@ export const LokasiBlSubGiatSchema = z.object({
    bl_sub_giat_id: z.string().nullish(),
    jadwal_anggaran_id: z.string(),
 })
-
-export type LokasiBlSubGiat = z.infer<typeof LokasiBlSubGiatSchema>
 
 export const LokasiBlSubGiatUncheckedCreateInputSchema = z
    .object({
@@ -1048,10 +1029,6 @@ export const LokasiBlSubGiatUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type LokasiBlSubGiatUncheckedCreateInput = z.infer<
-   typeof LokasiBlSubGiatUncheckedCreateInputSchema
->
-
 /////////////////////////////////////////
 // OUTPUT BL SUB GIAT SCHEMA
 /////////////////////////////////////////
@@ -1096,8 +1073,6 @@ export const OutputBlSubGiatSchema = z.object({
    jadwal_anggaran_id: z.string(),
 })
 
-export type OutputBlSubGiat = z.infer<typeof OutputBlSubGiatSchema>
-
 export const OutputBlSubGiatUncheckedCreateInputSchema = z
    .object({
       id: z.string().optional(),
@@ -1137,9 +1112,7 @@ export const OutputBlSubGiatUncheckedCreateInputSchema = z
       jadwal_anggaran_id: z.string(),
    })
    .strip()
-export type OutputBlSubGiatUncheckedCreateInput = z.infer<
-   typeof OutputBlSubGiatUncheckedCreateInputSchema
->
+
 /////////////////////////////////////////
 // RINCI BL SUB GIAT SCHEMA
 /////////////////////////////////////////
@@ -1346,8 +1319,6 @@ export const RinciBlSubGiatSchema = z.object({
       .nullish(),
    bl_sub_giat_id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
 })
-
-export type RinciBlSubGiat = z.infer<typeof RinciBlSubGiatSchema>
 
 export const RinciBlSubGiatUncheckedCreateInputSchema = z
    .object({
@@ -1573,10 +1544,6 @@ export const RinciBlSubGiatUncheckedCreateInputSchema = z
    })
    .strip()
 
-export type RinciBlSubGiatUncheckedCreateInput = z.infer<
-   typeof RinciBlSubGiatUncheckedCreateInputSchema
->
-
 /////////////////////////////////////////
 // SUBS RINCI BL SUB GIAT SCHEMA
 /////////////////////////////////////////
@@ -1630,8 +1597,6 @@ export const SubsRinciBlSubGiatSchema = z.object({
    updated_at: z.coerce.date(),
    bl_sub_giat_id: z.string().nullish(),
 })
-
-export type SubsRinciBlSubGiat = z.infer<typeof SubsRinciBlSubGiatSchema>
 
 export const SubsRinciBlSubGiatUncheckedCreateInputSchema = z
    .object({
@@ -1717,8 +1682,6 @@ export const KetRinciBlSubGiatSchema = z.object({
    bl_sub_giat_id: z.string().nullish(),
 })
 
-export type KetRinciBlSubGiat = z.infer<typeof KetRinciBlSubGiatSchema>
-
 export const KetRinciBlSubGiatUncheckedCreateInputSchema = z
    .object({
       id: z.string().optional(),
@@ -1743,9 +1706,7 @@ export const KetRinciBlSubGiatUncheckedCreateInputSchema = z
       bl_sub_giat_id: z.string().optional().nullable(),
    })
    .strip()
-export type KetRinciBlSubGiatUncheckedCreateInput = z.infer<
-   typeof KetRinciBlSubGiatUncheckedCreateInputSchema
->
+
 /////////////////////////////////////////
 // TAG BL SUB GIAT SCHEMA
 /////////////////////////////////////////
@@ -1783,7 +1744,6 @@ export const TagBlSubGiatSchema = z.object({
    bl_sub_giat_id: z.string().nullish(),
    jadwal_anggaran_id: z.string(),
 })
-export type TagBlSubGiat = z.infer<typeof TagBlSubGiatSchema>
 
 export const TagBlSubGiatUncheckedCreateInputSchema = z
    .object({
@@ -1818,10 +1778,6 @@ export const TagBlSubGiatUncheckedCreateInputSchema = z
       jadwal_anggaran_id: z.string(),
    })
    .strip()
-
-export type TagBlSubGiatUncheckedCreateInput = z.infer<
-   typeof TagBlSubGiatUncheckedCreateInputSchema
->
 
 export const BlSubGiatDeleteByListIdValidationSchema = z
    .object({
@@ -1983,3 +1939,71 @@ export const SubGiatPayloadSchema = z
       jadwal_anggaran_murni_id: z.string().nullish(),
    })
    .strip()
+
+declare global {
+   type BlSubGiat = z.infer<typeof BlSubGiatSchema>
+   type BlSubGiatUncheckedCreateInput = z.infer<typeof BlSubGiatUncheckedCreateInputSchema>
+   type BlSubGiatAktif = z.infer<typeof BlSubGiatAktifSchema>
+   type BlSubGiatAktifUncheckedCreateInput = z.infer<
+      typeof BlSubGiatAktifUncheckedCreateInputSchema
+   >
+   type DanaBlSubGiat = z.infer<typeof DanaBlSubGiatSchema>
+   type DanaBlSubGiatUncheckedCreateInput = z.infer<typeof DanaBlSubGiatUncheckedCreateInputSchema>
+   type LabelBlSubGiat = z.infer<typeof LabelBlSubGiatSchema>
+   type LabelBlSubGiatUncheckedCreateInput = z.infer<
+      typeof LabelBlSubGiatUncheckedCreateInputSchema
+   >
+   type OutputBlSubGiat = z.infer<typeof OutputBlSubGiatSchema>
+   type OutputBlSubGiatUncheckedCreateInput = z.infer<
+      typeof OutputBlSubGiatUncheckedCreateInputSchema
+   >
+   type LokasiBlSubGiat = z.infer<typeof LokasiBlSubGiatSchema>
+   type LokasiBlSubGiatUncheckedCreateInput = z.infer<
+      typeof LokasiBlSubGiatUncheckedCreateInputSchema
+   >
+
+   type RinciBlSubGiat = z.infer<typeof RinciBlSubGiatSchema>
+   type RinciBlSubGiatUncheckedCreateInput = z.infer<
+      typeof RinciBlSubGiatUncheckedCreateInputSchema
+   >
+   type SubsRinciBlSubGiat = z.infer<typeof SubsRinciBlSubGiatSchema>
+   type SubsRinciBlSubGiatUncheckedCreateInput = z.infer<
+      typeof SubsRinciBlSubGiatUncheckedCreateInputSchema
+   >
+   type KetRinciBlSubGiat = z.infer<typeof KetRinciBlSubGiatSchema>
+   type KetRinciBlSubGiatUncheckedCreateInput = z.infer<
+      typeof KetRinciBlSubGiatUncheckedCreateInputSchema
+   >
+   type TagBlSubGiat = z.infer<typeof TagBlSubGiatSchema>
+   type TagBlSubGiatUncheckedCreateInput = z.infer<typeof TagBlSubGiatUncheckedCreateInputSchema>
+   type SubGiatPayload = z.infer<typeof SubGiatPayloadSchema>
+   type BlSubGiatDeleteByListIdParams = z.infer<typeof BlSubGiatDeleteByListIdValidationSchema>
+   type BlSubGiatAktifDeleteByListIdParams = z.infer<
+      typeof BlSubGiatAktifDeleteByListIdValidationSchema
+   >
+   type RinciBlSubGiatDeleteByListIdParams = z.infer<
+      typeof RinciBlSubGiatDeleteByListIdValidationSchema
+   >
+   type SubsRinciBlSubGiatDeleteByListIdParams = z.infer<
+      typeof SubsRinciBlSubGiatDeleteByListIdValidationSchema
+   >
+   type KetRinciBlSubGiatDeleteByListIdParams = z.infer<
+      typeof KetRinciBlSubGiatDeleteByListIdValidationSchema
+   >
+
+   type DanaBlSubGiatDeleteByListIdParams = z.infer<
+      typeof DanaBlSubGiatDeleteByListIdValidationSchema
+   >
+   type LabelBlSubGiatDeleteByListIdParams = z.infer<
+      typeof LabelBlSubGiatDeleteByListIdValidationSchema
+   >
+   type LokasiBlSubGiatDeleteByListIdParams = z.infer<
+      typeof LokasiBlSubGiatDeleteByListIdValidationSchema
+   >
+   type OutputBlSubGiatDeleteByListIdParams = z.infer<
+      typeof OutputBlSubGiatDeleteByListIdValidationSchema
+   >
+   type TagBlSubGiatDeleteByListIdParams = z.infer<
+      typeof TagBlSubGiatDeleteByListIdValidationSchema
+   >
+}

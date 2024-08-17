@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-// import { createJadwalAnggaran, getJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import { updateUser } from '@actions/data/user'
 import BooleanInput from '@components/form/boolean-input'
 import { TextInput } from '@components/form/text-input'
@@ -20,7 +19,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
 import { titleCase } from '@utils'
-import { IUser, UserSchema, z } from '@zod'
+import { UserSchema, z } from '@zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 

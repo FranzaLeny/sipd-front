@@ -3,7 +3,6 @@ import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@
 import { compact } from 'lodash-es'
 import { numberToText } from '@shared/utils'
 
-import { SubGiatWithRinci } from './rincian'
 import { RincianGrouped } from './template'
 
 function RiciaActions({ id }: { id: string }) {

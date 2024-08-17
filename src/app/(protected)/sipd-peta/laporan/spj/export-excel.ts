@@ -1,14 +1,12 @@
-import { SpjFungsional } from '@actions/penatausahaan/pengeluaran/spj'
-import { SumberDanaAkunRinciSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { borderAll, createExcelData, numStyle, textStyle } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 import { sortBy } from 'lodash-es'
 
-type Params = SpjFungsional & {
+type Params = SpjFungsionalSipdPeta & {
    dana: SumberDanaAkunRinciSubGiat[]
    bulan: string
-   pembukuan2: (SpjFungsional['pembukuan2'][number] & {
+   pembukuan2: (Pembukuan1SpjFungsionalSipdPeta & {
       nama_dana?: string
       id_dana?: string
       rak?: {

@@ -5,7 +5,6 @@ import { HelperColumns } from '@components/table'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import { titleCase } from '@utils'
-import { Role } from '@validations/zod'
 import { MoreVertical } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
 
