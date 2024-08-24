@@ -360,6 +360,56 @@ interface SubGiatWithRinci {
    skpd: SubGiatWithRinciSkpd
 }
 
+interface SyncBlSubGiatParams {
+   payload: BlSubGiatSipdPayload
+   id_bl: number
+   id_jadwal: number
+   jadwal_anggaran_id: string
+   kode_giat: string
+   kode_sub_giat: string
+   kode_program: string
+   bl_giat_id: string
+   bl_sub_giat_aktif_id: string
+   jadwal_anggaran_murni_id?: string | null
+   staticData?: {
+      pagu?: number | null
+      pagu_indikatif?: number | null
+      pagu_murni?: number | null
+   }
+   subGiat: BlSubGiatSipd
+}
+
+interface GetDetailSubGiatSipdParams {
+   payload: {
+      tahun: number
+      id_daerah: number
+      id_unit: number
+      is_anggaran: number
+      id_sub_bl: number
+   }
+   id_bl: number
+   id_jadwal: number
+   kode_giat: string
+   kode_program: string
+   jadwal_anggaran_id: string
+   kode_sub_giat: string
+   bl_giat_id: string
+   bl_sub_giat_aktif_id: string
+   bl_sub_giat_id: string
+}
+
+type GetListDanaParams = {
+   limit?: number
+   search?: string
+   after?: string
+} & Partial<DanaBlSubGiat>
+
+type GetBlSubGiatByKodeSblParams<U extends true | undefined = undefined> = {
+   jadwal_anggaran_id: string
+   kode_sbl: string
+   with_rinci?: U
+}
+
 // file jadwal-anggaran
 
 type JadwalAnggaran = JadwalAnggaranZod & {

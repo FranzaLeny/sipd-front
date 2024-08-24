@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, useState } from 'react'
-import { getDanaBlSubGiat, GetDanaListParams } from '@actions/perencanaan/rka/bl-sub-giat'
+import { getDanaBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
 import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/react'
 import { useLocale } from '@react-aria/i18n'
 import { useQuery } from '@tanstack/react-query'
@@ -18,7 +18,7 @@ export interface DanaSelectorProps
    onChange?: (danaBlSubGiat: DanaBlSubGiat | undefined) => void
    onValueChange?: (nama_dana: string | null) => void
    onSelectionChange?: (id_dana_sub_bl: number | null) => void
-   params?: GetDanaListParams
+   params?: GetListDanaParams
    delayFetch?: number
 }
 
@@ -43,7 +43,7 @@ export const DanaSelector = forwardRef(
       const { locale } = useLocale()
       const { data, isFetching, status } = useQuery({
          queryKey: [{ ...queryParams }, 'bl_sub_giat_dana', 'jadwal_anggaran'] as [
-            GetDanaListParams,
+            GetListDanaParams,
             ...any,
          ],
          queryFn: async ({ queryKey: [params] }) => {

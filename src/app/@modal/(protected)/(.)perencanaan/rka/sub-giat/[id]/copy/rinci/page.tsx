@@ -5,7 +5,7 @@ import {
    getRinciSubGiatByBlSubgiatId,
    syncRinciBlSubGiat,
 } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
-import { getBlSubGiatById, getBlSubGiatByIdUnik } from '@actions/perencanaan/rka/bl-sub-giat'
+import { getBlSubGiatById, getBlSubGiatByKodeSbl } from '@actions/perencanaan/rka/bl-sub-giat'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
@@ -56,18 +56,13 @@ const ModalSingkronJadwal = ({ params: { id } }: Props) => {
    })
    const { data: targetSubGiat } = useQuery({
       queryKey: [
-         { jadwal_anggaran_id: jadwal?.id, id_unit: currSubGiat?.id_unit },
-         currSubGiat?.id_unik,
+         { jadwal_anggaran_id: jadwal?.id, kode_sbl: currSubGiat?.kode_sbl },
          'bl_sub_giat',
          'perencanaan',
-      ] as any,
-      queryFn: async ({ queryKey: [uniq, idUnik] }) => {
-         if (idUnik && uniq?.jadwal_anggaran_id && uniq?.id_unit) {
-            return await getBlSubGiatByIdUnik({
-               id_unik: idUnik,
-               id_unit: uniq.id_unit,
-               jadwal_anggaran_id: uniq.jadwal_anggaran_id,
-            })
+      ] as [GetBlSubGiatByKodeSblParams, ...any],
+      queryFn: async ({ queryKey: [params] }) => {
+         if (!!params && !!params?.jadwal_anggaran_id && !!params?.kode_sbl) {
+            return await getBlSubGiatByKodeSbl(params)
          }
          return null
       },
