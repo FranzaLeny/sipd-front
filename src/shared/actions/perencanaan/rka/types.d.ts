@@ -636,43 +636,39 @@ interface ItemLaporanRkaSKpd {
    total_harga_murni: number
    kode_akun: string
    nama_akun: string
+   kode: string[]
+}
+
+interface ListAkunBlLaporanBlSkpd {
+   kode_akun: string
+   nama_akun: string
+}
+
+interface BelanjaItemLaporanBlSkpd {
+   total_harga: number
+   [k: ListAkunBlLaporanBlSkpd['kode_akun']]: number
 }
 
 interface ItemLaporanBlSkpd {
-   kode: string[]
-   uraian: string
-   nama_dana: string
-   lokasi: string
-   pagu_n_lalu: number
-   belanja: BlItemLaporanBlSkpd
-   belanja_murni: BlMurniItemLaporanBlSkpd
-   sellisih: number
-   pagu_n_depan: number
-   nomor_urut: number
-   group: string
-   noname: number
-   noname_murni: number
-   dana: string
-   pagu: number
-   pagu_murni: number
    level: number
+   kode: (null | string)[]
+   kode_rekening: string
+   uraian: string
+   belanja: BelanjaRekapBl
+   belanja_murni: BelanjaRekapBl
+   kode_name: string
+   kode_unik: string
+   nama_dana: null | string
+   lokasi: null | string
    id_sub_bl: number
-}
+   pagu: number
+   pagu_n_lalu: number
+   pagu_n_depan: number
+   pagu_murni: number
+   group: string
+   selisih: number
 
-interface BlMurniItemLaporanBlSkpd {
-   bo_murni: number
-   btt_murni: number
-   bt_murni: number
-   bm_murni: number
-   total_harga_murni: number
-}
-
-interface BlItemLaporanBlSkpd {
-   bo: number
-   btt: number
-   bt: number
-   bm: number
-   total_harga: number
+   dana?: string
 }
 
 interface ItemLaporanPendapatan {
@@ -720,11 +716,12 @@ interface LaporanBlSubGiat {
    skpd: SkpdLaporan
 }
 
-// Rekapan Belanja dan Pendapatan SKPD
+// Rekapan Belanja  SKPD
 interface LaporanBlSkpd {
    list_bl: ItemLaporanBlSkpd[]
    jadwal: JadwalLaporan
    skpd: SkpdLaporan
+   list_akun_bl: ListAkunBlLaporanBlSkpd[]
 }
 
 // Rekapan Belanja program kegiatan subkegiatan
@@ -790,3 +787,79 @@ type GetListPendapatanParams = {
    search?: string
    after?: string
 } & GetPendapatanParams
+
+interface LaporanFormRak {
+   listBl: _ListBl[]
+   skpd: SkpdLaporan
+   jadwal: {
+      tahun: number
+      nama_sub_tahap: string
+      is_perubahan: number
+   }
+}
+
+interface _ListBl {
+   id: string
+   id_sub_skpd: number
+   kode_urusan: string
+   kode_bidang_urusan: string
+   kode_unit: null
+   kode_skpd: string
+   kode_sub_skpd: string
+   kode_program: string
+   kode_giat: string
+   kode_sub_giat: string
+   nama_urusan: string
+   nama_bidang_urusan: string
+   nama_unit: string
+   nama_skpd: string
+   nama_sub_skpd: string
+   nama_program: string
+   nama_giat: string
+   nama_sub_giat: string
+   pagu: number
+   akun_bl: _Akunbl[]
+}
+
+interface _Akunbl {
+   bl_sub_giat_id: string
+   kode_akun: string
+   total_harga: number
+   total_harga_murni: number
+   id_akun: string
+   nama_akun: string
+   level: number
+   is_group: boolean
+   rak: _Rak
+}
+
+interface _Rak {
+   nilai_rak: number
+   nilai_realisasi: null
+   kode_akun: string
+   bl_sub_giat_id: string
+   bulan_1: number
+   realisasi_1: null
+   bulan_2: number
+   realisasi_2: null
+   bulan_3: number
+   realisasi_3: null
+   bulan_4: number
+   realisasi_4: null
+   bulan_5: number
+   realisasi_5: null
+   bulan_6: number
+   realisasi_6: null
+   bulan_7: number
+   realisasi_7: null
+   bulan_8: number
+   realisasi_8: null
+   bulan_9: number
+   realisasi_9: null
+   bulan_10: number
+   realisasi_10: null
+   bulan_11: number
+   realisasi_11: null
+   bulan_12: number
+   realisasi_12: null
+}

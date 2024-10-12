@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getAllBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
-import { getLaporanSubGiat } from '@actions/perencanaan/rka/laporan'
+import { getLaporanRkaSubGiat } from '@actions/perencanaan/rka/laporan'
 import { ExcelIcon, XlsxIcon } from '@components/icons/excel'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import BlSubGiatSelector from '@components/perencanaan/bl-sub-giat'
@@ -110,9 +110,9 @@ export default function RinciBl({
          'jadwal_anggaran',
          'bl_sub_giat',
          'bl_sub_giat_rinci',
-         'getLaporanSubGiat',
+         'getLaporanRkaSubGiat',
       ],
-      queryFn: async ({ queryKey: [id] }) => (id ? await getLaporanSubGiat(id) : undefined),
+      queryFn: async ({ queryKey: [id] }) => (id ? await getLaporanRkaSubGiat(id) : undefined),
       enabled: !!blSubGiatId,
    })
    const data = useMemo(() => {
@@ -221,7 +221,7 @@ export default function RinciBl({
             tapd: TapdLaporan[]
          }[] = []
          for await (const sbl of listSubGiat) {
-            await getLaporanSubGiat(sbl?.id).then((res) => {
+            await getLaporanRkaSubGiat(sbl?.id).then((res) => {
                const currData = paguPerubahan ? generatePerubahan(res) : res
                const item = {
                   dokumen: jenisDok,

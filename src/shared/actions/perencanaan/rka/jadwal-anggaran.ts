@@ -1,4 +1,4 @@
-import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/pengeluaran/jadwal'
+import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/sipd/jadwal'
 import {
    JadwalAnggaranUncheckedCreateInputSchema,
    JadwalAnggaranUncheckedUpdateInputSchema,

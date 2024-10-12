@@ -17,18 +17,18 @@ import { useQuery } from '@tanstack/react-query'
 
 type GetAllSkpdParams = Parameters<typeof getAllSkpd>
 
-export interface SkpdMultipleSelectProps
-   extends Pick<
+export interface SkpdMultipleSelectProps {
+   selectProps?: Pick<
       SelectProps,
       Exclude<
          keyof SelectProps,
          'onChange' | 'children' | 'defaultItems' | 'items' | 'onSelectionChange'
       >
-   > {
+   >
    onChange?: (skpd: Skpd[]) => void
    onSelectionChange?: (listIdSkpd: string[]) => void
    isClearable?: boolean
-   params?: GetAllSkpdParams[0]
+   params?: GetAllSkpdParams[number]
    delayFetch?: number
 }
 
@@ -40,7 +40,7 @@ export const SkpdMultipleSelect = forwardRef(
          delayFetch = 1000,
          onSelectionChange,
          isClearable = true,
-         ...props
+         selectProps,
       }: SkpdMultipleSelectProps,
       ref?: React.Ref<HTMLSelectElement>
    ) => {
@@ -106,7 +106,7 @@ export const SkpdMultipleSelect = forwardRef(
             aria-labelledby='SKPD'
             placeholder='Pilih SKPD...'
             variant='bordered'
-            {...props}
+            {...selectProps}
             isMultiline
             onSelectionChange={handleChange}
             showScrollIndicators={false}
@@ -124,11 +124,11 @@ export const SkpdMultipleSelect = forwardRef(
             }}
             items={list}
             ref={ref}
-            isDisabled={props?.isDisabled || !options}
+            isDisabled={selectProps?.isDisabled || !options}
             renderValue={(items) => {
                return (
                   <div className='flex flex-wrap gap-2'>
-                     {items.map(({ data, key, props, textValue, rendered, type }) =>
+                     {items?.map(({ data, key, props, textValue, rendered, type }) =>
                         key && data ? (
                            <Chip
                               onClose={isClearable ? () => handleClear(items, key) : undefined}
@@ -143,7 +143,7 @@ export const SkpdMultipleSelect = forwardRef(
                   </div>
                )
             }}
-            isLoading={props?.isLoading || isFetching}>
+            isLoading={selectProps?.isLoading || isFetching}>
             {({ nama_skpd, id, hidden }) => (
                <SelectItem
                   className={`data-[selected=true]:border-b ${hidden ? 'hidden' : ''}`}

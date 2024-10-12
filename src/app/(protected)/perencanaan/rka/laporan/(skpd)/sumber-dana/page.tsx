@@ -1,4 +1,4 @@
-import { getLaporanSumberDana } from '@actions/perencanaan/rka/laporan'
+import { getLaporanRkaSumberDana } from '@actions/perencanaan/rka/laporan'
 import ErrorPage from '@components/ui/error'
 
 import RekapDana from './rekap-dana'
@@ -22,7 +22,7 @@ export default async function Page(props: Props) {
    if (!props?.searchParams?.jadwal_anggaran_id || !props?.searchParams?.id_unit) {
       return <div className='content text-danger mx-auto p-8'>Pilih Jadwal dan SKPD</div>
    }
-   const data = await getLaporanSumberDana(props?.searchParams).catch((e) => {
+   const data = await getLaporanRkaSumberDana(props?.searchParams).catch((e) => {
       let errorCode = 500
       e.response?.status && (errorCode = e.response?.status)
       return { errorCode, message: e?.message }

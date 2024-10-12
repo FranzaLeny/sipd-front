@@ -7,8 +7,8 @@ import { useQuery } from '@tanstack/react-query'
 import { debounce } from 'lodash-es'
 import { ArrowDown } from 'lucide-react'
 
-interface Props
-   extends Pick<
+interface Props {
+   autocompleteProps?: Pick<
       AutocompleteProps,
       Exclude<
          keyof AutocompleteProps,
@@ -20,7 +20,7 @@ interface Props
          | 'onValueChange'
          | 'onSelectionChange'
       >
-   > {
+   >
    onValueChange?: (nama: string | null) => void
    onSelectionChange?: (id: string | null) => void
    onChange?: (user?: UserSipdPerencanaan) => void
@@ -31,13 +31,13 @@ interface Props
 export const UserSipdPerencanaanSelector = forwardRef(
    (
       {
-         onChange,
+         onChange = () => {},
+         // onInputChange = () => {},
          params,
          delayFetch = 1000,
-         onValueChange,
-         selectedKey,
-         onSelectionChange,
-         ...props
+         onValueChange = () => {},
+         onSelectionChange = () => {},
+         autocompleteProps: { selectedKey, ...props } = {},
       }: Props,
       ref: any
    ) => {
@@ -70,25 +70,29 @@ export const UserSipdPerencanaanSelector = forwardRef(
          }
       }, [data])
 
-      const handleInputChange = debounce((value: string) => {
+      const debounceValueChange = debounce((value: string) => {
          const user = options?.find((d) => d.nama === value)
          if (user) {
             return
          }
          setQueryParams(({ after, ...old }) => ({ ...old, search: value ?? '' }))
       }, delayFetch)
+      // const handleValueChange = (value: string) => {
+      //    onValueChange(value)
+      //    debounceValueChange(value)
+      // }
 
       const handleSelected = (key: any) => {
          setSelected(key)
          if (key && typeof key === 'string') {
             const user = options?.find((d) => d.id === key)
-            onChange && onChange(user)
-            onValueChange && onValueChange(user?.nama ?? null)
-            onSelectionChange && onSelectionChange(user?.id ?? null)
+            onChange(user)
+            onValueChange(user?.nama ?? null)
+            onSelectionChange(user?.id ?? null)
          } else {
-            onValueChange && onValueChange(null)
-            onChange && onChange(undefined)
-            onSelectionChange && onSelectionChange(null)
+            onValueChange(null)
+            onChange(undefined)
+            onSelectionChange(null)
          }
       }
       const loadMoreHandle = () => {
@@ -112,7 +116,6 @@ export const UserSipdPerencanaanSelector = forwardRef(
 
       return (
          <Autocomplete
-            // onKeyDown={(e: any) => e.continuePropagation()}
             aria-labelledby='user-perencanaan'
             placeholder='Pilih User SIPD Perencanaan...'
             variant='bordered'
@@ -120,7 +123,6 @@ export const UserSipdPerencanaanSelector = forwardRef(
             defaultItems={[]}
             inputProps={{ name: 'user-perencanaan' }}
             {...props}
-            // inputProps={{ ref }}
             defaultSelectedKey={props?.defaultSelectedKey?.toString()}
             listboxProps={{
                ...props.listboxProps,
@@ -133,7 +135,8 @@ export const UserSipdPerencanaanSelector = forwardRef(
             }}
             ref={ref}
             selectedKey={selected}
-            onInputChange={handleInputChange}
+            // onInputChange={handleInputChange}
+            onValueChange={debounceValueChange}
             onSelectionChange={handleSelected}
             items={options || []}
             isDisabled={props?.isDisabled || !options}

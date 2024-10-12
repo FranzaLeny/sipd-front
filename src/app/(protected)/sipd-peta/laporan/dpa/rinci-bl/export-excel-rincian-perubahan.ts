@@ -11,8 +11,6 @@ import {
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 
-import { DpaRinciSubGiat } from './component'
-
 type Params = {
    dokumen: {
       name: string
@@ -20,7 +18,7 @@ type Params = {
       kode: string
       header: string
    }
-   data: DpaRinciSubGiat
+   data: RinciDpaBelanjaSubGiatFromSipdPeta
    jabatanKepala: string
    pangkatKepala?: string
    tapd?: Tapd[]

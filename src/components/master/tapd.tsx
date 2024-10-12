@@ -1,21 +1,11 @@
 'use client'
 
+import { forwardRef, useCallback, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { addTapdAnggaran, getTapdAnggaranList, updateTapdAnggaran } from '@actions/data/tapd'
 import { TextInput } from '@components/form/text-input'
 import UserSipdPerencanaanSelector from '@components/perencanaan/user'
-import {
-   Card,
-   CardContent,
-   CardDescription,
-   CardFooter,
-   CardHeader,
-   CardTitle,
-} from '@components/ui/card'
-
-import '@nextui-org/autocomplete'
-
-import { forwardRef, useCallback, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@components/ui/card'
 import manifest from '@constants/tpd.json'
 import {
    Autocomplete,
@@ -23,19 +13,20 @@ import {
    AutocompleteProps,
    Button,
    cn,
-   Input,
    Modal,
    ModalBody,
    ModalContent,
+   ModalFooter,
+   ModalHeader,
    useDisclosure,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { createTsForm } from '@ts-react/form'
+import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
 import { generateUniqueId } from '@utils/uniq-id'
 import { TapdAnggaranUncheckedCreateInputSchema } from '@validations/perencanaan/tapd'
 import { z } from '@zod'
 import { Reorder, useDragControls, useMotionValue } from 'framer-motion'
-import { ArrowBigLeft, Pencil, Save, Search, X } from 'lucide-react'
+import { ArrowBigLeft, Pencil, Save } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { useRaisedShadow } from '@shared/hooks/use-raised-shadow'
@@ -55,41 +46,16 @@ type SkpdSelectByJadwalProps = {
 
 type GetTapdAnggaranListParams = Parameters<typeof getTapdAnggaranList>[0]
 
-export const SkpdSelectByJadwal = ({
-   idsSkpd,
-   onChange,
-   errorMeesage,
-   tahun,
-   idDaerah,
-   isReadonly = false,
-}: SkpdSelectByJadwalProps) => {
-   return (
-      <div className='max-w-1/3 flex flex-col gap-3 print:hidden'>
-         {tahun && (
-            <SkpdMultipleSelect
-               isDisabled={isReadonly}
-               label='SKPD'
-               selectedKeys={idsSkpd ? new Set(idsSkpd) : undefined}
-               onSelectionChange={onChange}
-               params={{ tahun, id_daerah: idDaerah }}
-               isInvalid={!!errorMeesage}
-               errorMessage={errorMeesage}
-            />
-         )}
-      </div>
-   )
-}
-
 const TrAnggota = ({
    item,
-   onAction,
+   onSelected,
    noUrut,
    className,
 }: {
    item: any
    noUrut: number
    className?: string
-   onAction?: (id: string, edit?: boolean) => void
+   onSelected?: (data: Tapd) => void
 }) => {
    const y = useMotionValue(0)
    const itemStyles = useRaisedShadow(y)
@@ -116,25 +82,16 @@ const TrAnggota = ({
          <td className='border-print select-text px-3 py-2'>{item?.nip}</td>
          <td className='border-print select-text px-3 py-2'>{item?.jabatan}</td>
          <td className='border-print p-1'>
-            {!!onAction && (
+            {!!onSelected && (
                <div className='flex justify-center gap-2 print:hidden'>
                   <Button
                      radius='full'
                      isIconOnly
                      variant='bordered'
                      color='warning'
-                     onPress={() => onAction(item?.id, true)}
+                     onPress={() => onSelected({ ...item, key: noUrut - 1 })}
                      size='sm'>
                      <Pencil className='-m-4 size-4' />
-                  </Button>
-                  <Button
-                     radius='full'
-                     isIconOnly
-                     variant='bordered'
-                     color='danger'
-                     size='sm'
-                     onPress={() => onAction(item?.id)}>
-                     <X className='-m-4 size-4' />
                   </Button>
                </div>
             )}
@@ -147,7 +104,7 @@ export const TableAnggotaTapd = ({
    values = manifest?.data_tapd,
    show = true,
    onChange = () => {},
-   handleAnggotaChange,
+   onSelected,
    className = '',
    classNameTr = '',
 }: {
@@ -156,7 +113,7 @@ export const TableAnggotaTapd = ({
    className?: string
    classNameTr?: string
    onChange?: (data: Tapd[]) => void
-   handleAnggotaChange?: (id: string, edit?: boolean) => void
+   onSelected?: (data?: Tapd) => void
 }) => {
    return (
       <table
@@ -178,8 +135,20 @@ export const TableAnggotaTapd = ({
                <th className='border-print px-3 py-2'>Nama</th>
                <th className='border-print px-3 py-2'>NIP</th>
                <th className='border-print px-3 py-2'>Jabatan</th>
-               <th className='border-print px-3 py-2 text-center'>
-                  {!handleAnggotaChange ? 'Tanda Tangan' : 'Aksi'}
+               <th
+                  align='center'
+                  className='border-print text-center'>
+                  {!!onSelected ? (
+                     <Button
+                        color='secondary'
+                        size='sm'
+                        type='button'
+                        onPress={() => onSelected(undefined)}>
+                        Tambah
+                     </Button>
+                  ) : (
+                     'Tanda Tangan'
+                  )}
                </th>
             </tr>
          </thead>
@@ -194,7 +163,7 @@ export const TableAnggotaTapd = ({
                   key={item?.id}
                   item={item}
                   noUrut={index + 1}
-                  onAction={handleAnggotaChange}
+                  onSelected={onSelected}
                />
             ))}
          </Reorder.Group>
@@ -202,74 +171,6 @@ export const TableAnggotaTapd = ({
    )
 }
 
-const ModalUser = ({
-   isOpen,
-   onOpenChange,
-   onClose,
-   onUserSelect,
-   idDaerah = 0,
-}: {
-   isOpen: boolean
-   idDaerah?: number
-   onOpenChange: () => void
-   onClose: () => void
-   onUserSelect: (value: any) => void
-}) => {
-   return (
-      <Modal
-         className={cn(['bg-transparent'])}
-         classNames={{ base: 'shadow-none' }}
-         hideCloseButton
-         radius='lg'
-         isOpen={isOpen}
-         placement={'top'}
-         onOpenChange={onOpenChange}>
-         <ModalContent>
-            <ModalBody className={cn(['bg-content1 max-w-full overflow-x-hidden p-1'])}>
-               <UserSipdPerencanaanSelector
-                  label='Pilih User SIPD'
-                  placeholder='Cari ...'
-                  allowsEmptyCollection={false}
-                  menuTrigger='input'
-                  disableAnimation={true}
-                  scrollShadowProps={{
-                     isEnabled: false,
-                     hideScrollBar: false,
-                  }}
-                  popoverProps={{
-                     defaultOpen: false,
-                     disableAnimation: true,
-                  }}
-                  params={{ id_daerah: idDaerah }}
-                  autoFocus
-                  size='lg'
-                  onClose={onClose}
-                  radius='lg'
-                  onChange={onUserSelect}
-               />
-            </ModalBody>
-         </ModalContent>
-      </Modal>
-   )
-}
-
-const mapping = [[z.string(), TextInput] as const, [z.number(), TextInput] as const] as const
-
-const TapdSchema = z.object({
-   id: z.string().nullable().optional(),
-   nama: z.string().trim().min(1, { message: 'Wajib diisi' }),
-   jabatan: z.string().trim().min(1, { message: 'Wajib diisi' }),
-   nip: z.string().trim().min(1, { message: 'Wajib diisi' }),
-})
-
-type ItemTapd = z.infer<typeof TapdSchema>
-const FormComponent = (props: React.FormHTMLAttributes<HTMLFormElement>) => (
-   <form
-      className='w-full'
-      {...props}
-   />
-)
-const TsForm = createTsForm(mapping, { FormComponent })
 export type Tapd = {
    nama: string
    jabatan: string
@@ -277,7 +178,75 @@ export type Tapd = {
    id: string
 }
 
-export const FormAnggotaTapd = ({
+const FormComponent = (props: React.FormHTMLAttributes<HTMLFormElement>) => (
+   <form
+      className='w-full space-y-3'
+      {...props}
+   />
+)
+
+const AnggotaTapdSchema = z
+   .object({
+      id: z.string(),
+      nama: z.string().trim().min(1, { message: 'Wajib diisi' }),
+      nip: z
+         .string({ description: 'NIP // Masukan NIP' })
+         .trim()
+         .min(1, { message: 'Wajib diisi' }),
+      jabatan: z
+         .string({ description: 'Jabatan // Masukan Jabatan dalam TAPD' })
+         .trim()
+         .min(1, { message: 'Wajib diisi' }),
+   })
+   .strip()
+
+const zAnggotaTapd = createUniqueFieldSchema(
+   z.array(AnggotaTapdSchema).min(1, { message: 'Minimal harus ada 1 anggota TAPD' }),
+   'anggota_tapd'
+)
+const zSkpd = createUniqueFieldSchema(
+   z
+      .object({
+         connect: z
+            .array(
+               z
+                  .object({
+                     id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' }),
+                  })
+                  .strict()
+            )
+            .min(1, { message: 'Minimal harus ada 1 SKPD' }),
+      })
+      .strict(),
+   'skpd'
+)
+export const TapdInputSchema = z
+   .object({
+      id: z
+         .string()
+         .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
+         .optional(),
+      nama: z.string().trim().min(1, { message: 'Wajib diisi' }),
+      anggota_tapd: zAnggotaTapd,
+      skpd: zSkpd,
+   })
+   .strip()
+
+type ItemTapd = z.infer<typeof AnggotaTapdSchema>
+type TapdInput = z.infer<typeof TapdInputSchema>
+const mapping = [
+   [z.string(), TextInput],
+   [z.number(), TextInput],
+   [zAnggotaTapd, TextInput],
+   [zSkpd, TextInput],
+] as const
+const TsForm = createTsForm(mapping, { FormComponent })
+const VAL_OP = {
+   shouldValidate: true,
+   shouldTouch: false,
+   shouldDirty: false,
+}
+export const FormTapd = ({
    defaulValue,
    isReadOnly = false,
 }: {
@@ -286,123 +255,55 @@ export const FormAnggotaTapd = ({
 }) => {
    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
    const [anggota, setAnggota] = useState<Tapd[]>(defaulValue?.anggota_tapd ?? [])
-   const [edit, setEdit] = useState<string>()
-   const [error, setError] = useState<any>({})
+   const [anggotaSelected, setAnggotaSelected] = useState<Tapd>()
    const [loading, setLoading] = useState(false)
-   const [nama, setNama] = useState(defaulValue?.nama)
    const { data: session } = useSession()
    const [idsSkpd, setIdsSkpd] = useState<string[]>(defaulValue?.skpd.map((d) => d.id) ?? [])
 
    const router = useRouter()
    const { refetchQueries } = useRefetchQueries()
-   const formAdd = useForm<ItemTapd>({
-      resetOptions: { keepDirty: false, keepDefaultValues: false },
-      defaultValues: {
-         jabatan: 'Anggota',
-      },
-   })
-   const {
-      clearErrors,
-      setValue,
-      reset,
-      formState: { errors },
-   } = formAdd
 
-   const handleAddValueChange = useCallback(
-      (key: keyof ItemTapd, value: any) => {
-         if (isReadOnly) {
-            return
-         }
-         clearErrors(key)
-         setValue(key, value, { shouldValidate: true })
-      },
-      [clearErrors, setValue, isReadOnly]
-   )
-   const addItemTapd = (value: ItemTapd) => {
-      if (isReadOnly) {
-         return
-      }
-      let clone = [...anggota]
-      if (!!edit) {
-         const index = clone.findIndex((d) => d.id === edit)
-         if (index !== -1) {
-            clone[index] = value as any
+   const handleListAnggotaChange = ({ jabatan, nama, nip, id }: ItemTapd, isDelete = false) => {
+      if (id) {
+         if (isDelete) {
+            setAnggota((old) => old.filter((d) => d.id !== id))
          } else {
-            clone.push(value as any)
+            setAnggota((old) => old?.map((d) => (d.id === id ? { ...d, jabatan, nama, nip } : d)))
          }
       } else {
-         const id = generateUniqueId()
-         clone.push({ ...value, id })
+         const id: string = generateUniqueId()
+         setAnggota((prev) => [...prev, { jabatan, nama, nip, id }])
       }
-      setAnggota(clone)
-      reset()
-      setEdit(undefined)
-   }
 
-   const handleUserSelect = (value: any) => {
-      if (value && !isReadOnly) {
-         handleAddValueChange('id', value?.id)
-         handleAddValueChange('nip', value?.nip)
-         handleAddValueChange('nama', value?.nama)
-      }
+      setAnggotaSelected(undefined)
       onClose()
    }
-   const handleAnggotaChange = (id: string, edit = false) => {
-      if (isReadOnly) {
-         return
-      }
-      const value = anggota.find((d) => d.id === id)
-      if (edit && value) {
-         setEdit(id)
-         handleAddValueChange('id', value?.id)
-         handleAddValueChange('jabatan', value?.jabatan)
-         handleAddValueChange('nip', value?.nip)
-         handleAddValueChange('nama', value?.nama)
-      } else {
-         const colone = [...anggota.filter((d) => d.id !== id)]
-         setAnggota(colone)
-      }
-   }
+   const back = useCallback(() => {
+      router.back()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [])
 
-   const handleSave = async () => {
+   const formTapd = useForm<TapdInput>()
+
+   const handleSubmit = async (data: TapdInput) => {
       if (isReadOnly) {
          return
       }
       setLoading(true)
-      setError({})
       try {
          const id = defaulValue?.id
-         const data = {
-            anggota_tapd: anggota,
-            nama: nama ? nama?.trim() : null,
-            skpd: { connect: idsSkpd.map((id) => ({ id })) },
-         }
          const validate = TapdAnggaranUncheckedCreateInputSchema.parse(data)
          if (id) {
-            const res = await updateTapdAnggaran(id, validate)
+            const res = await updateTapdAnggaran(id, data)
             toast(res?.message ?? 'Berhasil', { type: res?.success ? 'success' : 'error' })
-            if (res?.success) {
-               setNama('')
-               setIdsSkpd([])
-            }
          } else {
             const res = await addTapdAnggaran(validate)
             toast(res?.message ?? 'Berhasil', { type: res?.success ? 'success' : 'error' })
-            if (res?.success) {
-               setNama('')
-               setIdsSkpd([])
-            }
          }
-         refetchQueries(['tapd_anggaran'])
+         refetchQueries(['data_tapd_anggaran'])
          router?.back()
       } catch (e: any) {
          if (e instanceof z.ZodError) {
-            const errors = e.flatten()
-            const error = {
-               nama: errors?.fieldErrors?.nama?.join(', '),
-               bl_skpd: errors?.fieldErrors?.bl_skpd?.join(', '),
-            }
-            setError(error)
             toast.error('Periksa kembali data sebelum disimpan')
          } else {
             toast(e?.message ?? 'Terjadi kesalahan')
@@ -410,137 +311,103 @@ export const FormAnggotaTapd = ({
       }
       setLoading(false)
    }
-   const back = useCallback(() => {
-      router.back()
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [])
-   const SearchUser = (
-      <Button
-         radius='full'
-         isIconOnly
-         variant='solid'
-         color='primary'
-         size='sm'
-         type='button'
-         onPress={onOpen}>
-         <Search className='-m-4 size-4' />
-      </Button>
-   )
-   return (
-      <div className='flex flex-col gap-3 pt-2 md:flex-row'>
-         {!isReadOnly && (
-            <Card className='h-fit md:sticky md:top-[calc(var(--height-navbar)+8.1px)] md:w-1/3'>
-               <CardHeader>
-                  <CardTitle>Tambah Anggoata TAPD</CardTitle>
-               </CardHeader>
-               <CardContent>
-                  <TsForm
-                     onSubmit={addItemTapd}
-                     form={formAdd}
-                     props={{
-                        nama: { endContent: SearchUser },
-                     }}
-                     schema={TapdSchema}>
-                     {({ jabatan, nama, nip }) => (
-                        <div className='flex w-full flex-col items-center gap-3'>
-                           {nama}
-                           {nip}
-                           {jabatan}
-                           <div className='flex justify-around gap-3'>
-                              {!!edit && (
-                                 <Button
-                                    color='danger'
-                                    variant='bordered'
-                                    endContent={<X className='-mr-2 size-5' />}
-                                    onPress={() => {
-                                       reset()
-                                       setEdit(undefined)
-                                    }}
-                                    type='button'>
-                                    Batal
-                                 </Button>
-                              )}
-                              <Button
-                                 color='primary'
-                                 variant='bordered'
-                                 type='submit'>
-                                 {!!edit ? 'Simpan Perubahan' : 'Tambah Anggota'}
-                              </Button>
-                           </div>
-                        </div>
-                     )}
-                  </TsForm>
-                  <CardDescription>
-                     <span className='text-danger font-bold'>
-                        Perhatikan Urutan dan Nama dari TAPD{' '}
-                     </span>
-                     Untuk mengatur urutan TAPD silahkan klik dan tarik pada Nomor sesuai urutan
-                     yang diinginkan.
-                  </CardDescription>
-               </CardContent>
-            </Card>
-         )}
-         <Card className='h-fit w-full md:flex-1'>
-            <CardHeader>
-               <CardTitle>FORM TAPD</CardTitle>
-            </CardHeader>
-            <CardContent>
-               <SkpdSelectByJadwal
-                  isReadonly={isReadOnly}
-                  tahun={session?.user?.tahun}
-                  idsSkpd={idsSkpd}
-                  idDaerah={session?.user?.id_daerah}
-                  onChange={setIdsSkpd}
-                  errorMeesage={error?.bl_skpd}
-               />
-               <Input
-                  label='Kelompok TAPD'
-                  name='nama'
-                  isReadOnly={isReadOnly}
-                  onValueChange={setNama}
-                  value={nama}
-                  isInvalid={!!error?.nama}
-                  errorMessage={error?.nama}
-               />
+   const handleSelectedAnggotaTapd = (item?: Tapd) => {
+      setAnggotaSelected(item)
+      onOpen()
+   }
 
-               <TableAnggotaTapd
-                  handleAnggotaChange={isReadOnly ? undefined : handleAnggotaChange}
-                  onChange={setAnggota}
-                  values={anggota}
-               />
-            </CardContent>
-            <CardFooter className='flex w-full justify-end gap-4'>
+   const handleClose = () => {
+      setAnggotaSelected(undefined)
+      onClose()
+   }
+   const fieldAnggota = formTapd?.register('anggota_tapd')
+   const fieldSkpd = formTapd?.register('skpd')
+   const fieldSkpdConn = formTapd?.register('skpd.connect')
+   useEffect(() => {
+      formTapd?.setValue('anggota_tapd', anggota as any, VAL_OP)
+   }, [anggota, formTapd])
+   useEffect(() => {
+      const newValue = [...idsSkpd]?.map((id) => ({ id }))
+      // @ts-expect-error
+      formTapd?.setValue('skpd', { connect: newValue }, VAL_OP)
+   }, [idsSkpd, formTapd])
+
+   return (
+      <Card className='h-fit w-full md:flex-1'>
+         <CardHeader>
+            <CardTitle>FORM TAPD</CardTitle>
+         </CardHeader>
+         <CardContent>
+            {!isReadOnly && (
+               <>
+                  <ModalAddPegawai
+                     idDaerah={session?.user?.id_daerah}
+                     isOpen={isOpen}
+                     onClose={handleClose}
+                     onOpenChange={onOpenChange}
+                     handleDataChange={handleListAnggotaChange}
+                     editValue={anggotaSelected}
+                  />
+               </>
+            )}
+            <TableAnggotaTapd
+               onSelected={isReadOnly ? undefined : handleSelectedAnggotaTapd}
+               onChange={setAnggota}
+               values={anggota}
+            />
+            {!!formTapd?.formState?.errors?.anggota_tapd && (
+               <p
+                  className='text-danger border-danger -mt-3 border p-3'
+                  ref={fieldAnggota?.ref}>
+                  {formTapd?.formState?.errors?.anggota_tapd?.message}
+               </p>
+            )}
+            <SkpdMultipleSelect
+               ref={fieldSkpdConn?.ref}
+               selectProps={{
+                  isDisabled: isReadOnly,
+                  label: 'SKPD',
+                  selectedKeys: idsSkpd ? new Set(idsSkpd) : [],
+                  isInvalid: !!formTapd?.formState?.errors?.skpd,
+                  errorMessage:
+                     formTapd?.formState?.errors?.skpd?.message ??
+                     formTapd?.formState?.errors?.skpd?.connect?.message,
+               }}
+               onSelectionChange={setIdsSkpd}
+               params={{ tahun: session?.user?.tahun, id_daerah: session?.user?.id_daerah }}
+            />
+
+            <TsForm
+               form={formTapd}
+               schema={TapdInputSchema}
+               defaultValues={{ nama: defaulValue?.nama }}
+               formProps={{ id: 'form-tapd', className: 'space-y-4 pt-2' }}
+               onSubmit={handleSubmit}>
+               {({ nama }) => <>{nama}</>}
+            </TsForm>
+         </CardContent>
+         <CardFooter className='flex w-full justify-end gap-4'>
+            <Button
+               isLoading={loading}
+               variant='shadow'
+               color='danger'
+               onPress={back}
+               startContent={<ArrowBigLeft className='-ml-2 size-5' />}>
+               Kembali
+            </Button>
+            {!isReadOnly && (
                <Button
+                  form='form-tapd'
+                  type='submit'
                   isLoading={loading}
                   variant='shadow'
-                  color='danger'
-                  onPress={back}
-                  startContent={<ArrowBigLeft className='-ml-2 size-5' />}>
-                  Kembali
+                  color='primary'
+                  startContent={<Save className='-ml-2 size-5' />}>
+                  {defaulValue?.id ? 'Update Data TAPD' : 'Simpan Data TAPD'}
                </Button>
-               {!isReadOnly && (
-                  <Button
-                     isLoading={loading}
-                     variant='shadow'
-                     color='primary'
-                     onPress={handleSave}
-                     startContent={<Save className='-ml-2 size-5' />}
-                     isDisabled={!anggota.length}>
-                     {defaulValue?.id ? 'Update Data TAPD' : 'Simpan Data TAPD'}
-                  </Button>
-               )}
-            </CardFooter>
-         </Card>
-         {!isReadOnly && (
-            <ModalUser
-               idDaerah={session?.user?.id_daerah}
-               onClose={onClose}
-               onUserSelect={handleUserSelect}
-               onOpenChange={onOpenChange}
-               isOpen={isOpen}
-            />
-         )}
-      </div>
+            )}
+         </CardFooter>
+      </Card>
    )
 }
 
@@ -632,3 +499,101 @@ export const TapdAnggaranSelector = forwardRef(
 )
 
 TapdAnggaranSelector.displayName = 'TapdAnggaranSelector'
+
+const ModalAddPegawai = ({
+   isOpen,
+   onClose = () => {},
+   onOpenChange = () => {},
+   editValue,
+   idDaerah = 0,
+   handleDataChange = () => {},
+}: {
+   isOpen: boolean
+   onOpenChange: () => void
+   handleDataChange: (item: ItemTapd, isDelete?: boolean) => void
+   onClose: () => void
+   editValue?: Tapd
+   idDaerah?: number
+}) => {
+   const itemDefault = {
+      id: '',
+      jabatan: 'Anggota',
+   }
+   const formAnggotaTapd = useForm<ItemTapd>()
+
+   const handleClose = () => {
+      formAnggotaTapd.reset(itemDefault)
+      onClose()
+   }
+   const hanldeSubmit = (data: ItemTapd, isDelete = false) => {
+      handleDataChange(data, isDelete)
+      formAnggotaTapd.reset(itemDefault)
+   }
+
+   const fieldNama = formAnggotaTapd?.register('nama')
+   const handleUserSipdSelected = (data?: UserSipdPerencanaan) => {
+      if (!!data) {
+         formAnggotaTapd.setValue('nip', data?.nip, VAL_OP)
+         formAnggotaTapd.setValue('nama', data?.nama, VAL_OP)
+      }
+   }
+
+   return (
+      <Modal
+         isOpen={isOpen}
+         onClose={handleClose}
+         onOpenChange={onOpenChange}
+         scrollBehavior='inside'>
+         <ModalContent>
+            <ModalHeader>{!!editValue ? 'Ubah' : 'Tambah'} Pelaksana Perjalanan Dinas</ModalHeader>
+            <ModalBody>
+               <UserSipdPerencanaanSelector
+                  autocompleteProps={{
+                     variant: 'bordered',
+                     label: 'Nama',
+                     allowsCustomValue: true,
+                     errorMessage: formAnggotaTapd?.formState?.errors?.nama?.message,
+                     isInvalid: !!formAnggotaTapd?.formState?.errors?.nama,
+                     placeholder: 'Masukan nama pegawai',
+                     defaultInputValue: editValue?.nama,
+                     onBlur: fieldNama?.onBlur,
+                     onInputChange: (v) => formAnggotaTapd?.setValue('nama', v, VAL_OP),
+                  }}
+                  ref={fieldNama?.ref}
+                  onChange={handleUserSipdSelected}
+                  params={{ id_daerah: idDaerah }}
+               />
+               <TsForm
+                  defaultValues={{ ...itemDefault, ...editValue }}
+                  formProps={{ id: 'form-anggota-tapd' }}
+                  schema={AnggotaTapdSchema}
+                  form={formAnggotaTapd}
+                  onSubmit={hanldeSubmit}>
+                  {({ jabatan, nip }) => (
+                     <>
+                        {nip}
+                        {jabatan}
+                     </>
+                  )}
+               </TsForm>
+            </ModalBody>
+            <ModalFooter className='flex items-center justify-end gap-3'>
+               {!!editValue && (
+                  <Button
+                     type='button'
+                     color='danger'
+                     onPress={() => hanldeSubmit(editValue, true)}>
+                     Hapus
+                  </Button>
+               )}
+               <Button
+                  form='form-anggota-tapd'
+                  type='submit'
+                  color='primary'>
+                  {!!editValue ? 'Ubah Pegawai' : 'Tambah Pegawai'}
+               </Button>
+            </ModalFooter>
+         </ModalContent>
+      </Modal>
+   )
+}

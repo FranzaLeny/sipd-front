@@ -1,4 +1,4 @@
-import { getLaporanBelanjaSkpd } from '@actions/perencanaan/rka/laporan'
+import { getLaporanRkaRekapBelanja } from '@actions/perencanaan/rka/laporan'
 import ErrorPage from '@components/ui/error'
 
 import RkaRekapBl from './rka-rekap-bl'
@@ -25,7 +25,7 @@ export default async function Page(props: Props) {
    if (!props?.searchParams?.jadwal_anggaran_id || !props?.searchParams?.id_unit) {
       return <div className='content text-danger mx-auto p-8'>Pilih Jadwal dan SKPD</div>
    }
-   const data = await getLaporanBelanjaSkpd(props?.searchParams).catch((e) => {
+   const data = await getLaporanRkaRekapBelanja(props?.searchParams).catch((e) => {
       console.log(e)
 
       let errorCode = 500
@@ -48,6 +48,7 @@ export default async function Page(props: Props) {
       <RkaRekapBl
          jadwalTipe={jadwalTipe}
          listBl={data?.list_bl}
+         listAkun={data?.list_akun_bl}
          skpd={data?.skpd?.sub_skpd}
          tahun={data?.jadwal?.tahun}
          anggotaTapd={data?.skpd?.tapd}

@@ -4,7 +4,6 @@ export const metadata = {
       template: `%s | DLH-Lembata`,
    },
 }
-
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
    return <>{children}</>
 }

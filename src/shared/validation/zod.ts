@@ -14,7 +14,6 @@ i18next.init({
 z.setErrorMap(zodI18nMap)
 
 // export configured zod instance
-export { z }
 
 export const reqErr = {
    required_error: 'Harus diisi',
@@ -43,3 +42,4 @@ export * from './perencanaan/data-perencanaan'
 export * from './perencanaan/pendapatan'
 export * from './perencanaan/tapd'
 export * from './user'
+export { z }

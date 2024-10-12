@@ -75,9 +75,11 @@ export default function RkaRekapBl({
    jadwalTipe,
    anggotaTapd,
    unit,
+   listAkun,
 }: {
    tahun: number
    listBl: ItemLaporanBlSkpd[]
+   listAkun: ListAkunBlLaporanBlSkpd[]
    skpd: UnitLaporan
    unit: UnitLaporan
    jadwalTipe: 'perubahan' | 'murni'
@@ -86,7 +88,8 @@ export default function RkaRekapBl({
    const [selectedDok, setSelectedDok] = useState('rka')
    const [tapd, setTapd] = useState(anggotaTapd)
    const [showKet, setShowKet] = useState(false)
-
+   const [isFormula, setIsFormula] = useState(false)
+   const [showBlank, setShowBlank] = useState(false)
    const printRef = useRef(null)
 
    const jenisDok = useMemo(() => {
@@ -121,9 +124,25 @@ export default function RkaRekapBl({
    const handleExport = useCallback(async () => {
       try {
          if (jenisDok?.type === 'perubahan') {
-            await dowloadRekapBlRkpa({ dokumen: jenisDok, items: listBl, skpd, tahun, tapd })
+            await dowloadRekapBlRkpa({
+               dokumen: jenisDok,
+               items: listBl,
+               skpd,
+               tahun,
+               tapd,
+               listAkun,
+               isFormula,
+            })
          } else if (jenisDok?.type === 'murni') {
-            await dowloadRekapBlRka({ dokumen: jenisDok, items: listBl, skpd, tahun, tapd })
+            await dowloadRekapBlRka({
+               dokumen: jenisDok,
+               items: listBl,
+               skpd,
+               tahun,
+               tapd,
+               listAkun,
+               isFormula,
+            })
          } else {
             throw new Error('Jenis Dokumen Tidak ada')
          }
@@ -131,7 +150,7 @@ export default function RkaRekapBl({
          console.error(error)
          toast.error('Gagal download excel rekapan belanja ' + skpd?.nama_skpd)
       }
-   }, [jenisDok, tahun, tapd, listBl, skpd])
+   }, [jenisDok, tahun, tapd, listBl, skpd, isFormula, listAkun])
    return (
       <>
          <div className='top-navbar sticky left-1/2 z-10 flex w-fit -translate-x-1/2 gap-4 rounded-b-3xl py-2 backdrop-blur'>
@@ -163,6 +182,20 @@ export default function RkaRekapBl({
                               isSelected={showKet}
                               onValueChange={setShowKet}>
                               Keterangan
+                           </Checkbox>
+                           <Checkbox
+                              size='sm'
+                              radius='full'
+                              isSelected={isFormula}
+                              onValueChange={setIsFormula}>
+                              Gunakan Formula
+                           </Checkbox>
+                           <Checkbox
+                              size='sm'
+                              radius='full'
+                              isSelected={showBlank}
+                              onValueChange={setShowBlank}>
+                              Tampilkan Pagu 0
                            </Checkbox>
 
                            <RadioGroup
@@ -276,28 +309,41 @@ export default function RkaRekapBl({
                <table className='tmin-w-full text-sm'>
                   {jenisDok?.type === 'perubahan' ? (
                      <TheadPerubahan
+                        akun={listAkun}
                         tahun={tahun}
                         showKet={showKet}
                      />
                   ) : (
                      <TheadMurni
                         tahun={tahun}
+                        akun={listAkun}
                         showKet={showKet}
                      />
                   )}
                   <tbody>
                      {listBl?.map((item) => {
+                        const isBlank =
+                           item?.belanja?.total_harga === 0 &&
+                           item?.belanja_murni?.total_harga === 0
                         return jenisDok?.type === 'perubahan' ? (
-                           <RenderRincianPerubahan
-                              key={item.nomor_urut}
-                              item={item}
-                              showKet={showKet}
-                           />
+                           isBlank && !showBlank ? (
+                              <></>
+                           ) : (
+                              <RenderRincianPerubahan
+                                 key={item.kode_unik}
+                                 item={item}
+                                 showKet={showKet}
+                                 akun={listAkun?.map((d) => d.kode_akun)}
+                              />
+                           )
+                        ) : isBlank && !showBlank ? (
+                           <></>
                         ) : (
                            <RenderRincianMurni
-                              key={item.nomor_urut}
+                              key={item.kode_unik}
                               item={item}
                               showKet={showKet}
+                              akun={listAkun?.map((d) => d.kode_akun)}
                            />
                         )
                      })}

@@ -1,5 +1,5 @@
-// https://sipd-ri.kemendagri.go.id/api/renja/renja_laporan/listDataRincianBelanjaSubKegiatan
-type RkaSubGiatSipdPayload = {
+LaporanListRinciBlSubGiatRka
+type LaporanRkaListRinciBlSubGiatSipdPayload = {
    tahun: number
    id_daerah: number
    id_unit: number
@@ -8,14 +8,14 @@ type RkaSubGiatSipdPayload = {
    is_anggaran?: number
    id_jadwal?: number
 }
-interface RkaSubGiatSipdResponse {
+interface LaporanRkaListRinciBlSubGiatSipdResponse {
    status: boolean
    status_code: number
-   data: ItemRkaSubGiatSipd[]
+   data: LaporanRinciBlSubGiatRka[]
    data_setup_tapd: any[]
 }
 
-interface ItemRkaSubGiatSipd {
+interface LaporanRinciBlSubGiatRka {
    id_rinci_sub_bl: number
    tahun: number
    id_daerah: number
@@ -61,7 +61,7 @@ interface ItemRkaSubGiatSipd {
    spek?: string | null
 }
 
-interface RkaSubGiatPergeseranSipdPayload {
+interface LaporanRkaPerubahanListRinciBlSubGiatSipdPayload {
    tahun: number
    id_daerah: number
    id_unit: number
@@ -69,14 +69,14 @@ interface RkaSubGiatPergeseranSipdPayload {
    id_sub_bl: number
    is_anggaran: number
 }
-interface RkaSubGiatPergeseranSipdResponse {
+interface LaporanRkaPerubahanListRinciBlSubGiatSipdResponse {
    status: boolean
    status_code: number
-   data: RkaSubGiatPergeseranSipd[]
+   data: LaporanRkaPerubahanListRinciBlSubGiatSipd[]
    data_setup_tapd: any[]
 }
 
-interface RkaSubGiatPergeseranSipd {
+interface LaporanRkaPerubahanListRinciBlSubGiatSipd {
    kode_rekening: string
    uraian: string
    koefisien_murni: string

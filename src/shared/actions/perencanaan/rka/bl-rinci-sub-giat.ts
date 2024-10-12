@@ -112,6 +112,25 @@ export const getSubsRinciBlSubGiatByDaerahSipd = async (
    }).then((res) => res.data)
 }
 
+export const deleteRinciBlSubGiatBySkpdSipd = async (payload: DeleteRinciBlSubGiatSipdPayload) => {
+   const data = await postToSipd(
+      'deleteRinciBlSubGiat',
+      {
+         keys: [
+            'aktivitas',
+            'id_daerah',
+            'id_daerah_log',
+            'id_rinci_sub_bl',
+            'id_user_log',
+            'kunci_bl_rinci',
+            'tahun',
+         ],
+         params: payload,
+      },
+      0
+   )
+   return data
+}
 export const getSubsRinciBlSubGiatBySkpdSipd = async (
    payload: ListSubsRinciBlSubGiatSipdPayload & { id_unit: number }
 ) => {

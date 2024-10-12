@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { getRkaPendapatanPergeseranSkpdSipd } from '@actions/perencanaan/rka/laporan'
+import { getLaporanRkaPerubahnPendapatanSipd } from '@actions/perencanaan/rka/laporan'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import { Button } from '@nextui-org/react'
@@ -25,8 +25,8 @@ export default function RingkasanPerubahanPendapatanSkpd({
             tahun: skpd?.tahun,
          },
          'rka_pergeseran_pendapatan_skpd_sipd',
-      ] as [RkaPergeseranSkpdSipdPayload, string],
-      queryFn: ({ queryKey: [q] }) => getRkaPendapatanPergeseranSkpdSipd(q),
+      ] as [LaporanRkaPerubahanPendapatanSipdPayload, string],
+      queryFn: ({ queryKey: [q] }) => getLaporanRkaPerubahnPendapatanSipd(q),
       enabled: !!skpd && !!sub_skpd,
    })
    const printRef = useRef(null)

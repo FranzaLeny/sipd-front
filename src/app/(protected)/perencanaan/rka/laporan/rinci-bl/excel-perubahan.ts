@@ -33,6 +33,18 @@ function formatDefaultRka(ws: Excel.Worksheet) {
       { key: 'selisih', style: numStyle, width: 11.71 },
       { key: 'rak', style: numStyle, width: 11.71 },
       { key: 'realisasi', style: numStyle, width: 11.71 },
+      {
+         key: 'sheet',
+         style: {
+            alignment: {
+               vertical: 'middle',
+               horizontal: 'left',
+               wrapText: false,
+               indent: 0.1,
+            },
+            font: { name: 'Arial', size: 10, bold: true },
+         },
+      },
    ]
    ws.views = [{ showGridLines: false }]
 }
@@ -61,40 +73,6 @@ const dowloadRkpaRinciBl = async (data: Data[]) => {
    saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
 }
 
-type KodeAkuns =
-   | 'bo'
-   | 'bo.bp'
-   | 'bo.bbj'
-   | 'bo.bb'
-   | 'bo.bsub'
-   | 'bo.bh'
-   | 'bo.bsos'
-   | 'bm'
-   | 'bm.bt'
-   | 'bm.bpm'
-   | 'bm.bbg'
-   | 'btt'
-   | 'bt'
-   | 'bt.bbh'
-   | 'bt.bbk'
-
-const listJenisBl: Record<string, KodeAkuns> = {
-   '5.1': 'bo',
-   '5.1.01': 'bo.bp',
-   '5.1.02': 'bo.bbj',
-   '5.1.03': 'bo.bb',
-   '5.1.04': 'bo.bsub',
-   '5.1.05': 'bo.bh',
-   '5.1.06': 'bo.bsos',
-   '5.2': 'bm',
-   '5.2.01': 'bm.bt',
-   '5.2.02': 'bm.bpm',
-   '5.2.03': 'bm.bbg',
-   '5.3': 'btt',
-   '5.4': 'bt',
-   '5.4.01': 'bt.bbh',
-   '5.4.02': 'bt.bbk',
-}
 const createSheet = async (data: Data, wb: Excel.Workbook) => {
    const { dokumen, items, skpd, tapd, subGiat } = data
    const idUnikSbl = '_' + subGiat?.id_sub_bl + '.'
@@ -140,7 +118,6 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
    fillDataSubKegiatan({ ws, subGiat })
    const starRow = fillTableHead({ ws })
    const lastRow = starRow + items.length - 1
-   const hasRici = items.length > 1
    for (let [index, rinci] of items.entries()) {
       const nextRow = starRow + index + 2
       const currRow = starRow + index + 1
@@ -176,23 +153,23 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
                 : uraian
       const rek = rekening?.reduce((a, b, i) => ({ ...a, [i + 1]: i === 5 ? b : b + '.' }), {})
       const total_murni = isRinci
-         ? `=ROUND(H${currRow}*I${currRow}+H${currRow}*I${currRow}*K${currRow},0)`
+         ? `=H${currRow}*I${currRow}+H${currRow}*I${currRow}*K${currRow}`
          : isTotal
-           ? hasRici
+           ? !isEmptyData
               ? '=SUBTOTAL(9,L' + (starRow + 1) + ':L' + lastRow + ')'
               : '=0'
            : generateSubTotal(group, index, nextRow, 'L')
       const total = isRinci
-         ? `=ROUND(M${currRow}*N${currRow}+M${currRow}*N${currRow}*P${currRow},0)`
+         ? `=M${currRow}*N${currRow}+M${currRow}*N${currRow}*P${currRow}`
          : isTotal
-           ? hasRici
+           ? !isEmptyData
               ? '=SUBTOTAL(9,Q' + (starRow + 1) + ':Q' + lastRow + ')'
               : '=0'
            : generateSubTotal(group, index, nextRow, 'Q')
       const selisih = isRinci
          ? `=Q${currRow}-L${currRow}`
          : isTotal
-           ? hasRici
+           ? !isEmptyData
               ? '=SUBTOTAL(9,R' + (starRow + 1) + ':R' + lastRow + ')'
               : '=0'
            : generateSubTotal(group, index, nextRow, 'R')
@@ -203,12 +180,12 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
             7: _uraian,
             8: isRinci ? { formula: `=${volume_murni?.join('*') || 0}` } : undefined,
             9: harga_satuan_murni,
-            10: isRinci ? satuan_murni?.join(' ') : undefined,
+            10: isRinci ? satuan_murni?.join(' ')?.trim() : undefined,
             11: isRinci ? { formula: `=${pajak_murni ?? 0}/100` } : undefined,
             12: { formula: total_murni },
             13: isRinci ? { formula: `=${volume?.join('*') || 0}` } : undefined,
             14: harga_satuan,
-            15: isRinci ? satuan?.join(' ') : undefined,
+            15: isRinci ? satuan?.join(' ')?.trim() : undefined,
             16: isRinci ? { formula: `=${pajak ?? 0}/100` } : undefined,
             17: { formula: total },
             18: { formula: selisih },
@@ -297,12 +274,12 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
             },
          ],
       })
-      if (!!kode && !!listJenisBl[kode]) {
+      if (!!kode && kode?.length <= 6) {
          const cell = row.number
-         ws.getCell(`Q${cell}`).name = idUnikSbl + listJenisBl[kode]
-         ws.getCell(`L${cell}`).name = idUnikSbl + listJenisBl[kode] + '.murni'
-         ws.getCell(cell, 19).name = idUnikSbl + listJenisBl[kode] + '.rak'
-         ws.getCell(cell, 20).name = idUnikSbl + listJenisBl[kode] + '.real'
+         ws.getCell(`Q${cell}`).name = idUnikSbl + kode
+         ws.getCell(`L${cell}`).name = idUnikSbl + kode + '.murni'
+         ws.getCell(cell, 19).name = idUnikSbl + kode + '.rak'
+         ws.getCell(cell, 20).name = idUnikSbl + kode + '.real'
       }
       borderAll({ row, ws, bold: !isRinci, excludeColumns: [19, 20] })
       row.eachCell({ includeEmpty: true }, (cell, col) => {
@@ -376,6 +353,7 @@ function fillDokJudul({
    ws.mergeCells(rows_judul[0].number, 15, rows_judul[rows_judul.length - 1].number, 18)
    const row = ws.addRow(undefined)
    row.height = 7
+
    return row.number
 }
 
@@ -488,6 +466,19 @@ function fillDataKegiatan({
          ws.getCell(1, 30).value = row.getCell(7).address
       }
    })
+   ws.getCell(`U5`).value = {
+      formula: `=HYPERLINK("#RINGKASAN_SKPD","SHEET: RINGKASAN SKPD")`,
+   }
+   ws.getCell(`U6`).value = {
+      formula: `=HYPERLINK("#PENDAPATAN","SHEET: PENDAPATAN")`,
+   }
+   ws.getCell(`U7`).value = {
+      formula: `=HYPERLINK("#SUMBER_DANA","SHEET: SUMBER DANA")`,
+   }
+   ws.getCell(`U8`).value = {
+      formula: `=HYPERLINK("#${idUnikSbl?.replaceAll('.', '')?.replaceAll('_', 'rekap.')}","SHEET: REKAPAN BELANJA")`,
+   }
+
    const row = ws.addRow(undefined)
    row.height = 7
    return row.number

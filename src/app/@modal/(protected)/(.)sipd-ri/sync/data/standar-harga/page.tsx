@@ -1,11 +1,16 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { getAllStandarHargaSipd, syncStandarHaga } from '@actions/perencanaan/data/standar-harga'
+import {
+   deleteOldStandarHarga,
+   getAllStandarHargaSipd,
+   syncStandarHaga,
+} from '@actions/perencanaan/data/standar-harga'
 import { validateSipdSession } from '@actions/perencanaan/token-sipd'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import { MaxDataInput, PilihTipes, Tipes } from '@components/perencanaan/sync-input'
-import { StandarHargaUncheckedCreateInputSchema } from '@zod'
+import { tipeToKelompok } from '@utils/standar-harga'
+import { StandarHargaDeleteOldParamsSchema, StandarHargaUncheckedCreateInputSchema } from '@zod'
 import { toast } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
 import { processChunks } from '@shared/utils/hof'
@@ -36,9 +41,11 @@ const ModalSingkron = () => {
       }
 
       const user = validateSipdSession(session)
-      let progressStart = 0.01
-      const progressIncrement = (1 - progressStart) / tipes.length
+      let progressStart = 0
+      const totalProcess = 2 * tipes.length
+      const progressIncrement = 1 / totalProcess
       try {
+         const sync_at = Date.now()
          for (const tipe of tipes) {
             toast.update(toastId, {
                render: (
@@ -49,15 +56,20 @@ const ModalSingkron = () => {
                ),
                progress: progressStart,
             })
-
-            const data = await getAllStandarHargaSipd({
-               id_daerah: user.id_daerah,
-               tahun: user.tahun,
-               tipe,
-               length: lengthData,
-               start: 0,
-            }).catch((error) => {
-               throw new Error(`Gagal mengambil data standar harga dari SIPD: ${error.message}`)
+            // PROCESS 1
+            const data = await getAllStandarHargaSipd(
+               {
+                  id_daerah: user.id_daerah,
+                  tahun: user.tahun,
+                  tipe,
+                  length: lengthData,
+                  start: 0,
+               },
+               sync_at
+            ).catch((error) => {
+               throw new Error(
+                  `Gagal mengambil data standar harga ${tipe} dari SIPD: ${error.message}`
+               )
             })
             toast.update(toastId, {
                render: (
@@ -66,10 +78,10 @@ const ModalSingkron = () => {
                      <p>Selesai chek data standar harga {tipe} dari SIPD-RI</p>
                   </div>
                ),
-               progress: progressStart + progressIncrement / 2,
+               progress: progressStart + progressIncrement,
             })
-            progressStart += progressIncrement / 2
-
+            progressStart += progressIncrement
+            // PROCESS 2
             if (data?.length) {
                await processChunks({
                   data,
@@ -77,33 +89,44 @@ const ModalSingkron = () => {
                   max: lengthData,
                   schema: StandarHargaUncheckedCreateInputSchema,
                   onSuccess: (res, progress, n) => {
-                     const message = res?.data?.message ?? 'Berhasil singkron data'
+                     const message = res?.data?.message ?? `Berhasil singkron data ${tipe}`
                      toast.update(toastId, {
                         render: (
                            <div>
-                              <p className='font-bold'>Proses ke {n} berhasil</p>
+                              <p className='font-bold'>
+                                 Proses simpa data {tipe} ke {n}
+                              </p>
                               <p>{message}</p>
                            </div>
                         ),
-                        progress: progressStart + (progressIncrement / 2) * progress,
+                        progress: progressStart + progressIncrement * progress,
                      })
                   },
                   onError: (err: any, progress, n) => {
                      const message = err?.message ?? 'Gagal singkron data'
                      toast.error(
                         <div>
-                           <p className='font-bold'>Proses ke {n} gagal</p>
+                           <p className='font-bold'>
+                              Proses simpa data {tipe} ke {n}
+                           </p>
                            <p>{message}</p>
                         </div>,
                         {
-                           progress: progressStart + (progressIncrement / 2) * progress,
+                           progress: progressStart + progressIncrement * progress,
                         }
                      )
                   },
                })
+               const usedData = StandarHargaDeleteOldParamsSchema.parse({
+                  id_daerah: user?.id_daerah,
+                  tahun: user?.tahun,
+                  sync_at,
+                  kelompok: tipeToKelompok(tipe),
+                  total_data: data?.length,
+               })
+               await deleteOldStandarHarga(usedData)
             }
-
-            progressStart += progressIncrement / 2
+            progressStart += progressIncrement
          }
 
          toast.success(`Selesai singkron data standar harga ${tipes.join(' ')}`)

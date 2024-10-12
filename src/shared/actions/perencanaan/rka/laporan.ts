@@ -1,52 +1,56 @@
 import axios from '@custom-axios/api-fetcher'
 import { postToSipd } from '@custom-axios/sipd-fetcher'
 
-export const getRkaRekapBlSipd = async (payload: RkaBlSkpdSipdPayload) => {
-   return await postToSipd('rkaRekapitulasiBelanjaSkpd', {
+export const getLaporanRkaSkpdSipd = async (payload: LaporanRkaSkpdSipdPayload) => {
+   return await postToSipd('laporanRkaSkpd', {
       keys: ['id_daerah', 'tahun', 'id_jadwal', 'id_skpd', 'id_sub_skpd', 'is_anggaran'],
       params: payload,
    }).then((res) => res.data)
 }
 
-export const getRkaBlPergeseranSubGiatSipd = async (payload: RkaBlPergeseranSkpdSipdPayload) => {
-   return await postToSipd('rkaRekapitulasiBelanjaSkpdPergeseran', {
+export const getLaporanRkaPerubahanSkpdSipd = async (
+   payload: LaporanRkaPerubahanSkpdSipdPayload
+) => {
+   return await postToSipd('laporanRkaPerubahanSkpd', {
       keys: ['id_daerah', 'tahun', 'id_skpd', 'id_sub_skpd'],
       params: payload,
    }).then((res) => res.data)
 }
 
-export const getRkaSkpdSipd = async (payload: RkaBlSkpdSipdPayload) => {
-   return await postToSipd('rkaBelanjaSkpd', {
-      keys: ['id_daerah', 'tahun', 'id_jadwal', 'id_skpd', 'id_sub_skpd', 'is_anggaran'],
-      params: payload,
-   }).then((res) => res.data)
-}
-
-export const getRkaPergeseranSkpdSipd = async (payload: RkaPergeseranSkpdSipdPayload) => {
-   return await postToSipd('rkaBelanjaSkpdPergeseran', {
-      keys: ['id_daerah', 'tahun', 'id_skpd', 'id_sub_skpd'],
-      params: payload,
-   }).then((res) => res.data)
-}
-
-export const getRkaPendapatanSkpdSipd = async (payload: RkaPendapatanSkpdSipdPayload) => {
-   return await postToSipd('rkaPendapatanSkpd', {
+export const getLaporanRkaPendapatanSkpdSipd = async (payload: LaporanRkaPendapatanSipdPayload) => {
+   return await postToSipd('laporanRkaPendapatan', {
       keys: ['id_daerah', 'tahun', 'id_jadwal', 'id_skpd'],
       params: payload,
    }).then((res) => res.data)
 }
 
-export const getRkaPendapatanPergeseranSkpdSipd = async (
-   payload: RkaPendapatanPergeseranSkpdSipdPayload
+export const getLaporanRkaPerubahnPendapatanSipd = async (
+   payload: LaporanRkaPerubahanPendapatanSipdPayload
 ) => {
-   return await postToSipd('rkaPendapatanSkpdPergeseran', {
+   return await postToSipd('laporanRkaPerubahanPendapatan', {
       keys: ['id_daerah', 'tahun', 'id_skpd', 'id_sub_skpd'],
       params: payload,
    }).then((res) => res.data)
 }
 
-export const getListSubGiatRkaSipd = async (payload: ListSubGiatRkaSipdPayolad) => {
-   return await postToSipd('listDataLampiranRKA', {
+export const getRkaRekapBelanjaSipd = async (payload: LaporanRkaRekapBlSipdPayload) => {
+   return await postToSipd('laporanRkaRekapBelanja', {
+      keys: ['id_daerah', 'tahun', 'id_jadwal', 'id_skpd', 'id_sub_skpd', 'is_anggaran'],
+      params: payload,
+   }).then((res) => res.data)
+}
+
+export const getLaporanRkaPerubahanRekapBelanjaSipd = async (
+   payload: LaporanRkaPerubahanRekapBlSipdPayload
+) => {
+   return await postToSipd('laporanRkaPerubahanRekapBl', {
+      keys: ['id_daerah', 'tahun', 'id_skpd', 'id_sub_skpd'],
+      params: payload,
+   }).then((res) => res.data)
+}
+
+export const getLaporanRkaSubGiatSipd = async (payload: LaporanRkaSubGiatSipdPayolad) => {
+   return await postToSipd('laporanRkaSubGiat', {
       keys: [
          'id_daerah',
          'tahun',
@@ -63,10 +67,10 @@ export const getListSubGiatRkaSipd = async (payload: ListSubGiatRkaSipdPayolad) 
          throw new Error('Gagal mengambil data belanja sub kegiatan dari sipd')
       })
 }
-export const getListSubGiatRkaPergeseranSipd = async (
-   payload: ListDataLampiranRKAPergeseranPayload
+export const getLaporanRkaPerubahanSubGiatSipd = async (
+   payload: LaporanRkaPerubahanSubGiatSipdPayload
 ) => {
-   return await postToSipd('listDataLampiranRKAPergeseran', {
+   return await postToSipd('laporanRkaPerubahanSubGiat', {
       keys: ['id_daerah', 'tahun', 'id_sub_bl', 'id_sub_giat', 'is_prop'],
       params: payload,
    })
@@ -76,8 +80,10 @@ export const getListSubGiatRkaPergeseranSipd = async (
       })
 }
 
-export const getRkaBlSubGiatSipd = async (payload: RkaSubGiatSipdPayload) => {
-   return await postToSipd('listDataRincianBelanjaSubKegiatan', {
+export const getLaporanRkaListRinciBlSubGiatSipd = async (
+   payload: LaporanRkaListRinciBlSubGiatSipdPayload
+) => {
+   return await postToSipd('laporanRkaListRinciBlSubGiat', {
       keys: ['id_daerah', 'tahun', 'id_sub_bl', 'id_jadwal', 'id_sub_skpd', 'is_anggaran'],
       params: payload,
    })
@@ -86,8 +92,10 @@ export const getRkaBlSubGiatSipd = async (payload: RkaSubGiatSipdPayload) => {
          throw new Error('Gagal mengambil data rka belanja sub kegiatan dari sipd')
       })
 }
-export const getRkaBlSubGiatPergeseranSipd = async (payload: RkaSubGiatPergeseranSipdPayload) => {
-   return await postToSipd('listDataRincianBelanjaSubKegiatanPergeseran', {
+export const getLaporanRkaPerubahanListRinciBlSubGiatSipd = async (
+   payload: LaporanRkaPerubahanListRinciBlSubGiatSipdPayload
+) => {
+   return await postToSipd('laporanRkaPerubahanListRinciBlSubGiat', {
       keys: ['id_daerah', 'tahun', 'id_sub_bl', 'id_sub_skpd', 'is_anggaran', 'id_unit'],
       params: payload,
    })
@@ -97,16 +105,16 @@ export const getRkaBlSubGiatPergeseranSipd = async (payload: RkaSubGiatPergesera
       })
 }
 
-export const getLaporanSkpd = async (params: GetLaporanSkpdParams) => {
+export const getLaporanRkaSkpd = async (params: GetLaporanSkpdParams) => {
    const { data } = await axios.get<ResponseApi<LaporanSkpd>>('/api/perencanaan/rka/skpd/laporan', {
       params,
    })
    return data
 }
 
-export const getLaporanBelanjaSkpd = async (params: GetLaporanSkpdParams) => {
+export const getLaporanRkaRekapBelanja = async (params: GetLaporanSkpdParams) => {
    return await axios
-      .get<ResponseApi<LaporanBlSkpd>>('/api/perencanaan/rka/skpd/laporan/belanja', {
+      .get<ResponseApi<LaporanBlSkpd>>('/api/perencanaan/rka/skpd/laporan/rekap-belanja', {
          params,
       })
       .then((res) => res.data)
@@ -120,15 +128,22 @@ export const getLaporanPendapatanSkpd = async (params: GetLaporanSkpdParams) => 
       .then((res) => res.data)
 }
 
-export const getLaporanSubGiat = async (id: string) => {
+export const getLaporanRkaSubGiat = async (id: string) => {
    return await axios
       .get<ResponseApi<LaporanBlSubGiat>>(`/api/perencanaan/rka/sub-giat/${id}/laporan`)
       .then((res) => res.data)
 }
 
-export const getLaporanSumberDana = async (params: GetLaporanSkpdParams) => {
+export const getLaporanRkaSumberDana = async (params: GetLaporanSkpdParams) => {
    return await axios
       .get<ResponseApi<LaporanRekapanSumberDana>>('/api/perencanaan/rka/skpd/laporan/sumber-dana', {
+         params,
+      })
+      .then((res) => res.data)
+}
+export const getLaporanFormRak = async (params: GetLaporanSkpdParams) => {
+   return await axios
+      .get<ResponseApi<LaporanFormRak>>('/api/perencanaan/rka/skpd/laporan/form-rak', {
          params,
       })
       .then((res) => res.data)

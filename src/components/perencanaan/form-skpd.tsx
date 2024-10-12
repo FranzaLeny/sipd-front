@@ -95,9 +95,7 @@ export default function FrormSkpd({
             }}
             onSubmit={handleSubmit}
             props={{
-               nama_skpd: {
-                  isReadOnly: true,
-               },
+               nama_skpd: { isReadOnly: true },
             }}
          />
       </DialogForm>

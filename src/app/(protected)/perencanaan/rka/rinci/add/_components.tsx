@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Props as InputProps, NumberInput, TextInput } from '@components/form/text-input'
+import { TextInput, TextInputProps } from '@components/form/text-input'
 import DialogForm from '@components/modal/dialog-form'
 import AkunSelector, { ObjectBl, ObjekBlSelector } from '@components/perencanaan/akun'
 import DanaSelector from '@components/perencanaan/dana-sbl'
@@ -21,7 +21,7 @@ import { useForm, UseFormWatch } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
 const mapping = [
-   [z.number(), NumberInput] as const,
+   [z.number(), TextInput] as const,
    [z.string(), TextInput] as const,
    [z.enum(['JENIS']), TextInput] as const,
 ] as const
@@ -83,7 +83,7 @@ const SelectorSchema = z.object({
    id_subs_sub_bl: z.number().int().nullish(),
 })
 
-const volumeProps: InputProps = {
+const volumeProps: TextInputProps = {
    labelPlacement: 'outside-left',
    classNames: {
       mainWrapper: 'w-full',
@@ -101,8 +101,9 @@ const satuanProps: SatuanSelectorProps = {
    inputProps: { classNames: { innerWrapper: 'pb-0', inputWrapper: 'h-auto min-h-auto' } },
    // base: 'flex-1',
 }
-const hargaProps: InputProps = {
-   numberFormatOptions: { currency: 'IDR', style: 'currency' },
+const numberFormatOptions: TextInputProps['numberFormatOptions'] = {
+   currency: 'IDR',
+   style: 'currency',
 }
 
 const checkVolumeAndSatuan = (
@@ -400,7 +401,7 @@ const ModalAddRincian = ({ data }: { data: BlSubGiat; user?: UserWithoutToken })
                props={{
                   total_harga: {
                      isReadOnly: true,
-                     ...hargaProps,
+                     numberFormatOptions,
                   },
                   koefisien: { isReadOnly: true },
                   volume: {
@@ -409,7 +410,7 @@ const ModalAddRincian = ({ data }: { data: BlSubGiat; user?: UserWithoutToken })
                   },
                   harga_satuan: {
                      isReadOnly: objBelanja?.fields?.includes('komponen'),
-                     ...hargaProps,
+                     numberFormatOptions,
                   },
                   vol_1: volumeProps,
                   vol_2: volumeProps,

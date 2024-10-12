@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { getBlSubGiatById } from '@actions/perencanaan/rka/bl-sub-giat'
-import { getLaporanSubGiat } from '@actions/perencanaan/rka/laporan'
+import { getLaporanRkaSubGiat } from '@actions/perencanaan/rka/laporan'
 import BlSubGiatSelector from '@components/perencanaan/bl-sub-giat'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import Loading from '@components/ui/loading'
@@ -97,9 +97,9 @@ export default function Rincian({
          'jadwal_anggaran',
          'bl_sub_giat',
          'bl_sub_giat_rinci',
-         'getLaporanSubGiat',
+         'getLaporanRkaSubGiat',
       ],
-      queryFn: async ({ queryKey: [id] }) => (id ? await getLaporanSubGiat(id) : undefined),
+      queryFn: async ({ queryKey: [id] }) => (id ? await getLaporanRkaSubGiat(id) : undefined),
       enabled: false,
    })
    const jenisDok = useMemo(() => {

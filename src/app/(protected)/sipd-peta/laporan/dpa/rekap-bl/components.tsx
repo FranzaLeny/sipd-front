@@ -1,6 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { getDpaBelanjaSkpdFromSipdPeta } from '@actions/penatausahaan/sipd/dpa'
+import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/sipd/jadwal'
+import { getSkpdPenatausahaanFromSipd } from '@actions/penatausahaan/sipd/skpd'
 import TanggalInput from '@components/form/tanggal-input'
 import { TableAnggotaTapd, Tapd } from '@components/master/tapd'
 import TableCatatanRka from '@components/perencanaan/table-catatan-rka'
@@ -14,94 +17,80 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
+import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
-import { useSipdPetaFetcher } from '@shared/hooks/use-sipd-peta-fetcher'
 
 import dowloadRkaBelanja from './export-excel-belanja-perubahan'
 
-interface SkpdPeta {
-   id_skpd: number
-   kode_skpd: string
-   nama_skpd: string
-}
-interface JadwalPergeseran {
-   tahapan: string
-   jadwal_sipd_penatausahaan: string
-   id_tahap_sipd: string
-   is_locked: number
-   id_jadwal: number
-   id_jadwal_sipd: number
-}
+// interface DpaBelanjaSkpdFromSipdPeta {
+//    tipe_q: string
+//    nama_ibu_kota: string
+//    nomor_dpa: string
+//    tanggal: string
+//    nama_skpd: string
+//    kode_skpd: string
+//    nama_kepala_skpd: string
+//    nip_kepala_skpd: string
+//    nama_ppkd: string
+//    nip_ppkd: string
+//    index: Index[]
+//    index_pergeseran: Indexpergeseran[]
+//    rak: Rak[]
+// }
 
-interface DpaBelanja {
-   tipe_q: string
-   nama_ibu_kota: string
-   nomor_dpa: string
-   tanggal: string
-   nama_skpd: string
-   kode_skpd: string
-   nama_kepala_skpd: string
-   nip_kepala_skpd: string
-   nama_ppkd: string
-   nip_ppkd: string
-   index: Index[]
-   index_pergeseran: Indexpergeseran[]
-   rak: Rak[]
-}
+// interface Rak {
+//    uraian: string
+//    januari: number
+//    februari: number
+//    maret: number
+//    april: number
+//    mei: number
+//    juni: number
+//    juli: number
+//    agustus: number
+//    september: number
+//    oktober: number
+//    november: number
+//    desember: number
+//    jumlah: number
+// }
 
-interface Rak {
-   uraian: string
-   januari: number
-   februari: number
-   maret: number
-   april: number
-   mei: number
-   juni: number
-   juli: number
-   agustus: number
-   september: number
-   oktober: number
-   november: number
-   desember: number
-   jumlah: number
-}
+// interface Index {
+//    kode_akun: string
+//    uraian: string
+//    sumber_dana: string
+//    lokasi: string
+//    t1: string
+//    bel_operasi: number
+//    bel_modal: number
+//    bel_btt: number
+//    bel_transfer: number
+//    jumlah: number
+//    t2: string
+// }
 
-interface Index {
-   kode_akun: string
-   uraian: string
-   sumber_dana: string
-   lokasi: string
-   t1: string
-   bel_operasi: number
-   bel_modal: number
-   bel_btt: number
-   bel_transfer: number
-   jumlah: number
-   t2: string
-}
-
-interface Indexpergeseran {
-   kode_rekening: string
-   uraian: string
-   sumber_dana: string
-   lokasi: string
-   t1: string
-   sebelum_bel_operasi: number
-   sebelum_bel_modal: number
-   sebelum_bel_btt: number
-   sebelum_bel_transfer: number
-   sebelum_jumlah: number
-   setelah_bel_operasi: number
-   setelah_bel_modal: number
-   setelah_bel_btt: number
-   setelah_bel_transfer: number
-   setelah_jumlah: number
-   bertambah_berkurang: number
-   t2: string
-}
+// interface Indexpergeseran {
+//    kode_rekening: string
+//    uraian: string
+//    sumber_dana: string
+//    lokasi: string
+//    t1: string
+//    sebelum_bel_operasi: number
+//    sebelum_bel_modal: number
+//    sebelum_bel_btt: number
+//    sebelum_bel_transfer: number
+//    sebelum_jumlah: number
+//    setelah_bel_operasi: number
+//    setelah_bel_modal: number
+//    setelah_bel_btt: number
+//    setelah_bel_transfer: number
+//    setelah_jumlah: number
+//    bertambah_berkurang: number
+//    t2: string
+// }
 type Props = {
    tahun: number
    id_skpd: number
@@ -156,7 +145,7 @@ const JENIS_DOKUMEN = {
 }
 
 interface PropsTableRak {
-   rak: DpaBelanja['rak']
+   rak: RakDpaSkpdPeta[]
    tanggal: string
    ibuKota: string
    jabatanKepala?: string | null
@@ -189,7 +178,7 @@ function TableRak(props: PropsTableRak) {
          <table className='min-w-[50%] leading-snug'>
             <tbody>
                {Object.keys(item)?.map((i) => {
-                  const key = i as keyof Rak
+                  const key = i as keyof RakDpaSkpdPeta
                   const value = item[key]
                   return key === 'uraian' ? (
                      <tr
@@ -308,7 +297,7 @@ function TableKop(props: PropsTableKop) {
    )
 }
 
-function TableRincian({ data }: { data: DpaBelanja['index'] }) {
+function TableRincian({ data }: { data: IndexDpaBelanjaSkpdFromSipdPeta[] }) {
    return (
       <table className='min-w-full leading-snug'>
          <thead className='bg-content1 break-inside-avoid text-center font-bold print:bg-slate-100'>
@@ -436,7 +425,7 @@ function TableRincian({ data }: { data: DpaBelanja['index'] }) {
    )
 }
 
-function TableRincianPergeseran({ data }: { data: DpaBelanja['index_pergeseran'] }) {
+function TableRincianPergeseran({ data }: { data: IndexpergeseranDpaBelanjaSkpdFromSipdPeta[] }) {
    return (
       <table className='min-w-full leading-snug'>
          <thead className='bg-content1 break-inside-avoid text-center font-bold print:bg-slate-100'>
@@ -612,21 +601,21 @@ export default function DpaRkaBelanja({
    const [dokumen, setDokumen] = useState<(typeof JENIS_DOKUMEN)['dppa'] | undefined>()
    const [disableKeysDok, setDisableKeysDok] = useState<string[]>([])
 
-   const { data: listSkpd, isFetching: loadingSkpd } = useSipdPetaFetcher<SkpdPeta[]>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/skpd/list/${id_daerah}/${tahun}`,
+   const { data: listSkpd, isFetching: loadingSkpd } = useQuery({
+      queryKey: [id_daerah, tahun, 'getSkpdPenatausahaanFromSipd'],
+      queryFn: ({ queryKey: [id_daerah, tahun] }) =>
+         getSkpdPenatausahaanFromSipd({ id_daerah, tahun }),
       enabled: !!id_daerah && !!tahun,
    })
 
-   const { data: listJadwal, isFetching: loadingJadwal } = useSipdPetaFetcher<JadwalPergeseran[]>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/laporan/dpa/dpa/jadwal-pergeseran`,
-      enabled: !!token,
+   const { data: listJadwal, isFetching: loadingJadwal } = useQuery({
+      queryKey: ['getJadwaPergeseranDpaFromSipd'],
+      queryFn: () => getJadwaPergeseranDpaFromSipd(),
    })
-
-   const { data: dpaSkpd, isFetching } = useSipdPetaFetcher<DpaBelanja>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/laporan/dpa/dpa/belanja/${skpd}/${jadwal}`,
+   const { data: dpaSkpd, isFetching } = useQuery({
+      queryKey: [jadwal, skpd, 'getDpaBelanjaSkpdFromSipdPeta'],
+      queryFn: ({ queryKey: [id_jadwal, id_skpd] }) =>
+         getDpaBelanjaSkpdFromSipdPeta({ id_jadwal, id_skpd }),
       enabled: !!jadwal && !!skpd,
    })
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
-import { Input, InputProps } from '@nextui-org/react'
+import { cn, Input, InputProps } from '@nextui-org/react'
 import { useLocale } from '@react-aria/i18n'
 import { useFieldInfo, useTsController } from '@ts-react/form'
 import { Eye, EyeOff } from 'lucide-react'
@@ -43,27 +43,34 @@ function formatNumberStrig(
    return firstPart
 }
 
-export type Props = Omit<
-   Omit<Omit<Omit<InputProps, 'errorMessage'>, 'onValueChange'>, 'defaultValue'>,
-   'value'
-> & {
+export interface TextInputProps
+   extends Pick<
+      InputProps,
+      Exclude<keyof InputProps, 'errorMessage' | 'onValueChange' | 'value' | 'defaultValue'>
+   > {
+   hidden?: boolean
    numberFormatOptions?: Intl.NumberFormatOptions
    errorMessage?: string
 }
-const BaseField = ({ numberFormatOptions, ...inputProps }: Props) => {
-   const [type, setType] = useState(inputProps.type)
+
+export const TextInput = (defaultProps: TextInputProps) => {
+   // @ts-expect-error
+   const { numberFormatOptions, control, enumValues, hidden, ...inputProps } = defaultProps
+   const [type, setType] = useState(inputProps?.type)
    const [value, setValue] = useState('')
    const { label, placeholder, defaultValue, isNullable, isOptional } = useFieldInfo()
    const { locale } = useLocale()
+
    const decimalSeparator = useMemo(() => {
       const numberFormat = new Intl.NumberFormat(locale, numberFormatOptions)
       const parts = numberFormat.formatToParts(1234.56)
       const decimal = parts.find((p) => p.type === 'decimal')?.value || ''
       return decimal
    }, [numberFormatOptions, locale])
+
    const {
       error,
-      field: { onChange, value: fieldValue, name },
+      field: { onChange, value: fieldValue, name, ref, onBlur },
       formState: { isSubmitting },
       fieldState: { invalid },
    } = useTsController<string | number | null | undefined>()
@@ -81,7 +88,7 @@ const BaseField = ({ numberFormatOptions, ...inputProps }: Props) => {
       [onChange, decimalSeparator, isNullable, type]
    )
    const passwordToggle = () => {
-      if (inputProps.type === 'password' && !inputProps.isClearable) {
+      if (inputProps?.type === 'password' && !inputProps?.isClearable) {
          const toggleVisibility = () => setType((old) => (old === 'text' ? 'password' : 'text'))
          return (
             <button
@@ -121,60 +128,29 @@ const BaseField = ({ numberFormatOptions, ...inputProps }: Props) => {
       'aria-labelledby': name,
       variant: 'bordered',
       autoComplete: name,
+      id: name,
       defaultValue: defaultValue ?? '',
+      ref,
+      onBlur,
       ...inputProps,
       errorMessage: error?.errorMessage,
       labelPlacement,
+      className: cn(hidden && 'hidden', inputProps?.className),
       onValueChange: handleChange,
       label: inputProps?.label ?? label ?? titleCase(name),
       placeholder: inputProps?.placeholder ?? placeholder,
       isReadOnly: inputProps?.isReadOnly || isSubmitting,
       isInvalid: invalid || inputProps?.isInvalid,
-      name,
       value: _value,
       type: type !== 'password' ? 'text' : type,
       isClearable:
-         inputProps?.isClearable ??
-         (inputProps?.isReadOnly || inputProps.type === 'password' || inputProps?.endContent)
+         (inputProps?.isClearable ??
+         (inputProps?.isReadOnly || inputProps?.type === 'password' || !!inputProps?.endContent))
             ? false
             : true,
       endContent: inputProps?.endContent ?? passwordToggle(),
    }
-   return (
-      <Input
-         key={name}
-         id={name}
-         {...props}
-      />
-   )
+   return <Input {...props} />
 }
 
-const TextInput = (props: Props) => (
-   <BaseField
-      type='text'
-      {...props}
-   />
-)
-
-const NumberInput = (props: Props) => (
-   <BaseField
-      {...props}
-      type='number'
-   />
-)
-
-const EmailField = (props: Props) => (
-   <BaseField
-      {...props}
-      type='email'
-   />
-)
-
-const PasswordInput = (props: Props) => (
-   <BaseField
-      {...props}
-      type='password'
-   />
-)
-
-export { BaseField, EmailField, NumberInput, PasswordInput, TextInput }
+export default TextInput

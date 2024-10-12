@@ -22,6 +22,10 @@ export async function syncAkun(data: AkunUncheckedCreateInput[]) {
    return await axios.put('/api/perencanaan/data/akun', data)
 }
 
+export async function deleteOldAkun(data: AkunDeleteOldParams) {
+   return await axios.delete('/api/perencanaan/data/akun/old', { data })
+}
+
 export async function getListAkun(params: GetListAkunParams) {
    return axios
       .get<ResponseApi<CursorPaginate<Akun>>>(`/api/perencanaan/data/akun`, { params })

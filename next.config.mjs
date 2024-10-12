@@ -8,7 +8,7 @@ const nextConfig = {
    // output: 'standalone',
    compiler: {
       styledComponents: true,
-      // removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,
+      removeConsole: process.env.NEXT_PUBLIC_SHOW_CONSOLE === 'false',
    },
 
    experimental: {

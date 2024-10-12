@@ -10,23 +10,40 @@ import {
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 
-function formatDefaultRka(ws: Excel.Worksheet) {
+function formatDefaultRka(ws: Excel.Worksheet, listAkun: ListAkunBlLaporanBlSkpd[]) {
+   const colomsAkun = listAkun?.map((akun) => ({
+      key: akun?.kode_akun,
+      style: numStyle,
+      width: 11.71,
+   }))
    ws.columns = [
       { key: 'kd_1', width: 2.71, style: textStyle },
-      { key: 'kd_2', width: 4.71, style: textStyle },
-      { key: 'kd_3', width: 2.71, style: textStyle },
+      { key: 'kd_2', width: 3.71, style: textStyle },
+      { key: 'kd_3', width: 3.71, style: textStyle },
       { key: 'kd_4', width: 4.71, style: textStyle },
-      { key: 'kd_5', width: 4.71, style: textStyle },
+      { key: 'kd_5', width: 5.71, style: textStyle },
       { key: 'uraian', width: 30.71, style: textStyle },
       { key: 'dana', width: 15.71, style: textStyle },
       { key: 'lokasi', width: 8.71, style: textStyle },
       { key: '1_n', width: 3.71, style: numStyle },
-      { key: 'bo', style: numStyle, width: 11.71 },
-      { key: 'bm', style: numStyle, width: 11.71 },
-      { key: 'btt', style: numStyle, width: 8.71 },
-      { key: 'bt', style: numStyle, width: 8.71 },
+      ...colomsAkun,
       { key: 'jumlah', style: numStyle, width: 11.71 },
       { key: 'n_1', style: numStyle, width: 11.71 },
+      { key: 'kosong', style: numStyle, width: 11.71 },
+      {
+         key: 'sheet',
+         style: {
+            alignment: {
+               vertical: 'middle',
+               horizontal: 'left',
+               wrapText: false,
+               shrinkToFit: true,
+               indent: 0.1,
+            },
+            font: { name: 'Arial', size: 10, bold: true },
+         },
+         width: 40.71,
+      },
    ]
    ws.views = [{ showGridLines: false }]
 }
@@ -42,10 +59,13 @@ type Data = {
    tapd?: TapdLaporan[]
    items: ItemLaporanBlSkpd[]
    tahun: number
+   listAkun: ListAkunBlLaporanBlSkpd[]
+   isFormula: boolean
 }
 
 const dowloadRekapBlRka = async (data: Data) => {
-   const { dokumen, items, skpd, tapd, tahun } = data
+   const { dokumen, items, skpd, tapd, tahun, listAkun, isFormula } = data
+   const akunLength = listAkun?.length
    const title = dokumen.kode + '_' + skpd?.kode_skpd?.substring(0, 6) + '_' + skpd?.nama_skpd
    const namaFile = title?.substring(0, 120)?.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_') + '_05_BELANJA'
    const sheet_name = 'BELANJA_' + skpd?.kode_skpd?.substring(0, 6)
@@ -57,18 +77,21 @@ const dowloadRekapBlRka = async (data: Data) => {
       const lastIndex = items.findIndex((d, i) => i > index && d.level <= level)
       const endRow = lastIndex === -1 ? lastRow : starRow + lastIndex
       let data: { formula: string }[] = []
-      for (let i = 9; i <= 15; i++) {
-         const column = numberToColumn(i)
-         data.push({ formula: `=SUBTOTAL(9,${column}${nextRow}:${column}${endRow})` })
+      if (items?.length) {
+         for (let i = 9; i <= akunLength + 11; i++) {
+            const column = numberToColumn(i)
+            data.push({ formula: `=SUBTOTAL(9,${column}${nextRow}:${column}${endRow})` })
+         }
       }
+
       return data
    }
 
    const wb = new Excel.Workbook()
    const ws = wb.addWorksheet(sheet_name)
-   formatDefaultRka(ws)
-   fillDokJudul({ ws, dokumen, tahun, skpd })
-   const starRow = fillTableHead({ ws })
+   formatDefaultRka(ws, listAkun)
+   fillDokJudul({ ws, dokumen, tahun, skpd, akunLength })
+   const starRow = fillTableHead({ ws, listAkun })
    const lastRow = starRow + items.length - 1
    for (let [index, rinci] of items.entries()) {
       const nextRow = starRow + index + 2
@@ -89,7 +112,12 @@ const dowloadRekapBlRka = async (data: Data) => {
          id_sub_bl,
       } = rinci
       const isTotal = group === 'jumlah'
-      const rincian = Object.values(belanja)
+      let rincian = listAkun?.map((akun) => belanja[akun?.kode_akun])
+      if (isFormula) {
+         rincian = listAkun?.map((akun) => ({
+            formula: `=IFERROR(_${id_sub_bl}.${akun?.kode_akun},0)`,
+         }))
+      }
 
       if (isTotal || isSkpd) {
          kode[0] = uraian
@@ -97,12 +125,25 @@ const dowloadRekapBlRka = async (data: Data) => {
       }
       const item: any[] = [...kode, uraian, nama_dana, lokasi]
       if (isRinci) {
-         rincian.pop()
+         const singkatan = uraian
+            ?.replace(/[^a-zA-Z]/g, ' ')
+            ?.replaceAll('dan', '')
+            ?.replaceAll('pada', '')
+            .split(' ')
+            ?.map((x) => x?.substring(0, 4))
+            ?.join('')
+         const sheetName = (kode?.join('.')?.substring(5) + singkatan).substring(0, 30)
          const newItem = [
             pagu_n_lalu,
             ...rincian,
-            { formula: `=SUM(${numberToColumn(10)}${currRow}:${numberToColumn(13)}${currRow})` },
+            {
+               formula: `=SUM(${numberToColumn(10)}${currRow}:${numberToColumn(10 + akunLength - 1)}${currRow})`,
+            },
             pagu_n_depan,
+            null,
+            {
+               formula: `=HYPERLINK("#_${id_sub_bl}.pagu","SHEET: ${sheetName}")`,
+            },
          ]
          item.push(...newItem)
       } else {
@@ -136,26 +177,11 @@ const dowloadRekapBlRka = async (data: Data) => {
             })
          }
       } else {
-         row.getCell(10).note = {
-            texts: [
-               {
-                  text: `=bo_${id_sub_bl}\n`,
-               },
-               {
-                  text: `=bm_${id_sub_bl}\n`,
-               },
-               {
-                  text: `=btt_${id_sub_bl}\n`,
-               },
-               {
-                  text: `=bt_${id_sub_bl}\n`,
-               },
-            ],
-            editAs: 'oneCells',
-         }
+         ws.getCell(row?.number, 6).name = `rekap.${id_sub_bl}`
       }
+
       ws.addConditionalFormatting({
-         ref: row.getCell(14).address,
+         ref: row.getCell(10 + akunLength).address,
          rules: [
             {
                type: 'cellIs',
@@ -174,21 +200,15 @@ const dowloadRekapBlRka = async (data: Data) => {
          ],
       })
 
-      borderAll({ row, ws, bold: !isRinci })
+      borderAll({ row, ws, bold: !isRinci, excludeColumns: [12 + akunLength, 13 + akunLength] })
    }
    const row = ws.addRow(undefined)
    row.height = 7
-   fillKepala({ ws, skpd })
-   fillKeterangan({ ws })
-   fillTapd({ ws, tapd })
+   fillKepala({ ws, skpd, akunLength })
+   fillKeterangan({ ws, akunLength })
+   const endRow = fillTapd({ ws, tapd, akunLength })
    ws.headerFooter.oddFooter = `&L&\"Arial\"&9&I${footer}&R&\"Arial\"&9&B- &P -`
-   // const password = skpd?.kode_skpd?.slice(-4)
-   // await ws.protect(password, {
-   //    insertRows: true,
-   //    formatRows: true,
-   //    formatColumns: true,
-   //    formatCells: true,
-   // })
+   ws.pageSetup.printArea = `A1:${numberToColumn(akunLength + 11)}${endRow}`
    const buf = await wb.xlsx.writeBuffer()
    saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
 }
@@ -200,12 +220,14 @@ function fillDokJudul({
    dokumen,
    skpd,
    tahun,
+   akunLength,
 }: {
    ws: Excel.Worksheet
    dokumen: Data['dokumen']
    skpd: Data['skpd']
    tahun: number
-}): void {
+   akunLength: number
+}): number {
    const data_judul = createExcelData({
       l: 3,
       c: false,
@@ -227,9 +249,14 @@ function fillDokJudul({
    const rows_judul = ws.addRows(data_judul)
    rows_judul.map((row) => {
       borderAll({ row, ws, bold: true, center: true, wrapText: true })
-      ws.mergeCells(row.number, 1, row.number, 11)
+      ws.mergeCells(row.number, 1, row.number, 7 + akunLength)
    })
-   ws.mergeCells(rows_judul[0].number, 12, rows_judul[rows_judul.length - 1].number, 15)
+   ws.mergeCells(
+      rows_judul[0].number,
+      akunLength + 8,
+      rows_judul[rows_judul.length - 1].number,
+      akunLength + 11
+   )
    ws.addRow(undefined)
    const data_roganisasi = []
    data_roganisasi[1] = 'Organisasi'
@@ -237,18 +264,26 @@ function fillDokJudul({
    data_roganisasi[5] = skpd.kode_skpd + '  ' + skpd.nama_skpd
    const row_org = ws.addRow(data_roganisasi)
    ws.mergeCells(row_org.number, 1, row_org.number, 4)
-   ws.mergeCells(row_org.number, 5, row_org.number, 15)
+   ws.mergeCells(row_org.number, 5, row_org.number, akunLength + 11)
    const rowheader = ws.addRow([dokumen.header])
-   ws.mergeCells(rowheader.number, 1, rowheader.number, 15)
+   ws.mergeCells(rowheader.number, 1, rowheader.number, akunLength + 11)
    borderAll({ row: rowheader, ws, bold: true, center: true, wrapText: true })
+   return rowheader?.number
 }
 
-function fillTableHead({ ws }: { ws: Excel.Worksheet }) {
+function fillTableHead({
+   ws,
+   listAkun,
+}: {
+   ws: Excel.Worksheet
+   listAkun: ListAkunBlLaporanBlSkpd[]
+}) {
+   const akunLength = listAkun?.length
    const data_th = createExcelData({
       l: 3,
       d: {
          0: createExcelData({
-            l: 15,
+            l: 11 + akunLength,
             d: {
                1: 'Urusan',
                2: 'Bidang Urusuan',
@@ -262,7 +297,7 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }) {
             },
          }),
          1: createExcelData({
-            l: 15,
+            l: 11 + akunLength,
             d: {
                9: 'T-1',
                10: 'Tahun N',
@@ -270,13 +305,15 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }) {
             },
          }),
          2: createExcelData({
-            l: 15,
+            l: 11 + akunLength,
             d: {
-               10: 'Belanja Operasi',
-               11: 'Belanja Modal',
-               12: 'Belanja Tak Terduga',
-               13: 'Belanja Transfer',
-               14: 'Jumlah',
+               ...listAkun?.reduce(
+                  (prev, curr, i) => {
+                     return { [10 + i]: curr?.nama_akun, ...prev }
+                  },
+                  {} as Record<number, string>
+               ),
+               [10 + akunLength]: 'Jumlah',
             },
          }),
       },
@@ -300,20 +337,21 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }) {
          ws.mergeCells(row.number, 3, row.number + 2, 3)
          ws.mergeCells(row.number, 4, row.number + 2, 4)
          ws.mergeCells(row.number, 5, row.number + 2, 5)
-         ws.mergeCells(row.number, 9, row.number, 15)
+         ws.mergeCells(row.number, 9, row.number, akunLength + 11)
       } else if (i === 1) {
-         ws.mergeCells(row.number, 10, row.number, 14)
+         ws.mergeCells(row.number, 10, row.number, akunLength + 10)
       } else if (i === 2) {
          ws.mergeCells(row.number, 6, row.number - 2, 6)
          ws.mergeCells(row.number, 7, row.number - 2, 7)
          ws.mergeCells(row.number, 8, row.number - 2, 8)
          ws.mergeCells(row.number, 9, row.number - 1, 9)
-         ws.mergeCells(row.number, 15, row.number - 1, 15)
+         ws.mergeCells(row.number, akunLength + 11, row.number - 1, akunLength + 11)
       }
    })
-   const data_column = Array.from({ length: 15 }, (_, index) => {
-      if (index === 13) {
-         return `${index + 1}=(10+11+12+13)`
+   const sumMurni = listAkun.reduce((a: string, _, b) => (!!a ? a + '+' + (b + 10) : '10'), '')
+   const data_column = Array.from({ length: akunLength + 11 }, (_, index) => {
+      if (index === akunLength + 9) {
+         return `${index + 1}=(${sumMurni})`
       } else {
          return String(index + 1)
       }
@@ -327,6 +365,7 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }) {
       fitToPage: true,
       fitToHeight: 0,
       orientation: 'portrait',
+      blackAndWhite: true,
       showGridLines: false,
       margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.2, footer: 0.2 },
       printTitlesRow: `${row_th[0].number}:${row_column.number}`,
@@ -334,30 +373,38 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }) {
    return row_column.number
 }
 
-function fillKepala({ ws, skpd }: { ws: Excel.Worksheet; skpd: Data['skpd'] }) {
+function fillKepala({
+   ws,
+   skpd,
+   akunLength,
+}: {
+   ws: Excel.Worksheet
+   skpd: Data['skpd']
+   akunLength: number
+}) {
    const data = createExcelData({
       l: !skpd?.pangkat_kepala ? 5 : 6,
       d: {
          1: createExcelData({
-            l: 15,
-            d: { 11: 'Lewoleba, __________________' },
+            l: akunLength + 11,
+            d: { [akunLength + 7]: 'Lewoleba, __________________' },
          }),
          2: createExcelData({
-            l: 15,
-            d: { 11: skpd?.nama_jabatan_kepala },
+            l: akunLength + 11,
+            d: { [akunLength + 7]: skpd?.nama_jabatan_kepala },
          }),
          4: createExcelData({
-            l: 15,
-            d: { 11: skpd?.nama_kepala },
+            l: akunLength + 11,
+            d: { [akunLength + 7]: skpd?.nama_kepala },
          }),
          5: createExcelData({
-            l: 15,
-            d: { 11: skpd?.pangkat_kepala ?? `NIP.${skpd.nip_kepala}` },
+            l: akunLength + 11,
+            d: { [akunLength + 7]: skpd?.pangkat_kepala ?? `NIP.${skpd.nip_kepala}` },
          }),
          6: !skpd?.pangkat_kepala
             ? undefined
             : createExcelData({
-                 l: 15,
+                 l: akunLength + 11,
                  d: { 11: `NIP.${skpd.nip_kepala}` },
               }),
       },
@@ -365,8 +412,8 @@ function fillKepala({ ws, skpd }: { ws: Excel.Worksheet; skpd: Data['skpd'] }) {
    })
    const rows = ws.addRows(data)
    rows.map((row, i) => {
-      ws.mergeCellsWithoutStyle(row.number, 11, row.number, 15)
-      const cell = row.getCell(11)
+      ws.mergeCellsWithoutStyle(row.number, akunLength + 7, row.number, akunLength + 11)
+      const cell = row.getCell(akunLength + 7)
       const style = cell.style
       cell.style = {
          ...style,
@@ -387,32 +434,32 @@ function fillKepala({ ws, skpd }: { ws: Excel.Worksheet; skpd: Data['skpd'] }) {
    return row.number
 }
 
-function fillKeterangan({ ws }: { ws: Excel.Worksheet }) {
+function fillKeterangan({ ws, akunLength }: { ws: Excel.Worksheet; akunLength: number }) {
    const data = createExcelData({
       l: 6,
       d: {
          1: createExcelData({
-            l: 15,
+            l: akunLength + 11,
             d: { 1: 'Pembahasan', 5: ':' },
          }),
          2: createExcelData({
-            l: 15,
+            l: akunLength + 11,
             d: { 1: 'Tanggal', 5: ':' },
          }),
          3: createExcelData({
-            l: 15,
+            l: akunLength + 11,
             d: { 1: 'Catatan', 5: ':' },
          }),
          4: createExcelData({
-            l: 15,
+            l: akunLength + 11,
             d: { 1: '1.' },
          }),
          5: createExcelData({
-            l: 15,
+            l: akunLength + 11,
             d: { 1: '2.' },
          }),
          6: createExcelData({
-            l: 15,
+            l: akunLength + 11,
             d: { 1: 'dst.' },
          }),
       },
@@ -422,10 +469,10 @@ function fillKeterangan({ ws }: { ws: Excel.Worksheet }) {
    rows.map((row, i) => {
       if (i < 3) {
          ws.mergeCellsWithoutStyle(row.number, 1, row.number, 4)
-         ws.mergeCellsWithoutStyle(row.number, 5, row.number, 15)
+         ws.mergeCellsWithoutStyle(row.number, 5, row.number, akunLength + 11)
       } else {
          ws.mergeCellsWithoutStyle(row.number, 1, row.number, 2)
-         ws.mergeCellsWithoutStyle(row.number, 3, row.number, 15)
+         ws.mergeCellsWithoutStyle(row.number, 3, row.number, akunLength + 11)
       }
       row.eachCell({ includeEmpty: true }, (cell) => {
          cell.border = {
@@ -448,16 +495,18 @@ export type Tapd = {
 function fillTapd({
    tapd = manifest?.data_tapd,
    ws,
+   akunLength,
 }: {
    tapd?: Tapd[] | null
    ws: Excel.Worksheet
+   akunLength: number
 }) {
    const title = 'TIM ANGGARAN PEMERINTAH DAERAH'
    const rowTitile = ws.addRow([title])
-   ws.mergeCellsWithoutStyle(rowTitile.number, 1, rowTitile.number, 15)
+   ws.mergeCellsWithoutStyle(rowTitile.number, 1, rowTitile.number, akunLength + 11)
    borderAll({ row: rowTitile, ws, bold: true, center: true })
    const header = createExcelData({
-      l: 15,
+      l: akunLength + 11,
       d: {
          1: 'NO.',
          3: 'NAMA',
@@ -472,8 +521,9 @@ function fillTapd({
    ws.mergeCellsWithoutStyle(row.number, 3, row.number, 6)
    ws.mergeCellsWithoutStyle(row.number, 7, row.number, 8)
    ws.mergeCellsWithoutStyle(row.number, 9, row.number, 12)
-   ws.mergeCellsWithoutStyle(row.number, 13, row.number, 15)
+   ws.mergeCellsWithoutStyle(row.number, 13, row.number, akunLength + 11)
    borderAll({ row, ws, bold: true, center: true })
+   let lastRow = row?.number
    tapd?.map((item, i) => {
       const data = createExcelData({
          l: 15,
@@ -489,12 +539,14 @@ function fillTapd({
       ws.mergeCellsWithoutStyle(row.number, 3, row.number, 6)
       ws.mergeCellsWithoutStyle(row.number, 7, row.number, 8)
       ws.mergeCellsWithoutStyle(row.number, 9, row.number, 12)
-      ws.mergeCellsWithoutStyle(row.number, 13, row.number, 15)
+      ws.mergeCellsWithoutStyle(row.number, 13, row.number, akunLength + 11)
       borderAll({ row, ws })
       row.eachCell((cell) => {
          const col = parseFloat(cell.col)
          col === 9 && (cell.style.alignment = { vertical: 'middle', horizontal: 'left' })
       })
       row.height = 20
+      lastRow = row.number
    })
+   return lastRow
 }

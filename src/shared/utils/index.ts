@@ -88,7 +88,12 @@ export function numberToMonth(angka: number) {
    }
 }
 
-export const numberToText = (v?: number | null, minimumFractionDigits = 0, useBracket = false) => {
+export const numberToText = (
+   v?: number | null,
+   minimumFractionDigits = 0,
+   useBracket = false,
+   zero = '0'
+) => {
    if (v) {
       const value = v.toFixed(minimumFractionDigits)
       const result = Number(value)
@@ -102,14 +107,14 @@ export const numberToText = (v?: number | null, minimumFractionDigits = 0, useBr
       }
       return result
    }
-   return '0'
+   return zero
 }
 
 export const numberToRupiah = (
    v = 0 as number | string | null | undefined,
    minimumFractionDigits = 0
-) => {
-   if (typeof v !== 'string') {
+): string => {
+   if (typeof v === 'number') {
       const value = v?.toFixed(minimumFractionDigits)
       return Number(value || 0)
          .toLocaleString('id-ID', {
@@ -119,8 +124,21 @@ export const numberToRupiah = (
          })
          .toString()
          ?.replace(/\s/g, '')
+   } else if (!!v) {
+      const str = v.trim()
+      // chek jika string tersebut hanya berisi angka
+      if (str.match(/^\d+$/)) {
+         return Number(v)
+            .toLocaleString('id-ID', {
+               style: 'currency',
+               currency: 'IDR',
+               minimumFractionDigits,
+            })
+            .toString()
+            ?.replace(/\s/g, '')
+      }
    }
-   return v
+   return v || '0'
 }
 
 export const splitKodeAkun = (kode_akun: string) => {

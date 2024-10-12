@@ -1,6 +1,6 @@
 // https://sipd-ri.kemendagri.go.id/api/renja/laporan/rkaRekapitulasiBelanjaSkpd
 
-type RkaBlSkpdSipdPayload = {
+type LaporanRkaRekapBlSipdPayload = {
    tahun: number
    id_daerah: number
    id_skpd: number
@@ -9,13 +9,13 @@ type RkaBlSkpdSipdPayload = {
    id_jadwal?: number
 }
 
-interface RkaBlSkpdSipdResponse {
+interface LaporanRkaRekapBlSipdResponse {
    status: boolean
    status_code: number
-   data: ItemRkaSkpdSipd[]
+   data: ItemLaporanRkaRekapSubSipd[]
 }
 
-interface ItemRkaSkpdSipd {
+interface ItemLaporanRkaRekapSubSipd {
    id_sub_bl: number
    tahun: number
    id_daerah: number
@@ -43,24 +43,24 @@ interface ItemRkaSkpdSipd {
    tipe: string
 }
 
-interface RkaBlPergeseranSkpdSipdPayload {
+interface LaporanRkaPerubahanRekapBlSipdPayload {
    tahun: number
    id_daerah: number
    id_skpd: number
    id_sub_skpd: number
 }
-interface RkaBlPergeseranSkpdSipdResponse {
+interface LaporanRkaPerubahanRekapBlSipdResponse {
    status: boolean
    status_code: number
-   data: DataRkaBlPergeseranSkpdSipd
+   data: DataLaporanRkaPerubahanRekapBlSipd
 }
 
-interface DataRkaBlPergeseranSkpdSipd {
-   data: RkaBlPergeseranSkpdSipd[]
-   summary: SummaryRkaBlPergeseranSkpdSipd
+interface DataLaporanRkaPerubahanRekapBlSipd {
+   data: LaporanRkaPerubahanRekapBlSipd[]
+   summary: SummaryLaporanRkaPerubahanRekapBlSipd
 }
 
-interface SummaryRkaBlPergeseranSkpdSipd {
+interface SummaryLaporanRkaPerubahanRekapBlSipd {
    sum_pagu_n_lalu: number
    sum_bo_murni: number
    sum_bm_murni: number
@@ -75,7 +75,7 @@ interface SummaryRkaBlPergeseranSkpdSipd {
    sum_pagu_n_depan: number
 }
 
-interface RkaBlPergeseranSkpdSipd {
+interface LaporanRkaPerubahanRekapBlSipd {
    kode_sub_skpd: string
    nama_sub_skpd: string
    kode: string

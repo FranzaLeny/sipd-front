@@ -8,8 +8,7 @@ export const metadata = {
 }
 export default async function Page() {
    const session = await getServerSession(['sipd_peta'])
-   const token = session?.user?.tokens?.find((d) => d.name === 'sipd_peta')?.token
-   if (!session || !session?.user?.accountPeta || !token) {
+   if (!session || !session?.user?.accountPeta) {
       return (
          <div className='content py-10 text-center'>
             Untuk akses menu penatausahaan, harus masuk menggunakan akun SIPD-Penatausaan
@@ -25,6 +24,6 @@ export default async function Page() {
    } = session
    const dataSkpd = await getSkpdTapdAnggaranBySkpd({ id_daerah, tahun, id_unit, id_skpd })
 
-   const data = { tahun, id_skpd, id_daerah, token, id_unit, dataSkpd }
+   const data = { tahun, id_skpd, id_daerah, id_unit, dataSkpd }
    return <DppaSkpd {...data} />
 }

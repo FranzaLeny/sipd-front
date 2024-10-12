@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ExcelIcon } from '@components/icons/excel'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
@@ -22,6 +21,7 @@ import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
 
 import { TbodyMurni, TbodyPerubahan, TheadMurni, TheadPerubahan } from './components'
+import downloadBlRka from './excel-murni'
 
 const LIST_DOKUMEN = [
    {
@@ -75,7 +75,6 @@ export default function RkaSkpd({
 }) {
    const [selectedDok, setSelectedDok] = useState('rka')
    const [tapd, setTapd] = useState(anggotaTapd)
-   const router = useRouter()
    const printRef = useRef(null)
 
    const jenisDok = useMemo(() => {
@@ -108,9 +107,21 @@ export default function RkaSkpd({
       content: () => printRef.current,
       documentTitle,
    })
-   const handleExport = () => {
-      toast.warning('Export excel masih dalam proses pengembangan')
-   }
+   const handleExport = useCallback(async () => {
+      try {
+         if (jenisDok?.type === 'perubahan') {
+            toast.warning('Export excel masih dalam proses pengembangan')
+         } else if (jenisDok?.type === 'murni') {
+            await downloadBlRka({ dokumen: jenisDok, items: listRekapan, skpd, tahun, tapd })
+         } else {
+            throw new Error('Jenis Dokumen Tidak ada')
+         }
+      } catch (error) {
+         console.error(error)
+         toast.error('Gagal download excel rekapan belanja ' + skpd?.nama_skpd)
+      }
+   }, [jenisDok, tahun, tapd, listRekapan, skpd])
+   console.log({ listRekapan })
 
    return (
       <>

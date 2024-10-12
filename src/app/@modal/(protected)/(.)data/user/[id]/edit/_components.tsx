@@ -17,24 +17,22 @@ import {
    SelectItem,
 } from '@nextui-org/react'
 import { useQueryClient } from '@tanstack/react-query'
-import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
+import { createTsForm } from '@ts-react/form'
 import { titleCase } from '@utils'
 import { UserSchema, z } from '@zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
 export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
-const booleanSchema = createUniqueFieldSchema(z.number().int().max(1), 'boolean')
-const mapping = [[z.string(), TextInput] as const, [booleanSchema, BooleanInput] as const] as const
+const mapping = [[z.string(), TextInput] as const, [z.number(), BooleanInput] as const] as const
 const Schema = UserSchema.pick({
    nama: true,
    jabatan: true,
    roles: true,
    username: true,
    nip: true,
-}).extend({
-   active: booleanSchema,
-   is_locked: booleanSchema,
+   active: true,
+   is_locked: true,
 })
 type ISchema = z.infer<typeof Schema>
 

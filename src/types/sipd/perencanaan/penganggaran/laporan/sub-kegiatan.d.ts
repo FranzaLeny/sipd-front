@@ -1,4 +1,4 @@
-type ListSubGiatRkaSipdPayolad = {
+type LaporanRkaSubGiatSipdPayolad = {
    tahun: number
    id_daerah: number
    is_prop: number
@@ -7,13 +7,13 @@ type ListSubGiatRkaSipdPayolad = {
    is_anggaran?: number
    id_jadwal?: number
 }
-interface ListSubGiatRkaResponse {
+interface LaporanRkaSubGiatSipdResponse {
    status: boolean
    status_code: number
-   data: SubGiatRkaSipd[]
+   data: LaporanSubGiatRkaSipd[]
 }
 
-interface SubGiatRkaSipd {
+interface LaporanSubGiatRkaSipd {
    kode_urusan: string
    nama_urusan: string
    kode_bidang_urusan: string
@@ -51,20 +51,20 @@ interface SubGiatRkaSipd {
    lokasi_bl: string
 }
 
-interface ListDataLampiranRKAPergeseranPayload {
+interface LaporanRkaPerubahanSubGiatSipdPayload {
    tahun: number
    id_daerah: number
    is_prop: number
    id_sub_bl: number
    id_sub_giat: number
 }
-interface ListDataLampiranRKAPergeseranResponse {
+interface LaporanRkaPerubahanSubGiatSipdResponse {
    status: boolean
    status_code: number
-   data: ListDataLampiranRKAPergeseran[]
+   data: LaporanRkaPerubahanSubGiatSipd[]
 }
 
-interface ListDataLampiranRKAPergeseran {
+interface LaporanRkaPerubahanSubGiatSipd {
    urut: number
    colom_1: string
    colom_2: string

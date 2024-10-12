@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { getRkaPergeseranSkpdSipd } from '@actions/perencanaan/rka/laporan'
+import { getLaporanRkaPerubahanSkpdSipd } from '@actions/perencanaan/rka/laporan'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import { Button } from '@nextui-org/react'
@@ -26,14 +26,15 @@ export default function RingkasanPerubahanSkpd({
             tahun: skpd?.tahun,
          },
          'laporan_rka_skpd_sipd',
-      ] as [RkaPergeseranSkpdSipdPayload, string],
-      queryFn: ({ queryKey: [q] }) => getRkaPergeseranSkpdSipd(q),
+      ] as [LaporanRkaPerubahanSkpdSipdPayload, string],
+      queryFn: ({ queryKey: [q] }) => getLaporanRkaPerubahanSkpdSipd(q),
       enabled: !!skpd && !!sub_skpd,
    })
 
    const handlePrint = useReactToPrint({
       content: () => printRef.current,
    })
+
    return (
       <div className='max-h-ful flex max-w-full flex-col overflow-hidden'>
          <div className='flex flex-none justify-end pb-2 print:hidden'>

@@ -3,8 +3,8 @@
 import { useCallback, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { getRakBlByJadwal, syncRelalisasiRak } from '@actions/penatausahaan/pengeluaran/rak'
-import { getSpjFungsionalSipdPeta } from '@actions/penatausahaan/pengeluaran/spj'
-import { getStatistikBlSkpdSipd } from '@actions/penatausahaan/pengeluaran/statistik'
+import { getSpjFungsionalSipdPeta } from '@actions/penatausahaan/sipd/spj'
+import { getStatistikBlSkpdSipd } from '@actions/penatausahaan/sipd/statistik'
 import { getSumberDanaAkunRinciSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { getAllBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
@@ -117,6 +117,8 @@ export default function Component({
       ],
       queryFn: async ({ queryKey: [params] }) => await getRakBlByJadwal(params),
       enabled: !!jadwal,
+      retry: 5,
+      retryDelay: 1000,
    })
 
    const namaBulan = useMemo(() => {

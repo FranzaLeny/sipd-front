@@ -30,7 +30,7 @@ export default async function Page() {
    }
 
    return (
-      <div className='content z-10 pb-3'>
+      <div className='content relative z-[1] pb-3'>
          <Template skpd={skpd} />
       </div>
    )

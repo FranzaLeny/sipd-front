@@ -163,6 +163,14 @@ export const helperColumns: HelperColumns<StandarHarga> = {
       headerProps: { align: 'center' },
       cell: diffForHumans,
    },
+   is_locked: {
+      key: 'is_locked',
+      sortable: true,
+      name: 'Status',
+      hide: true,
+      headerProps: { align: 'center' },
+      cell: (v) => (v === 5 ? 'DIHAPUS' : v === 1 ? 'DIKUNCI' : 'AKTIF'),
+   },
    aksi: {
       key: 'id',
       name: 'Aksi',

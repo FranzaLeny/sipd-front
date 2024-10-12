@@ -1,3 +1,5 @@
+'use client'
+
 import dynamic from 'next/dynamic'
 
 import { CardBalance1 } from './card-balance1'
@@ -16,9 +18,6 @@ const CardTransactions = dynamic(() => import('./card-transactions'), {
    ssr: false,
 })
 
-export const metadata = {
-   title: 'Dashboard',
-}
 const Page = () => (
    <div className='mx-auto flex min-w-full flex-col gap-4 p-4 sm:p-6 lg:grid lg:grid-cols-3 lg:gap-6 xl:p-6'>
       <div className='flex flex-col gap-6 md:col-span-2'>

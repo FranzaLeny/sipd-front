@@ -20,5 +20,6 @@
       "editor.defaultFormatter": "Prisma.prisma"
    },
    "codeium.enableCodeLens": true,
-   "editor.tabSize": 3
+   "editor.tabSize": 3,
+   "css.customData": [".vscode/tailwind.json"]
 }

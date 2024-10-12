@@ -1,25 +1,37 @@
+'use client'
+
 import { useCallback, useMemo } from 'react'
 import { DateValue, getLocalTimeZone, parseAbsoluteToLocal } from '@internationalized/date'
-import { Button, DatePicker, DatePickerProps } from '@nextui-org/react'
+import { Button, cn, DatePicker, DatePickerProps } from '@nextui-org/react'
 import { useFieldInfo, useTsController } from '@ts-react/form'
 import { titleCase } from '@utils'
 import { Eye } from 'lucide-react'
 
-export type Props = Omit<Omit<Omit<DatePickerProps, 'onValueChange'>, 'defaultValue'>, 'value'> & {
+export interface DateInputProps
+   extends Pick<
+      DatePickerProps,
+      Exclude<keyof DatePickerProps, 'onValueChange' | 'defaultValue' | 'value'>
+   > {
+   hidden?: boolean
+   numberFormatOptions?: Intl.NumberFormatOptions
+   errorMessage?: string
    isClearable?: boolean
 }
-const DateInput = ({ isClearable, ...inputProps }: Props) => {
+
+export const DateInput = (defaultProps: DateInputProps) => {
+   // @ts-expect-error
+   const { control, enumValues, hidden, isClearable, ...datePickerProps } = defaultProps
    const { label, defaultValue } = useFieldInfo()
    const {
       error,
-      field: { onChange, value: fieldValue, name },
+      field: { onChange, value: fieldValue, name, onBlur, ref },
       formState: { isSubmitting },
       fieldState: { invalid },
    } = useTsController<Date | null>()
 
    const handleChange = useCallback(
       (val?: DateValue | null | undefined | any) => {
-         onChange && onChange(val?.toDate(getLocalTimeZone()) ?? null)
+         onChange && onChange(val.toDate(getLocalTimeZone()) ?? null)
       },
       [onChange]
    )
@@ -31,23 +43,25 @@ const DateInput = ({ isClearable, ...inputProps }: Props) => {
            ? parseAbsoluteToLocal(fieldValue.toISOString())
            : null
    }, [fieldValue])
-   const labelPlacement = inputProps?.labelPlacement ?? 'inside'
+   const labelPlacement = datePickerProps?.labelPlacement ?? 'inside'
    const props: DatePickerProps = {
       'aria-labelledby': name,
       variant: 'bordered',
       defaultValue: defaultValue ?? '',
-      ...inputProps,
-      errorMessage: error?.errorMessage ?? inputProps?.errorMessage,
+      onBlur,
+      ref,
+      ...datePickerProps,
+      errorMessage: error?.errorMessage ?? datePickerProps?.errorMessage,
       labelPlacement,
       onChange: handleChange,
-      label: inputProps?.label ?? label ?? titleCase(name),
-      isReadOnly: inputProps?.isReadOnly || isSubmitting,
-      isInvalid: invalid || inputProps?.isInvalid,
-      name,
+      label: datePickerProps?.label ?? label ?? titleCase(name),
+      isReadOnly: datePickerProps?.isReadOnly || isSubmitting,
+      isInvalid: invalid || datePickerProps?.isInvalid,
       value,
-      timeInputProps: { label: 'Waktu', ...inputProps.timeInputProps, lang: 'id' },
+      className: cn(hidden && 'hidden', datePickerProps?.className),
+      timeInputProps: { label: 'Waktu', ...datePickerProps?.timeInputProps, lang: 'id' },
       startContent:
-         inputProps?.startContent ?? isClearable ? (
+         (datePickerProps?.startContent ?? isClearable) ? (
             <Button
                className='-ml-2'
                radius='full'
@@ -58,13 +72,7 @@ const DateInput = ({ isClearable, ...inputProps }: Props) => {
             </Button>
          ) : undefined,
    }
-   return (
-      <DatePicker
-         key={name}
-         id={name}
-         {...props}
-      />
-   )
+   return <DatePicker {...props} />
 }
 
 export default DateInput

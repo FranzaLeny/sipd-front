@@ -132,6 +132,8 @@ async function signInToUserApiBySipdRi(data: {
          baseURL,
       })
       .catch((error) => {
+         console.log('error', error)
+
          console.error('signInToUserApiBySipdRi', error?.message)
          throw new Error('Gagal sigin user ke api menggunakan akun-sipd ri', { cause: 'fetcher' })
       })

@@ -32,3 +32,7 @@ export async function getTotalSumberDana<T extends GetListSumberDanaParams>(para
 export async function syncSumberDana(data: SumberDanaUncheckedCreateInput[]) {
    return await axios.put('/api/perencanaan/data/sumber-dana', data)
 }
+
+export async function deleteOldSumberDana(data: SumberDanaDeleteOldParams) {
+   return await axios.delete('/api/perencanaan/data/sumber-dana/old', { data })
+}

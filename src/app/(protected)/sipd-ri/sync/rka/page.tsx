@@ -79,7 +79,7 @@ const Page = async () => {
          <div className='content'>
             <Card isBlurred>
                <CardHeader>
-                  <CardTitle>Data-Data Penganggran (RKA)</CardTitle>
+                  <CardTitle>Data-Data Penganggran (RKA) Tahun {user?.tahun}</CardTitle>
                </CardHeader>
                <CardContent className='grid grid-cols-1 gap-3 pt-0 lg:grid-cols-3'>
                   <CardDataJadwal

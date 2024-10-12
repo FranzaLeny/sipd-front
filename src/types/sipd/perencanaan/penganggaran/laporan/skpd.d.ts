@@ -1,4 +1,4 @@
-type RkaSkpdSipdPayload = {
+type LaporanRkaSkpdSipdPayload = {
    tahun: number
    id_daerah: number
    id_skpd: number
@@ -7,13 +7,13 @@ type RkaSkpdSipdPayload = {
    id_jadwal?: number
 }
 
-interface RkaSkpdSipdResponse {
+interface LaporanRkaSkpdSipdResponse {
    status: boolean
    status_code: number
-   data: RkaSkpdSipd
+   data: LaporanRkaSkpdSipd
 }
 
-interface RkaSkpdSipd {
+interface LaporanRkaSkpdSipd {
    pendapatan: _Pendapatan[]
    jumlah_pendapatan: number
    rincian: _Pendapatan[]
@@ -36,19 +36,19 @@ interface _Pendapatan {
    jumlah: number | null
 }
 
-interface RkaPergeseranSkpdSipdPayload {
+interface LaporanRkaPerubahanSkpdSipdPayload {
    tahun: number
    id_daerah: number
    id_skpd: number
    id_sub_skpd: number
 }
-interface RkaPergeseranSkpdSipdResponse {
+interface LaporanRkaPerubahanSkpdSipdResponse {
    status: boolean
    status_code: number
-   data: RkaPergeseranSkpdSipd[]
+   data: LaporanRkaPerubahanSkpdSipd[]
 }
 
-interface RkaPergeseranSkpdSipd {
+interface LaporanRkaPerubahanSkpdSipd {
    kode_akun: string
    nama_akun: string
    nilai_sebelum: number

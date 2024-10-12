@@ -1,49 +1,51 @@
+'use client'
+
 import { useCallback } from 'react'
 import { Checkbox, CheckboxProps } from '@nextui-org/react'
 import { useFieldInfo, useTsController } from '@ts-react/form'
 import { titleCase } from '@utils'
 
-const BooleanInput = ({
-   enumValues,
-   typeValue,
-   ...props
-}: Omit<CheckboxProps, 'children'> & {
+export interface BooleanInputProps
+   extends Pick<CheckboxProps, Exclude<keyof CheckboxProps, 'children'>> {
+   hidden?: boolean
    label?: string
-   typeValue?: 'boolean' | 'number'
-   enumValues: any
-}) => {
-   const { label, placeholder, isNullable, isOptional, defaultValue } = useFieldInfo()
+   typeValue?: 'boolean' | 'number' | 'string'
+   errorMessage?: string
+}
+
+export const BooleanInput = (defaultProsp: BooleanInputProps) => {
+   // @ts-expect-error
+   const { control, enumValues, hidden, typeValue, label, ...checkboxProps } = defaultProsp
+   const { label: _label } = useFieldInfo()
    const {
       error,
-      field: { onChange, value, name },
+      field: { onChange, value, name, onBlur, ref },
    } = useTsController<boolean | 0 | 1>()
    const handleChange = useCallback(
       (v: boolean) => {
-         typeValue === 'number' ? onChange(v ? 1 : 0) : onChange(v)
+         typeValue === 'number' ? onChange(!!v ? 1 : 0) : onChange(v)
       },
       [onChange, typeValue]
    )
-
    return (
-      <div className='flex flex-col gap-2'>
-         <Checkbox
-            color={props?.color}
-            radius={props?.radius}
-            size={props?.size}
-            isDisabled={props?.isDisabled}
-            isReadOnly={props?.isReadOnly}
-            classNames={props?.classNames}
-            defaultSelected={defaultValue ?? false}
-            {...props}
-            title={error?.errorMessage}
-            isInvalid={!!error}
-            name={name}
-            id={name}
-            isSelected={!!value}
-            onValueChange={handleChange}>
-            {label ?? props?.label ?? titleCase(name)}
-         </Checkbox>
-      </div>
+      <Checkbox
+         aria-labelledby={name}
+         color={checkboxProps?.color}
+         radius={checkboxProps?.radius}
+         size={checkboxProps?.size}
+         isDisabled={checkboxProps?.isDisabled}
+         isReadOnly={checkboxProps?.isReadOnly}
+         classNames={checkboxProps?.classNames}
+         onBlur={onBlur}
+         id={name}
+         ref={ref}
+         {...checkboxProps}
+         title={error?.errorMessage}
+         isInvalid={!!error}
+         isSelected={!!value}
+         onValueChange={handleChange}>
+         {label ?? _label ?? titleCase(name)}
+      </Checkbox>
    )
 }
 

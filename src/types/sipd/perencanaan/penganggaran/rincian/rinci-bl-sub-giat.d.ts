@@ -148,3 +148,19 @@ interface RinciBlSubGiatBySubBlSipd {
    koefisien_murni?: string
    harga_satuan_murni?: number
 }
+
+interface DeleteRinciBlSubGiatSipdPayload {
+   id_rinci_sub_bl: number
+   id_daerah: number
+   tahun: number
+   id_daerah_log: number
+   id_user_log: number
+   aktivitas?: 'delete'
+   kunci_bl_rinci?: 3
+}
+
+interface DeleteRinciBlSubGiatSipdResponse {
+   status: boolean
+   status_code: number
+   message: string
+}

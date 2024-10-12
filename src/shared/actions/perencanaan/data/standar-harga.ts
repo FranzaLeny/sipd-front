@@ -24,8 +24,10 @@ export const getStandarHargaSipdFromExport = async (
 }
 
 export const getAllStandarHargaSipd = async (
-   params: Omit<ListStandarHargaSipdPayload, 'kelompok'>
+   params: Omit<ListStandarHargaSipdPayload, 'kelompok'>,
+   syncAt = 0
 ) => {
+   const sync_at = syncAt ?? new Date()
    let kelompok: ListStandarHargaSipdPayload['kelompok'] = tipeToKelompok(params.tipe)
    return await getListStandarHargaSipd({ ...params, kelompok, length: 1 }).then(async (res) => {
       if (res.data.length && res.data.length < res.recordsTotal) {
@@ -40,7 +42,7 @@ export const getAllStandarHargaSipd = async (
       return res.data.map((d) => {
          const id_akun =
             data_with_id_akun.find((i) => d.id_standar_harga === i.id_standar_harga)?.id_akun || []
-         return { ...d, kelompok, is_sipd: true, id_akun }
+         return { ...d, kelompok, is_sipd: true, id_akun, sync_at }
       })
    })
 }
@@ -131,4 +133,8 @@ export const getAllStandarHargaByAkunFromSipd = async (
 // APi
 export async function syncStandarHaga(data: StandarHargaUncheckedCreateInput[]) {
    return await axios.put('/api/perencanaan/data/standar-harga', data)
+}
+
+export async function deleteOldStandarHarga(data: StandarHargaDeleteOldParams) {
+   return await axios.delete('/api/perencanaan/data/standar-harga/old', { data })
 }

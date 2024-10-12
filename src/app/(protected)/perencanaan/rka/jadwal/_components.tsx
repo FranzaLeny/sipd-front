@@ -79,9 +79,11 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
          keys.push('edit')
          keys.push('aktif')
          keys.push('copy')
+         keys.push('delete')
       }
       if (is_lokal === 1) {
          keys.push('copy')
+         keys.push('delete')
       }
 
       return [...new Set(keys)]
@@ -116,6 +118,13 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
                color='warning'
                endContent={<Edit className='size-4' />}>
                Ubah
+            </DropdownItem>
+            <DropdownItem
+               key='edit'
+               href={`jadwal/${id}/delete`}
+               color='warning'
+               endContent={<Edit className='size-4' />}>
+               Hapus
             </DropdownItem>
          </DropdownMenu>
       </Dropdown>

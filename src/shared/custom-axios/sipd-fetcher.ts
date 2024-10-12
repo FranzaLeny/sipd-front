@@ -1,16 +1,26 @@
 import http from 'http'
 import https from 'https'
+// import {
+//    UrlGetKeys,
+//    listSipdGet,
+//    listSipdPost,
+//    Payload,
+//    PayloadGet,
+//    PayloadResponseGetSipd,
+//    PayloadResponsePostSipd,
+//    UrlPostKeys,
+// } from '@actions/perencanaan/sipd-perencanaan-urls'
+import { generateApiKey } from '@actions/perencanaan/token-sipd'
 import {
-   GetUrlKey,
    listSipdGet,
    listSipdPost,
    Payload,
    PayloadGet,
    PayloadResponseGetSipd,
    PayloadResponsePostSipd,
-   PostUrlKey,
-} from '@actions/perencanaan/sipd-perencanaan-urls'
-import { generateApiKey } from '@actions/perencanaan/token-sipd'
+   UrlGetKeys,
+   UrlPostKeys,
+} from '@constants/sipd-urls'
 import Axios, { AxiosError, AxiosInstance } from 'axios'
 import { decodeJwt } from 'jose'
 
@@ -111,7 +121,7 @@ function setHeaders(config: any, apiDetails: { token: string; apikey: string }) 
    config.headers['Content-Type'] = 'multipart/form-data'
 }
 
-async function getFromSipd<T extends GetUrlKey>(
+async function getFromSipd<T extends UrlGetKeys>(
    route: T,
    {
       params,
@@ -147,7 +157,7 @@ async function getFromSipd<T extends GetUrlKey>(
    }
 }
 
-async function postToSipd<T extends PostUrlKey>(
+async function postToSipd<T extends UrlPostKeys>(
    route: T,
    {
       params,

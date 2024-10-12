@@ -1,7 +1,7 @@
 'use client'
 
 import { Fragment, useRef, useState } from 'react'
-import { getRkaBlPergeseranSubGiatSipd } from '@actions/perencanaan/rka/laporan'
+import { getLaporanRkaPerubahanRekapBelanjaSipd } from '@actions/perencanaan/rka/laporan'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import { Button } from '@nextui-org/react'
@@ -28,8 +28,8 @@ export default function RkaPergeseranBelanjaSkpd({
             tahun: skpd?.tahun,
          },
          'rka_pergeseran_belanja_skpd_sipd',
-      ] as [RkaPergeseranSkpdSipdPayload, string],
-      queryFn: ({ queryKey: [q] }) => getRkaBlPergeseranSubGiatSipd(q),
+      ] as [LaporanRkaPerubahanRekapBlSipdPayload, string],
+      queryFn: ({ queryKey: [q] }) => getLaporanRkaPerubahanRekapBelanjaSipd(q),
       enabled: !!skpd,
    })
 

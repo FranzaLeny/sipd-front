@@ -3,15 +3,15 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { getBlSubGiatAktifSipd } from '@actions/perencanaan/rka/bl-sub-giat'
 import {
-   getListSubGiatRkaPergeseranSipd,
-   getRkaBlSubGiatPergeseranSipd,
+   getLaporanRkaPerubahanListRinciBlSubGiatSipd,
+   getLaporanRkaPerubahanSubGiatSipd,
 } from '@actions/perencanaan/rka/laporan'
 import { TableAnggotaTapd } from '@components/master/tapd'
 import TableKepalaSkpd from '@components/perencanaan/table-kepala-skpd'
 import Loading from '@components/ui/loading'
 import { Autocomplete, AutocompleteItem, Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { numberToRupiah } from '@utils'
+import { numberToRupiah, numberToText } from '@utils'
 import { keyBy } from 'lodash-es'
 import { Printer } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
@@ -59,8 +59,8 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
             is_prop: 0,
          },
          'rka_pergeseran_sub_rinci_skpd_sipd',
-      ] as [ListDataLampiranRKAPergeseranPayload, string],
-      queryFn: ({ queryKey: [q] }) => getListSubGiatRkaPergeseranSipd(q),
+      ] as [LaporanRkaPerubahanSubGiatSipdPayload, string],
+      queryFn: ({ queryKey: [q] }) => getLaporanRkaPerubahanSubGiatSipd(q),
       enabled: !!selctedSbl,
    })
 
@@ -75,8 +75,8 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
             is_anggaran: 1,
          },
          'rka_pergeseran_rincian_skpd_sipd',
-      ] as [RkaSubGiatPergeseranSipdPayload, string],
-      queryFn: ({ queryKey: [q] }) => getRkaBlSubGiatPergeseranSipd(q),
+      ] as [LaporanRkaPerubahanListRinciBlSubGiatSipdPayload, string],
+      queryFn: ({ queryKey: [q] }) => getLaporanRkaPerubahanListRinciBlSubGiatSipd(q),
       enabled: !!selctedSbl,
    })
 
@@ -142,7 +142,7 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                </div>
             </div>
          </div>
-         <div className='max-h-full max-w-full flex-1 overflow-auto pb-4'>
+         <div className='max-h-full max-w-full flex-1 overflow-auto py-4'>
             {!!slbAktif?.length && !!selctedSbl ? (
                <div
                   className='w-fit min-w-full print:bg-white print:text-black'
@@ -338,10 +338,11 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                                  Rincian Perhitungan
                               </th>
                               <th
-                                 className='cell-print'
+                                 className='cell-print text-center'
                                  rowSpan={3}>
                                  <div>Bertambah</div>
                                  <div>(Berkurang)</div>
+                                 <div>(Rp)</div>
                               </th>
                            </tr>
                            <tr>
@@ -358,115 +359,129 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
                            </tr>
                            <tr>
                               <th className='cell-print'>Koefisien</th>
-                              <th className='cell-print'>Harga</th>
+                              <th className='cell-print'>Harga (Rp)</th>
                               <th className='cell-print'>Satuan</th>
                               <th className='cell-print'>PPN</th>
-                              <th className='cell-print'>Jumlah</th>
+                              <th className='cell-print'>Jumlah (Rp)</th>
                               <th className='cell-print'>Koefisien</th>
-                              <th className='cell-print'>Harga</th>
+                              <th className='cell-print'>Harga (Rp)</th>
                               <th className='cell-print'>Satuan</th>
                               <th className='cell-print'>PPN</th>
-                              <th className='cell-print'>Jumlah</th>
+                              <th className='cell-print'>Jumlah (Rp)</th>
                            </tr>
                         </thead>
                         <tbody>
                            {laporan?.map((d, i) => {
                               const isRinci = !d?.uraian?.includes('[') && !d.kode_rekening
+                              const koefisien_murni = !!d?.koefisien_murni?.trim()
+                                 ? d?.koefisien_murni
+                                 : undefined
+                              const koefisien_geser = !!d?.koefisien_geser?.trim()
+                                 ? d?.koefisien_geser
+                                 : undefined
                               const uraian = d?.uraian
                                  ?.split('\n')
                                  .map((d, i) => <p key={i}>{d}</p>)
+                              const isDeleted =
+                                 d?.rincian_murni == 0 && d?.rincian_geser == 0 && d?.selisih == 0
                               return (
-                                 <tr
-                                    key={`${d?.kode_rekening}-${i}-${selctedSbl?.kode_sbl}`}
-                                    className={`${!isRinci && 'font-bold'} break-inside-avoid text-right first:break-before-avoid`}>
-                                    <td className='cell-print text-left'>{d?.kode_rekening}</td>
-                                    <td
-                                       colSpan={isRinci ? 1 : 5}
-                                       className={'cell-print text-left '}>
-                                       {uraian}
-                                    </td>
-                                    {isRinci && (
-                                       <>
-                                          <td className='cell-print text-left'>
-                                             {d?.koefisien_murni
-                                                ?.split(' x ')
-                                                ?.map((d) =>
-                                                   d
-                                                      ?.split(' ')
-                                                      ?.map((e, i) =>
-                                                         i === 0
-                                                            ? e
-                                                                 ?.split('.')
-                                                                 ?.map((f, j) =>
-                                                                    j === 0 ? f : f?.substring(0, 2)
-                                                                 )
-                                                                 ?.join('.')
-                                                            : e
-                                                      )
-                                                      ?.join(' ')
-                                                )
-                                                ?.join(' x ')}
-                                          </td>
-                                          <td className='cell-print'>
-                                             {numberToRupiah(d?.harga_murni)}
-                                          </td>
-                                          <td className='cell-print twxt-left'>
-                                             {d?.satuan_murni}
-                                          </td>
-                                          <td className='cell-print text-center'>
-                                             {d?.ppn_murni ?? ''}%
-                                          </td>
-                                       </>
-                                    )}
-                                    <td className='cell-print'>
-                                       {numberToRupiah(d?.rincian_murni)}
-                                    </td>
-                                    {isRinci ? (
-                                       <>
-                                          <td className='cell-print text-left'>
-                                             {d?.koefisien_geser
-                                                ?.split(' x ')
-                                                ?.map((d) =>
-                                                   d
-                                                      ?.split(' ')
-                                                      ?.map((e, i) =>
-                                                         i === 0
-                                                            ? e
-                                                                 ?.split('.')
-                                                                 ?.map((f, j) =>
-                                                                    j === 0 ? f : f?.substring(0, 2)
-                                                                 )
-                                                                 ?.join('.')
-                                                            : e
-                                                      )
-                                                      ?.join(' ')
-                                                )
-                                                ?.join(' x ')}
-                                          </td>
-                                          <td className='cell-print'>
-                                             {numberToRupiah(d?.harga_geser)}
-                                          </td>
-                                          <td className='cell-print text-left'>
-                                             {d?.satuan_geser}
-                                          </td>
-                                          <td className='cell-print text-center'>
-                                             {d?.ppn_geser ?? ''}%
-                                          </td>
-                                       </>
-                                    ) : (
+                                 !isDeleted && (
+                                    <tr
+                                       key={`${d?.kode_rekening}-${i}-${selctedSbl?.kode_sbl}`}
+                                       className={`${!isRinci && 'font-bold'} break-inside-avoid text-right first:break-before-avoid`}>
+                                       <td className='cell-print text-left'>{d?.kode_rekening}</td>
                                        <td
-                                          colSpan={4}
-                                          className='cell-print'></td>
-                                    )}
-                                    <td className='cell-print'>
-                                       {numberToRupiah(d?.rincian_geser)}
-                                    </td>
-                                    <td className='cell-print text-right'>
-                                       {d?.selisih < 0
-                                          ? `(${numberToRupiah(Math.abs(d?.selisih))})`
-                                          : numberToRupiah(d?.selisih)}
-                                    </td>
-                                 </tr>
+                                          colSpan={isRinci ? 1 : 5}
+                                          className={'cell-print text-left '}>
+                                          {uraian}
+                                       </td>
+                                       {isRinci && (
+                                          <>
+                                             <td className='cell-print text-left'>
+                                                {koefisien_murni
+                                                   ?.split(' x ')
+                                                   ?.map((d) =>
+                                                      d
+                                                         ?.split(' ')
+                                                         ?.map((e, i) =>
+                                                            i === 0
+                                                               ? e
+                                                                    ?.split('.')
+                                                                    ?.map((f, j) =>
+                                                                       j === 0
+                                                                          ? f
+                                                                          : f?.substring(0, 2)
+                                                                    )
+                                                                    ?.join('.')
+                                                               : e
+                                                         )
+                                                         ?.join(' ')
+                                                   )
+                                                   ?.join(' x ') ?? '-'}
+                                             </td>
+                                             <td className='cell-print'>
+                                                {numberToText(d?.harga_murni, 0, false, '-')}
+                                             </td>
+                                             <td className='cell-print text-left'>
+                                                {!!koefisien_murni ? d?.satuan_murni : '-'}
+                                             </td>
+                                             <td className='cell-print text-center'>
+                                                {!!d?.ppn_murni ? d?.ppn_murni + '%' : '-'}
+                                             </td>
+                                          </>
+                                       )}
+                                       <td className='cell-print'>
+                                          {numberToText(d?.rincian_murni, 0, false, '-')}
+                                       </td>
+                                       {isRinci ? (
+                                          <>
+                                             <td className='cell-print text-left'>
+                                                {koefisien_geser
+                                                   ?.split(' x ')
+                                                   ?.map((d) =>
+                                                      d
+                                                         ?.split(' ')
+                                                         ?.map((e, i) =>
+                                                            i === 0
+                                                               ? e
+                                                                    ?.split('.')
+                                                                    ?.map((f, j) =>
+                                                                       j === 0
+                                                                          ? f
+                                                                          : f?.substring(0, 2)
+                                                                    )
+                                                                    ?.join('.')
+                                                               : e
+                                                         )
+                                                         ?.join(' ')
+                                                   )
+                                                   ?.join(' x ') ?? '-'}
+                                             </td>
+                                             <td className='cell-print'>
+                                                {!!koefisien_geser
+                                                   ? numberToText(d?.harga_geser)
+                                                   : '-'}
+                                             </td>
+                                             <td className='cell-print text-left'>
+                                                {!!koefisien_geser ? d?.satuan_geser : '-'}
+                                             </td>
+                                             <td className='cell-print text-center'>
+                                                {!!d?.ppn_geser ? d?.ppn_geser + '%' : '-'}
+                                             </td>
+                                          </>
+                                       ) : (
+                                          <td
+                                             colSpan={4}
+                                             className='cell-print'></td>
+                                       )}
+                                       <td className='cell-print'>
+                                          {numberToText(d?.rincian_geser)}
+                                       </td>
+                                       <td className='cell-print text-right'>
+                                          {numberToText(d?.selisih)}
+                                       </td>
+                                    </tr>
+                                 )
                               )
                            })}
                         </tbody>

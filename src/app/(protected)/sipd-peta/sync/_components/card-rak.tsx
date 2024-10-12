@@ -1,10 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import {
-   getRakSkpdBlBySkpd,
-   getRakSkpdSipdPetaBySkpd,
-} from '@actions/penatausahaan/pengeluaran/rak'
+import { getRakSkpdBlBySkpd } from '@actions/penatausahaan/pengeluaran/rak'
+import { getRakSkpdSipdPetaBySkpd } from '@actions/penatausahaan/sipd/rak'
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import hasAccess from '@utils/chek-roles'

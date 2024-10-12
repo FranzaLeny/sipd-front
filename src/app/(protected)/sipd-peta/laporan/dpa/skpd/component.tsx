@@ -1,6 +1,9 @@
 'use client'
 
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { getDpaSkpdFromSipd } from '@actions/penatausahaan/sipd/dpa'
+import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/sipd/jadwal'
+import { getSkpdPenatausahaanFromSipd } from '@actions/penatausahaan/sipd/skpd'
 import TanggalInput from '@components/form/tanggal-input'
 import { TableAnggotaTapd, Tapd } from '@components/master/tapd'
 import TableCatatanRka from '@components/perencanaan/table-catatan-rka'
@@ -14,70 +17,12 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
+import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
 import { sumBy } from 'lodash-es'
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
-import { useSipdPetaFetcher } from '@shared/hooks/use-sipd-peta-fetcher'
-
-interface SkpdPeta {
-   id_skpd: number
-   kode_skpd: string
-   nama_skpd: string
-}
-
-interface JadwalPergeseran {
-   tahapan: string
-   jadwal_sipd_penatausahaan: string
-   id_tahap_sipd: string
-   is_locked: number
-   id_jadwal: number
-   id_jadwal_sipd: number
-}
-
-interface DpaSkpdPergeseranPeta {
-   tipe_q: 'NEW'
-   nama_ibu_kota: string
-   nomor_dpa: string
-   tanggal: string
-   nama_skpd: string
-   kode_skpd: string
-   nama_kepala_skpd: string
-   nip_kepala_skpd: string
-   nama_ppkd: string
-   nip_ppkd: string
-   ringkasan_pendapatan: any[]
-   ringkasan_belanja: any[]
-   ringkasan_pembiayaan: any[]
-   rincian: Rincian[]
-   rincian_pergeseran: Rincianpergeseran[]
-}
-
-interface Rincianpergeseran {
-   kode_akun: string
-   uraian: string
-   sebelum_nilai: number
-   setelah_nilai: number
-   bertambah_berkurang: number
-}
-
-interface Rincian {
-   uraian: string
-   januari: number
-   februari: number
-   maret: number
-   april: number
-   mei: number
-   juni: number
-   juli: number
-   agustus: number
-   september: number
-   oktober: number
-   november: number
-   desember: number
-   jumlah: number
-}
 
 type Props = {
    dataSkpd: SkpdTapdAnggaranBySkpd
@@ -85,30 +30,6 @@ type Props = {
    id_skpd: number
    id_daerah: number
    token: string
-}
-
-interface DpaSkpdPeta {
-   tipe_q: 'OLD'
-   nama_ibu_kota: string
-   nomor_dpa: string
-   tanggal: string
-   nama_skpd: string
-   kode_skpd: string
-   nama_kepala_skpd: string
-   nip_kepala_skpd: string
-   nama_ppkd: string
-   nip_ppkd: string
-   ringkasan_pendapatan: Ringkasanpendapatan[]
-   ringkasan_belanja: Ringkasanpendapatan[]
-   ringkasan_pembiayaan: any[]
-   rincian: Rincian[]
-   //   rincian_pergeseran: Rincianpergeseran[]
-}
-
-interface Ringkasanpendapatan {
-   kode_akun: string
-   uraian: string
-   nilai: number
 }
 
 const JENIS_DOKUMEN = {
@@ -188,7 +109,7 @@ function TableRak(props: PropsTableRak) {
          <table className='min-w-[50%]'>
             <tbody>
                {Object.keys(rincianRak[0])?.map((i) => {
-                  const key = i as keyof Rincian
+                  const key = i as keyof RakDpaSkpdPeta
                   return key === 'uraian' ? (
                      <tr
                         className='break-inside-avoid'
@@ -499,7 +420,6 @@ export default function DpaSkpd({
    id_daerah = 0,
    id_skpd = 0,
    tahun = 0,
-   token = '',
    dataSkpd: { sub_skpd, tapd: _tapd },
 }: Props) {
    const [tapd, setTapd] = useState<Tapd[] | undefined>(_tapd ?? undefined)
@@ -508,21 +428,20 @@ export default function DpaSkpd({
    const [dokumen, setDokumen] = useState<(typeof JENIS_DOKUMEN)['dppa'] | undefined>()
    const [disableKeysDok, setDisableKeysDok] = useState<string[]>([])
 
-   const { data: listSkpd, isFetching: loadingSkpd } = useSipdPetaFetcher<SkpdPeta[]>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/skpd/list/${id_daerah}/${tahun}`,
+   const { data: listSkpd, isFetching: loadingSkpd } = useQuery({
+      queryKey: [id_daerah, tahun, 'getSkpdPenatausahaanFromSipd'],
+      queryFn: ({ queryKey: [id_daerah, tahun] }) =>
+         getSkpdPenatausahaanFromSipd({ id_daerah, tahun }),
       enabled: !!id_daerah && !!tahun,
    })
-
-   const { data: listJadwal, isFetching: loadingJadwal } = useSipdPetaFetcher<JadwalPergeseran[]>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/laporan/dpa/dpa/jadwal-pergeseran`,
-      enabled: !!token,
+   const { data: listJadwal, isFetching: loadingJadwal } = useQuery({
+      queryKey: ['getJadwaPergeseranDpaFromSipd'],
+      queryFn: () => getJadwaPergeseranDpaFromSipd(),
    })
 
-   const { data: dpaSkpd, isFetching } = useSipdPetaFetcher<DpaSkpdPergeseranPeta | DpaSkpdPeta>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/laporan/dpa/dpa/skpd/${skpd}/${jadwal}`,
+   const { data: dpaSkpd, isFetching } = useQuery({
+      queryKey: [jadwal, skpd, 'getDpaSkpdFromSipd'],
+      queryFn: ({ queryKey: [id_jadwal, id_skpd] }) => getDpaSkpdFromSipd({ id_jadwal, id_skpd }),
       enabled: !!jadwal && !!skpd,
    })
 

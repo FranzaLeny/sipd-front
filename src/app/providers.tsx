@@ -18,7 +18,8 @@ const queryClient = new QueryClient({
       queries: {
          refetchOnWindowFocus: false,
          networkMode: 'always',
-         retry: 0,
+         retry: 2,
+         retryDelay: 1000,
          staleTime: 1000 * 60 * 60, // 60 menit
          placeholderData: (prev: unknown) => prev,
       },

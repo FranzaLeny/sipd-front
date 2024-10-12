@@ -1,14 +1,14 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { geAllAkunSipd, syncAkun } from '@actions/perencanaan/data/akun'
+import { deleteOldAkun, geAllAkunSipd, syncAkun } from '@actions/perencanaan/data/akun'
 import { validateSipdSession } from '@actions/perencanaan/token-sipd'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
-import { AkunUncheckedCreateInputSchema } from '@zod'
+import { processChunks } from '@utils/hof'
+import { AkunDeleteOldParamsSchema, AkunUncheckedCreateInputSchema } from '@zod'
 import { toast, ToastContent } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
-import { processChunks } from '@shared/utils/hof'
 
 const ModalSingkron = () => {
    const { data: session } = useSession()
@@ -36,6 +36,7 @@ const ModalSingkron = () => {
          if (!isValid) {
             throw new Error('Maksimal data tidak valid')
          }
+         const sync_at = Date.now()
          const user = validateSipdSession(session)
          const data = await geAllAkunSipd(user)?.then((res) =>
             res?.map((akun) => {
@@ -44,7 +45,7 @@ const ModalSingkron = () => {
                if (!level && kode?.length) {
                   level = kode.length
                }
-               return { ...akun, tahun: [akun.tahun], level }
+               return { ...akun, tahun: [akun.tahun], level, sync_at }
             })
          )
          if (!data?.length) {
@@ -90,6 +91,14 @@ const ModalSingkron = () => {
                )
             },
          })
+         const usedData = AkunDeleteOldParamsSchema.parse({
+            id_daerah: user?.id_daerah,
+            tahun: user?.tahun,
+            sync_at,
+            total_data: data?.length,
+         })
+
+         await deleteOldAkun(usedData)
 
          toast.success(`Selesai singkron ${data.length} data akun`)
          return true

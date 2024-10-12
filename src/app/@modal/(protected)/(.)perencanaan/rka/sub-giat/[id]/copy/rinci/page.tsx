@@ -39,7 +39,7 @@ const ModalSingkronJadwal = ({ params: { id } }: Props) => {
    const { data } = useQuery({
       queryKey: [{ id }, 'bl_sub_giat_rinci', 'bl_sub_giat'] as [{ id: string }, ...any],
       queryFn: async ({ queryKey: [{ id }] }) => {
-         if ({ id }) {
+         if (!!id) {
             return await getRinciSubGiatByBlSubgiatId(id)
          }
          return null
@@ -48,7 +48,7 @@ const ModalSingkronJadwal = ({ params: { id } }: Props) => {
    const { data: currSubGiat } = useQuery({
       queryKey: [{ id }, 'bl_sub_giat'] as [{ id: string }, ...any],
       queryFn: async ({ queryKey: [{ id }] }) => {
-         if ({ id }) {
+         if (!!id) {
             return await getBlSubGiatById(id)
          }
          return null
@@ -94,7 +94,7 @@ const ModalSingkronJadwal = ({ params: { id } }: Props) => {
          return false
       }
    }, [lengthData, isValid, data, currSubGiat, targetSubGiat, deleteVolume])
-   const disabledKeys = !!currSubGiat ? ([currSubGiat?.jadwal_anggaran_id] ?? []) : []
+   const disabledKeys = !!currSubGiat ? [currSubGiat.jadwal_anggaran_id] : []
    return (
       <DialogConfirm
          action={action}

@@ -3,22 +3,17 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import Image from 'next/legacy/image'
 import { useSearchParams } from 'next/navigation'
-import { NumberInput, PasswordInput, TextInput } from '@components/form/text-input'
+import TextInput from '@components/form/text-input'
 import { Card } from '@components/ui/card'
 import { Button, CardBody, CardFooter, Select, Selection, SelectItem } from '@nextui-org/react'
-import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
+import { createTsForm } from '@ts-react/form'
 import { z } from '@zod'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 
 const ID_DAERAH = Number(process.env.NEXT_PUBLIC_SIPD_ID_DAERAH || 0)
 const TAHUN = Number(process.env.NEXT_PUBLIC_SIPD_TAHUN || 0)
-const password = createUniqueFieldSchema(z.string().min(1), 'password')
-const mapping = [
-   [z.string(), TextInput] as const,
-   [z.number(), NumberInput] as const,
-   [password, PasswordInput] as const,
-] as const
+const mapping = [[z.string(), TextInput] as const, [z.number(), TextInput] as const] as const
 
 export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
@@ -54,7 +49,7 @@ const SingInSchema = z
          .default(424)
          .nullable()
          .optional(),
-      password: password,
+      password: z.string({ description: 'Kata sandi ' }).trim().min(1),
    })
    .strict()
    .superRefine((data, ctx) => {
@@ -193,7 +188,7 @@ const FormLogin: React.FC<{
                      props={{
                         username: { isClearable: true },
                         password: {
-                           autoComplete: 'password',
+                           type: 'password',
                            label: 'Kata Sandi',
                         },
                      }}>

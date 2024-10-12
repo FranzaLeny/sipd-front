@@ -5,8 +5,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
    getLaporanRakBlSubGiatSipdPeta,
    getRakSubGiatSipdPeta,
-} from '@actions/penatausahaan/pengeluaran/rak'
-import { getSkpdPenatausahaanFromSipd } from '@actions/penatausahaan/pengeluaran/skpd'
+} from '@actions/penatausahaan/sipd/rak'
+import { getSkpdPenatausahaanFromSipd } from '@actions/penatausahaan/sipd/skpd'
 import { validateSipdPetaSession } from '@actions/perencanaan/token-sipd'
 import { Autocomplete, AutocompleteItem } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
@@ -35,6 +35,8 @@ export default function Page() {
    const [subGiat, setSubGiat] = useState<GetRakBlSubGiatSipdPetaParams & { kode_unik: string }>()
 
    useEffect(() => {
+      console.log({ user: user?.id_skpd })
+
       user?.id_skpd && setSkpd(user?.id_skpd?.toString() ?? '')
    }, [user?.id_skpd])
 

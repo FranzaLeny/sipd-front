@@ -31,9 +31,6 @@ interface RootLayoutProps {
    modal: React.ReactNode
 }
 const RootLayout = async ({ children, modal }: RootLayoutProps) => {
-   // const userAgent = headers().get('User-Agent') || ''
-   // const isMobileDevice = /Mobi/.test(userAgent)
-
    return (
       <html
          lang='en-US'

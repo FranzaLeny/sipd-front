@@ -1,6 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { getDpaPendapatanSkpdFromSipdPeta } from '@actions/penatausahaan/sipd/dpa'
+import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/sipd/jadwal'
+import { getSkpdPenatausahaanFromSipd } from '@actions/penatausahaan/sipd/skpd'
 import TanggalInput from '@components/form/tanggal-input'
 import { TableAnggotaTapd, Tapd } from '@components/master/tapd'
 import TableCatatanRka from '@components/perencanaan/table-catatan-rka'
@@ -14,81 +17,13 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
+import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
-import { useSipdPetaFetcher } from '@shared/hooks/use-sipd-peta-fetcher'
 
 import dowloadRkaPendapatan from './export-excel-pendapatan-perubahan'
-
-interface DpaPendapatanPeta {
-   tipe_q: 'OLD' | 'NEW'
-   nama_ibu_kota: string
-   nomor_dpa: string
-   tanggal: string
-   nama_skpd: string
-   kode_skpd: string
-   nama_kepala_skpd: string
-   nip_kepala_skpd: string
-   nama_ppkd: string
-   nip_ppkd: string
-   ringkasan: Ringkasan[]
-   ringkasan_pergeseran: Ringkasanpergeseran[]
-   rincian: Rincian[]
-}
-interface SkpdPeta {
-   id_skpd: number
-   kode_skpd: string
-   nama_skpd: string
-}
-interface JadwalPergeseran {
-   tahapan: string
-   jadwal_sipd_penatausahaan: string
-   id_tahap_sipd: string
-   is_locked: number
-   id_jadwal: number
-   id_jadwal_sipd: number
-}
-
-interface Rincian {
-   uraian: string
-   januari: number
-   februari: number
-   maret: number
-   april: number
-   mei: number
-   juni: number
-   juli: number
-   agustus: number
-   september: number
-   oktober: number
-   november: number
-   desember: number
-   jumlah: number
-}
-
-interface Ringkasan {
-   kode_akun: string
-   uraian: string
-   volume: number
-   satuan: string
-   koefisien: string
-   nilai: number
-}
-interface Ringkasanpergeseran {
-   kode_rekening: string
-   sebelum_uraian: string
-   setelah_uraian: string
-   sebelum_volume: number
-   setelah_volume: number
-   sebelum_satuan: string
-   setelah_satuan: string
-   sebelum_koefisien: string
-   setelah_koefisien: string
-   sebelum_nilai: number
-   setelah_nilai: number
-}
 
 const JENIS_DOKUMEN = {
    dppa: {
@@ -135,7 +70,7 @@ const JENIS_DOKUMEN = {
 }
 
 interface PropsTableRak {
-   rincianRak: DpaPendapatanPeta['rincian']
+   rincianRak: RakDpaSkpdPeta[]
    tanggal: string
    ibuKota: string
    jabatanKepala?: string | null
@@ -168,7 +103,7 @@ function TableRak(props: PropsTableRak) {
          <table className='min-w-[50%]'>
             <tbody>
                {Object.keys(item)?.map((i) => {
-                  const key = i as keyof Rincian
+                  const key = i as keyof RakDpaSkpdPeta
                   const value = item[key]
                   return key === 'uraian' ? (
                      <tr
@@ -287,7 +222,7 @@ function TableKop(props: PropsTableKop) {
    )
 }
 
-function TableRincian({ ringkasan }: { ringkasan: DpaPendapatanPeta['ringkasan'] }) {
+function TableRincian({ ringkasan }: { ringkasan: RingkasanpaPendapatanSkpdFromSipdPeta[] }) {
    const [jumlah, ...data] = ringkasan
    return (
       <table className='min-w-full leading-snug'>
@@ -368,7 +303,7 @@ type Props = {
 function TableRincianPergeseran({
    ringkasan,
 }: {
-   ringkasan: DpaPendapatanPeta['ringkasan_pergeseran']
+   ringkasan: RingkasanpergeseranDpaPendapatanSkpdFromSipdPeta[]
 }) {
    const [jumlah, ...other] = ringkasan
    const data = [...other, jumlah]
@@ -529,21 +464,22 @@ export default function DpaPendapatanSkpd({
    const [dokumen, setDokumen] = useState<(typeof JENIS_DOKUMEN)['dppa'] | undefined>()
    const [disableKeysDok, setDisableKeysDok] = useState<string[]>([])
 
-   const { data: listSkpd, isFetching: loadingSkpd } = useSipdPetaFetcher<SkpdPeta[]>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/skpd/list/${id_daerah}/${tahun}`,
+   const { data: listSkpd, isFetching: loadingSkpd } = useQuery({
+      queryKey: [id_daerah, tahun, 'getSkpdPenatausahaanFromSipd'],
+      queryFn: ({ queryKey: [id_daerah, tahun] }) =>
+         getSkpdPenatausahaanFromSipd({ id_daerah, tahun }),
       enabled: !!id_daerah && !!tahun,
    })
 
-   const { data: listJadwal, isFetching: loadingJadwal } = useSipdPetaFetcher<JadwalPergeseran[]>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/laporan/dpa/dpa/jadwal-pergeseran`,
-      enabled: !!token,
+   const { data: listJadwal, isFetching: loadingJadwal } = useQuery({
+      queryKey: ['getJadwaPergeseranDpaFromSipd'],
+      queryFn: () => getJadwaPergeseranDpaFromSipd(),
    })
 
-   const { data: dpaSkpd, isFetching } = useSipdPetaFetcher<DpaPendapatanPeta>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/laporan/dpa/dpa/pendapatan/${skpd}/${jadwal}`,
+   const { data: dpaSkpd, isFetching } = useQuery({
+      queryKey: [jadwal, skpd, 'getDpaPendapatanSkpdFromSipdPeta'],
+      queryFn: ({ queryKey: [id_jadwal, id_skpd] }) =>
+         getDpaPendapatanSkpdFromSipdPeta({ id_jadwal, id_skpd }),
       enabled: !!jadwal && !!skpd,
    })
 

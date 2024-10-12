@@ -1,6 +1,12 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+   getDpaBelanjaSubGiatFromSipdPeta,
+   getRinciDpaBelanjaSubGiatFromSipdPeta,
+} from '@actions/penatausahaan/sipd/dpa'
+import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/sipd/jadwal'
+import { getSkpdPenatausahaanFromSipd } from '@actions/penatausahaan/sipd/skpd'
 import TanggalInput from '@components/form/tanggal-input'
 import { TableAnggotaTapd, Tapd } from '@components/master/tapd'
 import TableCatatanRka from '@components/perencanaan/table-catatan-rka'
@@ -14,149 +20,13 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
+import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
 import { Download, Printer, Settings } from 'lucide-react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-toastify'
-import { useSipdPetaFetcher } from '@shared/hooks/use-sipd-peta-fetcher'
 
 import dowloadExcelRincianBelanja from './export-excel-rincian-perubahan'
-
-interface SkpdPeta {
-   id_skpd: number
-   kode_skpd: string
-   nama_skpd: string
-}
-interface JadwalPergeseran {
-   tahapan: string
-   jadwal_sipd_penatausahaan: string
-   id_tahap_sipd: string
-   is_locked: number
-   id_jadwal: number
-   id_jadwal_sipd: number
-}
-
-interface ListSubKegiatanSkpdSipdPetaResponse {
-   id_skpd: number
-   nama_skpd: string
-   kode_skpd: string
-   items: SubKegiatan[]
-}
-
-interface SubKegiatan {
-   id_daerah: number
-   tahun: number
-   id_unit: number
-   id_skpd: number
-   kode_skpd: string
-   nama_skpd: string
-   id_sub_skpd: number
-   kode_sub_skpd: string
-   nama_sub_skpd: string
-   id_urusan: number
-   id_bidang_urusan: number
-   kode_bidang_urusan: string
-   nama_bidang_urusan: string
-   id_program: number
-   kode_program: string
-   nama_program: string
-   id_giat: number
-   kode_giat: string
-   nama_giat: string
-   id_sub_giat: number
-   kode_sub_giat: string
-   nama_sub_giat: string
-   nilai: number
-   nilai_rak: number
-   status: number
-   rak_belum_sesuai: number
-}
-
-export interface DpaRinciSubGiat {
-   id_jadwal_sipd: number
-   id_tahap: number
-   nomor_dpa: string
-   tanggal_dpa: string
-   nama_pa: string
-   nip_pa: string
-   tanun: number
-   nama_daerah: string
-   nama_ibukota: string
-   kode_urusan: string
-   nama_urusan: string
-   kode_bidang_urusan: string
-   nama_bidang_urusan: string
-   kode_skpd: string
-   nama_skpd: string
-   kode_sub_skpd: string
-   nama_sub_skpd: string
-   kode_program: string
-   nama_program: string
-   kode_giat: string
-   nama_giat: string
-   kode_sub_giat: string
-   nama_sub_giat: string
-   nama_dana: string
-   nama_kab_kota: string
-   nama_kecamatan: string
-   nama_kelurahan: string
-   waktu_mulai: string
-   waktu_akhir: string
-   sasaran: string
-   pagu: number
-   pagu_n_lalu: number
-   pagu_n_depan: number
-   pagu_indikatif: number
-   tolok_ukur_capaian: string
-   target_kinerja_capaian: string
-   tolok_ukuran_keluaran: string
-   target_kinerja_keluaran: string
-   tolok_ukur_hasil: string
-   target_kinerja_hasi: string
-   total: number
-   nama_ppkd: string
-   nip_ppkd: string
-   item: Rincian[]
-   rak: Rak
-}
-
-interface Rak {
-   uraian: string
-   januari: number
-   februari: number
-   maret: number
-   april: number
-   mei: number
-   juni: number
-   juli: number
-   agustus: number
-   september: number
-   oktober: number
-   november: number
-   desember: number
-   jumlah: number
-}
-
-export interface Rincian {
-   kode_akun: string
-   uraian: string
-   koefisien: string
-   satuan: string
-   harga_satuan: number
-   pajak: number
-   nilai: number
-   sebelum_koefisien: string
-   sebelum_satuan: string
-   sebelum_harga_satuan: number
-   sebelum_pajak: number
-   sebelum_nilai: number
-   setelah_koefisien: string
-   setelah_satuan: string
-   setelah_harga_satuan: number
-   setelah_pajak: number
-   setelah_nilai: number
-   bertambah_berkurang: number
-}
 
 const JENIS_DOKUMEN = {
    dppa: {
@@ -203,7 +73,7 @@ const JENIS_DOKUMEN = {
 }
 
 interface PropsTableRak {
-   rincianRak: DpaRinciSubGiat['rak']
+   rincianRak: RakDpaSkpdPeta
    tanggal: string
    ibuKota: string
    jabatanKepala?: string | null
@@ -232,8 +102,10 @@ function TableRak(props: PropsTableRak) {
    } = props
    const jumlah = Object.keys(rincianRak)?.reduce((acc, key) => {
       const val =
-         typeof rincianRak[key as keyof Rak] === 'number' && key !== 'uraian' && key !== 'jumlah'
-            ? rincianRak[key as keyof Rak]
+         typeof rincianRak[key as keyof RakDpaSkpdPeta] === 'number' &&
+         key !== 'uraian' &&
+         key !== 'jumlah'
+            ? rincianRak[key as keyof RakDpaSkpdPeta]
             : 0
       acc += val as number
       return acc
@@ -255,7 +127,7 @@ function TableRak(props: PropsTableRak) {
                   </td>
                </tr>
                {Object.keys(rak)?.map((i) => {
-                  const key = i as keyof Rak
+                  const key = i as keyof RakDpaSkpdPeta
                   const value = rak[key]
                   return key === 'uraian' ? null : (
                      <tr
@@ -346,7 +218,7 @@ function TableRincian({
    rincian,
    idSubSkpd,
 }: {
-   rincian: DpaRinciSubGiat['item']
+   rincian: ItemRinciDpaBelanjaSubGiatFromSipdPeta[]
    idSubSkpd: number
 }) {
    const [jumlah] = rincian
@@ -428,7 +300,7 @@ function TableRincianPergeseran({
    rincian,
    idSubSkpd,
 }: {
-   rincian: DpaRinciSubGiat['item']
+   rincian: ItemRinciDpaBelanjaSubGiatFromSipdPeta[]
    idSubSkpd: number
 }) {
    const [jumlah] = rincian
@@ -561,14 +433,12 @@ type Props = {
    tahun: number
    id_skpd: number
    id_daerah: number
-   token: string
 }
 
 export default function DpaRincianBelanja({
    id_daerah = 0,
    id_skpd = 0,
    tahun = 0,
-   token = '',
    dataSkpd: { sub_skpd, tapd: _tapd },
 }: Props) {
    const [tapd, setTapd] = useState<Tapd[] | undefined>(_tapd ?? undefined)
@@ -576,43 +446,44 @@ export default function DpaRincianBelanja({
    const [jadwal, setJadwal] = useState<any>('')
    const [dokumen, setDokumen] = useState<(typeof JENIS_DOKUMEN)['dppa'] | undefined>()
    const [disableKeysDok, setDisableKeysDok] = useState<string[]>([])
-   const [selectedSubGiat, setSelectedSubGiat] = useState<SubKegiatan & { kode_sbl: string }>()
+   const [selectedSubGiat, setSelectedSubGiat] = useState<
+      ItemDpaBelanjaSubGiatFromSipdPeta & { kode_sbl: string }
+   >()
    const [isMurni, setIsMurni] = useState(true)
 
-   const { data: listSkpd, isFetching: loadingSkpd } = useSipdPetaFetcher<SkpdPeta[]>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/skpd/list/${id_daerah}/${tahun}`,
+   const { data: listSkpd, isFetching: loadingSkpd } = useQuery({
+      queryKey: [id_daerah, tahun, 'getSkpdPenatausahaanFromSipd'],
+      queryFn: ({ queryKey: [id_daerah, tahun] }) =>
+         getSkpdPenatausahaanFromSipd({ id_daerah, tahun }),
       enabled: !!id_daerah && !!tahun,
    })
-
-   const { data: listJadwal, isFetching: loadingJadwal } = useSipdPetaFetcher<JadwalPergeseran[]>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/laporan/dpa/dpa/jadwal-pergeseran`,
-      enabled: !!token,
+   const { data: listJadwal, isFetching: loadingJadwal } = useQuery({
+      queryKey: ['getJadwaPergeseranDpaFromSipd'],
+      queryFn: () => getJadwaPergeseranDpaFromSipd(),
    })
 
-   const { data: dataSubGiat, isFetching: loadingSubGiat } =
-      useSipdPetaFetcher<ListSubKegiatanSkpdSipdPetaResponse>({
-         token,
-         url: `https://service.sipd.kemendagri.go.id/referensi/strict/dpa/penarikan/belanja/skpd/${skpd}`,
-         enabled: !!skpd,
-      })
-
-   const { data: dpaSkpd, isFetching } = useSipdPetaFetcher<DpaRinciSubGiat>({
-      token,
-      url: `https://service.sipd.kemendagri.go.id/referensi/strict/laporan/dpa/dpa/rincian-belanja/${skpd}`,
+   const { data: dataSubGiat, isFetching: loadingSubGiat } = useQuery({
+      queryKey: [skpd ?? '', 'getDpaBelanjaSubGiatFromSipdPeta'] as [string, string],
+      queryFn: ({ queryKey: [id_skpd] }) => getDpaBelanjaSubGiatFromSipdPeta({ id_skpd }),
+      enabled: !!skpd,
+   })
+   const { data: dpaSkpd, isFetching } = useQuery({
+      queryKey: [
+         {
+            id_unit: selectedSubGiat?.id_unit,
+            id_skpd: selectedSubGiat?.id_skpd,
+            id_sub_skpd: selectedSubGiat?.id_sub_skpd,
+            id_urusan: selectedSubGiat?.id_urusan,
+            id_bidang_urusan: selectedSubGiat?.id_bidang_urusan,
+            id_program: selectedSubGiat?.id_program,
+            id_giat: selectedSubGiat?.id_giat,
+            id_sub_giat: selectedSubGiat?.id_sub_giat,
+            id_jadwal_sipd: jadwal,
+         },
+         'getRinciDpaBelanjaSubGiatFromSipdPeta',
+      ] as [RinciDpaBelanjaSubGiatFromSipdPetaParams, string],
+      queryFn: ({ queryKey: [params] }) => getRinciDpaBelanjaSubGiatFromSipdPeta(params),
       enabled: !!jadwal && !!selectedSubGiat,
-      params: {
-         id_unit: selectedSubGiat?.id_unit,
-         id_skpd: selectedSubGiat?.id_skpd,
-         id_sub_skpd: selectedSubGiat?.id_sub_skpd,
-         id_urusan: selectedSubGiat?.id_urusan,
-         id_bidang_urusan: selectedSubGiat?.id_bidang_urusan,
-         id_program: selectedSubGiat?.id_program,
-         id_giat: selectedSubGiat?.id_giat,
-         id_sub_giat: selectedSubGiat?.id_sub_giat,
-         id_jadwal_sipd: jadwal,
-      },
    })
 
    const listSubgiat = useMemo(() => {
@@ -759,7 +630,7 @@ export default function DpaRincianBelanja({
                isInvalid={!selectedSubGiat}
                isLoading={loadingSubGiat}
                label='Pilih Sub Kegiatan'
-               selectedKey={selectedSubGiat ? selectedSubGiat?.kode_sbl : '' || ''}
+               selectedKey={selectedSubGiat ? selectedSubGiat?.kode_sbl : ''}
                variant='bordered'
                onSelectionChange={handleSubgiatSelected}
                defaultItems={listSubgiat || []}>

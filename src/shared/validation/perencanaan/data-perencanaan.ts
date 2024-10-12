@@ -273,8 +273,16 @@ export const AkunUncheckedCreateInputSchema = z
          .default(0)
          .transform((v) => (v === null ? 0 : v)),
       tahun: z.number().int().array().optional(),
+      sync_at: z.number(),
    })
    .strip()
+
+export const AkunDeleteOldParamsSchema = z.object({
+   sync_at: z.number().int().min(1),
+   tahun: z.number().int().min(2024),
+   id_daerah: z.number().int(),
+   total_data: z.number().int(),
+})
 
 export const SkpdSchema = z.object({
    id: z.string(),
@@ -487,6 +495,7 @@ export const StandarHargaSchema = z.object({
    created_at: z.coerce.date(),
    updated_by: z.string().nullish(),
    updated_at: z.coerce.date(),
+   sync_at: z.coerce.number().int(),
 })
 
 export const StandarHargaQuerySchema = z.object({
@@ -527,8 +536,17 @@ export const StandarHargaUncheckedCreateInputSchema = z
       tipe_standar_harga: z.string(),
       is_sipd: z.coerce.number().nullable().optional(),
       id_akun: z.number().int().array().optional(),
+      sync_at: z.coerce.number().int(),
    })
    .strip()
+
+export const StandarHargaDeleteOldParamsSchema = z.object({
+   sync_at: z.number().int().min(1),
+   tahun: z.number().int().min(2024),
+   id_daerah: z.number().int(),
+   kelompok: z.number().max(5).min(1),
+   total_data: z.number().int(),
+})
 
 export const TahapanSchema = z.object({
    id: z.string(),
@@ -790,6 +808,7 @@ export const SumberDanaSchema = z.object({
       .string()
       .regex(/^[0-9a-fA-F]{24}$/, { message: 'bukan ObjectId' })
       .nullish(),
+   sync_at: z.coerce.number().int(),
 })
 
 export const SumberDanaUncheckedCreateInputSchema = z
@@ -857,8 +876,15 @@ export const SumberDanaUncheckedCreateInputSchema = z
          .transform((v) => (v === 0 ? null : v))
          .optional()
          .nullable(),
+      sync_at: z.coerce.number().int(),
    })
    .strip()
+
+export const SumberDanaDeleteOldParamsSchema = z.object({
+   sync_at: z.number().int().min(1),
+   tahun: z.number().int().min(2024),
+   id_daerah: z.number().int(),
+})
 
 declare global {
    type Akun = z.infer<typeof AkunSchema>
@@ -879,4 +905,7 @@ declare global {
    type DesaKel = z.infer<typeof DesaKelSchema>
    type SumberDana = z.infer<typeof SumberDanaSchema>
    type SumberDanaUncheckedCreateInput = z.infer<typeof SumberDanaUncheckedCreateInputSchema>
+   type SumberDanaDeleteOldParams = z.infer<typeof SumberDanaDeleteOldParamsSchema>
+   type AkunDeleteOldParams = z.infer<typeof AkunDeleteOldParamsSchema>
+   type StandarHargaDeleteOldParams = z.infer<typeof StandarHargaDeleteOldParamsSchema>
 }

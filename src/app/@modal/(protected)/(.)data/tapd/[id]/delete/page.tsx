@@ -24,7 +24,7 @@ const ModalSingkron = ({ params: { id } }: { params: { id: string } }) => {
       <DialogConfirm
          action={action}
          disabledSubmit={!session?.user}
-         data_key={['tapd_anggaran', 'perencanaan']}
+         data_key={['data_tapd_anggaran', 'perencanaan']}
          header='Hapus data TAPD Anggaran'>
          <p className='border-warning rounded-small border p-1 text-center'>
             PERHATIAN!! <span className='font-normal'>Saat proses tidak dapat dibatalkan.</span>

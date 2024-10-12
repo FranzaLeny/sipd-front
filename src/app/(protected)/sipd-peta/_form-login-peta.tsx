@@ -2,9 +2,9 @@
 
 import { useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { NumberInput, PasswordInput, TextInput } from '@components/form/text-input'
+import { getCaptchaSipdPeta, preLoginSipdPeta, signInSipdPeta } from '@actions/penatausahaan/auth'
+import { TextInput } from '@components/form/text-input'
 import Loading from '@components/ui/loading'
-import axios from '@custom-axios/index'
 import {
    Button,
    Card,
@@ -17,18 +17,12 @@ import {
    ModalFooter,
    ModalHeader,
 } from '@nextui-org/react'
-import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
-import { decodeJwt } from 'jose'
+import { createTsForm } from '@ts-react/form'
 import { z } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { useSession } from '@shared/hooks/use-session'
 
-const password = createUniqueFieldSchema(z.string({ description: 'Password' }).min(1), 'password')
-const mapping = [
-   [z.string(), TextInput] as const,
-   [z.number(), NumberInput] as const,
-   [password, PasswordInput] as const,
-] as const
+const mapping = [[z.string(), TextInput] as const, [z.number(), TextInput] as const] as const
 
 interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
 const CardForm = (props: FormProps) => {
@@ -38,21 +32,6 @@ const CardForm = (props: FormProps) => {
          {...props}
       />
    )
-}
-
-interface SessionSipdPeta {
-   iss: string
-   sub: string
-   exp: number
-   iat: number
-   tahun: number
-   id_user: number
-   id_daerah: number
-   kode_provinsi: string
-   id_skpd: number
-   id_role: number
-   id_pegawai: number
-   sub_domain_daerah: string
 }
 
 const TsForm = createTsForm(mapping, { FormComponent: CardForm })
@@ -69,57 +48,15 @@ const LoginSipdPeta = z
          .string()
          .regex(/^(?=.*-peta$).{6,}$/, { message: 'harus diakhiri dengan "-peta"' })
          .min(6, { message: 'Wajib diisi' }),
-      password: password,
+      password: z.string({ description: 'Password' }).trim().min(1),
    })
    .strict()
 type SignIn = z.infer<typeof LoginSipdPeta>
-
-interface CredentialsSipdPeta {
-   id_daerah: number
-   id_role: number
-   id_skpd: number
-   id_pegawai: number
-   password: string
-   tahun: number
-   username: string
-   captcha_id: string
-   captcha_solution: string
-}
-const signInSipdPeta = async (credentials: CredentialsSipdPeta) => {
-   return await axios
-      .post<LoginSipdPetaResponse>(
-         'https://service.sipd.kemendagri.go.id/auth/auth/login',
-         credentials
-      )
-      .then(async (res) => {
-         try {
-            const decode = decodeJwt(res.token) as SessionSipdPeta
-            const { exp, iat, ...account } = decode
-            return { accountPeta: { account, token: res?.token } }
-         } catch (error: any) {
-            console.error(error?.message)
-            throw { message: 'Proses extrak token gagal' }
-         }
-      })
-      .catch((e: any) => {
-         return Promise.reject({ message: e?.message, error: e?.response?.data })
-      })
-}
-
-const preLoginSipdPeta = async (credentials: PreLoginSipdPetaPayload) => {
-   return await axios.post<PreLoginSipdPetaResponse>(
-      'https://service.sipd.kemendagri.go.id/auth/auth/pre-login',
-      credentials
-   )
-}
 
 interface CaptchaSipdPeta {
    audio: string
    base64: string
    id: string
-}
-const getCaptchaSipdPeta = async () => {
-   return await axios.get<CaptchaSipdPeta>('https://service.sipd.kemendagri.go.id/auth/captcha/new')
 }
 
 const LoginPetaSchema = LoginSipdPeta.extend({
@@ -275,6 +212,8 @@ export default function FormLoginPeta() {
                         schema={LoginSipdPeta}
                         props={{
                            username: { description: 'Contoh username: 2024XXXXXXXXXX00001-peta' },
+                           password: { type: 'password' },
+                           tahun: { type: 'number' },
                         }}
                      />
                   )}

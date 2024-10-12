@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/pengeluaran/jadwal'
+import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/sipd/jadwal'
 import { getAllJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'

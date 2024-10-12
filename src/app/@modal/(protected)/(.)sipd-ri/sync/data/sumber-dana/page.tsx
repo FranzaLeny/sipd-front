@@ -1,7 +1,11 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { getAllSumberDanaSipd, syncSumberDana } from '@actions/perencanaan/data/sumber-dana'
+import {
+   deleteOldSumberDana,
+   getAllSumberDanaSipd,
+   syncSumberDana,
+} from '@actions/perencanaan/data/sumber-dana'
 import { validateSipdSession } from '@actions/perencanaan/token-sipd'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
@@ -37,8 +41,9 @@ const ModalSingkron = () => {
 
       try {
          const { id_daerah, tahun } = validateSipdSession(session)
+         const sync_at = Date.now()
          const data = await getAllSumberDanaSipd({ id_daerah, tahun, length: 1 }).then((res) =>
-            res.data?.map((d) => ({ ...d, tahun: !!d?.tahun ? d.tahun : tahun }))
+            res.data?.map((d) => ({ ...d, tahun: !!d?.tahun ? d.tahun : tahun, sync_at }))
          )
 
          if (!data?.length) {
@@ -84,7 +89,7 @@ const ModalSingkron = () => {
                )
             },
          })
-
+         await deleteOldSumberDana({ id_daerah, sync_at, tahun })
          toast.success(`Selesai singkron ${data.length} data sumber dana`)
          return true
       } catch (error: any) {

@@ -28,7 +28,7 @@ const Page = async () => {
          <div className='content z-0 h-full'>
             <Card isBlurred>
                <CardHeader>
-                  <CardTitle>MASTER DATA PERENCANAAN</CardTitle>
+                  <CardTitle>MASTER DATA PERENCANAAN TAHUN {user?.tahun}</CardTitle>
                </CardHeader>
                <CardContent className='grid grid-cols-1 gap-3 pt-0 lg:grid-cols-3'>
                   {user && (

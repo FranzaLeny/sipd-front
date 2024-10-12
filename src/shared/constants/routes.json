@@ -14,7 +14,25 @@
          "keywords": "kepegawaian",
          "path": "/kepegawaian",
          "access": ["kepegawaian"],
-         "comingSoon": true
+         "newPost": true,
+         "routes": [
+            {
+               "key": "/kepegawaian/pdinas",
+               "title": "Perjalanan Dinas",
+               "keywords": "SPD SPT",
+               "path": "/kepegawaian/pdinas",
+               "access": ["auth"],
+               "newPost": true
+            },
+            {
+               "key": "/kepegawaian/registrasi",
+               "title": "Registrasi Perjalanan Dinas",
+               "keywords": "SPD SPT",
+               "path": "/kepegawaian/registrasi",
+               "access": ["auth"],
+               "comingSoon": true
+            }
+         ]
       },
       {
          "key": "/data",
@@ -25,9 +43,25 @@
          "defaultOpen": false,
          "routes": [
             {
+               "key": "/data/pangkat",
+               "title": "Pangkat",
+               "keywords": "pangkat",
+               "path": "/data/pangkat",
+               "access": ["auth"],
+               "newPost": true
+            },
+            {
+               "key": "/data/pegawai",
+               "title": "Pegawai",
+               "keywords": "pegawai",
+               "path": "/data/pegawai",
+               "access": ["auth"],
+               "newPost": true
+            },
+            {
                "key": "/data/user",
                "title": "User",
-               "keywords": "roel",
+               "keywords": "user",
                "path": "/data/user",
                "access": ["auth"],
                "newPost": true
@@ -339,6 +373,13 @@
                            "keywords": "sumber-dana",
                            "path": "/perencanaan/rka/laporan/sumber-dana",
                            "access": ["perencanaan", "admin_perencanaan"]
+                        },
+                        {
+                           "key": "/perencanaan/rka/laporan/form-rak",
+                           "title": "Form RAK",
+                           "keywords": "form-rak",
+                           "path": "/perencanaan/rka/laporan/form-rak",
+                           "access": ["perencanaan", "admin_perencanaan"]
                         }
                      ]
                   }
@@ -375,6 +416,7 @@
          "keywords": "sipd",
          "access": ["auth"],
          "defaultOpen": false,
+         "comingSoon": false,
          "routes": [
             {
                "key": "/sipd/sipd-ri",

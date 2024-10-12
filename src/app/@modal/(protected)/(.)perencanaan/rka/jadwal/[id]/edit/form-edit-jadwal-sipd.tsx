@@ -5,16 +5,14 @@ import { useRouter } from 'next/navigation'
 import { updateJadwalAnggaran } from '@actions/perencanaan/rka/jadwal-anggaran'
 import DateInput from '@components/form/date-time-input'
 import RadioGroupInput from '@components/form/radio-input'
-import { NumberInput, TextInput } from '@components/form/text-input'
+import { TextInput } from '@components/form/text-input'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
 import { useQueryClient } from '@tanstack/react-query'
-import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
+import { createTsForm } from '@ts-react/form'
 import { z } from '@zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-
-const numberSelect = createUniqueFieldSchema(z.number().int(), 'numberSelect')
 
 export const JadwalAnggaranEditInputSchema = z
    .object({
@@ -24,10 +22,10 @@ export const JadwalAnggaranEditInputSchema = z
       nama_sub_tahap: z.string({ description: 'Nama Sub Tahap' }),
    })
    .extend({
-      is_locked: numberSelect,
-      is_active: numberSelect,
-      is_perubahan: numberSelect,
-      is_rinci_bl: numberSelect,
+      is_locked: z.number().int(),
+      is_active: z.number().int(),
+      is_perubahan: z.number().int(),
+      is_rinci_bl: z.number().int(),
    })
    .strip()
    .superRefine((data, ctx) => {
@@ -62,8 +60,7 @@ export const JadwalAnggaranEditInputSchema = z
 const mapping = [
    [z.string(), TextInput] as const,
    [z.date(), DateInput] as const,
-   [z.number(), NumberInput] as const,
-   [numberSelect, RadioGroupInput] as const,
+   [z.number(), RadioGroupInput] as const,
 ] as const
 
 export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
@@ -200,19 +197,19 @@ const ModalEditSipd: React.FC<Props> = ({ data }) => {
                      // waktu_mulai: { labelPlacement: 'outside' },
                      // waktu_selesai: { labelPlacement: 'outside' },
                      is_locked: {
-                        label: 'Status Jadwal',
                         typeValue: 'number',
-                        orientation: 'horizontal',
                         options: [
                            { value: '0', label: 'Dibuka' },
                            { value: '1', label: 'Dikunci' },
                            { value: '3', label: 'Dihapus' },
                         ],
+                        label: 'Status Jadwal',
+                        orientation: 'horizontal',
                      },
                      is_perubahan: {
                         label: 'Jenis Jadwal',
-                        typeValue: 'number',
                         orientation: 'horizontal',
+                        typeValue: 'number',
                         options: [
                            { value: '0', label: 'Murni' },
                            { value: '1', label: 'Perubahan' },
@@ -220,8 +217,8 @@ const ModalEditSipd: React.FC<Props> = ({ data }) => {
                      },
                      is_active: {
                         label: 'Status Aktif',
-                        typeValue: 'number',
                         orientation: 'horizontal',
+                        typeValue: 'number',
                         options: [
                            { value: '0', label: 'Non Aktif' },
                            { value: '1', label: 'Aktif' },
@@ -229,8 +226,8 @@ const ModalEditSipd: React.FC<Props> = ({ data }) => {
                      },
                      is_rinci_bl: {
                         label: 'Kelompok Jadwal',
-                        typeValue: 'number',
                         orientation: 'horizontal',
+                        typeValue: 'number',
                         options: [
                            { value: '0', label: 'Jadwal RKPD' },
                            { value: '1', label: 'Jadwal RKA' },

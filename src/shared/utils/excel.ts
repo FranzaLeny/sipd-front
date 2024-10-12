@@ -21,14 +21,15 @@ export function createExcelData<T>({
 export function borderAll(params: {
    row: Excel.Row
    ws: Excel.Worksheet
-   bold?: boolean
-   center?: boolean
-   wrapText?: boolean
-   italic?: boolean
+   bold?: boolean | number[]
+   center?: boolean | number[]
+   wrapText?: boolean | number[]
+   italic?: boolean | number[]
    fontSize?: number
    excludeColumns?: number[]
 }) {
    const { row, ws, bold, center, wrapText, fontSize, italic, excludeColumns } = params
+
    row.eachCell({ includeEmpty: true }, (singleCell, col) => {
       if (excludeColumns?.includes(col)) {
          return
@@ -43,12 +44,42 @@ export function borderAll(params: {
             bottom: { style: 'thin' },
             right: { style: 'thin' },
          },
-         font: { ...style.font, bold, size: fontSize ?? style.font?.size, italic },
+         font: {
+            ...style.font,
+            bold:
+               typeof bold === 'boolean'
+                  ? bold
+                  : typeof bold === 'object'
+                    ? bold?.includes(col)
+                    : style.font?.bold,
+            size: fontSize ?? style.font?.size,
+            italic:
+               typeof italic === 'boolean'
+                  ? italic
+                  : typeof italic === 'object'
+                    ? italic?.includes(col)
+                    : style.font?.italic,
+         },
          alignment: {
             ...style.alignment,
-            wrapText: typeof wrapText === 'boolean' ? wrapText : style.alignment?.wrapText,
-            horizontal: center ? 'center' : style.alignment?.horizontal,
-            vertical: center ? 'middle' : style.alignment?.vertical,
+            wrapText:
+               typeof wrapText === 'boolean'
+                  ? wrapText
+                  : typeof wrapText === 'object'
+                    ? wrapText?.includes(col)
+                    : style.alignment?.wrapText,
+            horizontal:
+               typeof center === 'boolean' && center
+                  ? 'center'
+                  : typeof center === 'object' && center?.includes(col)
+                    ? 'center'
+                    : style.alignment?.horizontal,
+            vertical:
+               typeof center === 'boolean' && center
+                  ? 'middle'
+                  : typeof center === 'object' && center?.includes(col)
+                    ? 'middle'
+                    : style.alignment?.vertical,
          },
       }
    })

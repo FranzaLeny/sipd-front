@@ -26,7 +26,20 @@ function formatDefaultRka(ws: Excel.Worksheet) {
       { key: 'pajak', style: percentStyle, width: 5.71 },
       { key: 'jumlah', style: numStyle, width: 11.71 },
       { key: 'rak', style: numStyle, width: 11.71 },
-      { key: 'realisasi', style: numStyle, width: 11.71 },
+      { key: 'real', style: numStyle, width: 11.71 },
+      { key: 'kosong', width: 11.71 },
+      {
+         key: 'sheet',
+         style: {
+            alignment: {
+               vertical: 'middle',
+               horizontal: 'left',
+               wrapText: false,
+               indent: 0.1,
+            },
+            font: { name: 'Arial', size: 10, bold: true },
+         },
+      },
    ]
    ws.views = [{ showGridLines: false }]
 }
@@ -53,41 +66,6 @@ const dowloadRkaRinciBl = async (data: Data[]) => {
    wb.creator = 'FXIL'
    const buf = await wb.xlsx.writeBuffer()
    saveAs(new Blob([buf]), `${namaFile.replace(/[^\w\s]|(?!\S)\s+/g, ' ')}.xlsx`)
-}
-
-type KodeAkuns =
-   | 'bo'
-   | 'bo.bp'
-   | 'bo.bbj'
-   | 'bo.bb'
-   | 'bo.bsub'
-   | 'bo.bh'
-   | 'bo.bsos'
-   | 'bm'
-   | 'bm.bt'
-   | 'bm.bpm'
-   | 'bm.bbg'
-   | 'btt'
-   | 'bt'
-   | 'bt.bbh'
-   | 'bt.bbk'
-
-const listJenisBl: Record<string, KodeAkuns> = {
-   '5.1': 'bo',
-   '5.1.01': 'bo.bp',
-   '5.1.02': 'bo.bbj',
-   '5.1.03': 'bo.bb',
-   '5.1.04': 'bo.bsub',
-   '5.1.05': 'bo.bh',
-   '5.1.06': 'bo.bsos',
-   '5.2': 'bm',
-   '5.2.01': 'bm.bt',
-   '5.2.02': 'bm.bpm',
-   '5.2.03': 'bm.bbg',
-   '5.3': 'btt',
-   '5.4': 'bt',
-   '5.4.01': 'bt.bbh',
-   '5.4.02': 'bt.bbk',
 }
 
 const createSheet = async (data: Data, wb: Excel.Workbook) => {
@@ -147,6 +125,7 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
          kode,
          nilai_rak,
          nilai_realisasi,
+         total_harga,
       } = rinci
       const isTotal = group === 10
       const _uraian =
@@ -159,18 +138,20 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
                 : uraian
       const rek = rekening?.reduce((a, b, i) => ({ ...a, [i + 1]: i === 5 ? b : b + '.' }), {})
       const total = isRinci
-         ? `=ROUND(H${currRow}*I${currRow}+H${currRow}*I${currRow}*K${currRow},0)`
+         ? `=H${currRow}*I${currRow}+H${currRow}*I${currRow}*K${currRow}`
          : isTotal
-           ? '=SUBTOTAL(9,L' + (starRow + 1) + ':L' + lastRow + ')'
+           ? isEmptyData
+              ? '=0'
+              : '=SUBTOTAL(9,L' + (starRow + 1) + ':L' + lastRow + ')'
            : generateSubTotal(group, index, nextRow)
       let item = createExcelData({
          l: 14,
          d: {
             ...rek,
             7: _uraian,
-            8: isRinci ? { formula: `=${volume?.join('*')}` } : undefined,
+            8: isRinci ? { formula: `=${volume?.join('*') || 0}` } : undefined,
             9: harga_satuan,
-            10: isRinci ? satuan?.join(' ') : undefined,
+            10: isRinci ? satuan?.join(' ')?.trim() : undefined,
             11: isRinci ? { formula: `${pajak || 0}/100` } : undefined,
             12: { formula: total },
             13: nilai_rak ?? null,
@@ -188,18 +169,62 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
             bold: true,
             min_height: 15,
          })
+         ws.addConditionalFormatting({
+            ref: row.getCell(12).address,
+            rules: [
+               {
+                  type: 'cellIs',
+                  priority: 1,
+                  operator: 'lessThan',
+                  formulae: [total_harga],
+                  style: {
+                     fill: { pattern: 'solid', bgColor: { argb: 'CCC0DA' }, type: 'pattern' },
+                  },
+               },
+               {
+                  type: 'cellIs',
+                  priority: 2,
+                  operator: 'greaterThan',
+                  formulae: [total_harga],
+                  style: {
+                     fill: { pattern: 'solid', bgColor: { argb: 'B7DEE8' }, type: 'pattern' },
+                  },
+               },
+            ],
+         })
+      } else {
+         ws.addConditionalFormatting({
+            ref: row.getCell(12).address,
+            rules: [
+               {
+                  type: 'cellIs',
+                  priority: 1,
+                  operator: 'lessThan',
+                  formulae: [total_harga],
+                  style: {
+                     fill: { pattern: 'solid', bgColor: { argb: 'FFC7CE' }, type: 'pattern' },
+                  },
+               },
+               {
+                  type: 'cellIs',
+                  priority: 2,
+                  operator: 'greaterThan',
+                  formulae: [total_harga],
+                  style: {
+                     fill: { pattern: 'solid', bgColor: { argb: 'FDE9D9' }, type: 'pattern' },
+                  },
+               },
+            ],
+         })
       }
       if (isTotal) {
          ws.getCell(row?.number, 12).name = idUnikSbl + 'jml'
-         ws.getCell(row?.number, 13).name = idUnikSbl + 'rak'
-         ws.getCell(row?.number, 14).name = idUnikSbl + 'real'
       }
-      if (!!kode && !!listJenisBl[kode]) {
+      if (!!kode && kode?.length <= 6) {
          const cell = row.number
-         ws.getCell(`L${cell}`).name = idUnikSbl + listJenisBl[kode]
-         ws.getCell(cell, 13).name = idUnikSbl + listJenisBl[kode] + '.rak'
-         ws.getCell(cell, 14).name = idUnikSbl + listJenisBl[kode] + '.real'
+         ws.getCell(`L${cell}`).name = idUnikSbl + kode
       }
+
       borderAll({ row, ws, bold: !isRinci, excludeColumns: [13, 14] })
       row.eachCell({ includeEmpty: true }, (cell, col) => {
          const cellAddress = cell.address
@@ -226,8 +251,9 @@ const createSheet = async (data: Data, wb: Excel.Workbook) => {
    fillKepala({ ws, skpd })
    fillKeterangan({ ws })
    lastRow = fillTapd({ ws, tapd })
-   ws.pageSetup.printArea = `A1:L${lastRow + 2}`
+
    ws.headerFooter.oddFooter = `&L&\"Arial\"&9&I${footer}&R&\"Arial\"&9${dokumen?.kode}| &B&P`
+   ws.pageSetup.printArea = `A1:L${lastRow + 2}`
    return namaFile
 }
 
@@ -268,6 +294,7 @@ function fillDokJudul({
    ws.mergeCells(rows_judul[0].number, 10, rows_judul[rows_judul.length - 1].number, 12)
    const row = ws.addRow(undefined)
    row.height = 7
+
    return row.number
 }
 
@@ -380,6 +407,18 @@ function fillDataKegiatan({
          ws.getCell(1, 30).value = row.getCell(7).address
       }
    })
+   ws.getCell(`P5`).value = {
+      formula: `=HYPERLINK("#RINGKASAN_SKPD","SHEET: RINGKASAN SKPD")`,
+   }
+   ws.getCell(`P6`).value = {
+      formula: `=HYPERLINK("#PENDAPATAN","SHEET: PENDAPATAN")`,
+   }
+   ws.getCell(`P7`).value = {
+      formula: `=HYPERLINK("#SUMBER_DANA","SHEET: SUMBER DANA")`,
+   }
+   ws.getCell(`P8`).value = {
+      formula: `=HYPERLINK("#${idUnikSbl?.replaceAll('.', '')?.replaceAll('_', 'rekap.')}","SHEET: REKAPAN BELANJA")`,
+   }
    const row = ws.addRow(undefined)
    row.height = 7
    return row.number
@@ -583,6 +622,7 @@ function fillDataSubKegiatan({
 
    const row = ws.addRow(undefined)
    row.height = 7
+
    return row.number
 }
 
@@ -636,7 +676,9 @@ function fillTableHead({ ws }: { ws: Excel.Worksheet }): number {
       margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.2, footer: 0.2 },
       printTitlesRow: `${row_th[0].number}:${row_th[row_th.length - 1].number}`,
    }
-   return row_th[row_th.length - 1].number
+   const numRow = row_th[row_th.length - 1].number
+
+   return numRow
 }
 
 function fillKepala({ ws, skpd }: { ws: Excel.Worksheet; skpd: UnitLaporan }) {

@@ -1,8 +1,7 @@
 'use client'
 
 import { updateUser } from '@actions/data/user'
-import BooleanInput from '@components/form/boolean-input'
-import { TextInput } from '@components/form/text-input'
+import { TextInput, TextInputProps } from '@components/form/text-input'
 import { Card, CardContent } from '@components/ui/card'
 import { Button } from '@nextui-org/react'
 import { createTsForm } from '@ts-react/form'
@@ -11,7 +10,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
 
-const mapping = [[z.string(), TextInput] as const, [z.boolean(), BooleanInput] as const] as const
+const mapping = [[z.string(), TextInput] as const] as const
 
 export interface FormProps extends React.HTMLAttributes<HTMLDivElement> {}
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/
@@ -70,7 +69,10 @@ const FormComponent = (props: FormProps) => (
 )
 
 const TsForm = createTsForm(mapping, { FormComponent })
-
+const PASSWORD_PROPS: TextInputProps = {
+   type: 'password',
+   autoComplete: 'off',
+}
 const CardSecuriy = ({
    data,
    revalidateProfile,
@@ -130,9 +132,10 @@ const CardSecuriy = ({
             form={form}
             schema={Schema}
             props={{
-               confirm_password: { type: 'password' },
-               password: { type: 'password' },
-               new_password: { type: 'password' },
+               username: { autoComplete: 'off' },
+               confirm_password: PASSWORD_PROPS,
+               password: PASSWORD_PROPS,
+               new_password: PASSWORD_PROPS,
             }}
             onSubmit={onSubmit}
          />
