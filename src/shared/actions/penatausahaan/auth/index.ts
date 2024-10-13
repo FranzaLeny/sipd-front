@@ -5,8 +5,14 @@ import https from 'https'
 import axios from '@custom-axios/index'
 import { decodeJwt } from 'jose'
 
-const httpsAgent = new https.Agent({ keepAlive: true })
-const httpAgent = new http.Agent({ keepAlive: true })
+const AXIOS_OPTIONS = {
+   headers: {
+      Origin: 'https://sipd.kemendagri.go.id',
+   },
+   httpsAgent: new https.Agent({ keepAlive: true }),
+   httpAgent: new http.Agent({ keepAlive: true }),
+   baseURL: process.env.NEXT_PUBLIC_API_SIPD_PETA_URL,
+}
 interface CredentialsSipdPeta {
    id_daerah: number
    id_role: number
@@ -34,15 +40,7 @@ interface SessionSipdPeta {
 }
 export const signInSipdPeta = async (credentials: CredentialsSipdPeta) => {
    return await axios
-      .post<LoginSipdPetaResponse>(
-         'https://service.sipd.kemendagri.go.id/auth/auth/login',
-         credentials,
-         {
-            headers: {
-               Origin: 'https://sipd.kemendagri.go.id',
-            },
-         }
-      )
+      .post<LoginSipdPetaResponse>('auth/auth/login', credentials, AXIOS_OPTIONS)
       .then(async (res) => {
          try {
             const decode = decodeJwt(res.token) as SessionSipdPeta
@@ -54,26 +52,16 @@ export const signInSipdPeta = async (credentials: CredentialsSipdPeta) => {
          }
       })
       .catch((e: any) => {
-         console.log('signInSipdPeta error', e?.request?.headers)
+         console.error('signInSipdPeta error', e?.request?.headers)
          return Promise.reject({ message: e?.message, error: e?.response?.data })
       })
 }
 
 export const preLoginSipdPeta = async (credentials: PreLoginSipdPetaPayload) => {
    return await axios
-      .post<PreLoginSipdPetaResponse>(
-         'https://service.sipd.kemendagri.go.id/auth/auth/pre-login',
-         credentials,
-         {
-            headers: {
-               Origin: 'https://sipd.kemendagri.go.id',
-            },
-            httpsAgent,
-            httpAgent,
-         }
-      )
+      .post<PreLoginSipdPetaResponse>('auth/auth/pre-login', credentials, AXIOS_OPTIONS)
       .catch((e: any) => {
-         console.log('preLoginSipdPeta error', e?.request?.headers)
+         console.error('preLoginSipdPeta error', e?.request?.headers)
          throw { message: e?.message, error: e?.response?.data }
       })
 }
@@ -84,16 +72,8 @@ interface CaptchaSipdPeta {
 }
 
 export const getCaptchaSipdPeta = async () => {
-   return await axios
-      .get<CaptchaSipdPeta>('https://service.sipd.kemendagri.go.id/auth/captcha/new', {
-         headers: {
-            Origin: 'https://sipd.kemendagri.go.id',
-         },
-         httpsAgent,
-         httpAgent,
-      })
-      .catch((e: any) => {
-         console.log('getCaptchaSipdPeta error', e?.request?.headers)
-         throw { message: e?.message, error: e?.response?.data }
-      })
+   return await axios.get<CaptchaSipdPeta>('auth/captcha/new', AXIOS_OPTIONS).catch((e: any) => {
+      console.error('getCaptchaSipdPeta error', e?.request?.headers)
+      throw { message: e?.message, error: e?.response?.data }
+   })
 }
