@@ -1,14 +1,9 @@
-'use server'
-
 import http from 'http'
 import https from 'https'
 import axios from '@custom-axios/index'
 import { decodeJwt } from 'jose'
 
 const AXIOS_OPTIONS = {
-   headers: {
-      Origin: 'https://sipd.kemendagri.go.id',
-   },
    httpsAgent: new https.Agent({ keepAlive: true }),
    httpAgent: new http.Agent({ keepAlive: true }),
    baseURL: process.env.NEXT_PUBLIC_API_SIPD_PETA_URL,

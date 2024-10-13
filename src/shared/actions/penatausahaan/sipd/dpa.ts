@@ -1,5 +1,3 @@
-'use server'
-
 import axios from '@custom-axios/peta-fetcher'
 
 export const getDpaSkpdFromSipd = async ({

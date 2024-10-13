@@ -1,7 +1,6 @@
 import http from 'http'
 import https from 'https'
 import Axios, { AxiosError, AxiosInstance } from 'axios'
-import { getServerSession } from '@shared/server-actions/auth'
 
 const axios: AxiosInstance = Axios.create({
    headers: {
@@ -51,16 +50,33 @@ axios.interceptors.request.use(
 
 export default axios
 
-async function getToken(): Promise<string | undefined> {
-   const session = await getServerSession(['sipd_peta'])
-   // // if (typeof window === 'undefined') {
-   // //    const { getServerSession } = await import('@shared/server-actions/auth')
-   // //    user = (await getServerSession(['sipd_peta']))?.user
-   // // } else {
-   // //    const sessionData = localStorage.getItem('x-sipd-ri')
-   // //    user = sessionData ? JSON.parse(sessionData) : undefined
-   // // }
-   // const token = session?.user?.tokens?.find((d) => d.name == 'sipd_peta')?.token
+// async function getToken(): Promise<string | undefined> {
+//    const session = await getServerSession(['sipd_peta'])
+//    // // if (typeof window === 'undefined') {
+//    // //    const { getServerSession } = await import('@shared/server-actions/auth')
+//    // //    user = (await getServerSession(['sipd_peta']))?.user
+//    // // } else {
+//    // //    const sessionData = localStorage.getItem('x-sipd-ri')
+//    // //    user = sessionData ? JSON.parse(sessionData) : undefined
+//    // // }
+//    // const token = session?.user?.tokens?.find((d) => d.name == 'sipd_peta')?.token
 
-   return session?.user?.tokens?.find((d) => d.name == 'sipd_peta')?.token
+//    return session?.user?.tokens?.find((d) => d.name == 'sipd_peta')?.token
+// }
+
+async function getToken(): Promise<string | undefined> {
+   try {
+      let user: any
+      if (typeof window === 'undefined') {
+         const { getServerSession } = await import('@shared/server-actions/auth')
+         user = (await getServerSession(['sipd_peta']))?.user
+      } else {
+         const sessionData = localStorage.getItem('x-sipd-ri')
+         user = sessionData ? JSON.parse(sessionData) : undefined
+      }
+
+      return user?.tokens?.find((d: any) => d?.name == 'sipd_peta')?.token
+   } catch (error) {
+      return
+   }
 }
