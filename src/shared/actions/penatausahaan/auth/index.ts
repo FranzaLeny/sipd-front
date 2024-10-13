@@ -1,8 +1,12 @@
 'use server'
 
+import http from 'http'
+import https from 'https'
 import axios from '@custom-axios/index'
 import { decodeJwt } from 'jose'
 
+const httpsAgent = new https.Agent({ keepAlive: true })
+const httpAgent = new http.Agent({ keepAlive: true })
 interface CredentialsSipdPeta {
    id_daerah: number
    id_role: number
@@ -64,6 +68,8 @@ export const preLoginSipdPeta = async (credentials: PreLoginSipdPetaPayload) => 
             headers: {
                Origin: 'https://sipd.kemendagri.go.id',
             },
+            httpsAgent,
+            httpAgent,
          }
       )
       .catch((e: any) => {
@@ -83,6 +89,8 @@ export const getCaptchaSipdPeta = async () => {
          headers: {
             Origin: 'https://sipd.kemendagri.go.id',
          },
+         httpsAgent,
+         httpAgent,
       })
       .catch((e: any) => {
          console.log('getCaptchaSipdPeta error', e?.request?.headers)

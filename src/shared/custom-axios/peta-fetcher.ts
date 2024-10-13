@@ -39,7 +39,6 @@ axios.interceptors.request.use(
          config.headers['Content-Type'] = 'application/json'
          config.headers['Origin'] = 'https://sipd.kemendagri.go.id'
       } catch (error) {
-         console.error(error)
          return Promise.reject({ message: 'Unauthenticated', error: 'Request to SIPD-KEU failed' })
       }
       config.httpsAgent = new https.Agent({ keepAlive: true })
