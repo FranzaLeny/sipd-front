@@ -26,7 +26,6 @@ import {
    PopoverContent,
    PopoverTrigger,
    Select,
-   Selection,
    SelectItem,
    Spinner,
    Table,
@@ -37,6 +36,7 @@ import {
    TableRow,
    Textarea,
    useDisclosure,
+   type Selection,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'

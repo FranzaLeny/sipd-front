@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
+import type { Route } from 'next'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { SkpdSelect } from '@components/perencanaan/skpd'
@@ -49,7 +50,7 @@ export default function ParamSelector({
          } else if (!!defaultSkpd && defaultSkpd !== defaultUnit) {
             paramsFromObject.set('id_skpd', defaultSkpd)
          }
-         router.replace(pathname + '?' + paramsFromObject, { scroll: false })
+         router.replace((pathname + '?' + paramsFromObject) as Route, { scroll: false })
       },
       [defaultJadwal, defaultSkpd, defaultTahun, defaultUnit, pathname, router]
    )

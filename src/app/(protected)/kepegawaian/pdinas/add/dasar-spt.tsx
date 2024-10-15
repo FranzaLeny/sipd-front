@@ -11,9 +11,9 @@ import {
    useDisclosure,
 } from '@nextui-org/react'
 import { Reorder } from 'framer-motion'
-import { Control, useController, useForm } from 'react-hook-form'
+import { useController, useForm, type Control } from 'react-hook-form'
 
-import { DasarForm, DasarInput, DasarInputSchema, PDinasInput } from './componet-form'
+import { DasarForm, DasarInputSchema, type DasarInput, type PDinasInput } from './componet-form'
 
 type SelectedItem = {
    dasar?: string

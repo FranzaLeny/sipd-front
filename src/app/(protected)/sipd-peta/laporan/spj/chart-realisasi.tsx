@@ -1,7 +1,7 @@
 'use client'
 
 import { sortBy } from 'lodash-es'
-import Chart, { Props } from 'react-apexcharts'
+import Chart, { type Props } from 'react-apexcharts'
 
 const ChartRealisasi = ({
    items,

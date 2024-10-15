@@ -5,11 +5,17 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import manifest from '@constants/routes.json'
 import { BaseItem } from '@nextui-org/aria-utils'
-import { cn, dataFocusVisibleClasses, Spacer, SpacerProps } from '@nextui-org/react'
+import { cn, dataFocusVisibleClasses, Spacer, type SpacerProps } from '@nextui-org/react'
 import { useFocusRing } from '@react-aria/focus'
 import { usePress } from '@react-aria/interactions'
-import { TreeState, useTreeState } from '@react-stately/tree'
-import { CollectionBase, Expandable, ItemProps, MultipleSelection, Node } from '@react-types/shared'
+import { useTreeState, type TreeState } from '@react-stately/tree'
+import type {
+   CollectionBase,
+   Expandable,
+   ItemProps,
+   MultipleSelection,
+   Node,
+} from '@react-types/shared'
 import { dataAttr } from '@utils/assertion'
 import { isEmpty, sortBy } from 'lodash-es'
 import { ChevronRight } from 'lucide-react'

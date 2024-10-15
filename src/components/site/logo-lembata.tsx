@@ -1,4 +1,4 @@
-import Image, { ImageProps } from 'next/legacy/image'
+import Image, { type ImageProps } from 'next/legacy/image'
 
 const LogoDaerah: React.FC<Omit<Omit<ImageProps, 'alt'>, 'src'>> = (props) => {
    return (

@@ -8,7 +8,7 @@ import {
 } from '@actions/perencanaan/data/standar-harga'
 import { validateSipdSession } from '@actions/perencanaan/token-sipd'
 import DialogConfirm from '@components/modal/dialog-confirm'
-import { MaxDataInput, PilihTipes, Tipes } from '@components/perencanaan/sync-input'
+import { MaxDataInput, PilihTipes, type Tipes } from '@components/perencanaan/sync-input'
 import { tipeToKelompok } from '@utils/standar-harga'
 import { StandarHargaDeleteOldParamsSchema, StandarHargaUncheckedCreateInputSchema } from '@zod'
 import { toast } from 'react-toastify'

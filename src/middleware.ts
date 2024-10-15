@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { NextRequestWithAuth, withAuth } from 'next-auth/middleware'
+import { withAuth, type NextRequestWithAuth } from 'next-auth/middleware'
 
 const authenticatedRoutes = [
    '/dashboard',

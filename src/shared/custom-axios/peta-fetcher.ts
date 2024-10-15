@@ -1,6 +1,6 @@
 import http from 'http'
 import https from 'https'
-import Axios, { AxiosError, AxiosInstance } from 'axios'
+import Axios, { AxiosError, type AxiosInstance } from 'axios'
 
 const axios: AxiosInstance = Axios.create({
    headers: {

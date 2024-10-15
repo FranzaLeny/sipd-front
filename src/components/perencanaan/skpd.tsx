@@ -5,13 +5,13 @@ import { getAllSkpd } from '@actions/perencanaan/data/skpd'
 import {
    Autocomplete,
    AutocompleteItem,
-   AutocompleteProps,
    Chip,
    Input,
    Select,
-   Selection,
    SelectItem,
-   SelectProps,
+   type AutocompleteProps,
+   type Selection,
+   type SelectProps,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 

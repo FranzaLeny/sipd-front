@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react'
 import hasAccess from '@utils/chek-roles'
-import { useSession as useSessionNext, UseSessionOptions } from 'next-auth/react'
+import { useSession as useSessionNext, type UseSessionOptions } from 'next-auth/react'
 
 export function useSession(
    requerdRoles: RoleUser[] = [],

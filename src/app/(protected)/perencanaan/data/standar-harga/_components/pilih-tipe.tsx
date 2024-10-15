@@ -1,4 +1,4 @@
-import { Select, SelectItem, SelectProps } from '@nextui-org/react'
+import { Select, SelectItem, type SelectProps } from '@nextui-org/react'
 
 export const TIPES: ('SSH' | 'HSPK' | 'ASB' | 'SBU')[] = ['ASB', 'HSPK', 'SBU', 'SSH']
 

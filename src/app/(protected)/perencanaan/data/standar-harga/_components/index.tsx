@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { HelperColumns } from '@components/table'
+import { type HelperColumns } from '@components/table'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import hasAccess from '@utils/chek-roles'
@@ -24,7 +24,7 @@ export const ActionStandarHargaTable = ({ roles }: { roles?: RoleUser[] }) => {
       const searchParams = new URLSearchParams()
       searchParams.append('tipe', e?.target?.value?.toLocaleLowerCase())
       id_akun && searchParams.append('id_akun', id_akun)
-      router.replace(`standar-harga?${searchParams}`)
+      router.replace(`/perencanaan/data/standar-harga?${searchParams}`)
    }
    const canAdd = useMemo(() => {
       if (!!roles && roles?.length) {

@@ -4,8 +4,9 @@ import { SidebarProvider } from '@/providers/sidebar-provider'
 import { UiProvider } from '@/providers/ui-provider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { SessionProvider } from 'next-auth/react'
+
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
-import { ThemeProviderProps } from 'next-themes/dist/types'
+import type { ThemeProviderProps } from 'next-themes/dist/types'
 import { ToastContainer } from 'react-toastify'
 
 export interface ProvidersProps extends React.HTMLProps<HTMLDivElement> {

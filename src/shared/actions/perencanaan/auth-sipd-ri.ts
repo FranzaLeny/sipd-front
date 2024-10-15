@@ -3,7 +3,7 @@
 import https from 'https'
 import { generateApiKey, reFillSesionSipd } from '@actions/perencanaan/token-sipd'
 import { decodeJwt } from 'jose'
-import { Session } from 'next-auth'
+import { type Session } from 'next-auth'
 import axios from '@shared/custom-axios'
 import { signInToUserApiBySipdRi } from '@shared/server-actions/auth-api'
 

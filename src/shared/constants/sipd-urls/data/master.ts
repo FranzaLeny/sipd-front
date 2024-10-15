@@ -1,4 +1,4 @@
-import { TypeGetSipdUrls, TypePostSipdUrls } from '../types'
+import type { TypeGetSipdUrls, TypePostSipdUrls } from '../types'
 
 const ID_DAERAH = Number(process.env.NEXT_PUBLIC_SIPD_ID_DAERAH || 0)
 const ID_UNIT = Number(process.env.NEXT_PUBLIC_SIPD_ID_UNIT || 0)

@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
-import { Metadata } from 'next'
+import { type Metadata } from 'next'
 import { mappingAkunStandarHarga } from '@actions/perencanaan/data/standar-harga'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import { toast } from 'react-toastify'

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Input, InputProps } from '@nextui-org/react'
+import { Input, type InputProps } from '@nextui-org/react'
 
 export interface DebouncedInputProps extends InputProps {
    debounce?: number

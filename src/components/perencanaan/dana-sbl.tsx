@@ -2,7 +2,7 @@
 
 import { forwardRef, useState } from 'react'
 import { getDanaBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
-import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/react'
+import { Autocomplete, AutocompleteItem, type AutocompleteProps } from '@nextui-org/react'
 import { useLocale } from '@react-aria/i18n'
 import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'

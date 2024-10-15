@@ -1,6 +1,6 @@
 'use client'
 
-import { cn, TableCellProps, TableColumnProps, TableProps } from '@nextui-org/react'
+import { cn, type TableCellProps, type TableColumnProps, type TableProps } from '@nextui-org/react'
 
 type TableServerSideProps<T> = {
    tableUiProps?: TableUiProps

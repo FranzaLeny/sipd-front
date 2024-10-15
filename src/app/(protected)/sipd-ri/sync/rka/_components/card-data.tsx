@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import Link from 'next/link'
 import { Button, Card, CardBody, CardFooter, CardHeader, Skeleton } from '@nextui-org/react'
 import { useLocale } from '@react-aria/i18n'
-import { UseQueryResult } from '@tanstack/react-query'
+import { type UseQueryResult } from '@tanstack/react-query'
 
 type CardDataProps = {
    canPres: boolean

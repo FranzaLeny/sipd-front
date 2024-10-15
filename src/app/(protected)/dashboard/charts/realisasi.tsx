@@ -1,6 +1,6 @@
 'use client'
 
-import Chart, { Props } from 'react-apexcharts'
+import Chart, { type Props } from 'react-apexcharts'
 
 export const RealisasiChart = () => {
    return (

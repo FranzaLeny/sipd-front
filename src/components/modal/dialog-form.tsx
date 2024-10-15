@@ -3,17 +3,17 @@
 import { useEffect, useState } from 'react'
 import {
    Button,
-   ButtonProps,
    cn,
    Divider,
    Modal,
    ModalBody,
-   ModalBodyProps,
    ModalContent,
    ModalFooter,
    ModalHeader,
-   ModalHeaderProps,
-   ModalProps,
+   type ButtonProps,
+   type ModalBodyProps,
+   type ModalHeaderProps,
+   type ModalProps,
 } from '@nextui-org/react'
 
 type DialogFormProps = Omit<Omit<ModalProps, 'isOpen'>, 'onCflose'> & {

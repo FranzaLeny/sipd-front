@@ -1,4 +1,4 @@
-import { AppOptions, cert, getApps, initializeApp } from 'firebase-admin/app'
+import { cert, getApps, initializeApp, type AppOptions } from 'firebase-admin/app'
 import { getStorage } from 'firebase-admin/storage'
 
 const firebaseAdminConfig: AppOptions = {

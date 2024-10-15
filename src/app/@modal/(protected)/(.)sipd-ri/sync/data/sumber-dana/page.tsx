@@ -10,7 +10,7 @@ import { validateSipdSession } from '@actions/perencanaan/token-sipd'
 import DialogConfirm from '@components/modal/dialog-confirm'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
 import { SumberDanaUncheckedCreateInputSchema } from '@zod'
-import { toast, ToastContent } from 'react-toastify'
+import { toast, type ToastContent } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
 import { processChunks } from '@shared/utils/hof'
 

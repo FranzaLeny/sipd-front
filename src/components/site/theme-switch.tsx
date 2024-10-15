@@ -1,6 +1,6 @@
 'use client'
 
-import { cn, SwitchProps, useSwitch } from '@nextui-org/react'
+import { cn, useSwitch, type SwitchProps } from '@nextui-org/react'
 import { useIsSSR } from '@react-aria/ssr'
 import { VisuallyHidden } from '@react-aria/visually-hidden'
 import { Moon, SunIcon } from 'lucide-react'

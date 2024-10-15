@@ -7,7 +7,7 @@ import {
    CardHeader,
    cn,
    Divider,
-   CardFooterProps as FormHeaderProps,
+   type CardFooterProps as FormHeaderProps,
 } from '@nextui-org/react'
 
 export interface FormProps {

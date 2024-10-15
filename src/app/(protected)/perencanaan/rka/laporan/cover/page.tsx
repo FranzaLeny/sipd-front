@@ -7,7 +7,7 @@ import {
    DropdownItem,
    DropdownMenu,
    DropdownTrigger,
-   Selection,
+   type Selection,
 } from '@nextui-org/react'
 import Docxtemplater from 'docxtemplater'
 import { saveAs } from 'file-saver'

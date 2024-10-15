@@ -13,8 +13,8 @@ import {
    ModalFooter,
    ModalHeader,
    Select,
-   Selection,
    SelectItem,
+   type Selection,
 } from '@nextui-org/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { createTsForm } from '@ts-react/form'

@@ -8,12 +8,12 @@ import {
    Divider,
    Modal,
    ModalBody,
-   ModalBodyProps,
    ModalContent,
    ModalFooter,
    ModalHeader,
-   ModalHeaderProps,
-   ModalProps,
+   type ModalBodyProps,
+   type ModalHeaderProps,
+   type ModalProps,
 } from '@nextui-org/react'
 
 type DialogShowProps = {

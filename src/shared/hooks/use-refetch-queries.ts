@@ -1,6 +1,6 @@
 'use client'
 
-import { QueryKey, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, type QueryKey } from '@tanstack/react-query'
 
 export function useRefetchQueries() {
    const queryClient = useQueryClient()

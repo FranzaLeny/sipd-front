@@ -1,75 +1,44 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node", // default 'bundler'
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "forceConsistentCasingInFileNames": true, //Tambahan
-    "strictNullChecks": true,
-    "baseUrl": ".",
-    "plugins": [
-      {
-        "name": "next"
+   "compilerOptions": {
+      "target": "es2017",
+      "lib": ["dom", "dom.iterable", "esnext"],
+      "allowJs": true,
+      "removeComments": true,
+      "skipLibCheck": true,
+      "strict": true,
+      "noEmit": true,
+      "esModuleInterop": true,
+      "module": "esnext",
+      "moduleResolution": "bundler", // default 'bundler'
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "jsx": "preserve",
+      "incremental": true,
+      "forceConsistentCasingInFileNames": true, //Tambahan
+      "strictNullChecks": true,
+      "allowUnreachableCode": false,
+      "noUncheckedSideEffectImports": true,
+      "verbatimModuleSyntax": true,
+      "baseUrl": ".",
+      "plugins": [
+         {
+            "name": "next"
+         }
+      ],
+      "paths": {
+         "@zod": ["./src/shared/validation/zod.ts"],
+         "@components/*": ["./src/components/*"],
+         "@custom-axios/*": ["./src/shared/custom-axios/*"],
+         "@utils": ["./src/shared/utils/index.ts"],
+         "@utils/*": ["./src/shared/utils/*"],
+         "@actions/*": ["./src/shared/actions/*"],
+         "@validations/*": ["./src/shared/validation/*"],
+         "@constants/*": ["./src/shared/constants/*"],
+         "@shared/*": ["./src/shared/*"],
+         "@/*": ["./src/*"]
       }
-    ],
-    "paths": {
-      "@zod": [
-        "./src/shared/validation/zod.ts"
-      ],
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@custom-axios/*": [
-        "./src/shared/custom-axios/*"
-      ],
-      "@utils": [
-        "./src/shared/utils/index.ts"
-      ],
-      "@utils/*": [
-        "./src/shared/utils/*"
-      ],
-      "@actions/*": [
-        "./src/shared/actions/*"
-      ],
-      "@validations/*": [
-        "./src/shared/validation/*"
-      ],
-      "@constants/*": [
-        "./src/shared/constants/*"
-      ],
-      "@shared/*": [
-        "./src/shared/*"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
-    }
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "build/types/**/*.ts",
-    ".next-dev/types/**/*.ts",
-    "STANDALONE/types/**/*.ts"
-  ]
-  // "exclude": ["node_modules"]
-  ,
-  "exclude": [
-    "node_modules"
-  ]
+   },
+   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "out/types/**/*.ts"],
+   "exclude": ["node_modules"]
 }
+

@@ -5,12 +5,12 @@ import { getListStandarHarga } from '@actions/perencanaan/data/standar-harga'
 import {
    Autocomplete,
    AutocompleteItem,
-   AutocompleteProps,
    Button,
    Select,
-   Selection,
    SelectItem,
-   SelectProps,
+   type AutocompleteProps,
+   type Selection,
+   type SelectProps,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { compact, debounce } from 'lodash-es'

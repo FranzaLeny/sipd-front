@@ -2,14 +2,14 @@
 
 import {
    cn,
-   ModalContentProps as FormContentProps,
-   ModalFooterProps as FormFotterProps,
-   ModalHeaderProps as FormHeaderProps,
    Modal,
    ModalContent,
    ModalFooter,
    ModalHeader,
-   ModalProps,
+   type ModalContentProps as FormContentProps,
+   type ModalFooterProps as FormFotterProps,
+   type ModalHeaderProps as FormHeaderProps,
+   type ModalProps,
 } from '@nextui-org/react'
 
 export interface FormProps {

@@ -1,4 +1,4 @@
-import { TypeGetSipdUrls, TypePostSipdUrls } from '../types'
+import type { TypeGetSipdUrls, TypePostSipdUrls } from '../types'
 import * as lokasi from './lokasi'
 import * as master from './master'
 

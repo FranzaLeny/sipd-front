@@ -10,7 +10,6 @@ import manifest from '@constants/tpd.json'
 import {
    Autocomplete,
    AutocompleteItem,
-   AutocompleteProps,
    Button,
    cn,
    Modal,
@@ -19,6 +18,7 @@ import {
    ModalFooter,
    ModalHeader,
    useDisclosure,
+   type AutocompleteProps,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'

@@ -39,3 +39,4 @@ type Colors = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'dan
 type FC<T> = (props: T) => JSX.Element | null
 
 type NonUndefined<T> = T extends undefined ? never : T
+declare module '*.css' {}

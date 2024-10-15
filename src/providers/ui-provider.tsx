@@ -1,8 +1,9 @@
 'use client'
 
 import { useCallback } from 'react'
+import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
-import { NextUIProvider, NextUIProviderProps } from '@nextui-org/react'
+import { NextUIProvider, type NextUIProviderProps } from '@nextui-org/react'
 import { useLocale } from '@react-aria/i18n'
 
 import { useSidebar } from './sidebar-provider'
@@ -17,7 +18,7 @@ export const UiProvider: React.FC<Omit<NextUIProviderProps, 'navigate' | 'locale
    const navigate = useCallback(
       (href: string, options?: any) => {
          console.log(`Navigate called with href: ${href}`, options)
-         return router.push(href, { scroll: false })
+         return router.push(href as Route, { scroll: false })
       },
       [router]
    )

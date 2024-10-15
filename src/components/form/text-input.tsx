@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
-import { cn, Input, InputProps } from '@nextui-org/react'
+import { cn, Input, type InputProps } from '@nextui-org/react'
 import { useLocale } from '@react-aria/i18n'
 import { useFieldInfo, useTsController } from '@ts-react/form'
 import { Eye, EyeOff } from 'lucide-react'

@@ -8,7 +8,7 @@ import {
 import { getJadwaPergeseranDpaFromSipd } from '@actions/penatausahaan/sipd/jadwal'
 import { getSkpdPenatausahaanFromSipd } from '@actions/penatausahaan/sipd/skpd'
 import TanggalInput from '@components/form/tanggal-input'
-import { TableAnggotaTapd, Tapd } from '@components/master/tapd'
+import { TableAnggotaTapd, type Tapd } from '@components/master/tapd'
 import TableCatatanRka from '@components/perencanaan/table-catatan-rka'
 import Loading from '@components/ui/loading'
 import {

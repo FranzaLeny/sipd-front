@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { HelperColumns } from '@components/table'
+import { type HelperColumns } from '@components/table'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import {
    Button,

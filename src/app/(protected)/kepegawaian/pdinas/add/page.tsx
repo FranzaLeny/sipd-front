@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from 'react'
 import { getJadwalAnggaranAktif } from '@actions/perencanaan/rka/jadwal-anggaran'
-import { DateInputProps } from '@components/form/date-time-input'
+import type { DateInputProps } from '@components/form/date-time-input'
 import BlSubGiatSelector from '@components/perencanaan/bl-sub-giat'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@components/ui/card'
 import { Button } from '@nextui-org/react'
@@ -11,7 +11,7 @@ import { toRoman } from '@utils/roman'
 import { useForm } from 'react-hook-form'
 import { useSession } from '@shared/hooks/use-session'
 
-import { PDinasInput, PDinasInputSchema, TsForm } from './componet-form'
+import { PDinasInputSchema, TsForm, type PDinasInput } from './componet-form'
 import DasarSPT from './dasar-spt'
 import PelaksanaPDinas from './pelaksana-pd'
 

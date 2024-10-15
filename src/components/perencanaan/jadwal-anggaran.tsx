@@ -8,15 +8,15 @@ import Timer from '@components/ui/timer'
 import {
    Autocomplete,
    AutocompleteItem,
-   AutocompleteProps,
    Button,
    Chip,
    Dropdown,
    DropdownItem,
    DropdownMenu,
    DropdownTrigger,
-   Selection,
    Tooltip,
+   type AutocompleteProps,
+   type Selection,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { useSession } from '@shared/hooks/use-session'

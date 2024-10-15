@@ -2,7 +2,7 @@
 
 import { forwardRef, useState } from 'react'
 import { getSubsRinciBlSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
-import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/react'
+import { Autocomplete, AutocompleteItem, type AutocompleteProps } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 
 export interface SubsRinciSelectorProps

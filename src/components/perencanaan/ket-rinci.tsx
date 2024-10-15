@@ -9,14 +9,14 @@ import { TextInput } from '@components/form/text-input'
 import {
    Autocomplete,
    AutocompleteItem,
-   AutocompleteProps,
    Button,
    Modal,
    ModalBody,
    ModalContent,
    ModalFooter,
    ModalHeader,
-   ModalProps,
+   type AutocompleteProps,
+   type ModalProps,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { createTsForm } from '@ts-react/form'

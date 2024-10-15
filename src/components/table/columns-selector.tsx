@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import { TableIcon } from 'lucide-react'
 
-import { ColumnKeys } from './table-function'
+import { type ColumnKeys } from './table-function'
 
 type Columns = {
    uid: string | number

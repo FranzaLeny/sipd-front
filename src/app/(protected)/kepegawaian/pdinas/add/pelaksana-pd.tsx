@@ -16,10 +16,10 @@ import { eselonToString } from '@utils/roman'
 import { Reorder } from 'framer-motion'
 import { sortBy } from 'lodash-es'
 import { EllipsisVertical } from 'lucide-react'
-import { Control, useController, useForm } from 'react-hook-form'
+import { useController, useForm, type Control } from 'react-hook-form'
 import { z } from 'zod'
 
-import { PDinasInput, PelaksanaPdSchema, TsForm } from './componet-form'
+import { PelaksanaPdSchema, TsForm, type PDinasInput } from './componet-form'
 
 type PelaksanaPd = z.infer<typeof PelaksanaPdSchema>
 export default function PelaksanaPDinas({ control }: { control: Control<PDinasInput> }) {

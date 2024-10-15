@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, useEffect, useState } from 'react'
-import { Input, InputProps, Select, Selection, SelectItem } from '@nextui-org/react'
+import { Input, Select, SelectItem, type InputProps, type Selection } from '@nextui-org/react'
 import { KomponenTipeArraySchema, MaxBatchSchema } from '@zod'
 import { fromZodError } from 'zod-validation-error'
 

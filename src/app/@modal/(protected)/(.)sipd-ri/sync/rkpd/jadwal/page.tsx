@@ -11,7 +11,7 @@ import DialogConfirm from '@components/modal/dialog-confirm'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
 import { processChunks } from '@utils/hof'
 import { JadwalAnggaranUncheckedCreateInputSchema } from '@zod'
-import { toast, ToastContent } from 'react-toastify'
+import { toast, type ToastContent } from 'react-toastify'
 import { useSession } from '@shared/hooks/use-session'
 
 async function singkronData(data: JadwalAnggaranUncheckedCreateInput[], n: number) {

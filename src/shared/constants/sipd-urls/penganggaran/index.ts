@@ -1,4 +1,4 @@
-import { TypePostSipdUrls } from '../types'
+import type { TypePostSipdUrls } from '../types'
 import * as kegiatan from './kegiatan'
 import * as laporan from './laporan'
 import * as pembiayaan from './pembiayaan'

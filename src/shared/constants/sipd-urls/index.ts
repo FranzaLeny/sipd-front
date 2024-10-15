@@ -1,7 +1,7 @@
 import * as data from './data'
 import * as penganggaran from './penganggaran'
 import * as rkpd from './rkpd'
-import { TypeGetSipdUrls, TypePostSipdUrls } from './types'
+import type { TypeGetSipdUrls, TypePostSipdUrls } from './types'
 
 export type UrlGetKeys = keyof PayloadResponseGetSipd
 export type UrlPostKeys = keyof PayloadResponsePostSipd

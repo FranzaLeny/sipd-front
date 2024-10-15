@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import Link from 'next/link'
-import { HelperColumns } from '@components/table'
+import { type HelperColumns } from '@components/table'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
 import hasAccess from '@utils/chek-roles'
 import { MoreVertical } from 'lucide-react'

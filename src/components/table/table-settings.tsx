@@ -4,7 +4,7 @@ import { Button, Checkbox, Divider, Radio, RadioGroup } from '@nextui-org/react'
 import { Settings } from 'lucide-react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 
-import { COLORS, IFormTable, SELECTIONS, TableUiProps } from './table-function'
+import { COLORS, SELECTIONS, type IFormTable, type TableUiProps } from './table-function'
 
 type TableSettingsProps = {
    isOpen: boolean

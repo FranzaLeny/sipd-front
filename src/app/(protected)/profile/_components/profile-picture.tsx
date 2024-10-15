@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { updateUser } from '@actions/data/user'
 import axios from '@custom-axios/index'
 import { Avatar, Button } from '@nextui-org/react'

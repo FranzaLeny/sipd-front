@@ -1,11 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import dynamic from 'next/dynamic'
 import Loading from '@components/ui/loading'
 import {
    cn,
-   SortDescriptor,
+   type SortDescriptor,
    Table,
    TableBody,
    TableCell,
@@ -14,20 +12,22 @@ import {
    TableRow,
    useDisclosure,
 } from '@nextui-org/react'
-import { useQuery } from '@tanstack/react-query'
 import axios from '@shared/custom-axios/api-fetcher'
+import { useQuery } from '@tanstack/react-query'
+import dynamic from 'next/dynamic'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import BottomTable from './bottom-table'
 import ColumnsSelector from './columns-selector'
 import GlobalSearch from './global-search'
 import {
-   BaseData,
+   type BaseData,
    generateCellProps,
    generateColumns,
    generateTableUi,
-   IFormTable,
+   type IFormTable,
    INITIAL_LIMIT,
-   TableServerSideProps,
+   type TableServerSideProps,
 } from './table-function'
 import TableSettings, { TableSettingToggle } from './table-settings'
 

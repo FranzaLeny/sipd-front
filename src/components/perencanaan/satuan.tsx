@@ -1,12 +1,12 @@
 'use client'
 
 import { forwardRef, useEffect, useMemo, useState } from 'react'
-import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/react'
+import { Autocomplete, AutocompleteItem, type AutocompleteProps } from '@nextui-org/react'
 import { useFilter } from '@react-aria/i18n'
 import { sortBy } from 'lodash-es'
 import { useInfiniteScroll } from '@shared/hooks/use-infinite-scroll'
 
-import { useSatuanList, UseSatuanListProps } from './use-satuan-list'
+import { useSatuanList, type UseSatuanListProps } from './use-satuan-list'
 
 type FieldState = {
    selectedKey: React.Key | null

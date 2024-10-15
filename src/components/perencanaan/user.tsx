@@ -2,7 +2,7 @@
 
 import { forwardRef, useEffect, useState } from 'react'
 import { getUserSipdPerencanaan } from '@actions/perencanaan/data/user'
-import { Autocomplete, AutocompleteItem, AutocompleteProps, Button } from '@nextui-org/react'
+import { Autocomplete, AutocompleteItem, Button, type AutocompleteProps } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { debounce } from 'lodash-es'
 import { ArrowDown } from 'lucide-react'

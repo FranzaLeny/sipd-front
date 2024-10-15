@@ -14,14 +14,14 @@ import { generateApiKey } from '@actions/perencanaan/token-sipd'
 import {
    listSipdGet,
    listSipdPost,
-   Payload,
-   PayloadGet,
-   PayloadResponseGetSipd,
-   PayloadResponsePostSipd,
-   UrlGetKeys,
-   UrlPostKeys,
+   type Payload,
+   type PayloadGet,
+   type PayloadResponseGetSipd,
+   type PayloadResponsePostSipd,
+   type UrlGetKeys,
+   type UrlPostKeys,
 } from '@constants/sipd-urls'
-import Axios, { AxiosError, AxiosInstance } from 'axios'
+import Axios, { AxiosError, type AxiosInstance } from 'axios'
 import { decodeJwt } from 'jose'
 
 const axios: AxiosInstance = Axios.create({

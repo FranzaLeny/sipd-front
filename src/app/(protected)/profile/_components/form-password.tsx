@@ -1,7 +1,7 @@
 'use client'
 
 import { updateUser } from '@actions/data/user'
-import { TextInput, TextInputProps } from '@components/form/text-input'
+import { TextInput, type TextInputProps } from '@components/form/text-input'
 import { Card, CardContent } from '@components/ui/card'
 import { Button } from '@nextui-org/react'
 import { createTsForm } from '@ts-react/form'

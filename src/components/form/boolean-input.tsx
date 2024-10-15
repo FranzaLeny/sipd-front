@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
-import { Checkbox, CheckboxProps } from '@nextui-org/react'
+import { Checkbox, type CheckboxProps } from '@nextui-org/react'
 import { useFieldInfo, useTsController } from '@ts-react/form'
 import { titleCase } from '@utils'
 

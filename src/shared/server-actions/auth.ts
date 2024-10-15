@@ -2,7 +2,7 @@ import { signInUserToSipdRi } from '@actions/perencanaan/auth-sipd-ri'
 import getAccess from '@utils/chek-roles'
 import { z } from '@zod'
 import { unionBy } from 'lodash-es'
-import { getServerSession as _getServerSession, AuthOptions, User } from 'next-auth'
+import { getServerSession as _getServerSession, type AuthOptions, type User } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { fromZodError } from 'zod-validation-error'
 

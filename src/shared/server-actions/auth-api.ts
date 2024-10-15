@@ -1,7 +1,7 @@
 'use server'
 
 import { headers } from 'next/headers'
-import { Session } from 'next-auth'
+import { type Session } from 'next-auth'
 import axios from '@shared/custom-axios'
 
 type UserDlh = {

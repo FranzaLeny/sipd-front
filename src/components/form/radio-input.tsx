@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
-import { cn, Radio, RadioGroup, RadioGroupProps } from '@nextui-org/react'
+import { cn, Radio, RadioGroup, type RadioGroupProps } from '@nextui-org/react'
 import { useFieldInfo, useTsController } from '@ts-react/form'
 import { titleCase } from '@utils'
 

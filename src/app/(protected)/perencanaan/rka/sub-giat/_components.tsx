@@ -4,7 +4,7 @@ import React, { useMemo } from 'react'
 import Link from 'next/link'
 import { getBlSkpdByIdSkpd } from '@actions/perencanaan/rka/bl-skpd'
 import { JadwalAnggaranSearchParams } from '@components/perencanaan/jadwal-anggaran'
-import { HelperColumns } from '@components/table'
+import { type HelperColumns } from '@components/table'
 import {
    Accordion,
    AccordionItem,

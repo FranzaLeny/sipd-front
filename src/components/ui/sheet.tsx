@@ -1,6 +1,6 @@
 'use client'
 
-import { ElementRef, forwardRef } from 'react'
+import { forwardRef, type ElementRef } from 'react'
 import {
    cn,
    Modal,
@@ -8,10 +8,10 @@ import {
    ModalContent,
    ModalFooter,
    ModalHeader,
-   ModalProps,
-   ModalSlots,
-   SlotsToClasses,
    useDisclosure,
+   type ModalProps,
+   type ModalSlots,
+   type SlotsToClasses,
 } from '@nextui-org/react'
 
 export interface SheetProps extends Omit<ModalProps, 'placement'> {

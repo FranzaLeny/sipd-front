@@ -3,13 +3,13 @@
 import { forwardRef } from 'react'
 import {
    CardBody,
-   CardFooterProps,
    CardFooter as CardFooterUi,
    CardHeader as CardHeaderUi,
-   CardProps,
    Card as CardUi,
    cn,
-   HTMLNextUIProps,
+   type CardFooterProps,
+   type CardProps,
+   type HTMLNextUIProps,
 } from '@nextui-org/react'
 
 const Card = forwardRef<HTMLDivElement, CardProps>(({ ...props }, ref) => (
