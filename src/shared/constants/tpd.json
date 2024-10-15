@@ -2,32 +2,32 @@
    "data_tapd": [
       {
          "id": "dummy_1",
-         "nama": "Sahali, ST,MM",
+         "nama": "Sahali, S.T., M.M.",
          "nip": "197408062000121003",
          "jabatan": "Anggota"
       },
       {
          "id": "dummy_2",
-         "nama": "Ferdinandus Diri Burin, SE.M",
+         "nama": "Ferdinandus Diri Burin, S.E., M.E.",
          "nip": "197511112002121010",
          "jabatan": "Sekretaris"
       },
       {
          "id": "dummy_3",
-         "nama": "Lusius Kehali,SE",
+         "nama": "Lusius Kehali, S.E.",
          "nip": "197805062005011016",
          "jabatan": "Anggota"
       },
       {
          "id": "dummy_4",
-         "nama": "Maria Amsi Nogo, SE., MM",
+         "nama": "Maria Amsi Nogo, S.E., M.M.",
          "nip": "197810012009032007",
          "jabatan": "Anggota"
       }
    ],
    "kepala_skpd": {
       "id": "dummy_1",
-      "nama": "Christianus Rimbaraya, SE, MM",
+      "nama": "Christianus Rimbaraya, S.E., M.M.",
       "nip": "197911162006041007",
       "jabatan": "Kepala Dinas Lingkungan Hidup"
    }

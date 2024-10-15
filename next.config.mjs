@@ -5,12 +5,11 @@ const nextConfig = {
    reactStrictMode: true,
    distDir:
       process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_BUILD_FOLDER : undefined,
-   // output: 'standalone',
+   // output: process.env.NEXT_PUBLIC_BUILD_FOLDER === 'standalone' ? 'standalone' : undefined,
    compiler: {
       styledComponents: true,
-      removeConsole: process.env.NEXT_PUBLIC_SHOW_CONSOLE === 'false',
+      removeConsole: process.env.NEXT_PUBLIC_SHOW_CONSOLE !== 'false',
    },
-
    experimental: {
       webVitalsAttribution: ['CLS', 'LCP'],
       staleTimes: {

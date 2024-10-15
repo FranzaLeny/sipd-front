@@ -15,6 +15,7 @@
 
 # production
 /build
+/STANDALONE
 
 # misc
 .DS_Store

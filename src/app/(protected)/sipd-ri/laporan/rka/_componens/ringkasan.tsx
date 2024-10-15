@@ -50,9 +50,9 @@ export default function RingkasanPerubahanSkpd({
          <div className='max-h-full max-w-full flex-1 overflow-auto pb-4'>
             <div
                ref={printRef}
-               className='w-fit min-w-full print:bg-white print:text-black'>
+               className='w-fit min-w-full'>
                <table className='min-w-full'>
-                  <tbody className='text-center font-bold uppercase'>
+                  <tbody className='page-print text-center font-bold uppercase'>
                      <tr>
                         <td className='cell-print'>
                            <div className='p-2'>

@@ -50,6 +50,11 @@ const mapping = [
    [zPelaksanaPd, TextInput],
 ] as const
 
+const mappingText = [
+   [z.string(), TextAreaInput],
+   [z.number(), TextAreaInput],
+] as const
+
 export const PDinasInputSchema = z
    .object({
       pelaksana: zPelaksanaPd,
@@ -60,6 +65,19 @@ export const PDinasInputSchema = z
       tempat_tujuan: z.string({
          description: 'Masukan Tempat Tujuan',
       }),
+      tahun: z.coerce.number({
+         description: 'Tahun // Tahun perjalanan dinas',
+      }),
+      nama_sub_giat: z
+         .string({
+            description: 'Sub Kegian // Sub Kegiatan yang dibebankan',
+         })
+         .trim()
+         .min(1, { message: 'Sub Kegiatan Tidak Boleh Kosong' }),
+      id_sub_bl: z.coerce.number().int().min(1),
+      kode_sub_giat: z.string().trim().min(1),
+      kode_sbl: z.string().trim().min(1),
+
       tanggal_berangkat: z.date({
          description: 'Tanggal Berangkat // Pilih Tanggal Berangkat',
       }),
@@ -133,5 +151,15 @@ const CardForm = (props: FormProps) => {
       />
    )
 }
-
+export const DasarInputSchema = z.object({
+   dasar: z
+      .string({
+         description: 'Dasar Perjalanan Dinas',
+         message: 'Dasar Perjalanan Dinas Tidak Boleh Kosong',
+      })
+      .trim()
+      .min(1, { message: 'Dasar Perjalanan Dinas Tidak Boleh Kosong' }),
+})
+export type DasarInput = z.infer<typeof DasarInputSchema>
 export const TsForm = createTsForm(mapping, { FormComponent: CardForm })
+export const DasarForm = createTsForm(mappingText, { FormComponent: CardForm })

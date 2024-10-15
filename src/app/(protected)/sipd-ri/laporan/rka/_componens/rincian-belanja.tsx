@@ -145,7 +145,7 @@ export default function RingkasanPerubahanRincianBelanjaSubGiat({
          <div className='max-h-full max-w-full flex-1 overflow-auto py-4'>
             {!!slbAktif?.length && !!selctedSbl ? (
                <div
-                  className='w-fit min-w-full print:bg-white print:text-black'
+                  className='page-print w-fit min-w-full'
                   ref={printRef}>
                   <table className='min-w-full'>
                      <tbody className='text-center font-bold uppercase'>

@@ -112,7 +112,7 @@ type GetBlSubGiatParams = {
 }
 
 type GetAllBlSubGiatParams =
-   | GetBlSubGiatParams
+   | ({ hasPagu?: number | string } & GetBlSubGiatParams)
    | (Partial<GetBlSubGiatParams> & {
         bl_sub_giat_id: string
      })

@@ -69,6 +69,9 @@
    .pagu-skpd td {
       @apply rounded-b-small border-x border-b px-3 pb-2 pt-0.5 text-center border-success even:border-warning;
    }
+   .page-print {
+      @apply print:bg-white print:!p-0 print:!px-px print:!mx-auto print:text-black;
+   }
 }
 
 @media print {

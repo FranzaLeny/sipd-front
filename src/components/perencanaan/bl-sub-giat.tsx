@@ -6,36 +6,37 @@ import { Autocomplete, AutocompleteItem, AutocompleteProps } from '@nextui-org/r
 import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
 
-type BlSubGiat = AsyncReturnType<typeof getAllBlSubGiat>
+// type BlSubGiat = AsyncReturnType<typeof getAllBlSubGiat>
 type ParamsGetAllSubGiat = Parameters<typeof getAllBlSubGiat>[0]
 
-export interface BlSubGiatSelectorProps
-   extends Pick<
+export interface BlSubGiatSelectorProps {
+   autocompleteProps?: Pick<
       AutocompleteProps,
       Exclude<
          keyof AutocompleteProps,
-         'onChange' | 'children' | 'defaultItems' | 'items' | 'onSelectionChange'
+         'onChange' | 'children' | 'defaultItems' | 'items' | 'onSelectionChange' | 'selectedKey'
       >
-   > {
-   onChange?: (blsubGiat: BlSubGiat[number] | null) => void
+   >
+   onChange?: (blsubGiat?: BlSubGiat) => void
    onValueChange?: (nama: string | null) => void
    onSelectionChange?: (id: string | null) => void
    params: ParamsGetAllSubGiat
+   fieldKey?: 'id' | 'kode_sbl' | 'kode_sub_giat'
    delayFetch?: number
+   selectedKey?: string | null
 }
 
 const BlSubGiatSelector = forwardRef(
-   (
-      {
+   (blSubGiatSelectorProps: BlSubGiatSelectorProps, ref?: React.Ref<HTMLInputElement>) => {
+      const {
          onChange = () => {},
          params,
+         fieldKey = 'id',
          onValueChange = () => {},
          onSelectionChange = () => {},
          selectedKey,
-         ...props
-      }: BlSubGiatSelectorProps,
-      ref?: React.Ref<HTMLInputElement>
-   ) => {
+         autocompleteProps,
+      } = blSubGiatSelectorProps
       const {
          data: options,
          isFetching,
@@ -53,13 +54,13 @@ const BlSubGiatSelector = forwardRef(
 
       const handleChange = (value?: any) => {
          if (typeof value === 'string') {
-            const subs = options?.find((d) => d.id === value)
-            onSelectionChange(subs?.id ?? null)
+            const subs = options?.find((d) => d[fieldKey] === value)
+            onSelectionChange(subs ? subs[fieldKey] : null)
             onValueChange(subs?.nama_sub_giat ?? null)
-            onChange(subs ?? null)
+            onChange(subs)
          } else {
             onSelectionChange(null)
-            onChange(null)
+            onChange(undefined)
          }
       }
       return (
@@ -71,21 +72,21 @@ const BlSubGiatSelector = forwardRef(
             placeholder='Pilih Sub Kegiatan...'
             variant='bordered'
             defaultItems={options || []}
-            {...props}
+            {...autocompleteProps}
             selectedKey={selectedKey ? selectedKey?.toString() : null}
             onSelectionChange={handleChange}
-            defaultSelectedKey={props?.defaultSelectedKey?.toString()}
+            defaultSelectedKey={autocompleteProps?.defaultSelectedKey?.toString()}
             ref={ref}
-            isDisabled={props?.isDisabled || !options}
-            isLoading={props?.isLoading || isFetching || status === 'pending'}>
-            {({ id, nama_sub_giat, nama_sub_skpd, nama_giat, nama_program, pagu = 0 }) => {
+            isDisabled={autocompleteProps?.isDisabled || !options}
+            isLoading={autocompleteProps?.isLoading || isFetching || status === 'pending'}>
+            {({ nama_sub_giat, nama_sub_skpd, nama_giat, nama_program, pagu = 0, ...rest }) => {
                return (
                   <AutocompleteItem
                      className='data-[selected=true]:text-primary'
                      classNames={{ title: 'whitespace-normal' }}
-                     value={id}
+                     value={rest[fieldKey]}
                      textValue={nama_sub_giat}
-                     key={id}>
+                     key={rest[fieldKey]}>
                      <div>
                         <p>
                            {nama_sub_giat ?? ''} {numberToRupiah(pagu)}

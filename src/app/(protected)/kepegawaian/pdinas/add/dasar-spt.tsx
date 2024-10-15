@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
    Button,
    Modal,
@@ -8,117 +8,79 @@ import {
    ModalContent,
    ModalFooter,
    ModalHeader,
-   Textarea,
    useDisclosure,
 } from '@nextui-org/react'
 import { Reorder } from 'framer-motion'
-import { Control, useController } from 'react-hook-form'
+import { Control, useController, useForm } from 'react-hook-form'
 
-import { PDinasInput } from './componet-form'
+import { DasarForm, DasarInput, DasarInputSchema, PDinasInput } from './componet-form'
+
+type SelectedItem = {
+   dasar?: string
+   index?: number
+}
 
 export default function DasarSPT({ control }: { control: Control<PDinasInput> }) {
    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
-   const [selectedIndex, setSelectedIndex] = useState(0)
-   const [value, setValue] = useState('')
+   const [selected, setSelected] = useState<SelectedItem>()
+
    const {
-      field: { value: dasar, onChange, name },
+      field: { value: listDasar, onChange, name },
       formState: {
          errors: { dasar: dasarError = [] },
       },
       fieldState: { invalid },
    } = useController({ name: 'dasar', control })
 
-   const handleDataChange = (operation: 'update' | 'remove') => {
-      if (!!value.trim()) {
-         if (!!selectedIndex) {
-            if (operation === 'remove') {
-               onChange([...dasar.slice(0, selectedIndex - 1), ...dasar.slice(selectedIndex)])
-            } else {
-               onChange([
-                  ...dasar.slice(0, selectedIndex - 1),
-                  value,
-                  ...dasar.slice(selectedIndex),
-               ])
-            }
-         } else {
-            onChange([...dasar, value])
-         }
-      }
-      setValue('')
-      setSelectedIndex(0)
+   const handleClose = () => {
+      setSelected(undefined)
       onClose()
    }
-   useEffect(() => {
-      if (Math.abs(selectedIndex) && dasar?.length) {
-         setValue(dasar[Math.abs(selectedIndex) - 1])
+   const handleDataChange = (data: DasarInput, isDelete = false) => {
+      const { dasar } = data
+      let temp: string[] = [...listDasar]
+      if (typeof selected?.index === 'number') {
+         if (isDelete) {
+            temp = listDasar?.filter((d, i) => i !== selected?.index)
+         } else {
+            temp = listDasar?.map((d, i) => (i === selected?.index ? dasar : d))
+         }
+      } else {
+         temp.push(dasar)
       }
-   }, [selectedIndex, dasar])
+      onChange(temp)
+   }
+
+   const handleOpen = (data?: SelectedItem) => {
+      setSelected(data)
+      onOpen()
+   }
+
    return (
       <div className='space-y-3'>
          <div className='bg-secondary-50  rounded-medium flex items-center justify-between'>
-            <h6 className='pl-3'>Dasar -Dasar Perjalanan Dinas</h6>
+            <h6 className='pl-3'>Dasar-dasar Perjalanan Dinas</h6>
             <Button
                variant='bordered'
                color='primary'
-               onPress={onOpen}>
-               Tambah Dasa Perjalanan Dinas
+               onPress={() => handleOpen()}>
+               Tambah Dasar Perjalanan Dinas
             </Button>
          </div>
-         <Modal
-            isOpen={isOpen}
-            onClose={() => {
-               setSelectedIndex(0)
-               setValue('')
-            }}
-            onOpenChange={onOpenChange}>
-            <ModalContent>
-               {(onClose) => (
-                  <>
-                     <ModalHeader className='flex flex-col gap-1'>
-                        {!!selectedIndex ? 'Ubah' : 'Tambah'} Dasar Perjalanan Dinas
-                     </ModalHeader>
-                     <form id='form-dasar-pd'>
-                        <ModalBody>
-                           <Textarea
-                              name='dasar_pd'
-                              id='dasar_pd'
-                              isInvalid={!value.trim()}
-                              errorMessage='Tidak boleh kosong!'
-                              value={value ?? undefined}
-                              variant='bordered'
-                              onValueChange={(v) => !!v.trim() && setValue(v)}
-                              required
-                              label='Dasar Perjalanan dinas'
-                              placeholder='Masukan dasar - dasar perjalanan dinas'
-                           />
-                        </ModalBody>
-                        <ModalFooter>
-                           {!!selectedIndex && (
-                              <Button
-                                 color='danger'
-                                 onPress={() => handleDataChange('remove')}>
-                                 Hapus
-                              </Button>
-                           )}
-                           <Button
-                              form='form-dasar-pd'
-                              color={!!selectedIndex ? 'success' : 'primary'}
-                              onPress={() => handleDataChange('update')}>
-                              {!!selectedIndex ? 'Ubah' : 'Tambah'}
-                           </Button>
-                        </ModalFooter>
-                     </form>
-                  </>
-               )}
-            </ModalContent>
-         </Modal>
+         {NewFunction({
+            isOpen,
+            handleClose,
+            onOpenChange,
+            selected,
+            handleDataChange,
+         })}
          <Reorder.Group
             className='list-inside list-[lower-alpha] space-y-2'
             axis='y'
             id='dasar-spt'
-            values={dasar}
+            values={listDasar}
             onReorder={onChange}>
-            {dasar?.map((item, i) => (
+            {listDasar?.map((item, i) => (
                <Reorder.Item
                   className={`border-divider flex items-center justify-between rounded-lg border p-2 ${!!dasarError[i] ? 'border-danger-500' : ''}`}
                   key={item.replace(/[^a-zA-Z0-9]/g, '')}
@@ -126,10 +88,7 @@ export default function DasarSPT({ control }: { control: Control<PDinasInput> })
                   {item}{' '}
                   <span>
                      <Button
-                        onPress={() => {
-                           setSelectedIndex(i + 1)
-                           onOpen()
-                        }}
+                        onPress={() => handleOpen({ dasar: item, index: i })}
                         variant='ghost'
                         radius='full'
                         className='inline-flex size-5'
@@ -140,7 +99,66 @@ export default function DasarSPT({ control }: { control: Control<PDinasInput> })
                </Reorder.Item>
             ))}
          </Reorder.Group>
-         <p className='text-danger-'>{dasar?.length === 0 ? 'Tidak ada data' : ''}</p>
+         <p className='text-danger-'>{listDasar?.length === 0 ? 'Tidak ada data' : ''}</p>
       </div>
+   )
+}
+function NewFunction({
+   isOpen,
+   handleClose,
+   onOpenChange,
+   selected,
+   handleDataChange,
+}: {
+   isOpen: boolean
+   handleClose: () => void
+   onOpenChange: () => void
+   selected?: SelectedItem
+   handleDataChange: (data: DasarInput, isDelete?: boolean) => void
+}) {
+   const formDasar = useForm<DasarInput>()
+   const onClose = () => {
+      formDasar.reset({ dasar: undefined })
+      handleClose()
+   }
+   const handeleSubmit = (data: DasarInput) => {
+      handleDataChange(data)
+      onClose()
+   }
+   return (
+      <Modal
+         isOpen={isOpen}
+         onClose={onClose}
+         onOpenChange={onOpenChange}>
+         <ModalContent>
+            <ModalHeader className='flex flex-col gap-1'>
+               {!!selected ? 'Ubah' : 'Tambah'} Dasar Perjalanan Dinas
+            </ModalHeader>
+            <ModalBody>
+               <DasarForm
+                  defaultValues={{ dasar: selected?.dasar }}
+                  formProps={{
+                     id: 'form-dasar-pd',
+                  }}
+                  onSubmit={handeleSubmit}
+                  form={formDasar}
+                  schema={DasarInputSchema}
+               />
+            </ModalBody>
+            <ModalFooter>
+               <Button
+                  type='button'
+                  color='danger'>
+                  Hapus
+               </Button>
+               <Button
+                  form='form-dasar-pd'
+                  type='submit'
+                  color={!!selected ? 'success' : 'primary'}>
+                  {!!selected ? 'Ubah' : 'Tambah'}
+               </Button>
+            </ModalFooter>
+         </ModalContent>
+      </Modal>
    )
 }

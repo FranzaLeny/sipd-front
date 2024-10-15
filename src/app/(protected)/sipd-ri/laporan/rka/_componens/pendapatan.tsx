@@ -48,7 +48,7 @@ export default function RingkasanPerubahanPendapatanSkpd({
          </div>
          <div className='h-fit max-h-full max-w-full flex-1 overflow-auto pb-10'>
             <div
-               className='w-fit min-w-full print:bg-white print:text-black'
+               className='page-print w-fit min-w-full'
                ref={printRef}>
                <table className='min-w-full'>
                   <tbody className='text-center font-bold uppercase'>

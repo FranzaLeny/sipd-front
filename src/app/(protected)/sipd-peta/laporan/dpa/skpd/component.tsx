@@ -583,7 +583,7 @@ export default function DpaSkpd({
                <div className='content pb-10'>
                   <div
                      ref={printRef}
-                     className='w-fit min-w-full max-w-max print:bg-white print:text-black'>
+                     className='page-print w-fit min-w-full max-w-max'>
                      <TableKop
                         dokumen={dokumen}
                         tahun={tahun}

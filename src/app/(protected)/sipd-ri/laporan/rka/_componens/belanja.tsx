@@ -54,7 +54,7 @@ export default function RkaPergeseranBelanjaSkpd({
          <div className='max-h-full max-w-full flex-1 overflow-auto pb-10'>
             <div
                ref={printRef}
-               className='w-fit min-w-full print:bg-white print:text-black'>
+               className='page-print w-fit min-w-full'>
                <table className='min-w-full'>
                   <tbody className='text-center font-bold uppercase'>
                      <tr>

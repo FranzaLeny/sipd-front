@@ -186,7 +186,7 @@ export default function RkaPendapatan({
 
          <div
             ref={printRef}
-            className='bg-content1 rounded-medium min-w-full max-w-max p-2 shadow sm:p-4 print:bg-white print:p-0 print:text-sm print:text-black'>
+            className='page-print bg-content1 rounded-medium min-w-full max-w-max p-2 shadow sm:p-4 print:text-sm'>
             <table className='min-w-full'>
                <tbody className='text-center font-bold uppercase'>
                   <tr>

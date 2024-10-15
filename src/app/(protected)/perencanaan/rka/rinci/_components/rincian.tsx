@@ -180,15 +180,18 @@ export default function Rincian({
                {jadwal && (
                   <div>
                      <BlSubGiatSelector
-                        isDisabled={isFetching || isFetchingLaporan}
-                        label='Pilih Sub Kegiatan'
-                        labelPlacement='inside'
+                        autocompleteProps={{
+                           label: 'Sub Kegiatan',
+                           placeholder: 'Pilih Sub Kegiatan',
+                           labelPlacement: 'inside',
+                           isDisabled: isFetching || isFetchingLaporan,
+                           isLoading: isFetching,
+                           isInvalid: !blSubGiatId,
+                           errorMessage: 'Harus pilih sub kegiatan',
+                        }}
                         selectedKey={blSubGiatId}
-                        isLoading={isFetching}
                         params={{ id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }}
                         onSelectionChange={setBlSubGiatId}
-                        isInvalid={!blSubGiatId}
-                        errorMessage={'Harus pilih sub kegiatan'}
                      />
                   </div>
                )}

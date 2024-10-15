@@ -78,7 +78,7 @@ export default function RekapDana({ sumberDana, tahun, skpd, jadwal }: Props) {
             </div>
             <div
                ref={printRef}
-               className='bg-content1 rounded-medium size-fit min-w-full max-w-max p-2 text-sm shadow sm:p-4 print:bg-white print:p-0 print:text-xs print:text-black'>
+               className='page-print bg-content1 rounded-medium size-fit min-w-full max-w-max p-2 text-sm shadow sm:p-4 print:text-xs'>
                <table className='min-w-full'>
                   <tbody className='text-center font-bold uppercase'>
                      <tr className='border-b-4 border-double print:border-black'>

@@ -648,7 +648,7 @@ export default function DpaPendapatanSkpd({
                <div className='content pb-10 text-base'>
                   <div
                      ref={printRef}
-                     className='w-fit min-w-full max-w-max print:bg-white print:text-black'>
+                     className='page-print w-fit min-w-full max-w-max'>
                      <TableKop
                         dokumen={dokumen}
                         tahun={tahun}

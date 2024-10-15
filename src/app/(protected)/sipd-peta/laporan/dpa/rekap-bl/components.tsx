@@ -784,7 +784,7 @@ export default function DpaRkaBelanja({
                <div className='content size-fit min-w-full max-w-max pb-10 '>
                   <div
                      ref={printRef}
-                     className='w-fit min-w-full max-w-max text-base print:bg-white print:text-black'>
+                     className='page-print w-fit min-w-full max-w-max text-base'>
                      <TableKop
                         dokumen={dokumen}
                         tahun={tahun}

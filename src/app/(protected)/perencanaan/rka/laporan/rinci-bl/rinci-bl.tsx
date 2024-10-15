@@ -123,6 +123,7 @@ export default function RinciBl({
    }, [defaultData, paguPerubahan])
 
    const [tapd, setTapd] = useState(data?.skpd?.tapd)
+   console.log({ tapd })
 
    const handleJadwalChange = (jadwal?: string) => {
       setJadwal(jadwal)
@@ -150,7 +151,8 @@ export default function RinciBl({
       } else if (data?.jadwal?.is_perubahan === 0) {
          setIsPerubahan(false)
       }
-   }, [data?.jadwal, tahun])
+      setTapd(data?.skpd?.tapd)
+   }, [data?.jadwal, data?.skpd?.tapd, tahun])
 
    useEffect(() => {
       setPaguPerubahan(false)
@@ -265,8 +267,11 @@ export default function RinciBl({
                {jadwal && (
                   <div>
                      <BlSubGiatSelector
-                        label='Pilih Sub Kegiatan'
-                        labelPlacement='inside'
+                        autocompleteProps={{
+                           label: 'Sub Kegiatan',
+                           placeholder: 'Pilih Sub Kegiatan',
+                           labelPlacement: 'inside',
+                        }}
                         selectedKey={blSubGiatId}
                         params={{ id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }}
                         onSelectionChange={setBlSubGiatId}
@@ -397,7 +402,7 @@ export default function RinciBl({
                <div className='content pb-20'>
                   <div
                      ref={componentRef}
-                     className={`size-fit min-w-full max-w-max p-2 text-sm shadow sm:p-4 print:bg-white print:p-0 print:text-xs print:text-black`}>
+                     className={`page-print size-fit min-w-full max-w-max p-2 text-sm shadow sm:p-4 print:text-xs`}>
                      <TableKop
                         jenisDok={jenisDok}
                         tahun={data?.sub_kegiatan?.tahun}
