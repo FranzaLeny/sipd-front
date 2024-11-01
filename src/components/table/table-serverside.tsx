@@ -1,9 +1,10 @@
 'use client'
 
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import dynamic from 'next/dynamic'
 import Loading from '@components/ui/loading'
 import {
    cn,
-   type SortDescriptor,
    Table,
    TableBody,
    TableCell,
@@ -11,22 +12,21 @@ import {
    TableHeader,
    TableRow,
    useDisclosure,
+   type SortDescriptor,
 } from '@nextui-org/react'
-import axios from '@shared/custom-axios/api-fetcher'
 import { useQuery } from '@tanstack/react-query'
-import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import axios from '@shared/custom-axios/api-fetcher'
 
 import BottomTable from './bottom-table'
 import ColumnsSelector from './columns-selector'
 import GlobalSearch from './global-search'
 import {
-   type BaseData,
    generateCellProps,
    generateColumns,
    generateTableUi,
-   type IFormTable,
    INITIAL_LIMIT,
+   type BaseData,
+   type IFormTable,
    type TableServerSideProps,
 } from './table-function'
 import TableSettings, { TableSettingToggle } from './table-settings'
@@ -70,7 +70,6 @@ export default function TableServerSide<T extends BaseData>(props: TableServerSi
    const [params, setParams] = useState<Params>({
       limit: searchParamsStatic?.limit ?? INITIAL_LIMIT,
       ...searchParamsStatic,
-      search: '',
    })
 
    const reset = useCallback(() => {
@@ -147,7 +146,7 @@ export default function TableServerSide<T extends BaseData>(props: TableServerSi
          if (value) {
             setParams(({ after, before, ...old }) => ({ ...old, search: value }))
          } else {
-            setParams(({ after, before, ...old }) => ({ ...old, search: '' }))
+            setParams(({ after, before, ...old }) => ({ ...old }))
          }
       },
       [reset]
@@ -157,18 +156,27 @@ export default function TableServerSide<T extends BaseData>(props: TableServerSi
       (sortBy: SortDescriptor) => {
          reset()
          const column_sort = columns.find((d) => d.uid === sortBy?.column)
-         !!sortBy &&
-            !!column_sort &&
-            setParams(({ after, before, ...old }) => ({
-               ...old,
-               orderBy:
-                  sortBy?.direction === 'descending'
-                     ? `-${column_sort?.key.toString()}`
-                     : (column_sort?.key as string),
-            }))
-         setSortDescriptor(sortBy)
+         if (
+            sortDescriptor?.column === sortBy?.column &&
+            sortDescriptor?.direction === 'descending' &&
+            sortBy?.direction === 'ascending'
+         ) {
+            setParams(({ after, before, orderBy, ...old }) => old)
+            setSortDescriptor(undefined)
+         } else {
+            !!sortBy &&
+               !!column_sort &&
+               setParams(({ after, before, ...old }) => ({
+                  ...old,
+                  orderBy:
+                     sortBy?.direction === 'descending'
+                        ? `-${column_sort?.key.toString()}`
+                        : (column_sort?.key as string),
+               }))
+            setSortDescriptor(sortBy)
+         }
       },
-      [columns, reset]
+      [columns, reset, sortDescriptor]
    )
 
    const handleLimitChange = useCallback(

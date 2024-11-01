@@ -28,6 +28,7 @@ interface Props
    onChange?: (akun?: Akun) => void
    params?: GetListAkunParams
    delayFetch?: number
+   refetchOnInput?: boolean
 }
 
 export const AkunSelector = forwardRef(
@@ -39,20 +40,18 @@ export const AkunSelector = forwardRef(
          onValueChange,
          selectedKey,
          onSelectionChange,
+         refetchOnInput = true,
          ...props
       }: Props,
       ref?: React.Ref<HTMLInputElement>
    ) => {
-      const [selected, setSelected] = useState(selectedKey?.toString() || null)
-
       const [queryParams, setQueryParams] = useState({
-         search: '',
          limit: 5,
          tahun: 0,
          ...params,
       })
       const [options, setOptions] = useState<Akun[]>([])
-      const { data, isFetching, status, isFetched } = useQuery({
+      const { data, isFetching, status } = useQuery({
          queryKey: [{ ...queryParams }, 'data_akun'] as [GetListAkunParams, string],
          queryFn: async ({ queryKey: [params] }) => {
             return await getListAkun(params)
@@ -60,7 +59,7 @@ export const AkunSelector = forwardRef(
          placeholderData: (previousData) => previousData,
       })
       useEffect(() => {
-         setQueryParams({ tahun: 0, limit: 5, ...params, search: '' })
+         setQueryParams({ tahun: 0, limit: 5, ...params })
       }, [params])
       useEffect(() => {
          if (data?.hasPreviousPage) {
@@ -71,15 +70,16 @@ export const AkunSelector = forwardRef(
       }, [data])
 
       const handleInputChange = debounce((value: string) => {
-         const akun = options?.find((d) => d.nama_akun === value)
-         if (akun) {
-            return
+         if (refetchOnInput) {
+            const akun = options?.find((d) => d.nama_akun === value)
+            if (akun) {
+               return
+            }
+            setQueryParams(({ after, ...old }) => ({ ...old, search: value ?? undefined }))
          }
-         setQueryParams(({ after, ...old }) => ({ ...old, search: value ?? '' }))
       }, delayFetch)
 
       const handleSelected = (key: any) => {
-         setSelected(key)
          if (key && typeof key === 'string') {
             const akun = options?.find((d) => d.id_akun === Number(key))
             onChange && onChange(akun)
@@ -112,11 +112,10 @@ export const AkunSelector = forwardRef(
 
       return (
          <Autocomplete
-            onKeyDown={(e: any) => e.continuePropagation()}
+            // onKeyDown={(e: any) => e.continuePropagation()}
             popoverProps={{ isOpen: true, defaultOpen: true }}
             // allowsCustomValue
             label='Akun Belanja'
-            placeholder='Pilih Akun Belanja...'
             variant='bordered'
             defaultFilter={() => true}
             shouldCloseOnBlur={false}
@@ -124,11 +123,11 @@ export const AkunSelector = forwardRef(
             {...props}
             defaultSelectedKey={props?.defaultSelectedKey?.toString()}
             listboxProps={{
-               topContent: 'Pilih Akun',
+               ...props?.listboxProps,
                bottomContent: data?.hasNextPage ? bottomContent : undefined,
                emptyContent: 'Tidak ada data akun',
             }}
-            selectedKey={selected}
+            selectedKey={selectedKey?.toString()}
             onInputChange={handleInputChange}
             onSelectionChange={handleSelected}
             ref={ref}

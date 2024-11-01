@@ -120,7 +120,7 @@ export function RowActions({ id, is_lokal, created_by, updated_by }: JadwalAngga
                Ubah
             </DropdownItem>
             <DropdownItem
-               key='edit'
+               key='delete'
                href={`jadwal/${id}/delete`}
                color='warning'
                endContent={<Edit className='size-4' />}>

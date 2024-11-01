@@ -13,7 +13,7 @@ import {
 } from '@nextui-org/react'
 import { MoreVertical } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
-import { titleCase } from '@shared/utils'
+import { snakeToTileCase } from '@shared/utils'
 
 export const ActionTahapanTable = () => {
    const { hasAcces } = useSession(['super_admin', 'admin', 'admin_perencanaan'])
@@ -84,7 +84,7 @@ export const helperColumns: HelperColumns<Tahapan> = {
    status_tahap: {
       key: 'status_tahap',
       name: 'Jenis Tahapan',
-      cell: (v) => titleCase(v),
+      cell: (v) => snakeToTileCase(v),
    },
    status_aktif: {
       key: 'status_aktif',

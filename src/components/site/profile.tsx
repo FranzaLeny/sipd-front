@@ -9,13 +9,7 @@ const Profile = () => {
    const { data, status } = useSession()
    const user = useMemo(() => data?.user, [data?.user])
    const router = useRouter()
-   useEffect(() => {
-      if (status === 'authenticated') {
-         localStorage.setItem('x-sipd-ri', JSON.stringify(user))
-      } else if (status === 'unauthenticated') {
-         localStorage.removeItem('x-sipd-ri')
-      }
-   }, [user, status])
+
    const logout = async () => {
       await signOut({ redirect: false })
       localStorage.clear()
@@ -23,6 +17,15 @@ const Profile = () => {
       router.replace('/', { scroll: false })
       setIsOpen(false)
    }
+
+   useEffect(() => {
+      if (status === 'authenticated') {
+         localStorage.setItem('x-sipd-ri', JSON.stringify(user))
+      } else if (status === 'unauthenticated') {
+         localStorage.removeItem('x-sipd-ri')
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [user, status])
    const goToProfile = () => {
       router.push('/profile')
       setIsOpen(false)

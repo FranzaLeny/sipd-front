@@ -1,4 +1,7 @@
-import DialogCommingSoon from '@components/modal/dialog-coming-soon'
+import type { Metadata } from 'next'
+import { getPegawai } from '@actions/data/pegawai'
+
+import ModalDeletePegawai from './modal-confirm'
 
 interface Props {
    params: Params
@@ -7,9 +10,15 @@ interface Props {
 interface Params {
    id: string
 }
-// TODO Page DELETE ROLE
-const Page = ({ params: { id } }: Props) => {
-   return <DialogCommingSoon title='Hapus Data Pegawai' />
+
+export const metadata: Metadata = {
+   title: 'Hapus Pegawai',
+}
+const Page = async ({ params: { id } }: Props) => {
+   const { data: pegawai } = await getPegawai(id).catch(() => ({
+      data: { id: undefined, nama: undefined },
+   }))
+   return <ModalDeletePegawai pegawai={{ id: pegawai?.id, nama: pegawai?.nama }} />
 }
 
 export default Page

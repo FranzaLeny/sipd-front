@@ -267,11 +267,7 @@ export default function RinciBl({
                {jadwal && (
                   <div>
                      <BlSubGiatSelector
-                        autocompleteProps={{
-                           label: 'Sub Kegiatan',
-                           placeholder: 'Pilih Sub Kegiatan',
-                           labelPlacement: 'inside',
-                        }}
+                        label='Sub Kegiatan'
                         selectedKey={blSubGiatId}
                         params={{ id_unit: unit, jadwal_anggaran_id: jadwal, id_daerah: daerah }}
                         onSelectionChange={setBlSubGiatId}

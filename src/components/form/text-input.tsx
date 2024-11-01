@@ -5,7 +5,8 @@ import { cn, Input, type InputProps } from '@nextui-org/react'
 import { useLocale } from '@react-aria/i18n'
 import { useFieldInfo, useTsController } from '@ts-react/form'
 import { Eye, EyeOff } from 'lucide-react'
-import { titleCase } from '@shared/utils'
+import { ZodNumber } from 'zod'
+import { snakeToTileCase } from '@shared/utils'
 
 const parseNumber = (value: string, decimalSeparator: string): number | null => {
    const cleanedString = value
@@ -56,9 +57,17 @@ export interface TextInputProps
 export const TextInput = (defaultProps: TextInputProps) => {
    // @ts-expect-error
    const { numberFormatOptions, control, enumValues, hidden, ...inputProps } = defaultProps
-   const [type, setType] = useState(inputProps?.type)
+   const [type, setType] = useState(inputProps?.type ?? 'text')
    const [value, setValue] = useState('')
-   const { label, placeholder, defaultValue, isNullable, isOptional } = useFieldInfo()
+   const {
+      label,
+      placeholder,
+      defaultValue,
+      isNullable,
+      isOptional,
+      zodType,
+      type: types,
+   } = useFieldInfo()
    const { locale } = useLocale()
 
    const decimalSeparator = useMemo(() => {
@@ -70,14 +79,27 @@ export const TextInput = (defaultProps: TextInputProps) => {
 
    const {
       error,
-      field: { onChange, value: fieldValue, name, ref, onBlur },
+      field: { onChange, value: fieldValue, name = '', ref, onBlur },
       formState: { isSubmitting },
       fieldState: { invalid },
    } = useTsController<string | number | null | undefined>()
+
+   const isNumber = useMemo(() => {
+      return types === 'number' || zodType instanceof ZodNumber
+   }, [types, zodType])
+
+   const labelField = useMemo(() => {
+      const index = name.match(/\[(\d+)\]/)
+      if (index) {
+         const indexNumber = parseInt(index[1])
+         return `${label ?? snakeToTileCase(name?.replace(/\[\d+\]/, ''))} ${indexNumber + 1}`
+      }
+      return label ?? snakeToTileCase(name)
+   }, [name, label])
    const handleChange = useCallback(
       (val: string) => {
          setValue(val)
-         if (type === 'number') {
+         if (isNumber) {
             const _val = parseNumber(val, decimalSeparator)
             onChange(_val)
          } else {
@@ -85,7 +107,7 @@ export const TextInput = (defaultProps: TextInputProps) => {
             onChange(val ? val : isNullable ? null : undefined)
          }
       },
-      [onChange, decimalSeparator, isNullable, type]
+      [onChange, decimalSeparator, isNullable, isNumber]
    )
    const passwordToggle = () => {
       if (inputProps?.type === 'password' && !inputProps?.isClearable) {
@@ -109,9 +131,7 @@ export const TextInput = (defaultProps: TextInputProps) => {
       if (fieldValue === undefined || fieldValue === null) {
          return ''
       }
-      if (type !== 'number' && typeof fieldValue === 'string') {
-         return fieldValue
-      } else if (type === 'number' && !!numberFormatOptions) {
+      if (isNumber && !!numberFormatOptions) {
          const stringValue = formatNumberStrig(value, locale, numberFormatOptions, decimalSeparator)
          const numberValue = parseNumber(value, decimalSeparator)
          if (stringValue === value || fieldValue === numberValue) {
@@ -120,15 +140,16 @@ export const TextInput = (defaultProps: TextInputProps) => {
          return formatNumberStrig(fieldValue, locale, numberFormatOptions, decimalSeparator)
       }
       return fieldValue.toString()
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [fieldValue, value, locale])
+   }, [fieldValue, value, locale, isNumber, decimalSeparator, numberFormatOptions])
 
+   const isRequired = !(isNullable && isOptional)
    const labelPlacement = inputProps?.labelPlacement ?? 'inside'
    const props: InputProps = {
       'aria-labelledby': name,
       variant: 'bordered',
-      autoComplete: name,
+      autoComplete: name?.replace(/\[\d+\]/, ''),
       id: name,
+      isRequired,
       defaultValue: defaultValue ?? '',
       ref,
       onBlur,
@@ -137,7 +158,7 @@ export const TextInput = (defaultProps: TextInputProps) => {
       labelPlacement,
       className: cn(hidden && 'hidden', inputProps?.className),
       onValueChange: handleChange,
-      label: inputProps?.label ?? label ?? titleCase(name),
+      label: inputProps?.label ?? labelField,
       placeholder: inputProps?.placeholder ?? placeholder,
       isReadOnly: inputProps?.isReadOnly || isSubmitting,
       isInvalid: invalid || inputProps?.isInvalid,

@@ -3,7 +3,7 @@
 import { useCallback } from 'react'
 import { cn, Textarea, type TextAreaProps } from '@nextui-org/react'
 import { useFieldInfo, useTsController } from '@ts-react/form'
-import { titleCase } from '@shared/utils'
+import { snakeToTileCase } from '@shared/utils'
 
 export interface TextAreaInputProps
    extends Pick<
@@ -31,10 +31,11 @@ export const TextAreaInput = (defaultProps: TextAreaInputProps) => {
       },
       [onChange, isNullable]
    )
-
+   const isRequired = !(isNullable && isOptional)
    const labelPlacement = inputProps?.labelPlacement ?? 'inside'
    const props: TextAreaProps = {
       'aria-labelledby': name,
+      isRequired,
       variant: 'bordered',
       autoComplete: name,
       id: name,
@@ -47,7 +48,7 @@ export const TextAreaInput = (defaultProps: TextAreaInputProps) => {
       labelPlacement,
       onValueChange: handleChange,
       className: cn(hidden && 'hidden', inputProps?.className),
-      label: inputProps?.label ?? label ?? titleCase(name),
+      label: inputProps?.label ?? label ?? snakeToTileCase(name),
       placeholder: inputProps?.placeholder ?? placeholder,
       isReadOnly: inputProps?.isReadOnly || isSubmitting,
       isInvalid: invalid || inputProps?.isInvalid,

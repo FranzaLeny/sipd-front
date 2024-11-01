@@ -44,12 +44,11 @@ export const UserSipdPerencanaanSelector = forwardRef(
       const [selected, setSelected] = useState(selectedKey?.toString() || null)
 
       const [queryParams, setQueryParams] = useState({
-         search: '',
          tahun: 0,
          ...params,
       })
       const [options, setOptions] = useState<UserSipdPerencanaan[]>([])
-      const { data, isFetching, status, isFetched } = useQuery({
+      const { data, isFetching, status } = useQuery({
          queryKey: [{ ...queryParams }, 'data_user_sipd_perencanaan'] as [
             GetListUserSipdPerencanaanParams,
             ...string[],
@@ -60,7 +59,7 @@ export const UserSipdPerencanaanSelector = forwardRef(
          placeholderData: (previousData) => previousData,
       })
       useEffect(() => {
-         setQueryParams({ tahun: 0, limit: 10, ...params, search: '' })
+         setQueryParams({ tahun: 0, limit: 10, ...params })
       }, [params])
       useEffect(() => {
          if (data?.hasPreviousPage) {
@@ -75,12 +74,8 @@ export const UserSipdPerencanaanSelector = forwardRef(
          if (user) {
             return
          }
-         setQueryParams(({ after, ...old }) => ({ ...old, search: value ?? '' }))
+         setQueryParams(({ after, ...old }) => ({ ...old, search: value ?? undefined }))
       }, delayFetch)
-      // const handleValueChange = (value: string) => {
-      //    onValueChange(value)
-      //    debounceValueChange(value)
-      // }
 
       const handleSelected = (key: any) => {
          setSelected(key)

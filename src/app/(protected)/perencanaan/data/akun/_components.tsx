@@ -101,6 +101,13 @@ export const helperColumns: HelperColumns<Akun> = {
       cell: toBooleanText,
       sortable: true,
    },
+   is_pdinas: {
+      key: 'is_pdinas',
+      name: 'Perjalanan Dinas',
+      hide: true,
+      cell: toBooleanText,
+      sortable: true,
+   },
    tahun: {
       key: 'tahun',
       name: 'Tahun',

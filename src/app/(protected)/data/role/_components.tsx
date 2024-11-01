@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { type HelperColumns } from '@components/table'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
-import { titleCase } from '@utils'
+import { snakeToTileCase } from '@utils'
 import { MoreVertical } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
 
@@ -66,7 +66,7 @@ export const helperColumns: HelperColumns<Role> = {
       key: 'name',
       name: 'Nama',
       sortable: true,
-      cell: (name: string) => titleCase(name),
+      cell: (name: string) => snakeToTileCase(name),
    },
 
    created_at: {

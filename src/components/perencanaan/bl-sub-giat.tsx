@@ -9,14 +9,14 @@ import { numberToRupiah } from '@utils'
 // type BlSubGiat = AsyncReturnType<typeof getAllBlSubGiat>
 type ParamsGetAllSubGiat = Parameters<typeof getAllBlSubGiat>[0]
 
-export interface BlSubGiatSelectorProps {
-   autocompleteProps?: Pick<
+export interface BlSubGiatSelectorProps
+   extends Pick<
       AutocompleteProps,
       Exclude<
          keyof AutocompleteProps,
          'onChange' | 'children' | 'defaultItems' | 'items' | 'onSelectionChange' | 'selectedKey'
       >
-   >
+   > {
    onChange?: (blsubGiat?: BlSubGiat) => void
    onValueChange?: (nama: string | null) => void
    onSelectionChange?: (id: string | null) => void
@@ -35,8 +35,9 @@ const BlSubGiatSelector = forwardRef(
          onValueChange = () => {},
          onSelectionChange = () => {},
          selectedKey,
-         autocompleteProps,
+         ...autocompleteProps
       } = blSubGiatSelectorProps
+
       const {
          data: options,
          isFetching,
@@ -68,12 +69,16 @@ const BlSubGiatSelector = forwardRef(
             listboxProps={{ emptyContent: 'Tidak ada data Sub Kegiatan' }}
             onKeyDown={(e: any) => e.continuePropagation()}
             popoverProps={{ isOpen: true, defaultOpen: true }}
-            aria-labelledby='Sub Kegiatan'
-            placeholder='Pilih Sub Kegiatan...'
+            aria-labelledby='sub-giat-selctor'
+            label='Sub Kegiatan'
             variant='bordered'
+            labelPlacement='inside'
             defaultItems={options || []}
             {...autocompleteProps}
-            selectedKey={selectedKey ? selectedKey?.toString() : null}
+            errorMessage={
+               autocompleteProps?.isInvalid ? autocompleteProps?.errorMessage : undefined
+            }
+            selectedKey={selectedKey ? selectedKey?.toString() : undefined}
             onSelectionChange={handleChange}
             defaultSelectedKey={autocompleteProps?.defaultSelectedKey?.toString()}
             ref={ref}

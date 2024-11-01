@@ -26,9 +26,11 @@ export default function PelaksanaPDinas({ control }: { control: Control<PDinasIn
    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
    const [formData, setFormData] = useState<PelaksanaPd>()
    const {
-      field: { value, onChange, name },
-      formState: {},
-      fieldState: { invalid },
+      field: { value, onChange, ref },
+      formState: {
+         errors: { pelaksana: errors = [] },
+      },
+      fieldState: { invalid, error },
    } = useController({ name: 'pelaksana', control })
    const listPelaksana: PelaksanaPd[] = useMemo(
       () =>
@@ -37,7 +39,6 @@ export default function PelaksanaPDinas({ control }: { control: Control<PDinasIn
             ?.map((d, i) => ({ ...d, nomor_urut: i + 1 })) || [],
       [value]
    )
-
    const handleOrder = (data: PelaksanaPd[]) => {
       onChange(data?.map((d, i) => ({ ...d, nomor_urut: i + 1 })))
    }
@@ -62,8 +63,9 @@ export default function PelaksanaPDinas({ control }: { control: Control<PDinasIn
    }
    const formatter = new DateFormatter('id-ID', { dateStyle: 'long' })
    const listPegawaiId = sortBy(listPelaksana?.map((d) => d.pegawai_id))
+
    return (
-      <div>
+      <>
          <ModalAddPegawai
             isOpen={isOpen}
             onClose={handleClose}
@@ -74,17 +76,24 @@ export default function PelaksanaPDinas({ control }: { control: Control<PDinasIn
             disabledKeysPegawai={listPegawaiId}
          />
          <div
-            className={`rounded-t-medium ${invalid || listPelaksana?.length === 0 ? 'border-danger' : 'border-divider'} flex items-center justify-between border p-2`}>
-            <h6 className='pl-3'>Pelaksana Perjalanan Dinas</h6>
-            <Button
-               color='secondary'
-               onPress={() => handeleOpen()}>
-               Pelaksana Baru
-            </Button>
-         </div>
-         {listPelaksana?.length > 0 ? (
-            <table className='min-w-full'>
+            className={`${invalid && 'border-danger rounded-medium border-separate overflow-hidden border'} `}>
+            <table className={`min-w-full`}>
                <thead>
+                  <tr>
+                     <th
+                        className='cell-print font-bold'
+                        colSpan={5}>
+                        <div className='flex items-center justify-between p-2'>
+                           <h6 className='flex-1'>Pelaksana Perjalanan Dinas</h6>
+                           <Button
+                              ref={ref}
+                              color='secondary'
+                              onPress={() => handeleOpen()}>
+                              Pelaksana Baru
+                           </Button>
+                        </div>
+                     </th>
+                  </tr>
                   <tr className='text-center'>
                      <th className='cell-print font-normal'>No</th>
                      <th className='cell-print font-normal'>Nama/NIP/Jabatan</th>
@@ -103,9 +112,10 @@ export default function PelaksanaPDinas({ control }: { control: Control<PDinasIn
                      // TODO Tampilkan error
                      <Reorder.Item
                         as='tr'
+                        className={`hover:bg-foreground/5 hover:cursor-move ${!!errors[i] && 'text-danger'}`}
                         key={item?.pegawai_id}
                         value={item}>
-                        <td className='cell-print'>{i + 1}</td>
+                        <td className='cell-print rounded-bl-medium'>{i + 1}</td>
                         <td className='cell-print'>
                            <div>{item?.nama}</div>
                            {item?.nip && <div>{item?.nip}</div>}
@@ -113,7 +123,7 @@ export default function PelaksanaPDinas({ control }: { control: Control<PDinasIn
                         </td>
                         <td className='cell-print'>{formatter.format(item?.tanggal_lahir)}</td>
                         <td className='cell-print'>{item?.keterangan}</td>
-                        <td className='cell-print'>
+                        <td className='cell-print rounded-br-medium'>
                            <Button
                               onPress={() => {
                                  handeleOpen(item)
@@ -129,12 +139,9 @@ export default function PelaksanaPDinas({ control }: { control: Control<PDinasIn
                   ))}
                </Reorder.Group>
             </table>
-         ) : (
-            <p className='text-danger border-danger rounded-b-medium border-x border-b p-2 text-center'>
-               Tidak ada data pelaksana perjalanan dinas
-            </p>
-         )}
-      </div>
+            {!!error?.message && <p className='text-danger p-2 text-center'>{error?.message}</p>}
+         </div>
+      </>
    )
 }
 const VAL_OP = {
@@ -195,10 +202,10 @@ const ModalAddPegawai = ({
          )
       }
    }
-
    return (
       <Modal
          isOpen={isOpen}
+         size='3xl'
          onClose={handleClose}
          onOpenChange={onOpenChange}
          scrollBehavior='inside'>
@@ -208,10 +215,18 @@ const ModalAddPegawai = ({
             </ModalHeader>
             <ModalBody>
                <PegawaiSelector
-                  variant='flat'
+                  defaultInputValue={defaultValue?.nama}
+                  allowsCustomValue={false}
+                  variant='bordered'
+                  label='Nama Pegawai'
+                  selectedKey={formPegawai.watch('pegawai_id')}
+                  defaultSelectedKey={defaultValue?.pegawai_id}
                   disabledKeys={disabledKeysPegawai}
-                  onChange={handlePegawaiChange}
+                  onSelected={handlePegawaiChange}
                   params={{ orderBy: ['-is_asn', '-pangkat_gol', 'nip'] }}
+                  isRequired
+                  errorMessage={formPegawai.formState.errors.nama?.message}
+                  isInvalid={!!formPegawai.formState.errors.nama}
                />
                <TsForm
                   defaultValues={{ ...itemDefault, ...defaultValue }}
@@ -223,7 +238,6 @@ const ModalAddPegawai = ({
                         hidden: formPegawai.watch('jenis_pegawai') === 'PPNPNS',
                      },
                      pangkat_gol: { hidden: true },
-                     is_pengikut: { label: 'Pengikut', typeValue: 'number' },
                      tanggal_lahir: {
                         granularity: 'day',
                         calendarProps: {},
@@ -233,8 +247,9 @@ const ModalAddPegawai = ({
                   formProps={{ id: 'form-pegawai' }}
                   schema={PelaksanaPdSchema}
                   form={formPegawai}
-                  onSubmit={hanldeSubmit}
-               />
+                  onSubmit={hanldeSubmit}>
+                  {({ nama, ...other }) => <>{Object.values(other)}</>}
+               </TsForm>
             </ModalBody>
             <ModalFooter className='flex items-center justify-end gap-3'>
                {!!defaultValue && (

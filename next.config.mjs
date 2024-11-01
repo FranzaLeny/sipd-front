@@ -12,7 +12,7 @@ const nextConfig = {
    output: process.env.NEXT_PUBLIC_OUTPUT,
    compiler: {
       styledComponents: true,
-      removeConsole: process.env.NEXT_PUBLIC_SHOW_CONSOLE !== 'false',
+      // removeConsole: process.env.NEXT_PUBLIC_SHOW_CONSOLE !== 'true',
    },
    experimental: {
       webVitalsAttribution: ['CLS', 'LCP'],
@@ -20,7 +20,7 @@ const nextConfig = {
          dynamic: 10,
          static: 180,
       },
-      typedRoutes: true,
+      // typedRoutes: true,
    },
    eslint: {
       dirs: ['src'],

@@ -1,4 +1,6 @@
-import DialogCommingSoon from '@components/modal/dialog-coming-soon'
+import { getAkun } from '@actions/perencanaan/data/akun'
+
+import ModalEdit from './modal-edit'
 
 interface Props {
    params: Params
@@ -7,9 +9,10 @@ interface Props {
 interface Params {
    id: string
 }
-// TODO Page EDIT AKUN DATA PERENCANAAN
-const Page = ({ params: { id } }: Props) => {
-   return <DialogCommingSoon title='Ubah Data Akun' />
+// TODO Page DELETE AKUN DATA PERENCANAAN
+const Page = async ({ params: { id } }: Props) => {
+   const akun = await getAkun(id)
+   return <ModalEdit akun={akun} />
 }
 
 export default Page

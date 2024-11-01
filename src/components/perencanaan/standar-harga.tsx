@@ -48,7 +48,6 @@ export const StandarHargaSelector = forwardRef(
    ) => {
       const [selected, setSelected] = useState(selectedKey?.toString() || null)
       const [queryParams, setQueryParams] = useState({
-         search: '',
          limit: 5,
          tahun: 0,
          set_input: 1,
@@ -56,7 +55,7 @@ export const StandarHargaSelector = forwardRef(
          ...params,
       })
       useEffect(() => {
-         setQueryParams(({ after, ...old }) => ({ ...old, ...params, search: '' }))
+         setQueryParams(({ after, ...old }) => ({ ...old, ...params }))
       }, [params])
       const [options, setOptions] = useState<StandarHarga[]>([])
       const { data, isFetching, status, isFetched } = useQuery({
@@ -83,7 +82,7 @@ export const StandarHargaSelector = forwardRef(
          if (standarHarga && standarHarga.nama_standar_harga == value) {
             return
          }
-         setQueryParams(({ after, ...old }) => ({ ...old, search: value ?? '' }))
+         setQueryParams(({ after, ...old }) => ({ ...old, search: value ?? undefined }))
       }, delayFetch)
       const handleSelected = (key: any) => {
          onSelectionChange && onSelectionChange(key)

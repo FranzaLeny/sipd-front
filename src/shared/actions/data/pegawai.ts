@@ -16,3 +16,14 @@ export async function getListPegawai(params: {
       })
       .then((res) => res.data)
 }
+export async function addPegawai(data: PegawaiUncheckedCreateInput) {
+   return await axios.post<ResponseApi<PegawaiWithPangkat>>(`/api/master/pegawai`, data)
+}
+
+export async function getPegawai(id: string) {
+   return await axios.get<ResponseApi<PegawaiWithPangkat>>(`/api/master/pegawai/${id}`)
+}
+
+export async function deletePegawai(id: string) {
+   return await axios.delete<ResponseApi<PegawaiWithPangkat>>(`/api/master/pegawai/${id}`)
+}

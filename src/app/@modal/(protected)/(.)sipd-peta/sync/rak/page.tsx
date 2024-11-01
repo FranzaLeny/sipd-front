@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { syncAkunBelanja } from '@actions/penatausahaan/pengeluaran/akun-belanja'
 import { syncRakBlSkpd, syncRakBlSubGiat } from '@actions/penatausahaan/pengeluaran/rak'
 import { getRakBlSubGiatSipdPeta, getRakSkpdSipdPeta } from '@actions/penatausahaan/sipd/rak'
 import { getAllBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
@@ -9,6 +10,7 @@ import DialogConfirm from '@components/modal/dialog-confirm'
 import JadwalInput from '@components/perencanaan/jadwal-anggaran'
 import { MaxDataInput } from '@components/perencanaan/sync-input'
 import { processChunks } from '@utils/hof'
+import { AkunBelanjaUncheckedCreateInputSchema } from '@validations/keuangan/akun-belanja'
 import {
    RakSkpdUncheckedCreateInputSchema,
    RakUncheckedCreateInputSchema,
@@ -65,6 +67,12 @@ const ModalSingkron = () => {
             action: syncRakBlSubGiat,
             max: lengthData,
             schema: RakUncheckedCreateInputSchema,
+         })
+         await processChunks({
+            data: dataRakSbl,
+            action: syncAkunBelanja,
+            max: lengthData,
+            schema: AkunBelanjaUncheckedCreateInputSchema,
          })
          await processChunks({
             data: dataRakSkpd,
@@ -171,8 +179,9 @@ const _getRakBlSkpdSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) =
       const rakSkpd = await getRakSkpdSipdPeta({ page: 1, limit: 100 })
       const dataRakSkpd: RakSkpdUncheckedCreateInput[] = []
       const dataRakSbl: RakUncheckedCreateInput[] = []
+      // chek index
 
-      for await (const rak of rakSkpd) {
+      for await (const [index, rak] of rakSkpd.entries()) {
          const dataRak = {
             ...rak,
             jadwal_anggaran_id,
@@ -188,12 +197,26 @@ const _getRakBlSkpdSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams) =
             ),
          })
          dataRakSkpd.push(dataRak)
+         if ((index + 1) % 10 === 0) {
+            toast.update('singkron_data', {
+               render: (
+                  <div>
+                     <p className='text-sm font-bold'>Mohon tunggu...</p>
+                     <p className='text-xs'>Istirahat 1 Detik</p>
+                  </div>
+               ),
+            })
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+         }
          await _getRakBlSubGiatSipdPeta({
             ...params,
             id_daerah: rak.id_daerah,
             id_skpd: rak.id_skpd,
             tahun: rak.tahun,
-         }).then((r) => dataRakSbl.push(...r))
+         }).then((r) => {
+            dataRakSbl.push(...r)
+         })
+         // Cek jika index habis dibagikan 10
       }
       return { dataRakSkpd, dataRakSbl }
    } catch (error: any) {
@@ -209,7 +232,7 @@ const _getRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams
       if (!subGiats?.length) {
          throw new Error('Data Sub Kgiatan untuk jadwal ini tidak ditemukan')
       }
-      for await (const sbl of subGiats) {
+      for await (const [index, sbl] of subGiats?.entries()) {
          const {
             id: bl_sub_giat_id,
             bl_sub_giat_aktif_id,
@@ -236,6 +259,17 @@ const _getRakBlSubGiatSipdPeta = async (params: BackUpRakBlSubGiatSipdPetaParams
                </div>
             ),
          })
+         // if ((index + 1) % 19 === 0) {
+         //    toast.update('singkron_data', {
+         //       render: (
+         //          <div>
+         //             <p className='text-sm font-bold'>Mohon tunggu...</p>
+         //             <p className='text-xs'>Istirahat 1 Detik</p>
+         //          </div>
+         //       ),
+         //    })
+         //    await new Promise((resolve) => setTimeout(resolve, 10000))
+         // }
          await getRakBlSubGiatSipdPeta({
             id_bidang_urusan,
             id_giat,

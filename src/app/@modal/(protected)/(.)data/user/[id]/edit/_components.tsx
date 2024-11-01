@@ -18,7 +18,7 @@ import {
 } from '@nextui-org/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { createTsForm } from '@ts-react/form'
-import { titleCase } from '@utils'
+import { snakeToTileCase } from '@utils'
 import { UserSchema, z } from '@zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -128,12 +128,6 @@ const ModalCopy = ({ data, roles }: { data: IUser; roles: RoleUser[] }) => {
                <TsForm
                   form={form}
                   schema={Schema}
-                  props={{
-                     active: { label: 'Aktif', typeValue: 'number' },
-                     is_locked: { label: 'Kunci', typeValue: 'number' },
-                     username: { label: 'Nama Pengguna' },
-                     nip: { label: 'NIP' },
-                  }}
                   onSubmit={onSubmit}>
                   {({ active, is_locked, jabatan, nama, username, nip }) => (
                      <>
@@ -217,7 +211,7 @@ function PilihRole({
             <SelectItem
                key={role}
                value={role}>
-               {titleCase(role)}
+               {snakeToTileCase(role)}
             </SelectItem>
          ))}
       </Select>

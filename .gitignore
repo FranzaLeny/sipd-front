@@ -13,6 +13,8 @@
 /.next/
 /out/
 /bun/
+/next-ui/
+tsconfig.turbo.json
 
 # production
 /build

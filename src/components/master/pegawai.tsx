@@ -14,18 +14,12 @@ interface Props
       AutocompleteProps,
       Exclude<
          keyof AutocompleteProps,
-         | 'onChange'
-         | 'children'
-         | 'defaultItems'
-         | 'items'
-         | 'ref'
-         | 'onValueChange'
-         | 'onSelectionChange'
+         'children' | 'defaultItems' | 'items' | 'ref' | 'onValueChange' | 'onSelectionChange'
       >
    > {
    onValueChange?: (nama_pegawai: string | null) => void
    onSelectionChange?: (id_pegawai: string | null) => void
-   onChange?: (pegawai?: PegawaiWithPangkat) => void
+   onSelected?: (pegawai?: PegawaiWithPangkat) => void
    params?: GetListParams
    delayFetch?: number
 }
@@ -33,20 +27,19 @@ interface Props
 export const PegawaiSelector = forwardRef(
    (
       {
-         onChange,
+         onSelected = () => {},
          params,
          delayFetch = 1000,
-         onValueChange,
+         onValueChange = () => {},
          selectedKey,
-         onSelectionChange,
+         onSelectionChange = () => {},
          ...props
       }: Props,
       ref?: React.Ref<HTMLInputElement>
    ) => {
-      const [selected, setSelected] = useState(selectedKey?.toString() || null)
+      // const [selected, setSelected] = useState(selectedKey?.toString() || null)
 
       const [queryParams, setQueryParams] = useState({
-         search: '',
          limit: 5,
          tahun: 0,
          ...params,
@@ -61,7 +54,7 @@ export const PegawaiSelector = forwardRef(
       })
 
       useEffect(() => {
-         setQueryParams({ tahun: 0, limit: 5, ...params, search: '' })
+         setQueryParams({ tahun: 0, limit: 5, ...params })
       }, [params])
 
       useEffect(() => {
@@ -73,24 +66,23 @@ export const PegawaiSelector = forwardRef(
       }, [data])
 
       const handleInputChange = debounce((value: string) => {
-         const akun = options?.find((d) => d.nama === value)
-         if (akun) {
+         const pegawai = options?.find((d) => d.nama === value)
+         if (pegawai) {
             return
          }
-         setQueryParams(({ after, ...old }) => ({ ...old, search: value ?? '' }))
+         setQueryParams(({ after, ...old }) => ({ ...old, search: value ?? undefined }))
       }, delayFetch)
 
       const handleSelected = (key: any) => {
-         setSelected(key)
          if (key && typeof key === 'string') {
-            const akun = options?.find((d) => d.id === key)
-            onChange && onChange(akun)
-            onValueChange && onValueChange(akun?.nama ?? null)
-            onSelectionChange && onSelectionChange(akun?.id ?? null)
+            const pegawai = options?.find((d) => d.id === key)
+            onSelected(pegawai)
+            onValueChange(pegawai?.nama ?? null)
+            onSelectionChange(pegawai?.id ?? null)
          } else {
-            onValueChange && onValueChange(null)
-            onChange && onChange(undefined)
-            onSelectionChange && onSelectionChange(null)
+            onValueChange(null)
+            onSelected(undefined)
+            onSelectionChange(null)
          }
       }
       const loadMoreHandle = () => {
@@ -115,23 +107,18 @@ export const PegawaiSelector = forwardRef(
       return (
          <Autocomplete
             onKeyDown={(e: any) => e.continuePropagation()}
-            popoverProps={{ isOpen: true, defaultOpen: true }}
-            // allowsCustomValue
             label='Pilih Pegawai'
-            placeholder='Pilih Pegawai...'
+            placeholder='Masukan nama pegawai...'
             variant='bordered'
             defaultFilter={() => true}
-            shouldCloseOnBlur={false}
             defaultItems={[]}
             {...props}
-            defaultSelectedKey={props?.defaultSelectedKey?.toString()}
             listboxProps={{
-               topContent: 'Pilih Pegawai',
+               emptyContent: 'Tidak ada data pegawai',
+               ...props?.listboxProps,
                bottomContent: data?.hasNextPage ? bottomContent : undefined,
-               emptyContent: 'Tidak ada data akun',
             }}
-            selectedKey={selected}
-            onInputChange={handleInputChange}
+            onValueChange={handleInputChange}
             onSelectionChange={handleSelected}
             ref={ref}
             items={options || []}
@@ -141,7 +128,7 @@ export const PegawaiSelector = forwardRef(
                <AutocompleteItem
                   className='data-[selected=true]:text-primary'
                   classNames={{ title: 'whitespace-normal' }}
-                  value={id}
+                  value={nama}
                   textValue={nama}
                   key={id}>
                   <div>

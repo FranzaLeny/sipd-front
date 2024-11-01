@@ -1,37 +1,54 @@
-export function snakeToProperCase(snakeCaseString: string) {
-   const words = snakeCaseString.split('_')
-   const properCaseWords = words.map((word) => {
-      const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      return capitalizedWord
-   })
-   const properCaseString = properCaseWords.join(' ')
-   return properCaseString
-}
-
-export function propperCase(snakeCaseString: string) {
-   const words = snakeCaseString.split(' ')
-   const properCaseWords = words.map((word) => {
-      const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      return capitalizedWord
-   })
-   const properCaseString = properCaseWords.join(' ')
-   return properCaseString
-}
-
-export const titleCase = (s: string, f = false) =>
-   s
-      .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
-      .replace(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase())
-
-export const toTitleCase = (s: string, f = false) => {
-   if (f) {
-      return s.toLowerCase().replace(/(^|[.?!]\s+)([a-z])/g, (match) => match.toUpperCase())
+/**
+ * Converts a string to proper case, where the first letter of each word is capitalized.
+ * If the `forceLowerCase` parameter is true, the entire string is first converted to
+ * lower case before capitalizing the first letter of each word.
+ *
+ * @param {string} text The string to be converted
+ * @param {boolean} [forceLowerCase=false] Whether to convert the entire string to lower case before processing
+ * @return {string} The converted string in proper case
+ */
+export const toProperCase = (text: string, forceLowerCase: boolean = false): string => {
+   if (forceLowerCase) {
+      return text.toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase())
    } else {
-      return s.replace(/(^|[.?!]\s+)([a-z])/g, (match) => match.toUpperCase())
+      return text.replace(/\b\w/g, (match) => match.toUpperCase())
    }
 }
 
-export function slug(str: string) {
+/**
+ * Converts a string from snake case to title case. If the second parameter is
+ * true, the entire string is first converted to lower case before converting
+ * to title case.
+ *
+ * @param {string} text The string to convert
+ * @return {string} The converted string
+ */
+
+export const snakeToTileCase = (text: string): string =>
+   text
+      .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
+      .replace(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase())
+
+/**
+ * Returns a string with the first letter of each sentence capitalized. If
+ * the second parameter is true, the entire string is first converted to
+ * lower case before capitalizing the first letter of each sentence.
+ *
+ * @param {string} s The string to convert
+ * @param {boolean} [forceLowerCase =false] Set to true to convert the entire string to
+ * lower case before capitalizing the first letter of each sentence.
+ * @return {string} The converted string
+ */
+
+export const toTitleCase = (text: string, forceLowerCase: boolean = false): string => {
+   if (forceLowerCase) {
+      return text.toLowerCase().replace(/(^|[.?!]\s+)([a-z])/g, (match) => match.toUpperCase())
+   } else {
+      return text.replace(/(^|[.?!]\s+)([a-z])/g, (match) => match.toUpperCase())
+   }
+}
+
+export function toSlug(str: string) {
    str = str.toLowerCase().trim()
    str = str.replace(/\s+/g, '-')
    str = str.replace(/[^\w\-]+/g, '')

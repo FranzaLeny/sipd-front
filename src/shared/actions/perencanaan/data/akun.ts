@@ -38,3 +38,12 @@ export async function getTolalAkun<T extends Partial<GetAkunParams>>(params: T) 
       >(`/api/perencanaan/data/akun/total`, { params })
       .then((res) => res?.data)
 }
+
+export async function getAkun(id: string) {
+   return await axios
+      .get<ResponseApi<Akun>>(`/api/perencanaan/data/akun/${id}`)
+      ?.then((res) => res.data)
+}
+export async function updateAkun(id: string, data: Partial<Akun>) {
+   return await axios.patch<ResponseApi<Akun>>(`/api/perencanaan/data/akun/${id}`, data)
+}

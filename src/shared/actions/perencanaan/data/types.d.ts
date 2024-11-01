@@ -22,6 +22,7 @@ type GetAkunParams = {
    is_sosial_uang: number
    is_subsidi: number
    is_tkdn: number
+   is_pdinas?: number
    set_input: number
    set_kab_kota: number
    set_prov: number

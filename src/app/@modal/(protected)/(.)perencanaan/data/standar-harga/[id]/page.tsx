@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { getStandarHargaById } from '@actions/perencanaan/data/standar-harga'
 import { DiffForHumans } from '@components/ui/DiffForHumans'
 import { cn } from '@nextui-org/react'
-import { numberToText, titleCase } from '@shared/utils'
+import { numberToText, snakeToTileCase } from '@shared/utils'
 import { kelompokToTipe } from '@shared/utils/standar-harga'
 
 const DialogShow = dynamic(() => import('@components/modal/dialog-show'), { ssr: false })
@@ -39,7 +39,7 @@ const getLabel = (key: keyof StandarHargaById) => {
       case 'is_sipd':
          return 'SIPD-RI'
       default:
-         return titleCase(key)
+         return snakeToTileCase(key)
    }
 }
 const diffForHumans = (value?: string | number | Date | null) => {

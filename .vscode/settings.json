@@ -21,5 +21,10 @@
    },
    "codeium.enableCodeLens": true,
    "editor.tabSize": 3,
-   "css.customData": [".vscode/tailwind.json"]
+   "css.customData": [".vscode/tailwind.json"],
+   "codeium.enableInComments": true,
+   "codeium.enableExplainProblem": false,
+   "codeium.indexStoragePath": "./",
+   "codeium.aggressiveShutdown": true,
+   "codeium.disableSupercomplete": true
 }

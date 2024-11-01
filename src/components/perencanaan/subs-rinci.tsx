@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useState } from 'react'
+import { forwardRef } from 'react'
 import { getSubsRinciBlSubGiat } from '@actions/perencanaan/rka/bl-rinci-sub-giat'
 import { Autocomplete, AutocompleteItem, type AutocompleteProps } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
@@ -33,14 +33,8 @@ export const SubsRinciSelector = forwardRef(
       }: SubsRinciSelectorProps,
       ref?: React.Ref<HTMLInputElement>
    ) => {
-      const [queryParams, setQueryParams] = useState({
-         search: '',
-         limit: 1000,
-         ...params,
-      })
-
       const { data, isFetching, status } = useQuery({
-         queryKey: [{ ...queryParams }, 'bl_sub_giat_rinci_subs'] as [
+         queryKey: [{ limit: 1000, ...params }, 'bl_sub_giat_rinci_subs'] as [
             GetListSubsRinciBlSubGiatParams,
             string,
          ],

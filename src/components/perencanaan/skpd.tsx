@@ -14,6 +14,7 @@ import {
    type SelectProps,
 } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import { toProperCase } from '@utils'
 
 type GetAllSkpdParams = Parameters<typeof getAllSkpd>
 
@@ -37,7 +38,6 @@ export const SkpdMultipleSelect = forwardRef(
       {
          onChange,
          params,
-         delayFetch = 1000,
          onSelectionChange,
          isClearable = true,
          selectProps,
@@ -166,10 +166,10 @@ interface SkpdSelectProps
       AutocompleteProps,
       Exclude<
          keyof AutocompleteProps,
-         'onChange' | 'children' | 'defaultItems' | 'items' | 'ref' | 'onSelectionChange'
+         'children' | 'defaultItems' | 'items' | 'ref' | 'onSelectionChange'
       >
    > {
-   onChange?: (skpd?: Skpd) => void
+   onSkpdChange?: (skpd?: Skpd) => void
    params?: GetAllSkpdParams[0]
    selectionKey?: 'id' | 'id_skpd'
    onSelectionChange?: (id?: string) => void
@@ -178,9 +178,9 @@ interface SkpdSelectProps
 export const SkpdSelect = forwardRef(
    (
       {
-         onChange,
+         onSkpdChange = () => {},
          params,
-         onSelectionChange,
+         onSelectionChange = () => {},
          selectionKey = 'id',
          isClearable = true,
          ...props
@@ -207,11 +207,11 @@ export const SkpdSelect = forwardRef(
       const handleChange = (value?: React.Key | null) => {
          if (typeof value === 'string') {
             const skpd = options?.find((d) => d[selectionKey].toString() === value)
-            skpd && onSelectionChange && onSelectionChange(skpd?.id)
-            skpd && onChange && onChange(skpd)
+            onSelectionChange(skpd?.id)
+            onSkpdChange(skpd)
          } else {
-            onSelectionChange && onSelectionChange(undefined)
-            onChange && onChange(undefined)
+            onSelectionChange(undefined)
+            onSkpdChange(undefined)
          }
       }
 
@@ -222,6 +222,7 @@ export const SkpdSelect = forwardRef(
             placeholder='Pilih SKPD...'
             variant='bordered'
             {...props}
+            selectedKey={props?.selectedKey?.toString()}
             onSelectionChange={handleChange}
             showScrollIndicators={false}
             defaultItems={list}
@@ -233,7 +234,7 @@ export const SkpdSelect = forwardRef(
                   className={`data-[selected=true]:border-b ${hidden ? 'hidden' : ''}`}
                   variant='bordered'
                   classNames={{ title: 'whitespace-normal capitalize' }}
-                  value={id}
+                  textValue={toProperCase(nama_skpd, true)}
                   key={selectionKey === 'id_skpd' ? id_skpd : id}>
                   {nama_skpd}
                </AutocompleteItem>

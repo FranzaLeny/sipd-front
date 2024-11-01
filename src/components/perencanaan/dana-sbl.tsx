@@ -1,9 +1,8 @@
 'use client'
 
-import { forwardRef, useState } from 'react'
+import { forwardRef } from 'react'
 import { getDanaBlSubGiat } from '@actions/perencanaan/rka/bl-sub-giat'
 import { Autocomplete, AutocompleteItem, type AutocompleteProps } from '@nextui-org/react'
-import { useLocale } from '@react-aria/i18n'
 import { useQuery } from '@tanstack/react-query'
 import { numberToRupiah } from '@utils'
 
@@ -35,14 +34,8 @@ export const DanaSelector = forwardRef(
       }: DanaSelectorProps,
       ref?: React.Ref<HTMLInputElement>
    ) => {
-      const [queryParams, setQueryParams] = useState({
-         search: '',
-         limit: 1000,
-         ...params,
-      })
-      const { locale } = useLocale()
       const { data, isFetching, status } = useQuery({
-         queryKey: [{ ...queryParams }, 'bl_sub_giat_dana', 'jadwal_anggaran'] as [
+         queryKey: [{ limit: 1000, ...params }, 'bl_sub_giat_dana', 'jadwal_anggaran'] as [
             GetListDanaParams,
             ...any,
          ],

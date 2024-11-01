@@ -1,4 +1,4 @@
-import { titleCase } from '@utils'
+import { snakeToTileCase } from '@utils'
 import { borderAll, numStyle, textStyle } from '@utils/excel'
 import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
@@ -49,7 +49,7 @@ const downloadRak = async (rak: RakBlByJadwal[]) => {
    const ws = wb.addWorksheet(sheet_name)
    formatDefaultRka(ws)
    // fillTableHead({ ws })
-   const titles = Object.keys(rak[0])?.map((title) => titleCase(title, true))
+   const titles = Object.keys(rak[0])?.map((title) => snakeToTileCase(title))
    const starRow = ws.addRow(titles)
    for (const [index, rinci] of rak.entries()) {
       const row = ws.addRow(Object.values(rinci))

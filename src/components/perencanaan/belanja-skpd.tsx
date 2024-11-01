@@ -43,14 +43,8 @@ export const BlSkpdSelector = forwardRef(
       }: BlSkpdSelectorProps,
       ref?: React.Ref<HTMLInputElement>
    ) => {
-      const [queryParams, setQueryParams] = useState({
-         search: '',
-         limit: 1000,
-         ...params,
-      })
-
       const { data, isFetching, status } = useQuery({
-         queryKey: [{ ...queryParams }, 'bl_skpd', 'jadwal_anggaran'] as [
+         queryKey: [{ limit: 500, ...params }, 'bl_skpd', 'jadwal_anggaran'] as [
             GetListBlSkpdParams,
             ...any,
          ],
@@ -133,11 +127,6 @@ export const BlSkpdSelectorMultiple = forwardRef(
       }: BlSkpdSelectorMultipleProps,
       ref?: React.Ref<HTMLSelectElement>
    ) => {
-      const [queryParams] = useState({
-         search: '',
-         limit: 1000,
-         ...params,
-      })
       const [list, setList] = useState<(BlSkpd & { hidden: boolean })[]>([])
       const [search, setSearch] = useState('')
       const { data, isFetching, status } = useQuery({

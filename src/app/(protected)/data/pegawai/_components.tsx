@@ -2,14 +2,16 @@
 
 import Link from 'next/link'
 import { type HelperColumns } from '@components/table'
-import { DiffForHumans } from '@components/ui/DiffForHumans'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
+import {
+   Button,
+   Chip,
+   Dropdown,
+   DropdownItem,
+   DropdownMenu,
+   DropdownTrigger,
+} from '@nextui-org/react'
 import { MoreVertical } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
-
-const diffForHumans = (value?: string | number | Date | null) => {
-   return <DiffForHumans value={value} />
-}
 
 export const ActionPegawaiTable = () => {
    const { hasAcces } = useSession(['super_admin'])
@@ -60,6 +62,8 @@ export default function rowActions(id: string) {
    )
 }
 
+const ESLON = { 6: 'Non Eselon', 4: 'Eselon IV', 3: 'Eselon III', 2: 'Eselon II', 1: 'Eselon I' }
+
 export const helperColumns: HelperColumns<DataPegawai> = {
    nama: {
       key: 'nama',
@@ -80,16 +84,64 @@ export const helperColumns: HelperColumns<DataPegawai> = {
             : null,
       sortable: true,
    },
-
    jabatan: {
       key: 'jabatan',
       name: 'Jabatan',
       sortable: true,
    },
+   eselon: {
+      key: 'eselon',
+      name: 'Eselon',
+      sortable: true,
+      hide: true,
+      cell: (i) => ESLON[i as keyof typeof ESLON],
+   },
    jenis_pegawai: {
       key: 'jenis_pegawai',
       name: 'Jenis Pegawai',
       sortable: true,
+   },
+   jenis_kelamin: {
+      key: 'jenis_kelamin',
+      name: 'JK',
+      sortable: true,
+      hide: true,
+      // cell: (jk: string) => (jk == 'L' ? 'Laki - Laki' : 'Perempuan'),
+   },
+   tanggal_asn: {
+      key: 'tanggal_asn',
+      name: 'TMT',
+      sortable: true,
+      hide: true,
+      cell: (date?: string) =>
+         !!date ? new Date(date)?.toLocaleDateString('id-ID', { dateStyle: 'medium' }) : null,
+   },
+   tanggal_lahir: {
+      key: 'tanggal_lahir',
+      name: 'Tanggal Lahir',
+      sortable: true,
+      hide: true,
+      cell: (date?: string) =>
+         !!date ? new Date(date)?.toLocaleDateString('id-ID', { dateStyle: 'medium' }) : null,
+   },
+   locked: {
+      key: 'locked',
+      name: 'Status',
+      sortable: true,
+      cell: (locked?: string) =>
+         !!locked ? (
+            <Chip
+               size='sm'
+               color='danger'>
+               Non Aktif
+            </Chip>
+         ) : (
+            <Chip
+               size='sm'
+               color='primary'>
+               Aktif
+            </Chip>
+         ),
    },
    aksi: {
       key: 'id',

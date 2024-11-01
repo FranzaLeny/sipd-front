@@ -16,7 +16,7 @@ const Page = async () => {
          <TableServerSide
             tableUiProps={{ isCompact: true }}
             helperColumns={helperColumns}
-            data_key={['data_pangkat']}
+            data_key={['data_pegawai']}
             endpoint='/api/master/pegawai'
             tableActions={<ActionPegawaiTable />}
          />

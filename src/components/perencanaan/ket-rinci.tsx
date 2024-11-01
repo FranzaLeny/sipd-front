@@ -53,14 +53,11 @@ export const KetRinciSelector = forwardRef(
       }: KetSelectorProps,
       ref?: React.Ref<HTMLInputElement>
    ) => {
-      const [queryParams, setQueryParams] = useState({
-         search: '',
-         limit: 1000,
-         ...params,
-      })
-
       const { data, isFetching, status, isFetched } = useQuery({
-         queryKey: [{ ...queryParams }, 'bl_sub_giat_rinci_ket'] as [GetListKetRinciParams, string],
+         queryKey: [{ limit: 1000, ...params }, 'bl_sub_giat_rinci_ket'] as [
+            GetListKetRinciParams,
+            string,
+         ],
          queryFn: async ({ queryKey: [params] }) => {
             return await getKetRinciBlSubGiat(params)
          },

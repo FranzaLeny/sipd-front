@@ -36,6 +36,7 @@ export const AkunSchema = z.object({
    is_sosial_uang: z.number().int(),
    is_subsidi: z.number().int(),
    is_tkdn: z.number().int(),
+   is_pdinas: z.number().int().nullable().optional(),
    ket_akun: z
       .string()
       .transform((v) => (v === '' ? null : v))
@@ -226,6 +227,7 @@ export const AkunUncheckedCreateInputSchema = z
          .nullable()
          .default(0)
          .transform((v) => (v === null ? 0 : v)),
+      is_pdinas: z.coerce.number().int().optional().nullable(),
       ket_akun: z
          .string()
          .transform((v) => (v === '' ? null : v))

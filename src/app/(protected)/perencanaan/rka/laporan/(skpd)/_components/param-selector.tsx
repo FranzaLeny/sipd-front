@@ -63,7 +63,7 @@ export default function ParamSelector({
                isInvalid={!defaultUnit}
                selectedKey={defaultSkpd ?? defaultUnit}
                params={{ id_unit: Number(defaultUnit ?? 0), tahun: Number(tahun ?? 0) }}
-               onChange={handleParamsChange}
+               onSkpdChange={handleParamsChange}
                labelPlacement='inside'
                label='Pilih Skpd'
                radius='md'

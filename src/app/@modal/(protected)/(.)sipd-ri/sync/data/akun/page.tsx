@@ -41,9 +41,8 @@ const ModalSingkron = () => {
          const data = await geAllAkunSipd(user)?.then((res) =>
             res?.map((akun) => {
                let level = akun?.level
-               const kode = akun?.kode_akun?.split('.')
-               if (!level && kode?.length) {
-                  level = kode.length
+               if (!level) {
+                  level = akun?.kode_akun?.length
                }
                return { ...akun, tahun: [akun.tahun], level, sync_at }
             })

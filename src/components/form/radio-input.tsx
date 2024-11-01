@@ -3,7 +3,7 @@
 import { useCallback } from 'react'
 import { cn, Radio, RadioGroup, type RadioGroupProps } from '@nextui-org/react'
 import { useFieldInfo, useTsController } from '@ts-react/form'
-import { titleCase } from '@utils'
+import { snakeToTileCase } from '@utils'
 
 export interface RadioGroupInputProps
    extends Pick<RadioGroupProps, Exclude<keyof RadioGroupProps, 'children'>> {
@@ -34,7 +34,7 @@ const RadioGroupInput = (defaultProps: RadioGroupInputProps) => {
          size={radiogroupProps?.size}
          aria-labelledby={name}
          id={name}
-         label={radiogroupProps?.label ?? label ?? titleCase(name)}
+         label={radiogroupProps?.label ?? label ?? snakeToTileCase(name)}
          isRequired={!(isNullable && isOptional)}
          onBlur={onBlur}
          ref={ref}

@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { getLocalTimeZone, parseAbsoluteToLocal, type DateValue } from '@internationalized/date'
 import { Button, cn, DatePicker, type DatePickerProps } from '@nextui-org/react'
 import { useFieldInfo, useTsController } from '@ts-react/form'
-import { titleCase } from '@utils'
+import { snakeToTileCase } from '@utils'
 import { Eye } from 'lucide-react'
 
 export interface DateInputProps
@@ -50,11 +50,12 @@ export const DateInput = (defaultProps: DateInputProps) => {
       defaultValue: defaultValue ?? '',
       onBlur,
       ref,
+
       ...datePickerProps,
       errorMessage: error?.errorMessage ?? datePickerProps?.errorMessage,
       labelPlacement,
       onChange: handleChange,
-      label: datePickerProps?.label ?? label ?? titleCase(name),
+      label: datePickerProps?.label ?? label ?? snakeToTileCase(name),
       isReadOnly: datePickerProps?.isReadOnly || isSubmitting,
       isInvalid: invalid || datePickerProps?.isInvalid,
       value,

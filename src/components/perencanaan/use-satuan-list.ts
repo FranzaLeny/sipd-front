@@ -9,10 +9,7 @@ export type UseSatuanListProps = {
 
 export function useSatuanList({ params = {} }: UseSatuanListProps = {}) {
    const satuan = useQuery({
-      queryKey: [{ search: '', limit: 1000, ...params }, 'data_satuan'] as [
-         GetListSatuanParams,
-         ...string[],
-      ],
+      queryKey: [{ limit: 1000, ...params }, 'data_satuan'] as [GetListSatuanParams, ...string[]],
       queryFn: async ({ queryKey: [params] }) => {
          return await getListSatuan(params)
       },

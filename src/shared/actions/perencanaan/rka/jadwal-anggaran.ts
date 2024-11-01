@@ -23,13 +23,8 @@ export const getJadwalAnggaranAktifFromSipd = async (params: JadwalAnggranCekAkt
 }
 
 // LOKAL
-export const getJadwalAnggaranById = async (
-   id: string | number,
-   params?: { byIdUnik?: boolean; byIdJadwal?: boolean }
-) => {
-   return await axios.get<ResponseApi<JadwalAnggaran>>(`/api/perencanaan/rka/jadwal/${id}`, {
-      params,
-   })
+export const getJadwalAnggaranById = async (id: string) => {
+   return await axios.get<ResponseApi<JadwalAnggaran>>(`/api/perencanaan/rka/jadwal/${id}`)
 }
 
 export const createJadwalAnggaran = async (data: JadwalAnggaranUncheckedCreateInput) => {
@@ -39,15 +34,12 @@ export const createJadwalAnggaran = async (data: JadwalAnggaranUncheckedCreateIn
 
 export const updateJadwalAnggaran = async (
    id: string,
-   data: JadwalAnggaranUncheckedUpdateInput,
-   isIdUnik = false
+   data: JadwalAnggaranUncheckedUpdateInput
 ) => {
    const valid = JadwalAnggaranUncheckedUpdateInputSchema.parse(data)
-   return await axios.patch<ResponseApi<JadwalAnggaran>>(
-      `/api/perencanaan/rka/jadwal/${id}${isIdUnik ? '/by-id-unik' : ''}`,
-      valid
-   )
+   return await axios.patch<ResponseApi<JadwalAnggaran>>(`/api/perencanaan/rka/jadwal/${id}`, valid)
 }
+
 export const updateJadwalAnggaranPenatausahaan = async (
    id_sipd: number,
    data: JadwalAnggaranUncheckedUpdateInput

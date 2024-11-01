@@ -22,7 +22,7 @@ import { ChevronRight } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
 
 interface Props<T> extends Omit<ItemProps<T>, 'title'>, Route {
-   slug?: string
+   toSlug?: string
    tag?: string
 }
 export type BaseItemProps<T extends object> = Props<T>

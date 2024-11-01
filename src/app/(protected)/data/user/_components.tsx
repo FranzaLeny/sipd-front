@@ -11,7 +11,7 @@ import {
    DropdownMenu,
    DropdownTrigger,
 } from '@nextui-org/react'
-import { titleCase } from '@utils'
+import { snakeToTileCase } from '@utils'
 import hasAccess from '@utils/chek-roles'
 import { MoreVertical } from 'lucide-react'
 import { useSession } from '@shared/hooks/use-session'
@@ -29,7 +29,7 @@ const roles = ({ roles }: IUser) => {
                   color='primary'
                   size='sm'
                   key={role}>
-                  {titleCase(role)}
+                  {snakeToTileCase(role)}
                </Chip>
             )
          })}

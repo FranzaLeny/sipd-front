@@ -439,16 +439,8 @@ export const TapdAnggaranSelector = forwardRef(
       }: TapdAnggaranSelectorProps,
       ref?: React.Ref<HTMLInputElement>
    ) => {
-      const [queryParams, setQueryParams] = useState({
-         search: '',
-         ...params,
-      })
-
       const { data, isFetching, status } = useQuery({
-         queryKey: [{ ...queryParams }, 'data_tapd_anggaran'] as [
-            GetTapdAnggaranListParams,
-            string,
-         ],
+         queryKey: [{ ...params }, 'data_tapd_anggaran'] as [GetTapdAnggaranListParams, string],
          queryFn: async ({ queryKey: [params] }) => {
             return await getTapdAnggaranList(params)
          },
